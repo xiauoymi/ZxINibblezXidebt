@@ -9,41 +9,32 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
-      </plugin>
-      <plugin>
-    <groupId>org.apache.cxf</groupId>
-    <artifactId>cxf-xjc-plugin</artifactId>
-    <version>2.3.0</version>
-    <configuration>
-        <extensions>
-            <extension>org.apache.cxf.xjcplugins:cxf-xjc-dv:2.3.0</extension>
-        </extensions>
-    </configuration>
-    <executions>
-        <execution>
-            <id>generate-sources</id>
-            <goals>
-                <goal>xsdtojava</goal>
-            </goals>
-            <configuration>
-                <sourceRoot>${basedir}/src/main/java</sourceRoot>
-                <xsdOptions>
-                    <xsdOption>
-                        <xsd>${basedir}/src/main/resources/xsds/accountlist_1.xsd</xsd>
-                        <packagename>com.nibbledebt.intuit.cad.data</packagename>
-                        
-                    </xsdOption>
-                </xsdOptions>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
+		    <groupId>org.apache.cxf</groupId>
+		    <artifactId>cxf-xjc-plugin</artifactId>
+		    <version>2.3.0</version>
+		    <configuration>
+		        <extensions>
+		            <extension>org.apache.cxf.xjcplugins:cxf-xjc-dv:2.3.0</extension>
+		        </extensions>
+		    </configuration>
+		    <executions>
+		        <execution>
+		            <id>generate-sources</id>
+		            <goals>
+		                <goal>xsdtojava</goal>
+		            </goals>
+		            <configuration>
+		                <sourceRoot>${basedir}/src/main/java</sourceRoot>
+		                <xsdOptions>
+		                    <xsdOption>
+		                        <xsd>${basedir}/src/main/resources/xsds/accountlist_1.xsd</xsd>
+		                        <packagename>com.nibbledebt.intuit.cad.data</packagename>
+		                    </xsdOption>
+		                </xsdOptions>
+		            </configuration>
+		        </execution>
+		    </executions>
+		</plugin>
     </plugins>
     <pluginManagement>
     	<plugins>

@@ -251,7 +251,7 @@
        <dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>9.3-1100-jdbc41</version>
+			<version>${postgres.driver.version}</version>
 		</dependency>
        <dependency>
 			<groupId>com.h2database</groupId>
@@ -332,7 +332,7 @@
 	      <dependency>
 	        <groupId>net.sf.dozer</groupId>
 	        <artifactId>dozer</artifactId>
-	        <version>5.5.1</version>
+	        <version>${dozer.version}</version>
 	        <scope>compile</scope>
 	      </dependency>
 		
@@ -352,14 +352,6 @@
 
     <build>
         <plugins>
-        	<plugin>
-	        <artifactId>maven-compiler-plugin</artifactId>
-	        <version>3.1</version>
-	        <configuration>
-	          <source>1.7</source>
-	          <target>1.7</target>
-	        </configuration>
-	      </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
