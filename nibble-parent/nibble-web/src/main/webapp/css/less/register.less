@@ -1,0 +1,51 @@
+.grow {
+	transition: all .2s ease-in-out;
+}
+
+.grow:hover {
+	transform: scale(1.1);
+}
+
+.img-radio{
+    display:none;
+    cursor: pointer;
+}
+
+.img-radio + label
+{
+    height: 100px;
+    width: 100px !important;
+    padding: 0 0 0 0px;
+    background-size: 100px;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.5;
+    cursor: pointer;
+    text-align: center;
+}
+
+.img-radio:hover + label
+{
+    height: 100px;
+    width: auto;
+    padding: 0 0 0 0px;
+    background-size: 100px;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 1;
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
+.img-radio:checked + label
+{
+    height: 100px;
+    width: auto;
+    padding: 0 0 0 0px;
+    background-size: 100px;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 1;
+    cursor: pointer;
+    transform: scale(1.1);
+}

@@ -1,0 +1,9 @@
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigations">
+	<div class="navicon-animated navbar-right sb-toggle-right">
+		<span></span>
+	</div>
+
+	<div class="navbar-left">
+		<img src="../images/logo.png" class="image-responsive" width="50px" ></img>
+	</div>
+</div>

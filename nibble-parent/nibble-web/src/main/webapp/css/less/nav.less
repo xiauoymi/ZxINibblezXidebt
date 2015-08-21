@@ -1,0 +1,568 @@
+
+.navicon-animated {
+	height: 32px;
+	padding: 5px;
+	border-radius: 2px;
+	position: relative;
+	vertical-align: middle
+}
+
+.navicon-animated span {
+	display: block;
+	width: 24px;
+	height: 4px;
+	border-radius: 1px;
+	position: relative;
+	top: 10px;
+	-webkit-transition: -webkit-transform 200ms, all 200ms;
+	transition: -webkit-transform 200ms, all 200ms;
+	background-color: @nibble-primary
+}
+
+.navicon-animated span:before , .navicon-animated span:after {
+	display: block;
+	width: 24px;
+	height: 4px;
+	border-radius: 1px;
+	position: absolute;
+	content: '';
+	-webkit-transition: -webkit-transform 200ms, top 200ms;
+	transition: transform 200ms, top 200ms;
+	background-color: @nibble-primary
+}
+
+.navicon-animated span:before {
+	top: -8px
+}
+
+.navicon-animated span:after {
+	top: 8px
+}
+
+html.sb-active-left .sb-toggle-left.navicon-animated span {
+	background-color: transparent;
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	transform: rotate(180deg)
+}
+
+html.sb-active-left .sb-toggle-left.navicon-animated span:before {
+	top: 0;
+	-webkit-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	transform: rotate(45deg)
+}
+
+html.sb-active-left .sb-toggle-left.navicon-animated span:after {
+	top: 0;
+	-webkit-transform: rotate(-45deg);
+	-moz-transform: rotate(-45deg);
+	-ms-transform: rotate(-45deg);
+	transform: rotate(-45deg)
+}
+
+html.sb-active-right .sb-toggle-right.navicon-animated span {
+	background-color: transparent;
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	transform: rotate(180deg)
+}
+
+html.sb-active-right .sb-toggle-right.navicon-animated span:before {
+	top: 0;
+	-webkit-transform: rotate(-45deg);
+	-moz-transform: rotate(-45deg);
+	-ms-transform: rotate(-45deg);
+	transform: rotate(-45deg)
+}
+
+html.sb-active-right .sb-toggle-right.navicon-animated span:after {
+	top: 0;
+	-webkit-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	transform: rotate(45deg)
+}
+
+.navicon.sb-hide {
+	display: none
+}
+
+.nav-bar-logo {
+	margin-left: 7px;
+	margin-right: 7px;
+	height: 50px;
+	line-height: 50px;
+	vertical-align: middle;
+	text-align: center;
+	overflow: hidden;
+	font-size: 36px
+}
+
+#sb-site {
+	box-shadow: 0 0 30px 10px rgba(0, 0, 0, 0.3); /* Shadow cast onto the slidebars when opened. */
+	padding: 50px 0 30px 0;
+}
+
+#adverts {
+	margin-top: 20px;
+}
+
+.advert {
+	border-radius: 3px;
+	border: 1px solid #727272;
+	margin-bottom: 10px;
+	padding: 3px;
+}
+
+.navbar {
+	box-shadow: /* Shadow beneath the bar and edge highlights. */
+		/* Layered single pixel shadows to create a one sided shadow effect. */
+		0 5px 0 0 rgba(0, 0, 0, 0.01),
+		0 4px 0 0 rgba(0, 0, 0, 0.02),
+		0 3px 0 0 rgba(0, 0, 0, 0.04),
+		0 2px 0 0 rgba(0, 0, 0, 0.06),
+		0 1px 0 0 rgba(0, 0, 0, 0.08),
+		/* Top highlight */
+		0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
+		/* Left highlight */
+		1px 0 0 0 rgba(255, 255, 255, 0.1) inset,
+		/* Right highlight */
+		-1px 0 0 0 rgba(255, 255, 255, 0.1) inset,
+		/* Bottom lowlight */
+		0 -1px 0 0 rgba(0, 0, 0, 0.1) inset;
+		
+	/* Glass gradient overlay. */
+	background-image: url("../images/dark_embroidery.png");
+//	background-image: -webkit-linear-gradient(top, rgba(250,142,9, 0.05) 50%, rgba(0,0,0, 0.02) 51%); /*  Webkit syntax. */
+//	background-image: linear-gradient(to bottom, rgba(250,142,9, 0.05) 50%, rgba(0, 0, 0, 0.02) 51%); /* Final syntax. */
+//	background-size: 100%;
+//	background-repeat: no-repeat;
+	
+	/* Bootstrap Changes */
+	border: none;
+	width: 100%;
+	left: auto;
+	right: auto;
+}
+
+#logo {
+	margin-top: 4px;
+	text-align: center;
+}
+
+#top-arrow {
+	padding-top: 17px;
+	padding-bottom: 13px;
+}
+
+.navbar .sb-toggle-left {
+	width: 58px;
+	float: left;
+	padding: 14px;
+}
+
+.navbar .sb-toggle-right {
+	width: 58px;
+	float: right;
+	padding: 14px;
+}
+
+.sb-toggle-left, .sb-toggle-right, .sb-open-left, .sb-open-right, .sb-close {
+	cursor: pointer;
+}
+
+.sb-right {
+	margin-top: 50px;
+}
+
+.navicon-line {
+	width: 24px;
+	height: 4px;
+	border-radius: 1px;
+	margin-bottom: 3px;
+	background-color: #fff;
+}
+
+ul.navbar-nav {
+	display: none;
+}
+
+footer {
+	margin-top: 30px;
+}
+
+/* Slidebars */
+
+.sb-slidebar {
+	background-color: #222222;
+}
+
+/* ---------------
+ * 003 - Slidebars
+ */
+
+.sb-slidebar {
+	
+	background-image: url("../images/dark_embroidery.png");
+//	background-color: #222222; /* Background colour. */
+	color: #e8e8e8; /* Text colour. */
+}
+
+.sb-slidebar a {
+	color: #FF3971;
+	text-decoration: none;
+}
+
+.sb-slidebar a:hover {
+	color: @nibble-primary; /* Link hover colour. */
+	text-decoration: underline;
+}
+
+.sb-slidebar  a.active{
+	color: @nibble-primary; /* Link hover colour. */
+	text-decoration: underline;
+}
+
+/* Main Menu */
+.sb-menu { /* Apply to <ul> or <ol>. */
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+}
+
+.sb-menu li {
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	border-top: 1px solid rgba(255, 255, 255, 0.1); /* Will lighten any background colour you set. */
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Will darken any background colour you set. */
+}
+
+.sb-menu > li:first-child {
+	border-top: none; /* Removes top border from first list item.. */
+}
+
+.sb-menu > li:last-child {
+	border-bottom: none; /* Removed bottom border from last list item. */
+}
+
+.sb-menu li a {
+	width: 100%; /* Makes links full width. */
+	display: inline-block;
+	padding: 1em; /* Creates an even padding the same size as your font. */
+	color: #f2f2f2;
+}
+
+.sb-menu li a:hover {
+	text-decoration: none;
+	background-color: rgba(255, 255, 255, 0.05); /* Will lighten any background colour you set. */
+}
+
+.sb-menu li a.active {
+	text-decoration: none;
+	background-color: rgba(255, 255, 255, 0.05); /* Will lighten any background colour you set. */
+}
+
+/* Borders */
+.sb-left .sb-menu li a {
+	border-left: 3px solid transparent;
+}
+
+.sb-left .sb-menu li a:hover {
+	border-left: 3px solid; /* Removes transparent colour, so border colour will be the same as link hover colour. */
+}
+
+.sb-left .sb-menu li a.active {
+	border-left: 3px solid; /* Removes transparent colour, so border colour will be the same as link hover colour. */
+}
+
+.sb-right .sb-menu li a {
+	border-right: 3px solid transparent;
+}
+
+.sb-right .sb-menu li a:hover {
+	border-right: 3px solid; /* Removes transparent colour, so border colour will be the same as link hover colour. */
+}
+
+.sb-right .sb-menu li a.active {
+	border-right: 3px solid; /* Removes transparent colour, so border colour will be the same as link hover colour. */
+}
+
+/* Left */
+
+
+.sb-menu li .sb-open-right, .sb-menu li small {
+	display: inline-block;
+	padding: 14px;
+}
+
+.sb-menu li img {
+	margin: 14px;
+}
+
+/* Right */
+aside#about-me {
+	padding: 14px 14px 14px 14px;
+}
+
+img.img-me {
+	margin: 14px auto;
+	border: 4px solid #fff;
+}
+
+/* Slidebar Type */
+
+.sb-slidebar, .sb-slidebar h3 {
+	color: #F0F0F0;
+}
+
+.sb-slidebar ul.sb-nav li a {
+	color: #DEDEDE;
+}
+
+.sb-slidebar ul.sb-nav li a:hover {
+	color: @nibble-primary;
+	text-decoration: none;
+}
+
+.sb-slidebar ul.sb-nav li span:hover {
+	color: @nibble-primary;
+}
+
+
+.sb-slidebar ul.sb-nav li a.active  {
+	color: @nibble-primary;
+	text-decoration: none;
+}
+
+/* Anchor Links */
+#download, #api, #options, #helper-classes {
+	margin-top: -50px;
+	padding-top: 50px;
+}
+
+/* Helper Classes */
+.add-bottom-margin {
+	margin-bottom: 15px;
+}
+
+.no-bottom-margin {
+	margin-bottom: 0;
+}
+
+.add-top-margin {
+	margin-top: 15px;
+}
+
+.no-top-margin {
+	margin-top: 0;
+}
+
+.push-down {
+	position: relative;
+	top: 2px;
+}
+
+@media (min-width: 768px) {
+	ul.navbar-nav {
+		display: block;
+	}
+	
+	#logo {
+		text-align: left;
+	}
+}
+
+@media (min-width: 992px) {
+
+}
+
+@media (min-width: 1200px) {
+
+}
+
+/* Site scroll locking - prevent site from scrolling when a Slidebar is open, except when static Slidebars are only available. */
+html.sb-scroll-lock.sb-active:not(.sb-static) {
+	overflow: hidden;
+}
+
+/* ----------
+ * 002 - Site
+ */
+
+#sb-site, .sb-site-container {
+	/* You may now use class .sb-site-container instead of #sb-site and use your own id. However please make sure you don't set any of the following styles any differently on your id. */
+	margin-top: 40px;
+	width: 100%;
+	min-height: 100vh;
+	position: relative;
+	z-index: 1; /* Site sits above Slidebars */
+	background-color: transparent; /* Default background colour, overwrite this with your own css. I suggest moving your html or body background styling here. Making this transparent will allow the Slidebars beneath to be visible. */
+}
+
+/* Micro clearfix by Nicolas Gallagher, ensures the site container hits the top and bottom of the screen. */
+#sb-site:before, #sb-site:after, .sb-site-container:before, .sb-site-container:after {
+	content: ' ';
+	display: table;
+}
+
+#sb-site:before, #sb-site:after, .sb-site-container:before, .sb-site-container:after {
+    clear: both;
+}
+
+/* ---------------
+ * 003 - Slidebars
+ */
+
+.sb-slidebar {
+	height: 100%;
+	overflow-y: auto; /* Enable vertical scrolling on Slidebars when needed. */
+	position: fixed;
+	top: 0;
+	z-index: 0; /* Slidebars sit behind sb-site. */
+	display: none; /* Initially hide the Slidebars. Changed from visibility to display to allow -webkit-overflow-scrolling. */
+	background-color: #222222; /* Default Slidebars background colour, overwrite this with your own css. */
+}
+
+.sb-slidebar, .sb-slidebar * {
+	-webkit-transform: translateZ( 0px ); /* Fixes issues with translated and z-indexed elements on iOS 7. */
+}
+
+.sb-left {
+	left: 0; /* Set Slidebar to the left. */
+}
+
+.sb-right {
+	right: 0; /* Set Slidebar to the right. */
+}
+
+html.sb-static .sb-slidebar,
+.sb-slidebar.sb-static {
+	position: absolute; /* Makes Slidebars scroll naturally with the site, and unfixes them for Android Browser < 3 and iOS < 5. */
+}
+
+.sb-slidebar.sb-active {
+	display: block; /* Makes Slidebars visibile when open. Changed from visibility to display to allow -webkit-overflow-scrolling. */
+}
+
+.sb-style-overlay {
+	z-index: 9999; /* Set z-index high to ensure it overlays any other site elements. */
+}
+
+.sb-momentum-scrolling {
+	-webkit-overflow-scrolling: touch; /* Adds native momentum scrolling for iOS & Android devices. */
+}
+
+/* Slidebar widths for browsers/devices that don't support media queries. */
+	.sb-slidebar {
+		width: 30%;
+	}
+	
+	.sb-width-thin {
+		width: 15%;
+	}
+	
+	.sb-width-wide {
+		width: 45%;
+	}
+
+@media (max-width: 480px) { /* Slidebar widths on extra small screens. */
+	.sb-slidebar {
+		width: 70%;
+	}
+	
+	.sb-width-thin {
+		width: 55%;
+	}
+	
+	.sb-width-wide {
+		width: 85%;
+	}
+}
+
+@media (min-width: 481px) { /* Slidebar widths on small screens. */
+	.sb-slidebar {
+		width: 55%;
+	}
+	
+	.sb-width-thin {
+		width: 40%;
+	}
+	
+	.sb-width-wide {
+		width: 70%;
+	}
+}
+
+@media (min-width: 768px) { /* Slidebar widths on medium screens. */
+	.sb-slidebar {
+		width: 40%;
+	}
+	
+	.sb-width-thin {
+		width: 25%;
+	}
+	
+	.sb-width-wide {
+		width: 55%;
+	}
+}
+
+@media (min-width: 992px) { /* Slidebar widths on large screens. */
+	.sb-slidebar {
+		width: 30%;
+	}
+	
+	.sb-width-thin {
+		width: 15%;
+	}
+	
+	.sb-width-wide {
+		width: 45%;
+	}
+}
+
+@media (min-width: 1200px) { /* Slidebar widths on extra large screens. */
+	.sb-slidebar {
+		width: 20%;
+	}
+	
+	.sb-width-thin {
+		width: 5%;
+	}
+	
+	.sb-width-wide {
+		width: 35%;
+	}
+}
+
+/* ---------------
+ * 004 - Animation
+ */
+
+.sb-slide, #sb-site, .sb-site-container, .sb-slidebar {
+	-webkit-transform: translate( 0px );
+	   -moz-transform: translate( 0px );
+	     -o-transform: translate( 0px );
+	        transform: translate( 0px );
+	
+	-webkit-transition: -webkit-transform 400ms ease;
+	   -moz-transition:    -moz-transform 400ms ease;
+	     -o-transition:      -o-transform 400ms ease;
+	        transition:         transform 400ms ease;
+	
+	-webkit-transition-property: -webkit-transform, left, right; /* Add left/right for Android < 4.4. */
+	-webkit-backface-visibility: hidden; /* Prevents flickering. This is non essential, and you may remove it if your having problems with fixed background images in Chrome. */
+}
+
+/* --------------------
+ * 005 - Helper Classes
+ */
+ 
+.sb-hide { 
+	display: none; /* Optionally applied to control classes when Slidebars is disabled over a certain width. */
+}

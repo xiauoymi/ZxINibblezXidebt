@@ -1,0 +1,35 @@
+<ehcache 
+    xsi:noNamespaceSchemaLocation="ehcache.xsd" 
+    updateCheck="true" 
+    monitoring="autodetect" 
+    dynamicConfig="true"
+    maxBytesLocalHeap="200M" >  
+ 
+    <cache name="instCache"
+          maxBytesLocalHeap="5M"
+          eternal="false"
+          timeToLiveSeconds="600"
+          timeToIdleSeconds="300"
+          overflowToDisk="false"        
+          memoryStoreEvictionPolicy="LRU" />     
+     <cache name="nibblerCache"
+          maxBytesLocalHeap="10M"
+          eternal="true"
+          timeToIdleSeconds="300"
+          overflowToDisk="false"        
+          memoryStoreEvictionPolicy="LRU" />     
+     
+    <cache name="logoCache"
+          maxBytesLocalHeap="1M"
+          eternal="true"
+          timeToIdleSeconds="300"
+          overflowToDisk="false"        
+          memoryStoreEvictionPolicy="LRU" />   
+    <cache name="instPlaidCache"
+          maxBytesLocalHeap="10M"
+          eternal="true"
+          timeToIdleSeconds="300"
+          overflowToDisk="false"        
+          memoryStoreEvictionPolicy="LRU" />
+               
+</ehcache>

@@ -1,0 +1,77 @@
+<div id="reset_panel">
+	<div id="reset_form">
+		<form id="reset-form" class="form-primary" method="POST">
+			<div class="form-group">
+				<h3 class="form-primary-heading">Reset your password</h3>
+				<div id="alert_message"
+					class="alert alert-danger alert-dismissible fade in hidden">
+					<button type="button" class="close" data-dismiss="alert"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<div id="message" class="text-center">&nbsp;</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="reset_username" class="sr-only">Username</label> <input
+					type="text" id="reset_username" class="form-control empty"
+					placeholder="&#xF007;    Username" name="reset_username" required
+					autofocus data-parsley-minlength="8"
+					data-parsley-validation-threshold="2" data-parsley-trigger="change"
+					data-parsley-required-message="The username is required"
+					data-parsley-minlength-message="The username you have entered is invalid"
+					data-parsley-group="reset_form">
+			</div>
+			<div class="form-group">
+				<label for="reset_password" class="sr-only">New Password</label> <input
+					type="password" id="reset_password" class="form-control empty"
+					placeholder="&#xF023;    New Password" name="reset_password"
+					required data-parsley-minlength="8"
+					data-parsley-validation-threshold="8" data-parsley-trigger="change"
+					data-parsley-required-message="The password is required"
+					data-parsley-group="reset_form">
+			</div>
+			<div class="form-group">
+				<label for="reset_repassword" class="sr-only">Verify New
+					Password</label> <input type="password" id="reset_repassword"
+					class="form-control empty"
+					placeholder="&#xF023;    Verify New Password"
+					name="reset_repassword" required
+					data-parsley-validation-threshold="8" data-parsley-trigger="change"
+					data-parsley-equalto="#reset_password"
+					data-parsley-error-message="The password you have entered does not match"
+					data-parsley-group="reset_form">
+			</div>
+			<div class="form-group">
+				<label for="reset_code" class="sr-only">Reset Code</label> <input
+					type="password" id="reset_code" class="form-control empty"
+					placeholder="&#xf005;    Reset Code" name="reset_code" required
+					data-parsley-minlength="8" data-parsley-validation-threshold="8"
+					data-parsley-trigger="change"
+					data-parsley-required-message="The reset code is required"
+					data-parsley-group="reset_form">
+			</div>
+			<div class="form-group">
+				<button id="reset_now"
+					class="btn btn-lg btn-nibble-primary btn-block" type="submit">Reset</button>
+			</div>
+				
+		</form>
+	</div>
+	<div id="reset_result" class="hidden">
+		<div class="row">
+			<div class="col-md-12">
+				<p>Your password has been successfully reset. Please click the
+					link below to go back to the Login screen and begin Nibbling at
+					your debt.</p>
+			</div>
+		</div>
+	</div>
+	<hr />
+	<div class="row">
+		<div class="col-md-offset-1 col-md-10">
+			<a href="" id="login_now"><i
+					class="fa fa-arrow-left"></i> Back to login</a>
+		</div>
+	</div>
+</div>

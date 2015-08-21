@@ -1,0 +1,202 @@
+html, body, #sb-site, .sb-site-container, .sb-slidebar {
+	/* Set box model to prevent any user added margins or paddings from altering the widths or heights. */
+	margin: 0;
+	padding: 0;
+	-webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+	        box-sizing: border-box;
+	overflow-x:hidden;
+}
+
+.black-pattern  {
+	background-image: url("../images/dark_embroidery.png");
+//	/* IE10 Consumer Preview */ 
+//	background-image: -ms-linear-gradient(top, @nibble-primary-bg 0%, #FFFFFF 100%);
+//	
+//	/* Mozilla Firefox */ 
+//	background-image: -moz-linear-gradient(top, @nibble-primary-bg 0%, #FFFFFF 100%);
+//	
+//	/* Opera */ 
+//	background-image: -o-linear-gradient(top, @nibble-primary-bg 0%, #FFFFFF 100%);
+//	
+//	/* Webkit (Safari/Chrome 10) */ 
+//	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, @nibble-primary-bg), color-stop(1, #FFFFFF));
+//	
+//	/* Webkit (Chrome 11+) */ 
+//	background-image: -webkit-linear-gradient(top, @nibble-primary-bg 0%, #FFFFFF 100%);
+//	
+//	/* W3C Markup, IE10 Release Preview */ 
+//	background-image: linear-gradient(to bottom, @nibble-primary-bg 0%, #FFFFFF 100%);
+//	
+//	background-repeat: no-repeat;
+//	-webkit-background-size: cover;
+//	-moz-background-size: cover;
+//	-o-background-size: cover;
+//	background-size: cover;
+}
+
+.light-pattern {
+	background-image: url("../images/brickwall.png");
+	
+}
+.navbar{
+	margin-bottom: 0 !important;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  border-bottom: 10px solid url("../images/dark_embroidery.png")  !important;  
+  background: rgba(250,142,9,0.1);
+}
+
+.modal-footer{
+	margin: 0 0 0 0;
+	padding-bottom: 0 0 0 0;
+	text-align: center;
+	background: rgba(250,142,9,0.1);
+}
+
+.modal-header{
+	font-family: 'Poiret One', cursive;
+	font-size: 2em;
+	font-weight: 500;
+	margin: 0 0 0 0;
+	padding-bottom: 0 0 0 0;
+	text-align: center;
+	background: rgba(250,142,9,0.1);
+}
+
+.form-section-header{
+	font-family: 'Ubuntu', sans-serif;
+	font-size: 1.1em;
+	font-weight: 500;
+	margin-bottom: 10px;
+	margin-top: -10px;
+	width: auto;
+	padding: 5px 5px 5px 5px;
+	text-align: left;
+	color: #ffffff;
+	background: rgba(250,142,9,0.6);
+	border-radius: 5px;
+}
+
+.modal-body{
+	font-family: 'Ubuntu', sans-serif;
+	font-size: 1em;
+	margin: 0 0 0 0;
+	padding-bottom: 0 0 0 0;
+	text-align: center;
+}
+
+.page-subheader{
+	font-family: 'Poiret One', cursive;
+	font-size: 2.5em;
+	font-weight: 200;
+	margin-top: 15px;
+	margin-bottom: 15px;
+	text-rendering: optimizeLegibility;
+	padding-bottom: 0 0 0 0;
+	text-align: center;
+	width: auto;
+	border-bottom: 1px solid @nibble-primary  !important;
+	background: rgba(250,142,9,0.1);
+}
+
+.logo-header {
+	color: @nibble-logo-header;
+	text-align: center;
+	font-family: @nibble-logo-header-font;
+	text-rendering: optimizeLegibility;
+	font-size: @nibble-logo-header-font-size;
+	position: inherit;
+	line-height: 1.1em;
+	text-transform: none;
+	letter-spacing: 0px;
+	font-weight: 400;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	margin-top: -20px;
+}
+
+.logo-header-nav {
+	color: @nibble-logo-header;
+	text-align: center;
+	font-family: @nibble-logo-header-font;
+	text-rendering: optimizeLegibility;
+	font-size: @nibble-logo-header-nav-font-size;
+	position: inherit;w
+	text-transform: none;
+	letter-spacing: 0px;
+	font-weight: 400;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	vertical-align: middle;
+}
+
+.logo-punch {
+	color: @nibble-logo-punch;
+	text-align: center;
+	font-family: @nibble-logo-punch-font;
+	font-size: @nibble-logo-punch-font-size;
+	line-height: 1.3em;
+	text-transform: none;
+	letter-spacing: 0px;
+	font-weight: 400;
+	font-style: normal;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	width: 100%;
+}
+
+.btn-nibble-primary {
+  .button-variant(@white; @nibble-primary; @nibble-primary);
+}
+
+h1 {
+	font-family: "Abel", Arial, sans-serif;
+	font-weight: 400;
+	font-size: 40px;
+}
+
+hr {
+	width: auto;
+	margin-left: auto;
+	margin-right: auto;
+	border-top: 1px solid @nibble-primary  !important;
+}
+
+.parsley-error{
+	background-color: @nibble-form-error-bg !important;
+  	border: 1px solid @nibble-form-error-border;	
+}
+
+.parsley-success{
+	  border: 1px solid @nibble-form-success-border !important;
+}
+
+.tooltip.bottom .tooltip-arrow {
+  top: 0;
+  left: 50%;
+  margin-left: -5px;
+  border-bottom-color: @nibble-tooltip-color !important; 
+  border-width: 0 5px 5px;
+}
+
+.tooltip-inner{
+    max-width:200px;
+    padding:3px 8px;
+    color:@nibble-tooltip-color !important;
+    text-align:center;
+    text-decoration:none;
+    background-color: @nibble-tooltip-bg !important;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    border:1px solid @nibble-tooltip-color !important;
+}
+

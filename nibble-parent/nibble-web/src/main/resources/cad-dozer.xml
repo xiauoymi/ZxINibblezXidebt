@@ -1,0 +1,32 @@
+<mappings xmlns="http://dozer.sourceforge.net"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+          
+  <mapping map-null="false"> 
+    <class-a>com.nibbledebt.intuit.cad.data.BankingAccount</class-a>
+    <class-b>com.nibbledebt.integration.model.cad.BankingAccount</class-b>   
+  </mapping>  
+  <mapping map-null="false"> 
+    <class-a>com.nibbledebt.intuit.cad.data.LoanAccount</class-a>
+    <class-b>com.nibbledebt.integration.model.cad.LoanAccount</class-b>   
+  </mapping>  
+  <mapping map-null="false"> 
+    <class-a>com.nibbledebt.intuit.cad.data.CreditAccount</class-a>
+    <class-b>com.nibbledebt.integration.model.cad.CreditAccount</class-b>   
+  </mapping>  
+   <mapping map-null="false"> 
+    <class-a>com.nibbledebt.intuit.cad.data.Challenges</class-a>
+    <class-b>com.nibbledebt.integration.model.cad.Challenges</class-b>   
+  </mapping>  
+  
+   <mapping map-null="false"> 
+    <class-a>com.nibbledebt.intuit.cad.data.Challenges.Challenge</class-a>
+    <class-b>com.nibbledebt.integration.model.cad.Challenges.Challenge</class-b>   
+  </mapping>  
+  <mapping map-null="false"> 
+    <class-a>com.nibbledebt.intuit.cad.data.InstitutionDetail</class-a>
+    <class-b>com.nibbledebt.integration.model.cad.InstitutionDetail</class-b>   
+  </mapping>  
+  
+</mappings> 

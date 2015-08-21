@@ -1,0 +1,280 @@
+<div id="register_panel">
+	<form id="register-form" name="register-form" class="form-primary"
+		method="POST">
+		<div class="form-group">
+			<h3 class="form-primary-heading">Create a New Account</h3>
+		</div>
+		<hr />
+		<div id="alert_message"
+			class="alert alert-danger alert-dismissible fade in hidden">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<div id="message" class="text-center">&nbsp;</div>
+		</div>
+		<div id="registration_form1">
+			<div class="form-group">
+				<h4 class="form-primary-heading">Enter your information:</h4>
+			</div>
+			<div class="form-group">
+				<label for="register_username" class="sr-only">Username</label> <input
+					type="text" id="register_username" class="form-control empty"
+					data-parsley-trigger="change"
+					placeholder="&#xF007;    Username" name="register_username"
+					required data-parsley-minlength="8"
+					data-parsley-validation-threshold="2" data-parsley-trigger="change"
+					data-parsley-required-message="The username is required"
+					data-parsley-minlength-message="The username must be atleast 8 characters"
+					data-parsley-group="registration_form1" 
+					data-parsley-remote 
+					data-parsley-remote-validator="useruq"
+					data-parsley-errors-messages-disabled
+					autofocus>
+			</div>
+			<div class="form-group">
+				<label for="register_password" class="sr-only">Password</label> <input
+					type="password" id="register_password" class="form-control empty"
+					placeholder="&#xf023;    Password" name="register_password"
+					required data-parsley-minlength="8"
+					data-parsley-validation-threshold="2" data-parsley-trigger="change"
+					data-parsley-required-message="The password is required"
+					data-parsley-minlength-message="The password must be atleast 8 characters"
+					data-parsley-group="registration_form1">
+			</div>
+			<div class="form-group">
+				<label for="register_password" class="sr-only">Re-enter
+					Password</label> <input type="password" id="register_repassword"
+					class="form-control empty"
+					placeholder="&#xf023;    Re-enter Password"
+					name="register_repassword" required
+					data-parsley-validation-threshold="8" data-parsley-trigger="change"
+					data-parsley-equalto="#register_password"
+					data-parsley-error-message="The password you have entered does not match"
+					data-parsley-group="registration_form1">
+			</div>
+			<div class="form-group">
+				<label for="register_first_name" class="sr-only">First Name</label>
+				<input type="text" id="register_first_name"
+					class="form-control empty" placeholder="&#xf05a;    First Name"
+					name="register_first_name" required
+					data-parsley-validation-threshold="2" data-parsley-trigger="change"
+					data-parsley-required-message="Your first name is required"
+					data-parsley-group="registration_form1">
+			</div>
+			<div class="form-group">
+				<label for="register_last_name" class="sr-only">Last Name</label> <input
+					type="text" id="register_last_name" class="form-control empty"
+					placeholder="&#xf05a;    Last Name" name="register_last_name"
+					required data-parsley-validation-threshold="2"
+					data-parsley-trigger="change"
+					data-parsley-required-message="Your last name is required"
+					data-parsley-group="registration_form1">
+			</div>
+			<div class="form-group">
+				<button class="btn btn-lg btn-nibble-primary btn-block"
+					id="register_next1">
+					Next - Contact Information <i
+						class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+				</button>
+			</div>
+			<hr />
+			<div class="row">
+				<div class="col-md-offset-1">
+					<small><a  href="" id="login_now"><i
+							class="fa fa-arrow-left"></i> Back to login</a></small>
+				</div>
+			</div>
+		</div>
+		<div id="registration_form2" class="hidden">
+			<div class="form-group">
+				<button class="btn btn-lg btn-nibble-primary btn-block"
+					type="submit" id="register_back1">
+					<i class="fa fa-md fa-arrow-left font-color-white"></i> Back
+				</button>
+			</div>
+			<div class="form-group">
+				<h4 class="form-primary-heading">Fill out your contact
+					information:</h4>
+			</div>
+			<div class="form-group">
+				<label for="register_address1" class="sr-only">Address Line
+					1</label> <input type="text" id="register_address1"
+					class="form-control empty" placeholder="&#xf015;    Address Line 1"
+					name="register_address1" required
+					data-parsley-validation-threshold="2" data-parsley-trigger="change"
+					data-parsley-required-message="Your home address is required"
+					data-parsley-group="registration_form2">
+			</div>
+			<div class="form-group">
+				<label for="register_address1" class="sr-only">Address Line
+					2</label> <input type="text" id="register_address2"
+					class="form-control empty" placeholder="&#xf015;    Address Line 2"
+					name="register_address2" data-parsley-group="registration_form2">
+			</div>
+			<div class="form-group">
+				<label for="register_city" class="sr-only">City</label> <input
+					type="text" id="register_city" class="form-control empty"
+					placeholder="&#xf015;    City" name="register_city" required
+					data-parsley-validation-threshold="2" data-parsley-trigger="change"
+					data-parsley-required-message="Your home city is required"
+					data-parsley-group="registration_form2">
+			</div>
+			<div class="form-group">
+				<label for="register_state" class="sr-only">State</label> <input
+					type="text" id="register_state" class="form-control empty"
+					placeholder="&#xf015;    State" name="register_state" required
+					data-parsley-validation-threshold="2" data-parsley-trigger="change"
+					data-parsley-required-message="Your home state is required"
+					data-parsley-group="registration_form2">
+			</div>
+			<div class="form-group">
+				<label for="register_zip" class="sr-only">Zip</label> <input
+					type="text" id="register_zip" class="form-control empty"
+					placeholder="&#xf015;    Zip" name="register_zip" required
+					data-parsley-validation-threshold="2" data-parsley-trigger="change"
+					data-parsley-required-message="Your home zip is required"
+					data-parsley-group="registration_form2">
+			</div>
+			<div class="form-group">
+				<label for="register_email" class="sr-only">Email address</label> <input
+					type="text" id="register_email" class="form-control empty"
+					placeholder="&#xf0e0;    Email" name="register_email" required
+					data-parsley-validation-threshold="2" data-parsley-trigger="change"
+					data-parsley-type="email"
+					data-parsley-required-message="Your email address is required"
+					data-parsley-type-message="You must enter a valid email address"
+					data-parsley-group="registration_form2">
+			</div>
+			<div class="form-group">
+				<label for="register_phone" class="sr-only">Phone Number</label> <input
+					type="text" id="register_phone" class="form-control empty"
+					placeholder="&#xf095;    Phone" name="register_phone" required
+					data-parsley-validation-threshold="2" data-parsley-trigger="change"
+					data-parsley-type="number"
+					data-parsley-required-message="Your phone number is required"
+					data-parsley-type-message="You must enter a valid phone number"
+					data-parsley-group="registration_form2">
+			</div>
+			<div class="form-group">
+				<button class="btn btn-lg btn-nibble-primary btn-block"
+					type="submit" id="register_next2">
+					Next - Link an Account <i
+						class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+				</button>
+			</div>
+			<hr />
+			<div class="row">
+				<div class="col-md-offset-1">
+					<small><a  href="" id="login_now"><i
+							class="fa fa-arrow-left"></i> Back to login</a></small>
+				</div>
+			</div>
+		</div>
+		<div id="registration_form3" class="hidden">
+			<div class="form-group">
+				<button class="btn btn-lg btn-nibble-primary btn-block"
+					type="submit" id="register_back2">
+					<i class="fa fa-md fa-arrow-left font-color-white"></i> Back
+				</button>
+			</div>
+			<div class="form-group">
+				<h4 class="form-primary-heading">Link an account to Nibble
+					from:</h4>
+			</div>
+			<div class="form-group">
+				<div id="insts-types"></div>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-lg btn-nibble-primary btn-block"
+					type="submit" id="register_finish">Finish</button>
+			</div>
+			<hr />
+			<div class="row">
+				<div class="col-md-offset-1">
+					<small><a  href="" id="login_now"><i
+							class="fa fa-arrow-left"></i> Back to login</a></small>
+				</div>
+			</div>
+		</div>
+	</form>
+	
+	<form id="mfa-form" name="mfa-form" class="form-primary hidden" method="POST">
+		<div id="mfa-form-heading" class="form-group">
+			
+		</div>
+		<hr />
+		<div id="registration_form4_info" class="container-fluid"></div>		
+		<div class="form-group">
+			<hr />
+			<button class="btn btn-lg btn-nibble-primary btn-block " type="submit" id="mfa_submit">Submit</button>
+		</div>
+	</form>
+	<div id="registration_result" class="hidden">
+		<div class="row">
+			<div class="col-md-12">
+				<p>Congratulations! Your Nibble Account was successfully
+					created. Please check your email for instructions on how to
+					activate your account.</p>
+			</div>
+		</div>
+		<hr />
+		<div class="row">
+			<div class="col-md-offset-1 col-md-10">
+				<small><a  href="" id="login_now"><i
+						class="fa fa-arrow-left"></i> Back to login</a></small>
+			</div>
+		</div>
+	</div>
+	<form id="register-form-modal" name="register-form-modal"
+		class="form-primary" method="POST">
+		<div id="registration_form3_modal" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<div id="modal-title-div"></div>
+					</div>
+					<div class="modal-body">
+						<div id="modal-body-username-fg" class="form-group hidden">
+							<label id="inst_username_label" for="inst_username"
+								class="sr-only"></label> <input type="text" id="inst_username"
+								class="form-control empty" placeholder="&#xF007;    Username"
+								name="inst_username" autofocus data-parsley-trigger="change"
+								data-parsley-required-message="The username is required"
+								data-parsley-group="registration_form4">
+						</div>
+						<div id="modal-body-password-fg" class="form-group hidden">
+							<label id="inst_password_label" for="inst_password"
+								class="sr-only"></label> <input type="password"
+								id="inst_password" class="form-control empty"
+								placeholder="&#xF023;    Password" name="inst_password"
+								data-parsley-trigger="change"
+								data-parsley-group="registration_form4"
+								data-parsley-required-message="The password is required">
+						</div>
+						<div id="modal-body-pin-fg" class="form-group hidden">
+							<label id="inst_pin_label" for="inst_pin" class="sr-only"></label>
+							<input type="password" id="inst_pin" class="form-control empty"
+								placeholder="&#xF023;    Pin" name="inst_pin"
+								data-parsley-trigger="change"
+								data-parsley-group="registration_form4"
+								data-parsley-required-message="The pin is required">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button id="registration_form3_modal_save" type="button"
+							class="btn btn-nibble-primary">Save changes</button>
+					</div>
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+	</form>	
+</div>

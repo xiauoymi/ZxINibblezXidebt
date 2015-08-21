@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:sec="http://www.springframework.org/schema/security"
+	xmlns:configuration="http://cxf.apache.org/transports/http/configuration"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:security="http://cxf.apache.org/configuration/security"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:ctx="http://www.springframework.org/schema/context"
+	xmlns:cxf="http://cxf.apache.org/core"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/wsdl/http-conf.xsd
+		http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+		http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+	default-autowire="default">
+
+	
+    
+	<!-- Thread pool -->
+	<bean id="taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="10" />
+		<property name="maxPoolSize" value="20" />
+		<property name="queueCapacity" value="20" />
+		<property name="waitForTasksToCompleteOnShutdown" value="true" />
+	</bean>
+	
+	<aop:aspectj-autoproxy/>
+	<ctx:component-scan base-package="com.nibbledebt"/>
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
+		<property name="locations">
+			<list>
+				<value>classpath:com/nibbledebt/external/external.properties</value>
+				<value>classpath:/com/nibbledebt/external/plaid-test.properties</value>
+                <value>classpath:com/nibbledebt/external/intuitcad-test.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:/com/nibbledebt/tasks/tasks-context.xml"/>
+	<import resource="classpath:/com/nibbledebt/cache/cache-context.xml"/>
+	<import resource="classpath:/com/nibbledebt/data/data-context.xml"/>
+	<import resource="classpath:/com/nibbledebt/external/integration-context.xml"/>
+	
+    <jaxrs:server address="/rest" basePackages="com.nibbledebt.web.rest">     	
+        <jaxrs:providers>
+        	<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+        	<bean class="com.nibbledebt.common.error.NotificationExceptionMapper" />
+        	<bean class="com.nibbledebt.common.error.ProcessingExceptionMapper" />
+        	<bean class="com.nibbledebt.common.error.ServiceExceptionMapper" />
+        	<bean class="com.nibbledebt.common.error.RepositoryExceptionMapper" />
+        </jaxrs:providers>
+     </jaxrs:server>
+ 	
+ 	
+	<beans profile="postgres-local, embedded-local">
+		<import resource="classpath:META-INF/cxf/cxf.xml" />
+		<cxf:bus>
+	        <cxf:features>
+	            <cxf:logging/>
+	        </cxf:features>
+	    </cxf:bus>
+	</beans>
+</beans>
