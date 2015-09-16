@@ -3,14 +3,10 @@
  */
 package com.nibbledebt.common.notifier;
 
-import java.io.IOException;
 import java.io.StringWriter;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
-import org.apache.velocity.exception.VelocityException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +25,7 @@ public class NotifierTest {
 	private VelocityEngineFactory velocityEngineFactory;
 	
 	@Test
-	public void testVelociyEngine() throws ResourceNotFoundException, ParseErrorException, VelocityException, IOException{
+	public void testVelociyEngine() throws Exception{
 		VelocityContext context = new VelocityContext();
 		context.put("activate_link", "testlink");
 		Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("account-created.vm");
