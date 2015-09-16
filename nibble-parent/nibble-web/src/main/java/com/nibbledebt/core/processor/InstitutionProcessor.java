@@ -99,9 +99,20 @@ public class InstitutionProcessor {
 			throw new ProcessingException("Error while converting logo inputstream to byte[].", e);
 		}
 	}
+
+    @Cacheable(value="logoCache")
+    @Transactional(readOnly = true)
+    public byte[] getLogoByName(String name) throws ProcessingException{
+        String prepared = name.replaceAll("-", "").replaceAll("\\.", "").replaceAll(" ", "_").toLowerCase();
+        try {
+            return IOUtils.toByteArray(this.getClass().getClassLoader().getResourceAsStream(LOGO_LOCATION+prepared));
+        } catch (IOException e) {
+            throw new ProcessingException("Error while converting logo inputstream to byte[].", e);
+        }
+    }
 	
 //	@Scheduled(cron="0 0 * * * *")
-	@Scheduled(fixedRate=60000)
+//	@Scheduled(fixedRate=60000)
 	@Loggable(logLevel=LogLevel.INFO)
 	public void populateInstitutions() throws ProcessingException{
 		try {

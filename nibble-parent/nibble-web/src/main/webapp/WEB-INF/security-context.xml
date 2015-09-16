@@ -29,13 +29,13 @@
         <sec:intercept-url pattern="/index.html**" access="permitAll"/>
         <sec:intercept-url pattern="/nibblehome.html**" access="isAuthenticated() and hasRole('nibbler_level_1')"/>
         
-        <sec:form-login login-page="/nibbleuser.html"   
+        <sec:form-login login-page="/login"
         				login-processing-url="/sslogin"
         				authentication-failure-url="/nibbleuser.html?message=Your username/password was incorrect."
         				default-target-url="/nibblehome.html"
         				password-parameter="nibbler_password"
         				username-parameter="nibbler_username"/>
-        <sec:session-management  session-fixation-protection="newSession" invalid-session-url="/nibbleuser.html?message=Your previous session has expired."/>
+        <sec:session-management  session-fixation-protection="newSession" invalid-session-url="/?message=Your previous session has expired."/>
 <!--         <sec:csrf /> -->
  
 	    <!-- enable remember me -->

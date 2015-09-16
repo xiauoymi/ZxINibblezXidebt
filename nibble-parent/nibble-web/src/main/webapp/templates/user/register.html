@@ -1,0 +1,283 @@
+<div id="register_panel" ng-controller="RegisterCtrl">
+    <form name="registration.form" class="form-primary" novalidate
+          ng-switch="registration.condition"
+          xt-form strategy="focusedAndDirtyOrSubmitted"
+          focus-error="true" role="form">
+        <div class="form-group">
+            <h3 class="form-primary-heading text-center">Create a New Account</h3>
+        </div>
+        <hr/>
+        <alert class="text-center" ng-repeat="alert in msg_alerts" type="{{alert.type}}" close="closeAlert($index)">
+            {{alert.msg}}
+        </alert>
+
+        <div ng-switch-default>
+            <div class="form-group">
+                <h4 class="form-primary-heading">Enter your information:</h4>
+            </div>
+            <div class="form-group">
+                <input
+                        type="text" class="form-control empty"
+                        placeholder="&#xF007;    Username" name="username"
+                        required ng-minlength="8" ng-model="newuser.username"
+                        unique-name msg-uniquename="user already exist"
+                        autofocus xt-validation-tooltip>
+            </div>
+            <div class="form-group">
+                <input
+                        type="password" class="form-control empty"
+                        placeholder="&#xf023;    Password" name="password"
+                        required ng-model="newuser.password"
+                        msg-strength="Password Strength"
+                        xt-validation-tooltip>
+
+                <div class="progress">
+                    <div class="progress-bar"
+                         ng-class="{'progress-bar-success': isPasswordStrong(), 'progress-bar-warning': isPasswordOk(),
+                         'progress-bar-danger': isPasswordWeak()}"
+                         aria-valuenow="{{registration.passwordStrenth}}"
+                         aria-valuemin="0"
+                         aria-valuemax="100"
+                         style="width: {{registration.passwordStrenth}}%">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <input
+                        type="password" class="form-control empty"
+                        placeholder="&#xf023;    Re-enter Password"
+                        name="repassword" required
+                        ng-model="newuser.repassword"
+                        msg-equalto="The password you have entered does not match"
+                        xt-validation-tooltip>
+
+            </div>
+            <div class="form-group">
+                <input
+                        type="text" class="form-control empty"
+                        placeholder="&#xf05a;    First Name"
+                        name="firstname" required
+                        ng-model="newuser.firstname"
+                        xt-validation-tooltip>
+            </div>
+            <div class="form-group">
+                <input
+                        type="text" class="form-control empty"
+                        placeholder="&#xf05a;    Last Name"
+                        name="lastname" required
+                        ng-model="newuser.lastname"
+                        xt-validation-tooltip>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        ng-click="registerForm2()"
+                        ng-disabled="invalidRegisterForm1()">
+                    Next - Contact Information <i
+                        class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+                </button>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-offset-1">
+                    <small><a href="" ng-click="goToLogin()"><i
+                            class="fa fa-arrow-left"></i> Back to login</a></small>
+                </div>
+            </div>
+        </div>
+
+
+        <div ng-switch-when="registrationForm2">
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        ng-click="backToForm1()">
+                    <i class="fa fa-md fa-arrow-left font-color-white"></i> Back
+                </button>
+            </div>
+            <div class="form-group">
+                <h4 class="form-primary-heading">Fill out your contact
+                    information:</h4>
+            </div>
+            <div class="form-group">
+                <input
+                        type="text" class="form-control empty"
+                        placeholder="&#xf015;    Address Line 1"
+                        name="address1" required
+                        ng-model="newuser.address1"
+                        xt-validation-tooltip>
+            </div>
+            <div class="form-group">
+                <input
+                        type="text" class="form-control empty"
+                        placeholder="&#xf015;    Address Line 2"
+                        name="address2"
+                        ng-model="newuser.address2">
+            </div>
+            <div class="form-group">
+                <input
+                        type="text" class="form-control empty"
+                        placeholder="&#xf015;    City"
+                        name="city" required
+                        ng-model="newuser.city"
+                        xt-validation-tooltip>
+            </div>
+            <div class="form-group">
+                <input
+                        type="text" class="form-control empty"
+                        placeholder="&#xf015;    State"
+                        name="regstate" required
+                        ng-model="newuser.state"
+                        xt-validation-tooltip>
+            </div>
+            <div class="form-group">
+                <input
+                        type="text" class="form-control empty"
+                        placeholder="&#xf015;    Zip"
+                        name="zipcode" required
+                        ng-model="newuser.zip"
+                        xt-validation-tooltip>
+            </div>
+            <div class="form-group">
+                <input
+                        type="email" class="form-control empty"
+                        placeholder="&#xf0e0;    Email"
+                        name="email" required
+                        ng-model="newuser.email"
+                        xt-validation-tooltip>
+            </div>
+            <div class="form-group">
+                <input
+                        type="number" class="form-control empty"
+                        placeholder="&#xf095;    Phone"
+                        name="phone" required
+                        ng-model="newuser.phone"
+                        xt-validation-tooltip>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        ng-click="linkAccount()"
+                        ng-disabled="invalidRegisterForm2()">
+                    Next - Link an Account <i
+                        class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+                </button>
+            </div>
+            <div class="form-group">
+                <div class="strike">
+                    <span>Or</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        ng-click="finishRegistration()"
+                        ng-disabled="invalidRegisterForm2()">
+                    Finish Registration <i
+                        class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+                </button>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-offset-1">
+                    <small><a href="" ng-click="goToLogin()"><i
+                            class="fa fa-arrow-left"></i> Back to login</a></small>
+                </div>
+            </div>
+        </div>
+        <div id="registration_form3" ng-switch-when="linkAccount">
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        ng-click="registerForm2()">
+                    <i class="fa fa-md fa-arrow-left font-color-white"></i> Back
+                </button>
+            </div>
+            <div class="form-group">
+                <h4 class="form-primary-heading">Link an account to Nibble
+                    from:</h4>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4 banks"
+                         ng-repeat="bank in banks">
+                        <img ng-src="{{bank.logoUrl}}" class="img-responsive nibble-institution-logo"
+                             ng-click="clickModal($index)">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        type="submit" id="register_finish" ng-disabled="isBankNotSelected()">Finish
+                </button>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-offset-1">
+                    <small><a href="" ng-click="goToLogin()"><i class="fa fa-arrow-left"></i> Back to login</a></small>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <form id="mfa-form" name="mfa-form" class="form-primary hidden" method="POST">
+        <div id="mfa-form-heading" class="form-group">
+
+        </div>
+        <hr/>
+        <div id="registration_form4_info" class="container-fluid"></div>
+        <div class="form-group">
+            <hr/>
+            <button class="btn btn-lg btn-nibble-primary btn-block " type="submit" id="mfa_submit">Submit</button>
+        </div>
+    </form>
+    <div id="registration_result" class="hidden">
+        <div class="row">
+            <div class="col-md-12">
+                <p>Congratulations! Your Nibble Account was successfully
+                    created. Please check your email for instructions on how to
+                    activate your account.</p>
+            </div>
+        </div>
+        <hr/>
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <small><a href="" id="login_now"><i
+                        class="fa fa-arrow-left"></i> Back to login</a></small>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/ng-template" id="registermodal.html">
+
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <div id="modal-title-div">
+                <h4 class="modal-title">{{bank.institutionName}} Authentication Information Required </h4>
+            </div>
+        </div>
+        <div class="modal-body">
+            <form name="institution.form"
+                  class="form-primary" novalidate
+                  xt-form strategy="focusedAndDirtyOrSubmitted"
+                  focus-error="true" role="form">
+                <div class="form-group" ng-repeat="key in keys">
+                    <input type="{{fieldType(key)}}" class="form-control empty"
+                           placeholder="{{fieldPlaceholder(key)}}"
+                           name="{{key.name}}" required
+                           ng-model="keys[$index].value"
+                           xt-validation-tooltip>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" ng-click="cancel()">Close</button>
+            <button id="registration_form3_modal_save" type="button"
+                    class="btn btn-nibble-primary" ng-disabled="invalidModalForm()" ng-click="ok()">Save changes
+            </button>
+        </div>
+
+
+    </script>
+
+
+</div>

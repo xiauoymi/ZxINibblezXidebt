@@ -1,0 +1,65 @@
+input.ng-invalid.ng-dirty{
+    background-color: #f2dede !important;
+    border: 1px solid #eed3d7;
+}
+
+.img-responsive.nibble-institution-logo{
+    max-height: 150px;
+    margin: 0 auto;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: all 0.2s ease-in-out;
+}
+
+.img-responsive.nibble-institution-logo:hover{
+    max-height: 150px;
+    margin: 0 auto;
+    cursor: pointer;
+    opacity: 1;
+    transform: scale(1.1);
+    transition: all 0.2s ease-in-out;
+}
+
+.col-md-4.banks {
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+@media (min-width: 480px) {
+    .col-md-4 {
+        float: left;
+        width: 33.33333333%;
+    }
+}
+
+.strike {
+    display: block;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.strike > span {
+    position: relative;
+    display: inline-block;
+}
+
+.strike > span:before,
+.strike > span:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 9999px;
+    height: 1px;
+    background: #fa8e09;
+}
+
+.strike > span:before {
+    right: 100%;
+    margin-right: 15px;
+}
+
+.strike > span:after {
+    left: 100%;
+    margin-left: 15px;
+}

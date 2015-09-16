@@ -1,0 +1,53 @@
+<!DOCYPE html>
+<html ng-app="nibble">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Nibble Portal</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/nibble-web.ico"/>
+    <link rel="stylesheet" href="../css/nibble.css" />
+    <link rel="stylesheet" href="../css/custom.css" />
+
+    <!--JS-->
+    <script src="js/v2/core/jquery-2.1.1.min.js"></script>
+    <script src="js/v2/core/angular.js"></script>
+    <script src="js/v2/core/ui-bootstrap.min.js"></script>
+    <script src="js/v2/core/ui-bootstrap-tpls.min.js"></script>
+    <script src="js/v2/core/pwstrength-bootstrap-1.2.2.js"></script>
+    <script src="js/v2/core/bootstrap.min.js"></script>
+    <script src="js/v2/core/angular-ui-router.min.js"></script>
+    <script src="js/v2/core/angular-cookies.min.js"></script>
+
+    <!--validation-->
+    <script src="js/v2/core/xtForm.js"></script>
+
+
+    <!--End JS-->
+</head>
+<body class="black-pattern">
+<div ui-view></div>
+<script src="js/v2/app.js"></script>
+
+
+<!--controllers-->
+<script src="js/v2/controllers/LoginCtrl.js"></script>
+<script src="js/v2/controllers/RegisterCtrl.js"></script>
+<script src="js/v2/controllers/RegisterModalBankCtrl.js"></script>
+
+<!--directives-->
+
+<script src="js/v2/directives/uniqueName.js"></script>
+<script src="js/v2/directives/loading.js"></script>
+
+<!--services-->
+<script src="js/v2/services/pwdstrength.js"></script>
+<script src="js/v2/services/accountService.js"></script>
+
+<!--filters-->
+<script src="js/v2/filters/urlencoder.js"></script>
+
+
+
+
+<script src="js/v2/utils.js"></script>
+</body>
+</html>

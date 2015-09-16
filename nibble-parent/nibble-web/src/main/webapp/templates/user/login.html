@@ -1,0 +1,46 @@
+<div id="login_panel" ng-controller="LoginCtrl">
+    <h3 class="form-primary-heading text-center">Login to your account</h3>
+    <alert class="text-center" ng-repeat="alert in msg_alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    <form xt-form strategy="dirtyAndFocusedOrSubmitted"
+          focus-error="true" role="form" novalidate name="loginForm"
+          id="login-form" class="form-primary" action="/sslogin"
+          method="POST">
+        <div class="form-group">
+            <input ng-model="user.login"
+                type="text"
+                class="form-control empty"
+                placeholder="&#xF007;    Username"
+                name="nibbler_username" required
+                autofocus ng-minlength="8"
+                xt-validation-tooltip>
+        </div>
+        <div class="form-group">
+            <input ng-model="user.pass"
+                type="password"
+                class="form-control empty"
+                placeholder="&#xF023;    Password"
+                name="nibbler_password" required
+                xt-validation-tooltip>
+        </div>
+        <div class="checkbox">
+            <label> <input type="checkbox" ng-model="user.remember">
+                Remember me
+            </label>
+        </div>
+        <div class="form-group">
+            <button type="submit" ng-disabled="loginForm.$invalid" class="btn btn-lg btn-nibble-primary btn-block">Sign
+                in</button>
+        </div>
+        <div class="form-group">
+            <a id="forgot_now" href=""><h4>Forgot your password?</h4> </a>
+        </div>
+        <hr />
+        <div class="form-group">
+            <p>
+                Not a Nibbler yet? <a href="" ng-click="registerNow()" id="register_now"><i
+                    class="fa fa-user"></i> Become one today</a>
+            </p>
+        </div>
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+    </form>
+</div>
