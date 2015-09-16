@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nibbledebt.common.error.ProcessingException;
-import com.nibbledebt.common.error.RepositoryException;
 import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.common.notifier.Notify;
 import com.nibbledebt.common.notifier.NotifyMethod;
@@ -30,6 +29,7 @@ import com.nibbledebt.core.data.dao.IInstitutionDao;
 import com.nibbledebt.core.data.dao.INibblerDao;
 import com.nibbledebt.core.data.dao.INibblerDirectoryDao;
 import com.nibbledebt.core.data.dao.INibblerRoleDao;
+import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.AccountBalance;
 import com.nibbledebt.core.data.model.AccountLimit;
 import com.nibbledebt.core.data.model.AccountType;

@@ -18,9 +18,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.nibbledebt.common.error.RepositoryException;
 import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.core.data.dao.IInstitutionDao;
+import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.integration.model.cad.Institution;
 import com.nibbledebt.integration.model.cad.InstitutionDetail;
 import com.nibbledebt.integration.model.cad.Key;

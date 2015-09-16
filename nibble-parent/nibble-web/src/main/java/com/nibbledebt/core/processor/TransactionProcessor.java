@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nibbledebt.common.error.ProcessingException;
-import com.nibbledebt.common.error.RepositoryException;
 import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
@@ -30,6 +29,7 @@ import com.nibbledebt.core.data.dao.IAccountTransactionDao;
 import com.nibbledebt.core.data.dao.INibblerAccountDao;
 import com.nibbledebt.core.data.dao.INibblerDao;
 import com.nibbledebt.core.data.dao.ITransactionCategoryDao;
+import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.AccountTransaction;
 import com.nibbledebt.core.data.model.Location;
 import com.nibbledebt.core.data.model.Nibbler;

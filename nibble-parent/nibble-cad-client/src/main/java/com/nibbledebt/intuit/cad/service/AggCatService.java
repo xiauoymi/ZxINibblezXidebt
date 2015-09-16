@@ -368,8 +368,9 @@ public class AggCatService {
 		new InterceptorProvider().executeInterceptors(intuitMessage);
 	}
 
-	public void deleteAccount(long accountId) throws AggCatException {
+	public void deleteAccount(long accountId, String requestType) throws AggCatException {
 		IntuitMessage intuitMessage = new IntuitMessage();
+		intuitMessage.setRequestType(requestType);
 		RequestElements requestElements = intuitMessage.getRequestElements();
 
 		Map requestParameters = requestElements.getRequestParameters();
@@ -384,8 +385,9 @@ public class AggCatService {
 		new InterceptorProvider().executeInterceptors(intuitMessage);
 	}
 
-	public void deleteCustomer() throws AggCatException {
+	public void deleteCustomer(String requestType) throws AggCatException {
 		IntuitMessage intuitMessage = new IntuitMessage();
+		intuitMessage.setRequestType(requestType);
 		RequestElements requestElements = intuitMessage.getRequestElements();
 
 		Map requestParameters = requestElements.getRequestParameters();

@@ -19,10 +19,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.nibbledebt.common.error.ProcessingException;
-import com.nibbledebt.common.error.RepositoryException;
 import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.common.security.MemberDetails;
+import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.processor.AccountsProcessor;
 import com.nibbledebt.core.processor.TransactionProcessor;
 import com.nibbledebt.web.rest.model.Account;

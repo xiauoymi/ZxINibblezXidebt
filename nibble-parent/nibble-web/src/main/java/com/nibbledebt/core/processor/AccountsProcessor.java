@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.nibbledebt.common.error.RepositoryException;
 import com.nibbledebt.core.data.dao.INibblerAccountDao;
+import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.NibblerAccount;
 import com.nibbledebt.web.rest.model.Account;
 

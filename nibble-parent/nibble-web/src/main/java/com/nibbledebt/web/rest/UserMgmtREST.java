@@ -15,10 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.nibbledebt.common.error.ProcessingException;
-import com.nibbledebt.common.error.RepositoryException;
 import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.common.validator.Validatable;
+import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.processor.UsersProcessor;
 import com.nibbledebt.web.rest.model.NibblerData;
 

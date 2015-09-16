@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AccountList", namespace = "http://schema.intuit.com/platform/fdatafeed/accountlist/v1", propOrder = {
-    "bankingAccountOrCreditAccountOrLoanAccount"
+    "accounts"
 })
 public class AccountList {
 
@@ -55,7 +55,7 @@ public class AccountList {
         @XmlElement(name = "RewardsAccount", namespace = "http://schema.intuit.com/platform/fdatafeed/rewardsaccount/v1", type = RewardsAccount.class),
         @XmlElement(name = "OtherAccount", namespace = "http://schema.intuit.com/platform/fdatafeed/otheraccount/v1", type = OtherAccount.class)
     })
-    protected List<Account> bankingAccountOrCreditAccountOrLoanAccount;
+    protected List<Account> accounts;
 
     /**
      * Gets the value of the bankingAccountOrCreditAccountOrLoanAccount property.
@@ -84,11 +84,11 @@ public class AccountList {
      * 
      * 
      */
-    public List<Account> getBankingAccountOrCreditAccountOrLoanAccount() {
-        if (bankingAccountOrCreditAccountOrLoanAccount == null) {
-            bankingAccountOrCreditAccountOrLoanAccount = new ArrayList<Account>();
+    public List<Account> getAccounts() {
+        if (accounts == null) {
+        	accounts = new ArrayList<Account>();
         }
-        return this.bankingAccountOrCreditAccountOrLoanAccount;
+        return this.accounts;
     }
 
 }

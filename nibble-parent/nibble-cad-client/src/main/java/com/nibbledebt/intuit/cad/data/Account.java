@@ -9,12 +9,17 @@
 package com.nibbledebt.intuit.cad.data;
 
 import java.math.BigDecimal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 
 /**
@@ -74,8 +79,16 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "aggrStatusCode",
     "currencyCode",
     "bankId",
-    "institutionLoginId"
+    "institutionLoginId",
+    "type"
 })
+@JsonTypeInfo(use= JsonTypeInfo.Id.NAME, include=JsonTypeInfo.As.PROPERTY, property="type")
+
+@JsonSubTypes({
+    @Type(value = BankingAccount.class, name = "bankingAccount"),
+    @Type(value = CreditAccount.class, name = "creditAccount"),
+    @Type(value = LoanAccount.class, name = "loanAccount"),
+    @Type(value = InvestmentAccount.class, name = "investmentAccount")})
 public abstract class Account {
 
     protected long accountId;
@@ -103,6 +116,7 @@ public abstract class Account {
     protected CurrencyCode currencyCode;
     protected String bankId;
     protected long institutionLoginId;
+    protected String type;
 
     /**
      * Gets the value of the accountId property.
@@ -535,5 +549,19 @@ public abstract class Account {
     public void setInstitutionLoginId(long value) {
         this.institutionLoginId = value;
     }
+
+	/**
+	 * @return the type
+	 */
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(String type) {
+		this.type = type;
+	}
 
 }

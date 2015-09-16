@@ -18,13 +18,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nibbledebt.common.error.ProcessingException;
-import com.nibbledebt.common.error.RepositoryException;
 import com.nibbledebt.common.notifier.Notify;
 import com.nibbledebt.common.notifier.NotifyMethod;
 import com.nibbledebt.common.notifier.NotifyType;
 import com.nibbledebt.core.data.dao.INibblerDao;
 import com.nibbledebt.core.data.dao.INibblerDirectoryDao;
 import com.nibbledebt.core.data.dao.INibblerRoleDao;
+import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.Nibbler;
 import com.nibbledebt.core.data.model.NibblerDirectory;
 import com.nibbledebt.core.data.model.NibblerDirectoryStatus;

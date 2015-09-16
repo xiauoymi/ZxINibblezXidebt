@@ -73,11 +73,13 @@ public class CADSaoTest {
 	
 	@Test
 	public void testDiscoverAndAddGood() throws ServiceException{
+		cadSao.deleteCustomers();
+		
 		Map<String, String> credsMap = new HashMap<>();
-		credsMap.put("Banking Userid", "direct");
+		credsMap.put("Banking Userid", "demo");
 		credsMap.put("Banking Password", "go");
 		
-		LinkResponse response = cadSao.discoverAndAddAccounts("100000", credsMap, "nibblekey");
+		LinkResponse response = cadSao.discoverAndAddAccounts("100000", credsMap, "testuser1");
 		assertNotNull(response);
 	}
 	
