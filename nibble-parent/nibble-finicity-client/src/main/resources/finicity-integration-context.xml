@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	
+
+	<bean id="finicityClient" class="com.nibbledebt.integration.finicity.FinicityClient" >
+		
+	</bean>
+	
+	
+	<bean id="fincityInstClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create"> 
+        <constructor-arg type="java.lang.String" value="${fincity.url.inst}" /> 
+        <constructor-arg name="webClientProviders" >
+        	<list>
+        		<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+        	</list>
+        </constructor-arg> 
+	</bean> 
+	
+	<bean id="fincityAuthClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create"> 
+        <constructor-arg type="java.lang.String" value="${fincity.url.auth}" /> 
+        <constructor-arg name="webClientProviders" >
+        	<list>
+        		<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+        	</list>
+        </constructor-arg> 
+	</bean>
+
+</beans>
