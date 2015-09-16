@@ -47,8 +47,10 @@
 				<value>classpath:com/nibbledebt/external/external.properties</value>
 				<value>classpath:/com/nibbledebt/external/plaid-test.properties</value>
                 <value>classpath:com/nibbledebt/external/intuitcad-test.properties</value>
+                <value>classpath:finicity-integration.properties</value>
 			</list>
 		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
 	</bean>
 	
 	<import resource="classpath:META-INF/cxf/cxf.xml" />

@@ -7,6 +7,8 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.nibbledebt.integration.finicity.error.FinicityAccessException;
+import com.nibbledebt.integration.finicity.error.PartnerAuthenticationException;
 import com.nibbledebt.integration.finicity.model.Institutions;
 
 /**
@@ -16,14 +18,19 @@ import com.nibbledebt.integration.finicity.model.Institutions;
 @Component
 public class FinicityClient {
 	@Autowired
-	private WebClient fincityWebClient;
+	private WebClient fincityInstClient;
 	
 	@Autowired
 	private SecurityContext finicitySecurityContext;
 	
-	public Institutions getInstitutions(){
-		fincityWebClient.query("Finicity-App-Key", "avalue")
-					.query("Finicity-App-Token", "avalue");
-		return  fincityWebClient.get(Institutions.class);
+	public Institutions getInstitutions() throws FinicityAccessException{
+		try {
+			fincityInstClient.query("Finicity-App-Key", finicitySecurityContext.getAppKey())
+								.query("Finicity-App-Token", finicitySecurityContext.getAppToken());
+		
+			return  fincityInstClient.get(Institutions.class);
+		} catch (PartnerAuthenticationException e) {
+			throw new FinicityAccessException(e);
+		}
 	}
 }
