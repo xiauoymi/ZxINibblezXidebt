@@ -76,10 +76,10 @@ public class CADSao implements IIntuitSao{
 				linkResponse.setChallenges(challenges);
 			}
 			
-			if(resp.getAccountList() != null && resp.getAccountList().getAccounts()!=null  
-											&&	!resp.getAccountList().getAccounts().isEmpty()){
+			if(resp.getAccountList() != null && resp.getAccountList().getBankingAccountOrCreditAccountOrLoanAccount()!=null
+											&&	!resp.getAccountList().getBankingAccountOrCreditAccountOrLoanAccount().isEmpty()){
 				AccountList accountslist = new AccountList();
-				for(com.nibbledebt.intuit.cad.data.Account acct : resp.getAccountList().getAccounts()){
+				for(com.nibbledebt.intuit.cad.data.Account acct : resp.getAccountList().getBankingAccountOrCreditAccountOrLoanAccount()){
 					if(acct instanceof com.nibbledebt.intuit.cad.data.BankingAccount)
 						accountslist.getBankingAccountsAndCreditAccountsAndLoanAccounts().add(mapper.map(acct, BankingAccount.class));
 					else if(acct instanceof com.nibbledebt.intuit.cad.data.LoanAccount)

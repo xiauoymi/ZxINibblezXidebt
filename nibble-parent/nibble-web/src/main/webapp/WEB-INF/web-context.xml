@@ -57,6 +57,7 @@
 	<import resource="classpath:/com/nibbledebt/tasks/tasks-context.xml"/>
 	<import resource="classpath:/com/nibbledebt/cache/cache-context.xml"/>
 	<import resource="classpath:/com/nibbledebt/data/data-context.xml"/>
+	<import resource="classpath:finicity-integration-context.xml"/>
 	<import resource="classpath:/com/nibbledebt/external/integration-context.xml"/>
 	
     <jaxrs:server address="/rest" basePackages="com.nibbledebt.web.rest">     	

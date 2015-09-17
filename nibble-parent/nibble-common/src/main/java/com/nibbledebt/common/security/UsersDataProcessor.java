@@ -8,6 +8,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import com.nibbledebt.web.rest.model.NibblerData;
  * @author alam_home
  *
  */
+@Component
 public class UsersDataProcessor extends AbstractProcessor {
 	@Autowired
 	private INibblerDao nibblerDao;
