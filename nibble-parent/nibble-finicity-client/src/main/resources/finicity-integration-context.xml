@@ -27,7 +27,7 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
 	default-autowire="default">	
 	
-	<bean id="fincityInstClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create">
+	<bean id="finicityInstClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create">
         <constructor-arg type="java.lang.String" value="${fincity.url.inst}" /> 
         <constructor-arg>
         	<list>
@@ -36,7 +36,7 @@
         </constructor-arg> 
 	</bean> 
 	
-	<bean id="fincityAuthClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create"> 
+	<bean id="finicityAuthClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create">
         <constructor-arg type="java.lang.String" value="${fincity.url.auth}" /> 
         <constructor-arg >
         	<list>

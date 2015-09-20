@@ -31,7 +31,7 @@
 	
 	<bean id="fincityInstClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create"> 
         <constructor-arg type="java.lang.String" value="${fincity.url.inst}" /> 
-        <constructor-arg name="webClientProviders" >
+        <constructor-arg>
         	<list>
         		<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
         	</list>
@@ -40,7 +40,7 @@
 	
 	<bean id="fincityAuthClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create"> 
         <constructor-arg type="java.lang.String" value="${fincity.url.auth}" /> 
-        <constructor-arg name="webClientProviders" >
+        <constructor-arg>
         	<list>
         		<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
         	</list>

@@ -14,16 +14,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 @XmlType(propOrder = {"partnerId", "partnerSecret"})
 public class Credentials {
-	
-	@XmlElement(name="partnerId")
+
 	private String partnerId;
-	
-	@XmlElement(name="partnerSecret")
 	private String partnerSecret;
 
 	/**
 	 * @return the partnerId
 	 */
+    @XmlElement
 	public String getPartnerId() {
 		return partnerId;
 	}
@@ -38,6 +36,7 @@ public class Credentials {
 	/**
 	 * @return the partnerSecret
 	 */
+    @XmlElement
 	public String getPartnerSecret() {
 		return partnerSecret;
 	}

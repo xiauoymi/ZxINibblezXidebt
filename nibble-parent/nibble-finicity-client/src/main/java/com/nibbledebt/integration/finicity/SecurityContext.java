@@ -21,7 +21,7 @@ import com.nibbledebt.integration.finicity.model.Credentials;
 @Component
 public class SecurityContext {
 	@Autowired
-	private WebClient fincityAuthClient;
+	private WebClient finicityAuthClient;
 	
 	@Value("${finicity.partner.id}")
 	private String partnerId;
@@ -80,8 +80,8 @@ public class SecurityContext {
 				Credentials credentials = new Credentials();
 				credentials.setPartnerId(partnerId);
 				credentials.setPartnerSecret(partnerSecret);
-				fincityAuthClient.query("Finicity-App-Key", appKey);
-				appToken = fincityAuthClient.post(credentials, Access.class).getToken();
+				finicityAuthClient.query("Finicity-App-Key", appKey);
+				appToken = finicityAuthClient.post(credentials, Access.class).getToken();
 			} catch (Exception e) {
 				throw new PartnerAuthenticationException();
 			}
