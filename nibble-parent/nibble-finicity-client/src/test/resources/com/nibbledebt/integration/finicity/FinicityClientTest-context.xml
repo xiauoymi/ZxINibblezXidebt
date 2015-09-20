@@ -4,7 +4,7 @@
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:cache="http://www.springframework.org/schema/cache"
 	xmlns:sec="http://www.springframework.org/schema/security"
-	xmlns:configuration="http://cxf.apache.org/transports/http/configuration"
+	xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
 	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
 	xmlns:jee="http://www.springframework.org/schema/jee"
 	xmlns:security="http://cxf.apache.org/configuration/security"
@@ -17,7 +17,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
-		http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/wsdl/http-conf.xsd
+		http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
 		http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
 		http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
 		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
@@ -27,9 +27,22 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
 	default-autowire="default">	
 	
-	<ctx:component-scan base-package="com.nibbledebt.integration.finicity"/>
+	<ctx:component-scan base-package="com.nibbledebt"/>
 	
-	<bean id="fincityInstClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create"> 
+	<http-conf:conduit name="*.http-conduit">
+		<http-conf:client 	ProxyServer="${proxy.url}" 
+							ProxyServerType="HTTP"
+							ProxyServerPort="${proxy.port}"
+							ConnectionTimeout="10000" 
+							ReceiveTimeout="10000" 
+							CacheControl="no-cache" />
+		<http-conf:proxyAuthorization>
+			<security:UserName>${proxy.username}</security:UserName>
+			<security:Password>${proxy.password}</security:Password>
+		</http-conf:proxyAuthorization>
+	</http-conf:conduit>
+	
+	<bean id="finicityInstClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create">
         <constructor-arg type="java.lang.String" value="${fincity.url.inst}" /> 
         <constructor-arg>
         	<list>
@@ -38,22 +51,22 @@
         </constructor-arg> 
 	</bean> 
 	
-	<bean id="fincityAuthClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create"> 
+	<bean id="finicityAuthClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create">
         <constructor-arg type="java.lang.String" value="${fincity.url.auth}" /> 
-        <constructor-arg>
+        <constructor-arg >
         	<list>
         		<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
         	</list>
-        </constructor-arg> 
+        </constructor-arg>
 	</bean>
 	
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
 				<value>classpath:/finicity-integration.properties</value>
+				<value>classpath:/proxy.properties</value>
 			</list>
 		</property>
 		<property name="ignoreUnresolvablePlaceholders" value="true"/>
 	</bean>
-
 </beans>

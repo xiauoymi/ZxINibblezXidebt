@@ -10,6 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.nibbledebt.integration.finicity.error.FinicityAccessException;
+import com.nibbledebt.integration.finicity.error.PartnerAuthenticationException;
 
 /**
  * @author alam_home
@@ -20,7 +21,15 @@ import com.nibbledebt.integration.finicity.error.FinicityAccessException;
 public class FinicityClientTest {
 
 	@Autowired
+	SecurityContext finicitySecurityContext;
+	
+	@Autowired
 	FinicityClient finicityClient;
+	
+	@Test
+	public void getToken() throws FinicityAccessException, PartnerAuthenticationException {
+		finicitySecurityContext.getAppToken();
+	}
 	
 	@Test
 	public void getInstitutions() throws FinicityAccessException {

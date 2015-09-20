@@ -3,21 +3,34 @@
  */
 package com.nibbledebt.integration.finicity.model;
 
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * @author alam_home
  *
  */
+@XmlRootElement
+@XmlType(propOrder = {"institution"})
 public class Institutions
 {
+	@XmlAttribute(name="moreAvailable")
     private String moreAvailable;
 
+	@XmlAttribute(name="displaying")
     private String displaying;
 
+	@XmlAttribute(name="found")
     private String found;
 
-    private Institution[] institution;
+	@XmlElement(name="institution")
+    private List<Institution> institutions;
 
    
 
@@ -78,8 +91,8 @@ public class Institutions
 	/**
 	 * @return the institution
 	 */
-	public Institution[] getInstitution() {
-		return institution;
+	public List<Institution> getInstitutions() {
+		return institutions;
 	}
 
 
@@ -87,8 +100,8 @@ public class Institutions
 	/**
 	 * @param institution the institution to set
 	 */
-	public void setInstitution(Institution[] institution) {
-		this.institution = institution;
+	public void setInstitutions(List<Institution> institutions) {
+		this.institutions = institutions;
 	}
 
 

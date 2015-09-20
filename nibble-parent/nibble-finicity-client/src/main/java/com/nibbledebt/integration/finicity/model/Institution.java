@@ -3,22 +3,33 @@
  */
 package com.nibbledebt.integration.finicity.model;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * @author alam_home
  *
  */
+@XmlRootElement
+@XmlType(propOrder = {"id", "urlLogonApp", "name", "urlHomeApp", "accountTypeDescription"})
 public class Institution
 {
+	@XmlElement(name="id")
     private String id;
 
+	@XmlElement(name="urlLogonApp")
     private String urlLogonApp;
 
+	@XmlElement(name="name")
     private String name;
 
+	@XmlElement(name="urlHomeApp")
     private String urlHomeApp;
 
+	@XmlElement(name="accountTypeDescription")
     private String accountTypeDescription;
 
    

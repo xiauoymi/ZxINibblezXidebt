@@ -80,10 +80,10 @@ public class SecurityContext {
 				Credentials credentials = new Credentials();
 				credentials.setPartnerId(partnerId);
 				credentials.setPartnerSecret(partnerSecret);
-				finicityAuthClient.query("Finicity-App-Key", appKey);
+				finicityAuthClient.getHeaders().add("Finicity-App-Key", appKey);
 				appToken = finicityAuthClient.post(credentials, Access.class).getToken();
 			} catch (Exception e) {
-				throw new PartnerAuthenticationException();
+				throw new PartnerAuthenticationException(e);
 			}
 		}
 		return appToken;
