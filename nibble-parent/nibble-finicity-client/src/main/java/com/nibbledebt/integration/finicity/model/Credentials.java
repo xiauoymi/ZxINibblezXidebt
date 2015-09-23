@@ -3,25 +3,17 @@
  */
 package com.nibbledebt.integration.finicity.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
  * @author alam_home
  *
  */
-@XmlRootElement(name="credentials")
-@XmlType(name="credentials", propOrder = {"partnerId", "partnerSecret"})
-@XmlAccessorType ( XmlAccessType.FIELD )
+@JsonRootName("credentials")
 public class Credentials {
 
-    @XmlElement(name="partnerId", required=true)
 	private String partnerId;
 
-    @XmlElement(name="partnerSecret", required=true)
 	private String partnerSecret;
 
 	/**

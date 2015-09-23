@@ -3,6 +3,7 @@
  */
 package com.nibbledebt.integration.finicity;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class FinicityClientTest {
 	
 	@Test
 	public void getToken() throws FinicityAccessException, PartnerAuthenticationException {
-		finicitySecurityContext.getAppToken();
+		Assert.assertNotNull(finicitySecurityContext.getAppToken());
 	}
 	
 	@Test

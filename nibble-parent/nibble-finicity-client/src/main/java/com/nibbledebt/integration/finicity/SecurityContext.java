@@ -5,12 +5,9 @@ package com.nibbledebt.integration.finicity;
 
 import java.security.Timestamp;
 
-import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
 import org.springframework.stereotype.Component;
 
 import com.nibbledebt.integration.finicity.error.PartnerAuthenticationException;
@@ -22,9 +19,10 @@ import com.nibbledebt.integration.finicity.model.Credentials;
  *
  */
 @Component
-public class SecurityContext implements ApplicationContextAware{
-	private ApplicationContext applicationContext;
-		
+public class SecurityContext {		
+	@Autowired
+	private RestClient restClient;
+	
 	@Value("${finicity.auth.url}")
 	private String finicityAuthUrl;	
 	
@@ -36,7 +34,7 @@ public class SecurityContext implements ApplicationContextAware{
 	
 	@Value("${finicity.app.key}")
 	private String appKey;
-	
+		
 	private String appToken;
 	private Timestamp lastPullTime;
 	
@@ -65,37 +63,14 @@ public class SecurityContext implements ApplicationContextAware{
 		this.partnerSecret = partnerSecret;
 	}
 	/**
-	 * @return the appKey
-	 */
-	public String getAppKey() {
-		return appKey;
-	}
-	/**
-	 * @param appKey the appKey to set
-	 */
-	public void setAppKey(String appKey) {
-		this.appKey = appKey;
-	}
-	/**
 	 * @return the appToken
 	 */
 	public String getAppToken() throws PartnerAuthenticationException{
 		if(this.appToken == null){
-			try {
-
-				HeaderInterceptor intrc = new HeaderInterceptor("Finicity-App-Key", appKey);
-				
-				Credentials credentials = new Credentials();
-				credentials.setPartnerId(partnerId);
-				credentials.setPartnerSecret(partnerSecret);
-				RestClient restClient = applicationContext.getBean("restClient", RestClient.class);
-				
-				restClient.getInterceptors().add(intrc);
-				restClient.getMessageConverters().add(new Jaxb2RootElementHttpMessageConverter());
-				ResponseEntity<Access> resp = restClient.postForEntity(finicityAuthUrl, credentials, Access.class);
-				appToken = resp.getBody().getToken();
-			} catch (Exception e) {
-				throw new PartnerAuthenticationException(e);
+			this.appToken = invokeAuthService().getToken();
+		}else{
+			if(lastPullTime.getTimestamp().getTime() < System.currentTimeMillis()+360000){
+				this.appToken = invokeAuthService().getToken();
 			}
 		}
 		return appToken;
@@ -118,18 +93,22 @@ public class SecurityContext implements ApplicationContextAware{
 	public void setLastPullTime(Timestamp lastPullTime) {
 		this.lastPullTime = lastPullTime;
 	}
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext)
-			throws BeansException {
-		this.applicationContext = applicationContext;
-		
-	}
 	
-//	private WebClient getConfiguredClient() throws PartnerAuthenticationException {
-//        return WebClient.fromClient(finicityAuthWebClient)
-//        		.header(, appKey)
-//        		.accept("application/xml")
-//				.type("application/xml");
-//    }
-	
+	/**
+	 * Reusable method for invokiung the auth service of Finicity
+	 * @return
+	 * @throws PartnerAuthenticationException
+	 */
+	protected Access invokeAuthService() throws PartnerAuthenticationException{
+		try {
+			Credentials credentials = new Credentials();
+			credentials.setPartnerId(partnerId);
+			credentials.setPartnerSecret(partnerSecret);
+			restClient.getInterceptors().add(new HeaderInterceptor("Finicity-App-Key", appKey));
+			ResponseEntity<Access> resp = restClient.postForEntity(finicityAuthUrl, credentials, Access.class);
+			return resp.getBody();
+		} catch (Exception e) {
+			throw new PartnerAuthenticationException(e);
+		}
+	}	
 }
