@@ -13,9 +13,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.ProxyAuthenticationStrategy;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.stereotype.Component;
@@ -28,8 +27,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  *
  */
 @Component
-@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "prototype")
 public class RestClient extends RestTemplate {
+
 	/**
 	 * Constructor for a custom RestTemplate for Finicity. It does the following:
 	 * 	- Creates credentials provider for Proxy Authentication
@@ -37,13 +36,20 @@ public class RestClient extends RestTemplate {
 	 * 	- Creates a route plan to run the calls through a proxy
 	 * 	- Sets a request factory with this client into this RestTemplate
 	 * 	- Configures the MappingJackson2XmlHttpMessageConverter to read root element name from @JsonRootName
+	 *  - Add the app key to the header of the http request
 	 *  
 	 * @param proxyUrl
 	 * @param proxyPort
 	 * @param proxyUsername
 	 * @param proxyPassword
 	 */
-    public RestClient(String proxyUrl, Integer proxyPort, String proxyUsername, String proxyPassword)  {
+	@Autowired
+    public RestClient(	@Value("${proxy.url}") String proxyUrl, 
+    					@Value("${proxy.port}") Integer proxyPort, 
+    					@Value("${proxy.username}") String proxyUsername, 
+    					@Value("${proxy.password}") String proxyPassword,
+    					@Value("${finicity.appkey}") String appKey,
+    					HeaderInterceptor headerInterceptor)  {
     	// create the credentials 
     	CredentialsProvider credsProvider = new BasicCredentialsProvider();
         credsProvider.setCredentials(
@@ -73,7 +79,7 @@ public class RestClient extends RestTemplate {
 			}
 		}
     	
-    }
-    
-    
+		// add the header interceptor to add the app key
+		getInterceptors().add(headerInterceptor);
+    }    
 }

@@ -104,11 +104,12 @@ public class SecurityContext {
 			Credentials credentials = new Credentials();
 			credentials.setPartnerId(partnerId);
 			credentials.setPartnerSecret(partnerSecret);
-			restClient.getInterceptors().add(new HeaderInterceptor("Finicity-App-Key", appKey));
+//			restClient.getInterceptors().add(new HeaderInterceptor("Finicity-App-Key", appKey));
 			ResponseEntity<Access> resp = restClient.postForEntity(finicityAuthUrl, credentials, Access.class);
 			return resp.getBody();
 		} catch (Exception e) {
 			throw new PartnerAuthenticationException(e);
 		}
-	}	
+	}
+		
 }

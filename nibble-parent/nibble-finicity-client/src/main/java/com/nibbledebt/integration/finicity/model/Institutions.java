@@ -12,24 +12,21 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 /**
  * @author alam_home
  *
  */
-@XmlRootElement
-@XmlType(propOrder = {"institution"})
+@JsonRootName("institutions")
 public class Institutions
 {
-	@XmlAttribute(name="moreAvailable")
     private String moreAvailable;
 
-	@XmlAttribute(name="displaying")
     private String displaying;
 
-	@XmlAttribute(name="found")
     private String found;
 
-	@XmlElement(name="institution")
     private List<Institution> institutions;
 
    

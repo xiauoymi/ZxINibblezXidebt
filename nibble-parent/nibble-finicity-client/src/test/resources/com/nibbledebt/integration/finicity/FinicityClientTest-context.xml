@@ -27,14 +27,7 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
 	default-autowire="default">	
 	
-	<ctx:component-scan base-package="com.nibbledebt"/>
-	
-	<bean id="restClient" class="com.nibbledebt.integration.finicity.RestClient" scope="prototype">
-		<constructor-arg value="${proxy.url}" />
-		<constructor-arg value="${proxy.port}" />
-		<constructor-arg value="${proxy.username}" />
-		<constructor-arg value="${proxy.password}" />
-	</bean>
+	<ctx:component-scan base-package="com.nibbledebt.integration" scoped-proxy="targetClass"/>
 
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
