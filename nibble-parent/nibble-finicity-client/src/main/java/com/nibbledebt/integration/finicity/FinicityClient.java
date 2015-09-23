@@ -27,13 +27,13 @@ public class FinicityClient {
 	@Value("${finicity.inst.url}")
 	private String finicityInstUrl;	
 	
-	public Institutions getInstitutions() throws FinicityAccessException{
-		try {
-			return  restClient.getForEntity(finicityInstUrl, Institutions.class);
-		} catch (PartnerAuthenticationException e) {
-			throw new FinicityAccessException(e);
-		}
-	}
+//	public Institutions getInstitutions() throws FinicityAccessException{
+//		try {
+//			return  restClient.getForEntity(finicityInstUrl, Institutions.class);
+//		} catch (PartnerAuthenticationException e) {
+//			throw new FinicityAccessException(e);
+//		}
+//	}/]
 //
 //    public Institution getInstitution(String institutionId) throws FinicityAccessException{
 //        try {
