@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.nibbledebt.integration.finicity.error.FinicityAccessException;
+import com.nibbledebt.integration.finicity.model.Institution;
 import com.nibbledebt.integration.finicity.model.Institutions;
 
 /**
@@ -30,13 +31,10 @@ public class FinicityClient {
 	public Institutions getInstitutions() throws FinicityAccessException{
 		return  restClient.getForObject(finicityInstUrl, Institutions.class);
 	}
-//
-//    public Institution getInstitution(String institutionId) throws FinicityAccessException{
-//        try {
-//            return getConfiguredClient().path("/" + institutionId).get(Institution.class);
-//        } catch (PartnerAuthenticationException e) {
-//            throw new FinicityAccessException(e);
-//        }
-//    }
+
+	@NeedsToken
+	public Institution getInstitution(String institutionId) throws FinicityAccessException{
+		return  restClient.getForObject(finicityInstUrl+institutionId, Institution.class);
+	}
 
 }

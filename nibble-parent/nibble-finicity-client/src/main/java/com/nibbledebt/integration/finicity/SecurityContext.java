@@ -4,6 +4,7 @@
 package com.nibbledebt.integration.finicity;
 
 import java.security.Timestamp;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +40,7 @@ public class SecurityContext {
 	private String appKey;
 		
 	private String appToken;
-	private Timestamp lastPullTime;
+	private Date lastPullTime;
 	
 	/**
 	 * @return the partnerId
@@ -79,9 +80,11 @@ public class SecurityContext {
 	public void refreshToken() throws PartnerAuthenticationException{
 		if(this.appToken == null){
 			this.appToken = invokeAuthService().getToken();
+			this.lastPullTime = new Date();
 		}else{
-			if(lastPullTime.getTimestamp().getTime() < System.currentTimeMillis()+360000){
+			if(this.lastPullTime!=null && this.lastPullTime.getTime() < System.currentTimeMillis()+360000){
 				this.appToken = invokeAuthService().getToken();
+				this.lastPullTime = new Date();
 			}
 		}
 		headerInterceptor.setToken(this.appToken);		
@@ -96,13 +99,13 @@ public class SecurityContext {
 	/**
 	 * @return the lastPullTime
 	 */
-	public Timestamp getLastPullTime() {
+	public Date getLastPullTime() {
 		return lastPullTime;
 	}
 	/**
 	 * @param lastPullTime the lastPullTime to set
 	 */
-	public void setLastPullTime(Timestamp lastPullTime) {
+	public void setLastPullTime(Date lastPullTime) {
 		this.lastPullTime = lastPullTime;
 	}
 	

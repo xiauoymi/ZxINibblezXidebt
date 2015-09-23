@@ -34,7 +34,12 @@ public class FinicityClientTest {
 	
 	@Test
 	public void getInstitutions() throws FinicityAccessException {
-		finicityClient.getInstitutions();
+		Assert.assertNotNull(finicityClient.getInstitutions());
+	}
+	
+	@Test
+	public void getInstitution() throws FinicityAccessException {
+		Assert.assertNotNull(finicityClient.getInstitution("101732"));
 	}
 
 }
