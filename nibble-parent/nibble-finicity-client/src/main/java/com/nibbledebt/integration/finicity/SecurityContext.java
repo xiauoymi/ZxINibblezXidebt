@@ -23,6 +23,9 @@ public class SecurityContext {
 	@Autowired
 	private RestClient restClient;
 	
+	@Autowired
+	private HeaderInterceptor headerInterceptor;
+	
 	@Value("${finicity.auth.url}")
 	private String finicityAuthUrl;	
 	
@@ -66,6 +69,14 @@ public class SecurityContext {
 	 * @return the appToken
 	 */
 	public String getAppToken() throws PartnerAuthenticationException{
+		refreshToken();
+		return appToken;
+	}
+	
+	/**
+	 * Refreshes the security token from finicity
+	 */
+	public void refreshToken() throws PartnerAuthenticationException{
 		if(this.appToken == null){
 			this.appToken = invokeAuthService().getToken();
 		}else{
@@ -73,8 +84,9 @@ public class SecurityContext {
 				this.appToken = invokeAuthService().getToken();
 			}
 		}
-		return appToken;
+		headerInterceptor.setToken(this.appToken);		
 	}
+	
 	/**
 	 * @param appToken the appToken to set
 	 */
@@ -104,7 +116,6 @@ public class SecurityContext {
 			Credentials credentials = new Credentials();
 			credentials.setPartnerId(partnerId);
 			credentials.setPartnerSecret(partnerSecret);
-//			restClient.getInterceptors().add(new HeaderInterceptor("Finicity-App-Key", appKey));
 			ResponseEntity<Access> resp = restClient.postForEntity(finicityAuthUrl, credentials, Access.class);
 			return resp.getBody();
 		} catch (Exception e) {

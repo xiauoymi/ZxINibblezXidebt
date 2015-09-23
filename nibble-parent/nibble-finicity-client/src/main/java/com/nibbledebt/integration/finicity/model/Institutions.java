@@ -5,11 +5,6 @@ package com.nibbledebt.integration.finicity.model;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -27,7 +22,7 @@ public class Institutions
 
     private String found;
 
-    private List<Institution> institutions;
+    private List<Institution> institution;
 
    
 
@@ -88,8 +83,8 @@ public class Institutions
 	/**
 	 * @return the institution
 	 */
-	public List<Institution> getInstitutions() {
-		return institutions;
+	public List<Institution> getInstitution() {
+		return institution;
 	}
 
 
@@ -97,8 +92,8 @@ public class Institutions
 	/**
 	 * @param institution the institution to set
 	 */
-	public void setInstitutions(List<Institution> institutions) {
-		this.institutions = institutions;
+	public void setInstitution(List<Institution> institution) {
+		this.institution = institution;
 	}
 
 

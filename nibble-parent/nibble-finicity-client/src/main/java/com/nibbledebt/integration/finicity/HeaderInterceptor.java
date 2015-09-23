@@ -22,13 +22,12 @@ public class HeaderInterceptor implements ClientHttpRequestInterceptor {
 	
 	@Value("${finicity.app.key}")
 	private String finAppKey;
+
+	private String token;
 	
+	private static final String finAppKeyLabel = "Finicity-App-Key";
 	
-	private String finAppKeyLabel;
-	
-	public HeaderInterceptor(){
-		this.finAppKeyLabel = "Finicity-App-Key";
-	}
+	private static final String finAppTokenLabel = "Finicity-App-Token";
 	
     @Override
     public ClientHttpResponse intercept(
@@ -39,6 +38,16 @@ public class HeaderInterceptor implements ClientHttpRequestInterceptor {
         headers.add(finAppKeyLabel, finAppKey);
         headers.add("Content-Type", "application/xml");
         headers.add("Accept", "application/xml");
+        if(token != null) headers.add(finAppTokenLabel, token);
         return execution.execute(request, body);
+    }
+    
+    /**
+     * Sets the token to the class variable for reuse.
+     * 
+     * @param token
+     */
+    public void setToken(String token){
+    	this.token = token;
     }
 }

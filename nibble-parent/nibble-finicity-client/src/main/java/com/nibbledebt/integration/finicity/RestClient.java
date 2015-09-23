@@ -81,5 +81,5 @@ public class RestClient extends RestTemplate {
     	
 		// add the header interceptor to add the app key
 		getInterceptors().add(headerInterceptor);
-    }    
+    }
 }

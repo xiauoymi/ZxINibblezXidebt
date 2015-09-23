@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.nibbledebt.integration.finicity.error.FinicityAccessException;
-import com.nibbledebt.integration.finicity.error.PartnerAuthenticationException;
 import com.nibbledebt.integration.finicity.model.Institutions;
 
 /**
@@ -27,13 +26,10 @@ public class FinicityClient {
 	@Value("${finicity.inst.url}")
 	private String finicityInstUrl;	
 	
-//	public Institutions getInstitutions() throws FinicityAccessException{
-//		try {
-//			return  restClient.getForEntity(finicityInstUrl, Institutions.class);
-//		} catch (PartnerAuthenticationException e) {
-//			throw new FinicityAccessException(e);
-//		}
-//	}/]
+	@NeedsToken
+	public Institutions getInstitutions() throws FinicityAccessException{
+		return  restClient.getForObject(finicityInstUrl, Institutions.class);
+	}
 //
 //    public Institution getInstitution(String institutionId) throws FinicityAccessException{
 //        try {
