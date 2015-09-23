@@ -31,6 +31,10 @@
             <appender-ref ref="AsynchFile" />
         </logger>
         
+        <logger name="org.springframework.web.client" additivity="false">
+            <appender-ref ref="Console" />
+            <appender-ref ref="AsynchFile" />
+        </logger>
         <logger name="org.apache.cxf.interceptor" additivity="false">
             <appender-ref ref="Console" />
             <appender-ref ref="AsynchFile" />

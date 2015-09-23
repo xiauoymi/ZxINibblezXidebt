@@ -33,7 +33,7 @@ public class FinicityClientTest {
 	
 	@Test
 	public void getInstitutions() throws FinicityAccessException {
-		finicityClient.getInstitutions();
+		
 	}
 
 }

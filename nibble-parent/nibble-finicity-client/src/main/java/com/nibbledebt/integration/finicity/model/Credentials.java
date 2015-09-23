@@ -3,6 +3,8 @@
  */
 package com.nibbledebt.integration.finicity.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -11,17 +13,20 @@ import javax.xml.bind.annotation.XmlType;
  * @author alam_home
  *
  */
-@XmlRootElement
-@XmlType(propOrder = {"partnerId", "partnerSecret"})
+@XmlRootElement(name="credentials")
+@XmlType(name="credentials", propOrder = {"partnerId", "partnerSecret"})
+@XmlAccessorType ( XmlAccessType.FIELD )
 public class Credentials {
 
+    @XmlElement(name="partnerId", required=true)
 	private String partnerId;
+
+    @XmlElement(name="partnerSecret", required=true)
 	private String partnerSecret;
 
 	/**
 	 * @return the partnerId
 	 */
-    @XmlElement
 	public String getPartnerId() {
 		return partnerId;
 	}
@@ -36,7 +41,6 @@ public class Credentials {
 	/**
 	 * @return the partnerSecret
 	 */
-    @XmlElement
 	public String getPartnerSecret() {
 		return partnerSecret;
 	}

@@ -132,6 +132,13 @@
 			<version>2.4.0</version>
 		</dependency>
 		
+  		<dependency>
+  			<groupId>org.apache.httpcomponents</groupId>
+  			<artifactId>httpclient</artifactId>
+    		<version>4.5</version>
+		    <scope>compile</scope>
+  		</dependency>
+		
 		<!-- Velocity Email stuff -->
 		<dependency>
 			<groupId>org.apache.velocity</groupId>

@@ -29,37 +29,13 @@
 	
 	<ctx:component-scan base-package="com.nibbledebt"/>
 	
-	<http-conf:conduit name="*.http-conduit">
-		<http-conf:client 	ProxyServer="${proxy.url}" 
-							ProxyServerType="HTTP"
-							ProxyServerPort="${proxy.port}"
-							ConnectionTimeout="10000" 
-							ReceiveTimeout="10000" 
-							CacheControl="no-cache" />
-		<http-conf:proxyAuthorization>
-			<security:UserName>${proxy.username}</security:UserName>
-			<security:Password>${proxy.password}</security:Password>
-		</http-conf:proxyAuthorization>
-	</http-conf:conduit>
-	
-	<bean id="finicityInstClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create">
-        <constructor-arg type="java.lang.String" value="${fincity.url.inst}" /> 
-        <constructor-arg>
-        	<list>
-        		<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
-        	</list>
-        </constructor-arg> 
-	</bean> 
-	
-	<bean id="finicityAuthClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create">
-        <constructor-arg type="java.lang.String" value="${fincity.url.auth}" /> 
-        <constructor-arg >
-        	<list>
-        		<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
-        	</list>
-        </constructor-arg>
+	<bean id="restClient" class="com.nibbledebt.integration.finicity.RestClient" scope="prototype">
+		<constructor-arg value="${proxy.url}" />
+		<constructor-arg value="${proxy.port}" />
+		<constructor-arg value="${proxy.username}" />
+		<constructor-arg value="${proxy.password}" />
 	</bean>
-	
+
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>

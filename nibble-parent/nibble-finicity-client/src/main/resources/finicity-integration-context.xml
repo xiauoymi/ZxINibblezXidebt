@@ -27,7 +27,7 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
 	default-autowire="default">	
 	
-	<http-conf:conduit name="*.http-conduit">
+	<http-conf:conduit name="https://api.finicity.com.*">
 		<http-conf:client 	ProxyServer="${proxy.url}" 
 							ProxyServerType="HTTP"
 							ProxyServerPort="${proxy.port}"
@@ -40,23 +40,15 @@
 		</http-conf:proxyAuthorization>
 	</http-conf:conduit>
 	
-	<bean id="finicityInstClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create">
-        <constructor-arg type="java.lang.String" value="${fincity.url.inst}" /> 
+	<bean id="finicityWebClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create">
+        <constructor-arg type="java.lang.String" value="${fincity.url}" /> 
         <constructor-arg>
         	<list>
-        		<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+        		<bean class="org.apache.cxf.jaxrs.provider.JAXBElementProvider" />
+<!--         		<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" /> -->
         	</list>
         </constructor-arg> 
 	</bean> 
-	
-	<bean id="finicityAuthClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create">
-        <constructor-arg type="java.lang.String" value="${fincity.url.auth}" /> 
-        <constructor-arg >
-        	<list>
-        		<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
-        	</list>
-        </constructor-arg>
-	</bean>
 	
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
