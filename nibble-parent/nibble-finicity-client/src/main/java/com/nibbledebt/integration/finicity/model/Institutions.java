@@ -3,11 +3,11 @@
  */
 package com.nibbledebt.integration.finicity.model;
 
-import java.util.List;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 /**
  * @author alam_home
@@ -16,15 +16,18 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName("institutions")
 public class Institutions
 {
+	@JacksonXmlProperty(isAttribute=true)
     private String moreAvailable;
 
+	@JacksonXmlProperty(isAttribute=true)
     private String displaying;
 
+	@JacksonXmlProperty(isAttribute=true)
     private String found;
 
-    private List<Institution> institution;
-
-   
+	@JacksonXmlProperty(localName = "institution")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    private Institution[] institution;
 
     /**
 	 * @return the moreAvailable
@@ -83,7 +86,7 @@ public class Institutions
 	/**
 	 * @return the institution
 	 */
-	public List<Institution> getInstitution() {
+	public Institution[] getInstitution() {
 		return institution;
 	}
 
@@ -92,7 +95,7 @@ public class Institutions
 	/**
 	 * @param institution the institution to set
 	 */
-	public void setInstitution(List<Institution> institution) {
+	public void setInstitution(Institution[] institution) {
 		this.institution = institution;
 	}
 
