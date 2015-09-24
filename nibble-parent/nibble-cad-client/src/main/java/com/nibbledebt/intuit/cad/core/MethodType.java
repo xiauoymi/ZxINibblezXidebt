@@ -1,11 +1,12 @@
 package com.nibbledebt.intuit.cad.core;
 
-public enum MethodType {
-	GET,
+public enum MethodType
+{
+  GET, 
 
-	POST,
+  POST, 
 
-	PUT,
+  PUT, 
 
-	DELETE;
+  DELETE;
 }

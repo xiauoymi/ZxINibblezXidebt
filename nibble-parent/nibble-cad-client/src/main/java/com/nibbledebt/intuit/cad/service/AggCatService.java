@@ -27,467 +27,455 @@ import com.nibbledebt.intuit.cad.interceptor.RequestElements;
 import com.nibbledebt.intuit.cad.interceptor.ResponseElements;
 import com.nibbledebt.intuit.cad.util.StringUtils;
 
-public class AggCatService {
-	private transient Context context = null;
+public class AggCatService
+{
+  private transient Context context = null;
 
-	public AggCatService(Context context) {
-		this.context = context;
-		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+  public AggCatService(Context context)
+  {
+    this.context = context;
+  }
 
-		System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
+  public Institutions getInstitutions()
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
 
-		System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
+    Map requestParameters = requestElements.getRequestParameters();
 
-		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "debug");
-	}
+    requestParameters.put("entity-name", EntityName.INSTITUTIONS.toString());
+    requestParameters.put("method-type", MethodType.GET.toString());
 
-	public Institutions getInstitutions(String requestType) throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		intuitMessage.setRequestType(requestType);
-		RequestElements requestElements = intuitMessage.getRequestElements();
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("GetInstitutions");
 
-		Map requestParameters = requestElements.getRequestParameters();
+    new InterceptorProvider().executeInterceptors(intuitMessage);
 
-		requestParameters
-				.put("entity-name", EntityName.INSTITUTIONS.toString());
-		requestParameters.put("method-type", MethodType.GET.toString());
+    return (Institutions)intuitMessage.getResponseElements().getResponse();
+  }
 
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("GetInstitutions");
+  public InstitutionDetail getInstitutionDetails(long institutionId)
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
 
-		new InterceptorProvider().executeInterceptors(intuitMessage);
+    Map requestParameters = requestElements.getRequestParameters();
 
-		return (Institutions) intuitMessage.getResponseElements().getResponse();
-	}
+    requestParameters.put("entity-name", EntityName.INSTITUTIONS.toString());
+    requestParameters.put("id", String.valueOf(institutionId));
+    requestParameters.put("method-type", MethodType.GET.toString());
 
-	public InstitutionDetail getInstitutionDetails(long institutionId, String requestType)
-			throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		intuitMessage.setRequestType(requestType);
-		RequestElements requestElements = intuitMessage.getRequestElements();
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("GetInstitutionDetails");
 
-		Map requestParameters = requestElements.getRequestParameters();
+    new InterceptorProvider().executeInterceptors(intuitMessage);
 
-		requestParameters
-				.put("entity-name", EntityName.INSTITUTIONS.toString());
-		requestParameters.put("id", String.valueOf(institutionId));
-		requestParameters.put("method-type", MethodType.GET.toString());
+    return (InstitutionDetail)intuitMessage.getResponseElements().getResponse();
+  }
 
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("GetInstitutionDetails");
+  public DiscoverAndAddAccountsResponse discoverAndAddAccounts(long institutionId, InstitutionLogin institutionLogin)
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
 
-		new InterceptorProvider().executeInterceptors(intuitMessage);
+    Map requestParameters = requestElements.getRequestParameters();
 
-		return (InstitutionDetail) intuitMessage.getResponseElements()
-				.getResponse();
-	}
+    requestParameters.put("entity-name", EntityName.INSTITUTIONS.toString());
+    requestParameters.put("id", String.valueOf(institutionId));
+    requestParameters.put("action", EntityName.LOGINS.toString());
+    requestParameters.put("method-type", MethodType.POST.toString());
 
-	public DiscoverAndAddAccountsResponse discoverAndAddAccounts(
-			long institutionId, InstitutionLogin institutionLogin, String requestType)
-			throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		intuitMessage.setRequestType(requestType);
-		RequestElements requestElements = intuitMessage.getRequestElements();
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("DiscoverAndAddAccounts");
 
-		Map requestParameters = requestElements.getRequestParameters();
+    requestElements.setObjectToSerialize(institutionLogin);
 
-		requestParameters
-				.put("entity-name", EntityName.INSTITUTIONS.toString());
-		requestParameters.put("id", String.valueOf(institutionId));
-		requestParameters.put("action", EntityName.LOGINS.toString());
-		requestParameters.put("method-type", MethodType.POST.toString());
+    new InterceptorProvider().executeInterceptors(intuitMessage);
 
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("DiscoverAndAddAccounts");
+    return getDiscoverAndAddAccountsResponse(String.valueOf(institutionId), intuitMessage);
+  }
 
-		requestElements.setObjectToSerialize(institutionLogin);
+  public DiscoverAndAddAccountsResponse discoverAndAddAccounts(ChallengeResponses challengeResponses, ChallengeSession challengeSession)
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
 
-		new InterceptorProvider().executeInterceptors(intuitMessage);
+    Map requestParameters = requestElements.getRequestParameters();
 
-		return getDiscoverAndAddAccountsResponse(String.valueOf(institutionId),
-				intuitMessage);
-	}
-	
+    requestParameters.put("entity-name", EntityName.INSTITUTIONS.toString());
+    requestParameters.put("id", challengeSession.getId());
+    requestParameters.put("action", EntityName.LOGINS.toString());
+    requestParameters.put("method-type", MethodType.POST.toString());
 
-	public DiscoverAndAddAccountsResponse discoverAndAddAccounts(
-			ChallengeResponses challengeResponses,
-			ChallengeSession challengeSession) throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		RequestElements requestElements = intuitMessage.getRequestElements();
+    Map requestHeaders = requestElements.getRequestHeaders();
+    requestHeaders.put("challengeNodeId", challengeSession.getChallengeNodeId());
+    requestHeaders.put("challengeSessionId", challengeSession.getChallengeSessionId());
 
-		Map requestParameters = requestElements.getRequestParameters();
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("DiscoverAndAddAccounts");
 
-		requestParameters
-				.put("entity-name", EntityName.INSTITUTIONS.toString());
-		requestParameters.put("id", challengeSession.getId());
-		requestParameters.put("action", EntityName.LOGINS.toString());
-		requestParameters.put("method-type", MethodType.POST.toString());
+    InstitutionLogin institutionLogin = new InstitutionLogin();
+    institutionLogin.setChallengeResponses(challengeResponses);
 
-		Map requestHeaders = requestElements.getRequestHeaders();
-		requestHeaders.put("challengeNodeId",
-				challengeSession.getChallengeNodeId());
-		requestHeaders.put("challengeSessionId",
-				challengeSession.getChallengeSessionId());
+    requestElements.setObjectToSerialize(institutionLogin);
 
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("DiscoverAndAddAccounts");
+    new InterceptorProvider().executeInterceptors(intuitMessage);
 
-		InstitutionLogin institutionLogin = new InstitutionLogin();
-		institutionLogin.setChallengeResponses(challengeResponses);
-
-		requestElements.setObjectToSerialize(institutionLogin);
-
-		new InterceptorProvider().executeInterceptors(intuitMessage);
-
-		return getDiscoverAndAddAccountsResponse(challengeSession.getId(),
-				intuitMessage);
-	}
-
-	private DiscoverAndAddAccountsResponse getDiscoverAndAddAccountsResponse(
-			String institutionId, IntuitMessage intuitMessage) {
-		DiscoverAndAddAccountsResponse response = new DiscoverAndAddAccountsResponse();
-		RequestElements requestElements = intuitMessage.getRequestElements();
-		String identifier = requestElements.getResourceTypeIdentifier();
-
-		ResponseElements responseElements = intuitMessage.getResponseElements();
-		if (identifier.equals("DiscoverAndAddAccounts")) {
-			AccountList accountList = (AccountList) responseElements
-					.getResponse();
-			response.setAccountList(accountList);
-		} else {
-			Challenges challenges = (Challenges) responseElements.getResponse();
-			response.setChallenges(challenges);
+    return getDiscoverAndAddAccountsResponse(challengeSession.getId(), intuitMessage);
+  }
 
-			ChallengeSession challengeSession = new ChallengeSession();
-			HttpResponse httpResponse = responseElements.getHttpResponse();
-			Header challengeSessionIdHeader = httpResponse
-					.getLastHeader("challengeSessionId");
-			Header challengeNodeIdHeader = httpResponse
-					.getLastHeader("challengeNodeId");
-
-			challengeSession.setChallengeSessionId(challengeSessionIdHeader
-					.getValue());
-			challengeSession.setChallengeNodeId(challengeNodeIdHeader
-					.getValue());
-			challengeSession.setId(institutionId);
+  private DiscoverAndAddAccountsResponse getDiscoverAndAddAccountsResponse(String institutionId, IntuitMessage intuitMessage)
+  {
+    DiscoverAndAddAccountsResponse response = new DiscoverAndAddAccountsResponse();
+    RequestElements requestElements = intuitMessage.getRequestElements();
+    String identifier = requestElements.getResourceTypeIdentifier();
+
+    ResponseElements responseElements = intuitMessage.getResponseElements();
+    if (identifier.equals("DiscoverAndAddAccounts")) {
+      AccountList accountList = (AccountList)responseElements.getResponse();
+      response.setAccountList(accountList);
+    } else {
+      Challenges challenges = (Challenges)responseElements.getResponse();
+      response.setChallenges(challenges);
+
+      ChallengeSession challengeSession = new ChallengeSession();
+      HttpResponse httpResponse = responseElements.getHttpResponse();
+      Header challengeSessionIdHeader = httpResponse.getLastHeader("challengeSessionId");
+      Header challengeNodeIdHeader = httpResponse.getLastHeader("challengeNodeId");
+
+      challengeSession.setChallengeSessionId(challengeSessionIdHeader.getValue());
+      challengeSession.setChallengeNodeId(challengeNodeIdHeader.getValue());
+      challengeSession.setId(institutionId);
+
+      response.setChallengeSession(challengeSession);
+    }
+    return response;
+  }
+
+  public AccountList getCustomerAccounts()
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
+    Map requestParameters = requestElements.getRequestParameters();
+
+    requestParameters.put("entity-name", EntityName.ACCOUNTS.toString());
+    requestParameters.put("method-type", MethodType.GET.toString());
+
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("GetCustomerAccounts");
+
+    new InterceptorProvider().executeInterceptors(intuitMessage);
+
+    return (AccountList)intuitMessage.getResponseElements().getResponse();
+  }
+
+  public AccountList getLoginAccounts(long loginId)
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
+    Map requestParameters = requestElements.getRequestParameters();
+
+    requestParameters.put("entity-name", EntityName.LOGINS.toString());
+    requestParameters.put("id", String.valueOf(loginId));
+    requestParameters.put("action", EntityName.ACCOUNTS.toString());
+    requestParameters.put("method-type", MethodType.GET.toString());
+
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("GetLoginAccounts");
+
+    new InterceptorProvider().executeInterceptors(intuitMessage);
 
-			response.setChallengeSession(challengeSession);
-		}
-		return response;
-	}
+    return (AccountList)intuitMessage.getResponseElements().getResponse();
+  }
 
-	public AccountList getCustomerAccounts() throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		RequestElements requestElements = intuitMessage.getRequestElements();
-		Map requestParameters = requestElements.getRequestParameters();
+  public AccountList getAccount(long accountId)
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
+    Map requestParameters = requestElements.getRequestParameters();
 
-		requestParameters.put("entity-name", EntityName.ACCOUNTS.toString());
-		requestParameters.put("method-type", MethodType.GET.toString());
+    requestParameters.put("entity-name", EntityName.ACCOUNTS.toString());
+    requestParameters.put("id", String.valueOf(accountId));
+    requestParameters.put("method-type", MethodType.GET.toString());
 
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("GetCustomerAccounts");
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("GetAccount");
 
-		new InterceptorProvider().executeInterceptors(intuitMessage);
+    new InterceptorProvider().executeInterceptors(intuitMessage);
 
-		return (AccountList) intuitMessage.getResponseElements().getResponse();
-	}
+    return (AccountList)intuitMessage.getResponseElements().getResponse();
+  }
+
+  public TransactionList getAccountTransactions(long accountId, String txnStartDate, String txnEndDate)
+    throws AggCatException
+  {
+    if (!StringUtils.hasText(txnStartDate)) {
+      throw new AggCatException("Transaction start date is missing");
+    }
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
+    Map requestParameters = requestElements.getRequestParameters();
+
+    requestParameters.put("entity-name", EntityName.ACCOUNTS.toString());
+    requestParameters.put("id", String.valueOf(accountId));
+    requestParameters.put("action", EntityName.TRANSACTIONS.toString());
+    requestParameters.put("method-type", MethodType.GET.toString());
+
+    Map queryParameters = requestElements.getQueryParameters();
+    queryParameters.put("txnStartDate", txnStartDate);
+
+    if (StringUtils.hasText(txnEndDate)) {
+      queryParameters.put("txnEndDate", txnEndDate);
+    }
+
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("GetAccountTransactions");
+
+    new InterceptorProvider().executeInterceptors(intuitMessage);
+
+    return (TransactionList)intuitMessage.getResponseElements().getResponse();
+  }
+
+  public UpdateInstitutionLoginResponse updateInstitutionLogin(long loginId, boolean isRefreshReqd, InstitutionLogin institutionLogin)
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
+
+    Map requestParameters = requestElements.getRequestParameters();
+
+    requestParameters.put("entity-name", EntityName.LOGINS.toString());
+    requestParameters.put("id", String.valueOf(loginId));
+    requestParameters.put("method-type", MethodType.PUT.toString());
+
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("UpdateInstitutionLogin");
+
+    Map queryParams = requestElements.getQueryParameters();
+    queryParams.put("refresh", Boolean.toString(isRefreshReqd));
+
+    if (null != institutionLogin) {
+      requestElements.setObjectToSerialize(institutionLogin);
+    }
+
+    new InterceptorProvider().executeInterceptors(intuitMessage);
 
-	public AccountList getLoginAccounts(long loginId) throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		RequestElements requestElements = intuitMessage.getRequestElements();
-		Map requestParameters = requestElements.getRequestParameters();
+    UpdateInstitutionLoginResponse response = getUpdateInstitutionLoginResponse(String.valueOf(loginId), intuitMessage);
+    return response;
+  }
+
+  public UpdateInstitutionLoginResponse updateInstitutionLogin(ChallengeResponses challengeResponses, ChallengeSession challengeSession)
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
 
-		requestParameters.put("entity-name", EntityName.LOGINS.toString());
-		requestParameters.put("id", String.valueOf(loginId));
-		requestParameters.put("action", EntityName.ACCOUNTS.toString());
-		requestParameters.put("method-type", MethodType.GET.toString());
+    Map requestParameters = requestElements.getRequestParameters();
 
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("GetLoginAccounts");
+    requestParameters.put("entity-name", EntityName.LOGINS.toString());
+    requestParameters.put("id", challengeSession.getId());
+    requestParameters.put("method-type", MethodType.PUT.toString());
 
-		new InterceptorProvider().executeInterceptors(intuitMessage);
+    Map requestHeaders = requestElements.getRequestHeaders();
+    requestHeaders.put("challengeNodeId", challengeSession.getChallengeNodeId());
+    requestHeaders.put("challengeSessionId", challengeSession.getChallengeSessionId());
 
-		return (AccountList) intuitMessage.getResponseElements().getResponse();
-	}
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("UpdateInstitutionLogin");
 
-	public AccountList getAccount(long accountId) throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		RequestElements requestElements = intuitMessage.getRequestElements();
-		Map requestParameters = requestElements.getRequestParameters();
+    InstitutionLogin institutionLogin = new InstitutionLogin();
+    institutionLogin.setChallengeResponses(challengeResponses);
+
+    requestElements.setObjectToSerialize(institutionLogin);
 
-		requestParameters.put("entity-name", EntityName.ACCOUNTS.toString());
-		requestParameters.put("id", String.valueOf(accountId));
-		requestParameters.put("method-type", MethodType.GET.toString());
+    new InterceptorProvider().executeInterceptors(intuitMessage);
+
+    UpdateInstitutionLoginResponse response = getUpdateInstitutionLoginResponse(challengeSession.getId(), intuitMessage);
+    return response;
+  }
 
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("GetAccount");
+  private UpdateInstitutionLoginResponse getUpdateInstitutionLoginResponse(String loginId, IntuitMessage intuitMessage)
+  {
+    UpdateInstitutionLoginResponse response = new UpdateInstitutionLoginResponse();
+    RequestElements requestElements = intuitMessage.getRequestElements();
+    String identifier = requestElements.getResourceTypeIdentifier();
 
-		new InterceptorProvider().executeInterceptors(intuitMessage);
+    if (identifier.equals("UpdateInstitutionLogin")) {
+      response.setUpdated(true);
+    } else {
+      ResponseElements responseElements = intuitMessage.getResponseElements();
+      Challenges challenges = (Challenges)responseElements.getResponse();
+      response.setChallenges(challenges);
 
-		return (AccountList) intuitMessage.getResponseElements().getResponse();
-	}
+      ChallengeSession challengeSession = new ChallengeSession();
+      HttpResponse httpResponse = responseElements.getHttpResponse();
+      Header challengeSessionIdHeader = httpResponse.getLastHeader("challengeSessionId");
+      Header challengeNodeIdHeader = httpResponse.getLastHeader("challengeNodeId");
+      challengeSession.setChallengeSessionId(challengeSessionIdHeader.getValue());
+      challengeSession.setChallengeNodeId(challengeNodeIdHeader.getValue());
+      challengeSession.setId(loginId);
 
-	public TransactionList getAccountTransactions(long accountId,
-			String txnStartDate, String txnEndDate) throws AggCatException {
-		if (!StringUtils.hasText(txnStartDate)) {
-			throw new AggCatException("Transaction start date is missing");
-		}
-		IntuitMessage intuitMessage = new IntuitMessage();
-		RequestElements requestElements = intuitMessage.getRequestElements();
-		Map requestParameters = requestElements.getRequestParameters();
+      response.setChallengeSession(challengeSession);
+    }
+    return response;
+  }
 
-		requestParameters.put("entity-name", EntityName.ACCOUNTS.toString());
-		requestParameters.put("id", String.valueOf(accountId));
-		requestParameters.put("action", EntityName.TRANSACTIONS.toString());
-		requestParameters.put("method-type", MethodType.GET.toString());
-
-		Map queryParameters = requestElements.getQueryParameters();
-		queryParameters.put("txnStartDate", txnStartDate);
-
-		if (StringUtils.hasText(txnEndDate)) {
-			queryParameters.put("txnEndDate", txnEndDate);
-		}
-
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("GetAccountTransactions");
-
-		new InterceptorProvider().executeInterceptors(intuitMessage);
-
-		return (TransactionList) intuitMessage.getResponseElements()
-				.getResponse();
-	}
-
-	public UpdateInstitutionLoginResponse updateInstitutionLogin(long loginId,
-			boolean isRefreshReqd, InstitutionLogin institutionLogin)
-			throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		RequestElements requestElements = intuitMessage.getRequestElements();
-
-		Map requestParameters = requestElements.getRequestParameters();
-
-		requestParameters.put("entity-name", EntityName.LOGINS.toString());
-		requestParameters.put("id", String.valueOf(loginId));
-		requestParameters.put("method-type", MethodType.PUT.toString());
-
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("UpdateInstitutionLogin");
-
-		Map queryParams = requestElements.getQueryParameters();
-		queryParams.put("refresh", Boolean.toString(isRefreshReqd));
-
-		if (null != institutionLogin) {
-			requestElements.setObjectToSerialize(institutionLogin);
-		}
-
-		new InterceptorProvider().executeInterceptors(intuitMessage);
-
-		UpdateInstitutionLoginResponse response = getUpdateInstitutionLoginResponse(
-				String.valueOf(loginId), intuitMessage);
-		return response;
-	}
+  public void updateAccountType(Account account)
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
 
-	public UpdateInstitutionLoginResponse updateInstitutionLogin(
-			ChallengeResponses challengeResponses,
-			ChallengeSession challengeSession) throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		RequestElements requestElements = intuitMessage.getRequestElements();
+    Map requestParameters = requestElements.getRequestParameters();
 
-		Map requestParameters = requestElements.getRequestParameters();
+    requestParameters.put("entity-name", EntityName.ACCOUNTS.toString());
+    requestParameters.put("id", Long.toString(account.getAccountId()));
+    requestParameters.put("method-type", MethodType.PUT.toString());
 
-		requestParameters.put("entity-name", EntityName.LOGINS.toString());
-		requestParameters.put("id", challengeSession.getId());
-		requestParameters.put("method-type", MethodType.PUT.toString());
+    requestElements.setObjectToSerialize(account);
 
-		Map requestHeaders = requestElements.getRequestHeaders();
-		requestHeaders.put("challengeNodeId",
-				challengeSession.getChallengeNodeId());
-		requestHeaders.put("challengeSessionId",
-				challengeSession.getChallengeSessionId());
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("UpdateAccountType");
 
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("UpdateInstitutionLogin");
+    new InterceptorProvider().executeInterceptors(intuitMessage);
+  }
 
-		InstitutionLogin institutionLogin = new InstitutionLogin();
-		institutionLogin.setChallengeResponses(challengeResponses);
+  public void deleteAccount(long accountId)
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
+
+    Map requestParameters = requestElements.getRequestParameters();
 
-		requestElements.setObjectToSerialize(institutionLogin);
+    requestParameters.put("entity-name", EntityName.ACCOUNTS.toString());
+    requestParameters.put("id", String.valueOf(accountId));
+    requestParameters.put("method-type", MethodType.DELETE.toString());
+
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("DeleteAccount");
+
+    new InterceptorProvider().executeInterceptors(intuitMessage);
+  }
+
+  public void deleteCustomer()
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
+
+    Map requestParameters = requestElements.getRequestParameters();
+
+    requestParameters.put("entity-name", EntityName.CUSTOMERS.toString());
+    requestParameters.put("method-type", MethodType.DELETE.toString());
 
-		new InterceptorProvider().executeInterceptors(intuitMessage);
-
-		UpdateInstitutionLoginResponse response = getUpdateInstitutionLoginResponse(
-				challengeSession.getId(), intuitMessage);
-		return response;
-	}
-
-	private UpdateInstitutionLoginResponse getUpdateInstitutionLoginResponse(
-			String loginId, IntuitMessage intuitMessage) {
-		UpdateInstitutionLoginResponse response = new UpdateInstitutionLoginResponse();
-		RequestElements requestElements = intuitMessage.getRequestElements();
-		String identifier = requestElements.getResourceTypeIdentifier();
-
-		if (identifier.equals("UpdateInstitutionLogin")) {
-			response.setUpdated(true);
-		} else {
-			ResponseElements responseElements = intuitMessage
-					.getResponseElements();
-			Challenges challenges = (Challenges) responseElements.getResponse();
-			response.setChallenges(challenges);
-
-			ChallengeSession challengeSession = new ChallengeSession();
-			HttpResponse httpResponse = responseElements.getHttpResponse();
-			Header challengeSessionIdHeader = httpResponse
-					.getLastHeader("challengeSessionId");
-			Header challengeNodeIdHeader = httpResponse
-					.getLastHeader("challengeNodeId");
-			challengeSession.setChallengeSessionId(challengeSessionIdHeader
-					.getValue());
-			challengeSession.setChallengeNodeId(challengeNodeIdHeader
-					.getValue());
-			challengeSession.setId(loginId);
-
-			response.setChallengeSession(challengeSession);
-		}
-		return response;
-	}
-
-	public void updateAccountType(Account account) throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		RequestElements requestElements = intuitMessage.getRequestElements();
-
-		Map requestParameters = requestElements.getRequestParameters();
-
-		requestParameters.put("entity-name", EntityName.ACCOUNTS.toString());
-		requestParameters.put("id", Long.toString(account.getAccountId()));
-		requestParameters.put("method-type", MethodType.PUT.toString());
-
-		requestElements.setObjectToSerialize(account);
-
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("UpdateAccountType");
-
-		new InterceptorProvider().executeInterceptors(intuitMessage);
-	}
-
-	public void deleteAccount(long accountId, String requestType) throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		intuitMessage.setRequestType(requestType);
-		RequestElements requestElements = intuitMessage.getRequestElements();
-
-		Map requestParameters = requestElements.getRequestParameters();
-
-		requestParameters.put("entity-name", EntityName.ACCOUNTS.toString());
-		requestParameters.put("id", String.valueOf(accountId));
-		requestParameters.put("method-type", MethodType.DELETE.toString());
-
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("DeleteAccount");
-
-		new InterceptorProvider().executeInterceptors(intuitMessage);
-	}
-
-	public void deleteCustomer(String requestType) throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		intuitMessage.setRequestType(requestType);
-		RequestElements requestElements = intuitMessage.getRequestElements();
-
-		Map requestParameters = requestElements.getRequestParameters();
-
-		requestParameters.put("entity-name", EntityName.CUSTOMERS.toString());
-		requestParameters.put("method-type", MethodType.DELETE.toString());
-
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("DeleteCustomer");
-
-		new InterceptorProvider().executeInterceptors(intuitMessage);
-	}
-
-	public InvestmentPositions getInvestmentPositions(long accountId)
-			throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		RequestElements requestElements = intuitMessage.getRequestElements();
-		Map requestParameters = requestElements.getRequestParameters();
-
-		requestParameters.put("entity-name", EntityName.ACCOUNTS.toString());
-		requestParameters.put("id", String.valueOf(accountId));
-		requestParameters.put("action", EntityName.POSITIONS.toString());
-		requestParameters.put("method-type", MethodType.GET.toString());
-
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("GetInvestmentPositions");
-
-		new InterceptorProvider().executeInterceptors(intuitMessage);
-
-		return (InvestmentPositions) intuitMessage.getResponseElements()
-				.getResponse();
-	}
-
-	public Files listFiles() throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		RequestElements requestElements = intuitMessage.getRequestElements();
-		requestElements.setApiType("Batch");
-		Map requestParameters = requestElements.getRequestParameters();
-
-		requestParameters.put("entity-name", EntityName.FILES.toString());
-		requestParameters.put("method-type", MethodType.GET.toString());
-
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("ListFiles");
-
-		new InterceptorProvider().executeInterceptors(intuitMessage);
-
-		return (Files) intuitMessage.getResponseElements().getResponse();
-	}
-
-	public void deleteFile(String fileName) throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		RequestElements requestElements = intuitMessage.getRequestElements();
-		requestElements.setApiType("Batch");
-
-		Map requestParameters = requestElements.getRequestParameters();
-
-		requestParameters.put("entity-name", EntityName.FILES.toString());
-		requestParameters.put("id", fileName);
-		requestParameters.put("method-type", MethodType.DELETE.toString());
-
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("DeleteFile");
-
-		new InterceptorProvider().executeInterceptors(intuitMessage);
-	}
-
-	public InputStream getFileData(String fileName) throws AggCatException {
-		return getFileData(fileName, null);
-	}
-
-	public InputStream getFileData(String fileName, long lowerRange,
-			long upperRange) throws AggCatException {
-		String range = Long.toString(lowerRange) + "-"
-				+ Long.toString(upperRange);
-		return getFileData(fileName, range);
-	}
-
-	private InputStream getFileData(String fileName, String range)
-			throws AggCatException {
-		IntuitMessage intuitMessage = new IntuitMessage();
-		RequestElements requestElements = intuitMessage.getRequestElements();
-		requestElements.setApiType("Batch");
-
-		Map requestParameters = requestElements.getRequestParameters();
-
-		requestParameters.put("entity-name", EntityName.FILES.toString());
-		requestParameters.put("id", fileName);
-		requestParameters.put("method-type", MethodType.GET.toString());
-
-		Map requestHeaders = requestElements.getRequestHeaders();
-		if (null != range) {
-			requestHeaders.put("Range", range);
-		}
-		requestHeaders.put("content-type", ContentType.OCTETSTREAM.toString());
-
-		requestElements.setContext(this.context);
-		requestElements.setResourceTypeIdentifier("GetFileData");
-
-		new InterceptorProvider().executeInterceptors(intuitMessage);
-		return (InputStream) intuitMessage.getResponseElements().getResponse();
-	}
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("DeleteCustomer");
+
+    new InterceptorProvider().executeInterceptors(intuitMessage);
+  }
+
+  public InvestmentPositions getInvestmentPositions(long accountId)
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
+    Map requestParameters = requestElements.getRequestParameters();
+
+    requestParameters.put("entity-name", EntityName.ACCOUNTS.toString());
+    requestParameters.put("id", String.valueOf(accountId));
+    requestParameters.put("action", EntityName.POSITIONS.toString());
+    requestParameters.put("method-type", MethodType.GET.toString());
+
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("GetInvestmentPositions");
+
+    new InterceptorProvider().executeInterceptors(intuitMessage);
+
+    return (InvestmentPositions)intuitMessage.getResponseElements().getResponse();
+  }
+
+  public Files listFiles()
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
+    requestElements.setApiType("Batch");
+    Map requestParameters = requestElements.getRequestParameters();
+
+    requestParameters.put("entity-name", EntityName.FILES.toString());
+    requestParameters.put("method-type", MethodType.GET.toString());
+
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("ListFiles");
+
+    new InterceptorProvider().executeInterceptors(intuitMessage);
+
+    return (Files)intuitMessage.getResponseElements().getResponse();
+  }
+
+  public void deleteFile(String fileName)
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
+    requestElements.setApiType("Batch");
+
+    Map requestParameters = requestElements.getRequestParameters();
+
+    requestParameters.put("entity-name", EntityName.FILES.toString());
+    requestParameters.put("id", fileName);
+    requestParameters.put("method-type", MethodType.DELETE.toString());
+
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("DeleteFile");
+
+    new InterceptorProvider().executeInterceptors(intuitMessage);
+  }
+
+  public InputStream getFileData(String fileName)
+    throws AggCatException
+  {
+    return getFileData(fileName, null);
+  }
+
+  public InputStream getFileData(String fileName, long lowerRange, long upperRange)
+    throws AggCatException
+  {
+    String range = Long.toString(lowerRange) + "-" + Long.toString(upperRange);
+    return getFileData(fileName, range);
+  }
+
+  private InputStream getFileData(String fileName, String range)
+    throws AggCatException
+  {
+    IntuitMessage intuitMessage = new IntuitMessage();
+    RequestElements requestElements = intuitMessage.getRequestElements();
+    requestElements.setApiType("Batch");
+
+    Map requestParameters = requestElements.getRequestParameters();
+
+    requestParameters.put("entity-name", EntityName.FILES.toString());
+    requestParameters.put("id", fileName);
+    requestParameters.put("method-type", MethodType.GET.toString());
+
+    Map requestHeaders = requestElements.getRequestHeaders();
+    if (null != range) {
+      requestHeaders.put("Range", range);
+    }
+    requestHeaders.put("content-type", ContentType.OCTETSTREAM.toString());
+
+    requestElements.setContext(this.context);
+    requestElements.setResourceTypeIdentifier("GetFileData");
+
+    new InterceptorProvider().executeInterceptors(intuitMessage);
+    return (InputStream)intuitMessage.getResponseElements().getResponse();
+  }
 }

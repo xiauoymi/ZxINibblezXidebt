@@ -1,16 +1,5 @@
 package com.nibbledebt.intuit.cad.interceptor;
 
-import com.nibbledebt.intuit.cad.core.Context;
-import com.nibbledebt.intuit.cad.core.IAuthorizer;
-import com.nibbledebt.intuit.cad.core.MethodType;
-import com.nibbledebt.intuit.cad.exception.AggCatException;
-import com.nibbledebt.intuit.cad.exception.ConfigurationException;
-import com.nibbledebt.intuit.cad.retry.IntuitRetryPolicyHandler;
-import com.nibbledebt.intuit.cad.util.Config;
-import com.nibbledebt.intuit.cad.util.CopyInputStream;
-import com.nibbledebt.intuit.cad.util.PropertyHelper;
-import com.nibbledebt.intuit.cad.util.StringUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,243 +20,239 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpParams;
 
-public class ConnectionInterceptor implements Interceptor {
-	private static final org.slf4j.Logger LOG = com.nibbledebt.intuit.cad.util.Logger
-			.getLogger();
-	private static final int PORT_443 = 443;
+import com.nibbledebt.intuit.cad.core.Context;
+import com.nibbledebt.intuit.cad.core.MethodType;
+import com.nibbledebt.intuit.cad.exception.AggCatException;
+import com.nibbledebt.intuit.cad.exception.ConfigurationException;
+import com.nibbledebt.intuit.cad.retry.IntuitRetryPolicyHandler;
+import com.nibbledebt.intuit.cad.util.Config;
+import com.nibbledebt.intuit.cad.util.CopyInputStream;
+import com.nibbledebt.intuit.cad.util.PropertyHelper;
+import com.nibbledebt.intuit.cad.util.StringUtils;
 
-	public void execute(IntuitMessage intuitMessage) throws AggCatException {
-		LOG.debug("Enter ConnectionInterceptor...");
+public class ConnectionInterceptor
+  implements Interceptor
+{
+  private static final org.slf4j.Logger LOG = com.nibbledebt.intuit.cad.util.Logger.getLogger();
+  private static final int PORT_443 = 443;
 
-		DefaultHttpClient client = new DefaultHttpClient();
+  public void execute(IntuitMessage intuitMessage)
+    throws AggCatException
+  {
+    LOG.debug("Enter ConnectionInterceptor...");
 
-		RequestElements intuitRequest = intuitMessage.getRequestElements();
+    DefaultHttpClient client = new DefaultHttpClient();
 
-		IntuitRetryPolicyHandler handler = getRetryHandler();
-		client.setHttpRequestRetryHandler(handler);
+    RequestElements intuitRequest = intuitMessage.getRequestElements();
 
-		HttpHost proxy = getProxy();
+    IntuitRetryPolicyHandler handler = getRetryHandler();
+    client.setHttpRequestRetryHandler(handler);
 
-		if (proxy != null) {
-			client.getParams().setParameter("http.route.default-proxy", proxy);
-			Scheme sch = getSSLScheme();
-			if (sch != null) {
-				client.getConnectionManager().getSchemeRegistry().register(sch);
-			}
-		}
+    HttpHost proxy = getProxy();
 
-		URI uri = null;
-		try {
-			uri = new URI((String) intuitRequest.getRequestParameters().get(
-					"resource-url"));
-		} catch (URISyntaxException e) {
-			throw new AggCatException("URISyntaxException", e);
-		}
+    if (proxy != null) {
+      client.getParams().setParameter("http.route.default-proxy", proxy);
+      Scheme sch = getSSLScheme();
+      if (sch != null) {
+        client.getConnectionManager().getSchemeRegistry().register(sch);
+      }
+    }
 
-		String methodType = (String) intuitRequest.getRequestParameters().get(
-				"method-type");
-		HttpRequestBase httpRequest = getHttpRequestBase(methodType, uri,
-				intuitRequest.getSerializedData());
+    URI uri = null;
+    try
+    {
+      uri = new URI((String)intuitRequest.getRequestParameters().get("resource-url"));
+    } catch (URISyntaxException e) {
+      throw new AggCatException("URISyntaxException", e);
+    }
 
-		populateRequestHeaders(httpRequest, intuitRequest.getRequestHeaders());
+    String methodType = (String)intuitRequest.getRequestParameters().get("method-type");
+    HttpRequestBase httpRequest = getHttpRequestBase(methodType, uri, intuitRequest.getSerializedData());
 
-		authorizeRequest(intuitRequest.getContext(), httpRequest);
+    populateRequestHeaders(httpRequest, intuitRequest.getRequestHeaders());
 
-		LOG.debug("Request URI : " + uri);
-		LOG.debug("Http Method : " + methodType);
-		LOG.debug("Request XML : " + intuitRequest.getSerializedData());
+    authorizeRequest(intuitRequest.getContext(), httpRequest);
 
-		HttpResponse httpResponse = null;
-		try {
-			HttpHost target = new HttpHost(uri.getHost(), -1, uri.getScheme());
-			httpResponse = client.execute(target, httpRequest);
-		} catch (ClientProtocolException e) {
-			throw new ConfigurationException(
-					"Error in Http Protocol definition", e);
-		} catch (IOException e) {
-			throw new AggCatException(e);
-		}
+    LOG.debug("Request URI : " + uri);
+    LOG.debug("Http Method : " + methodType);
+    LOG.debug("Request XML : " + intuitRequest.getSerializedData());
 
-		LOG.debug("Connection status : " + httpResponse.getStatusLine());
+    HttpResponse httpResponse = null;
+    try
+    {
+      HttpHost target = new HttpHost(uri.getHost(), -1, uri.getScheme());
+      httpResponse = client.execute(target, httpRequest);
+    } catch (ClientProtocolException e) {
+      throw new ConfigurationException("Error in Http Protocol definition", e);
+    } catch (IOException e) {
+      throw new AggCatException(e);
+    }
 
-		CopyInputStream copyInputStream = null;
-		try {
-			copyInputStream = new CopyInputStream(httpResponse.getEntity()
-					.getContent());
-			LOG.debug("Response XML : "
-					+ StringUtils.getContent(copyInputStream.getCopy()));
-		} catch (IOException e) {
-			LOG.error(
-					"IOException in while reading content from HttpResponse.",
-					e);
-			throw new AggCatException(e);
-		}
+    LOG.debug("Connection status : " + httpResponse.getStatusLine());
 
-		ResponseElements responseElements = intuitMessage.getResponseElements();
-		responseElements.setHttpResponse(httpResponse);
-		responseElements.setResponseStream(copyInputStream.getCopy());
-		LOG.debug("Exit ConnectionInterceptor.");
-	}
+    CopyInputStream copyInputStream = null;
+    try
+    {
+      copyInputStream = new CopyInputStream(httpResponse.getEntity().getContent());
+      LOG.debug("Response XML : " + StringUtils.getContent(copyInputStream.getCopy()));
+    } catch (IOException e) {
+      LOG.error("IOException in while reading content from HttpResponse.", e);
+      throw new AggCatException(e);
+    }
 
-	private void populateRequestHeaders(HttpRequestBase httpRequest,
-			Map<String, String> requestHeaders) {
-		Set keySet = requestHeaders.keySet();
-		Iterator keySetIterator = keySet.iterator();
-		while (keySetIterator.hasNext()) {
-			String key = (String) keySetIterator.next();
-			String value = (String) requestHeaders.get(key);
-			httpRequest.addHeader(key, value);
-		}
+    ResponseElements responseElements = intuitMessage.getResponseElements();
+    responseElements.setHttpResponse(httpResponse);
+    responseElements.setResponseStream(copyInputStream.getCopy());
+    LOG.debug("Exit ConnectionInterceptor.");
+  }
 
-		PropertyHelper propertyHelper = PropertyHelper.getInstance();
-		String requestSource = propertyHelper.getRequestSource()
-				+ propertyHelper.getVersion();
-		httpRequest.addHeader(propertyHelper.getRequestSourceHeader(),
-				requestSource);
-	}
+  private void populateRequestHeaders(HttpRequestBase httpRequest, Map<String, String> requestHeaders)
+  {
+    Set keySet = requestHeaders.keySet();
+    Iterator keySetIterator = keySet.iterator();
+    while (keySetIterator.hasNext()) {
+      String key = (String)keySetIterator.next();
+      String value = (String)requestHeaders.get(key);
+      httpRequest.addHeader(key, value);
+    }
 
-	private void authorizeRequest(Context context, HttpRequestBase httpRequest)
-			throws AggCatException {
-		context.getAuthorizer().authorize(httpRequest);
-	}
+    PropertyHelper propertyHelper = PropertyHelper.getInstance();
+    String requestSource = propertyHelper.getRequestSource() + propertyHelper.getVersion();
+    httpRequest.addHeader(propertyHelper.getRequestSourceHeader(), requestSource);
+  }
 
-	private IntuitRetryPolicyHandler getRetryHandler() throws AggCatException {
-		IntuitRetryPolicyHandler handler = null;
-		String policy = Config.getProperty("retry.mode");
-		if (policy.equalsIgnoreCase("fixed")) {
-			String retryCountStr = Config.getProperty("retry.fixed.count");
-			String retryIntervalStr = Config
-					.getProperty("retry.fixed.interval");
-			try {
-				handler = new IntuitRetryPolicyHandler(
-						Integer.parseInt(retryCountStr),
-						Integer.parseInt(retryIntervalStr));
-			} catch (NumberFormatException e) {
-				throw new ConfigurationException(e);
-			}
-		} else if (policy.equalsIgnoreCase("incremental")) {
-			String retryCountStr = Config
-					.getProperty("retry.incremental.count");
-			String retryIntervalStr = Config
-					.getProperty("retry.incremental.interval");
-			String retryIncrementStr = Config
-					.getProperty("retry.incremental.increment");
-			try {
-				handler = new IntuitRetryPolicyHandler(
-						Integer.parseInt(retryCountStr),
-						Integer.parseInt(retryIntervalStr),
-						Integer.parseInt(retryIncrementStr));
-			} catch (NumberFormatException e) {
-				throw new ConfigurationException(e);
-			}
-		} else if (policy.equalsIgnoreCase("exponential")) {
-			String retryCountStr = Config
-					.getProperty("retry.exponential.count");
-			String minBackoffStr = Config
-					.getProperty("retry.exponential.minBackoff");
-			String maxBackoffStr = Config
-					.getProperty("retry.exponential.maxBackoff");
-			String deltaBackoffStr = Config
-					.getProperty("retry.exponential.deltaBackoff");
-			try {
-				handler = new IntuitRetryPolicyHandler(
-						Integer.parseInt(retryCountStr),
-						Integer.parseInt(minBackoffStr),
-						Integer.parseInt(maxBackoffStr),
-						Integer.parseInt(deltaBackoffStr));
-			} catch (NumberFormatException e) {
-				throw new ConfigurationException(e);
-			}
-		}
+  private void authorizeRequest(Context context, HttpRequestBase httpRequest)
+    throws AggCatException
+  {
+    context.getAuthorizer().authorize(httpRequest);
+  }
 
-		return handler;
-	}
+  private IntuitRetryPolicyHandler getRetryHandler()
+    throws AggCatException
+  {
+    IntuitRetryPolicyHandler handler = null;
+    String policy = Config.getProperty("retry.mode");
+    if (policy.equalsIgnoreCase("fixed")) {
+      String retryCountStr = Config.getProperty("retry.fixed.count");
+      String retryIntervalStr = Config.getProperty("retry.fixed.interval");
+      try {
+        handler = new IntuitRetryPolicyHandler(Integer.parseInt(retryCountStr), Integer.parseInt(retryIntervalStr));
+      } catch (NumberFormatException e) {
+        throw new ConfigurationException(e);
+      }
+    }
+    else if (policy.equalsIgnoreCase("incremental")) {
+      String retryCountStr = Config.getProperty("retry.incremental.count");
+      String retryIntervalStr = Config.getProperty("retry.incremental.interval");
+      String retryIncrementStr = Config.getProperty("retry.incremental.increment");
+      try {
+        handler = new IntuitRetryPolicyHandler(Integer.parseInt(retryCountStr), Integer.parseInt(retryIntervalStr), Integer.parseInt(retryIncrementStr));
+      }
+      catch (NumberFormatException e) {
+        throw new ConfigurationException(e);
+      }
+    }
+    else if (policy.equalsIgnoreCase("exponential")) {
+      String retryCountStr = Config.getProperty("retry.exponential.count");
+      String minBackoffStr = Config.getProperty("retry.exponential.minBackoff");
+      String maxBackoffStr = Config.getProperty("retry.exponential.maxBackoff");
+      String deltaBackoffStr = Config.getProperty("retry.exponential.deltaBackoff");
+      try
+      {
+        handler = new IntuitRetryPolicyHandler(Integer.parseInt(retryCountStr), Integer.parseInt(minBackoffStr), Integer.parseInt(maxBackoffStr), Integer.parseInt(deltaBackoffStr));
+      }
+      catch (NumberFormatException e) {
+        throw new ConfigurationException(e);
+      }
+    }
 
-	public Scheme getSSLScheme() throws AggCatException {
-		String path = Config.getProperty("proxy.keystore.path");
-		String pass = Config.getProperty("proxy.keystore.password");
-		Scheme scheme = null;
-		FileInputStream instream = null;
-		KeyStore trustStore = null;
-		SSLSocketFactory factory = null;
+    return handler;
+  }
 
-		if ((path != null) && (pass != null)) {
-			try {
-				trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-				instream = new FileInputStream(new File(path));
-				trustStore.load(instream, pass.toCharArray());
-				factory = new SSLSocketFactory(trustStore);
-				scheme = new Scheme("https", 443, factory);
-			} catch (Exception e) {
-				LOG.error("Exception while getting the SSL Scheme", e);
-				throw new AggCatException(e);
-			} finally {
-				try {
-					instream.close();
-				} catch (IOException e) {
-					LOG.error("IOException", e);
-					throw new AggCatException(e);
-				}
-			}
-		}
-		return scheme;
-	}
+  public Scheme getSSLScheme()
+    throws AggCatException
+  {
+    String path = Config.getProperty("proxy.keystore.path");
+    String pass = Config.getProperty("proxy.keystore.password");
+    Scheme scheme = null;
+    FileInputStream instream = null;
+    KeyStore trustStore = null;
+    SSLSocketFactory factory = null;
 
-	public HttpHost getProxy() {
-		String host = Config.getProperty("proxy.host");
-		String portStr = Config.getProperty("proxy.port");
-		HttpHost proxy = null;
+    if ((path != null) && (pass != null)) {
+      try {
+        trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        instream = new FileInputStream(new File(path));
+        trustStore.load(instream, pass.toCharArray());
+        factory = new SSLSocketFactory(trustStore);
+        scheme = new Scheme("https", 443, factory);
+      } catch (Exception e) {
+        LOG.error("Exception while getting the SSL Scheme", e);
+        throw new AggCatException(e);
+      } finally {
+        try {
+          instream.close();
+        } catch (IOException e) {
+          LOG.error("IOException", e);
+          throw new AggCatException(e);
+        }
+      }
+    }
+    return scheme;
+  }
 
-		if ((host != null) && (portStr != null)) {
-			int port = Integer.parseInt(portStr);
-			proxy = new HttpHost(host, port);
-		}
-		return proxy;
-	}
+  public HttpHost getProxy()
+  {
+    String host = Config.getProperty("proxy.host");
+    String portStr = Config.getProperty("proxy.port");
+    HttpHost proxy = null;
 
-	private HttpRequestBase getHttpRequestBase(String methodType, URI uri,
-			String serializedData) throws AggCatException {
-		HttpRequestBase httpRequest = null;
-		if (StringUtils.hasText(methodType)) {
-			if (methodType.equals(MethodType.GET.toString())) {
-				httpRequest = new HttpGet(uri);
-			} else if (methodType.equals(MethodType.POST.toString())) {
-				httpRequest = new HttpPost(uri);
-				if (serializedData != null) {
-					HttpEntity entity;
-					try {
-						entity = new StringEntity(serializedData);
-					} catch (UnsupportedEncodingException e) {
-						throw new AggCatException(
-								"UnsupportedEncodingException", e);
-					}
-					((HttpPost) httpRequest).setEntity(entity);
-				}
-			} else if (methodType.equals(MethodType.PUT.toString())) {
-				httpRequest = new HttpPut(uri);
-				if (serializedData != null) {
-					HttpEntity entity;
-					try {
-						entity = new StringEntity(serializedData);
-					} catch (UnsupportedEncodingException e) {
-						throw new AggCatException(
-								"UnsupportedEncodingException", e);
-					}
-					((HttpPut) httpRequest).setEntity(entity);
-				}
-			} else if (methodType.equals(MethodType.DELETE.toString())) {
-				httpRequest = new HttpDelete(uri);
-			}
-		}
+    if ((host != null) && (portStr != null)) {
+      int port = Integer.parseInt(portStr);
+      proxy = new HttpHost(host, port);
+    }
+    return proxy;
+  }
 
-		return httpRequest;
-	}
+  private HttpRequestBase getHttpRequestBase(String methodType, URI uri, String serializedData)
+    throws AggCatException
+  {
+    HttpRequestBase httpRequest = null;
+    if (StringUtils.hasText(methodType)) {
+      if (methodType.equals(MethodType.GET.toString())) {
+        httpRequest = new HttpGet(uri);
+      } else if (methodType.equals(MethodType.POST.toString())) {
+        httpRequest = new HttpPost(uri);
+        if (serializedData != null) {
+          HttpEntity entity;
+          try {
+            entity = new StringEntity(serializedData);
+          } catch (UnsupportedEncodingException e) {
+            throw new AggCatException("UnsupportedEncodingException", e);
+          }
+          ((HttpPost)httpRequest).setEntity(entity);
+        }
+      } else if (methodType.equals(MethodType.PUT.toString())) {
+        httpRequest = new HttpPut(uri);
+        if (serializedData != null) {
+          HttpEntity entity;
+          try {
+            entity = new StringEntity(serializedData);
+          } catch (UnsupportedEncodingException e) {
+            throw new AggCatException("UnsupportedEncodingException", e);
+          }
+          ((HttpPut)httpRequest).setEntity(entity);
+        }
+      } else if (methodType.equals(MethodType.DELETE.toString())) {
+        httpRequest = new HttpDelete(uri);
+      }
+    }
+
+    return httpRequest;
+  }
 }

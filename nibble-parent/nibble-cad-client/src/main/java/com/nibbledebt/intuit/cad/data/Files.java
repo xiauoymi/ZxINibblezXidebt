@@ -3,11 +3,13 @@ package com.nibbledebt.intuit.cad.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 import org.jvnet.jaxb2_commons.lang.Equals;
 import org.jvnet.jaxb2_commons.lang.EqualsStrategy;
 import org.jvnet.jaxb2_commons.lang.HashCode;
@@ -18,69 +20,64 @@ import org.jvnet.jaxb2_commons.locator.ObjectLocator;
 import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "files" })
-@XmlRootElement(name = "Files", namespace = "http://schema.intuit.com/platform/fdatafeed/files/v1")
-public class Files implements Serializable, Equals, HashCode {
-	private static final long serialVersionUID = 1L;
+@XmlType(name="", propOrder={"files"})
+@XmlRootElement(name="Files", namespace="http://schema.intuit.com/platform/fdatafeed/files/v1")
+public class Files
+  implements Serializable, Equals, HashCode
+{
+  private static final long serialVersionUID = 1L;
 
-	@XmlElement(name = "file", namespace = "http://schema.intuit.com/platform/fdatafeed/files/v1")
-	protected List<File> files;
+  @XmlElement(name="file", namespace="http://schema.intuit.com/platform/fdatafeed/files/v1")
+  protected List<File> files;
 
-	public List<File> getFiles() {
-		if (this.files == null) {
-			this.files = new ArrayList();
-		}
-		return this.files;
-	}
+  public List<File> getFiles()
+  {
+    if (this.files == null) {
+      this.files = new ArrayList();
+    }
+    return this.files;
+  }
 
-	public void setFiles(List<File> files) {
-		this.files = files;
-	}
+  public void setFiles(List<File> files)
+  {
+    this.files = files;
+  }
 
-	public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator,
-			Object object, EqualsStrategy strategy) {
-		if (!(object instanceof Files)) {
-			return false;
-		}
-		if (this == object) {
-			return true;
-		}
-		Files that = (Files) object;
+  public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy) {
+    if (!(object instanceof Files)) {
+      return false;
+    }
+    if (this == object) {
+      return true;
+    }
+    Files that = (Files)object;
 
-		List lhsFiles = (this.files != null) && (!this.files.isEmpty()) ? getFiles()
-				: null;
+    List lhsFiles = (this.files != null) && (!this.files.isEmpty()) ? getFiles() : null;
 
-		List rhsFiles = (that.files != null) && (!that.files.isEmpty()) ? that
-				.getFiles() : null;
-		if (!strategy.equals(
-				LocatorUtils.property(thisLocator, "files", lhsFiles),
-				LocatorUtils.property(thatLocator, "files", rhsFiles),
-				lhsFiles, rhsFiles)) {
-			return false;
-		}
+    List rhsFiles = (that.files != null) && (!that.files.isEmpty()) ? that.getFiles() : null;
+    if (!strategy.equals(LocatorUtils.property(thisLocator, "files", lhsFiles), LocatorUtils.property(thatLocator, "files", rhsFiles), lhsFiles, rhsFiles)) {
+      return false;
+    }
 
-		return true;
-	}
+    return true;
+  }
 
-	public boolean equals(Object object) {
-		EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
-		return equals(null, null, object, strategy);
-	}
+  public boolean equals(Object object) {
+    EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
+    return equals(null, null, object, strategy);
+  }
 
-	public int hashCode(ObjectLocator locator, HashCodeStrategy strategy) {
-		int currentHashCode = 1;
+  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy) {
+    int currentHashCode = 1;
 
-		List theFiles = (this.files != null) && (!this.files.isEmpty()) ? getFiles()
-				: null;
-		currentHashCode = strategy.hashCode(
-				LocatorUtils.property(locator, "files", theFiles),
-				currentHashCode, theFiles);
+    List theFiles = (this.files != null) && (!this.files.isEmpty()) ? getFiles() : null;
+    currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "files", theFiles), currentHashCode, theFiles);
 
-		return currentHashCode;
-	}
+    return currentHashCode;
+  }
 
-	public int hashCode() {
-		HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
-		return hashCode(null, strategy);
-	}
+  public int hashCode() {
+    HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
+    return hashCode(null, strategy);
+  }
 }

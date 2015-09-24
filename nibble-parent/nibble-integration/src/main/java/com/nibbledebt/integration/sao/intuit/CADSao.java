@@ -63,7 +63,7 @@ public class CADSao implements IIntuitSao{
 			}
 			instLogin.setCredentials(creds);
 			DiscoverAndAddAccountsResponse resp = (AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, userId))
-														.discoverAndAddAccounts(Long.valueOf(institutionId), instLogin, "json");
+														.discoverAndAddAccounts(Long.valueOf(institutionId), instLogin);
 
 			LinkResponse linkResponse = new LinkResponse();
 			
@@ -76,10 +76,10 @@ public class CADSao implements IIntuitSao{
 				linkResponse.setChallenges(challenges);
 			}
 			
-			if(resp.getAccountList() != null && resp.getAccountList().getBankingAccountOrCreditAccountOrLoanAccount()!=null
-											&&	!resp.getAccountList().getBankingAccountOrCreditAccountOrLoanAccount().isEmpty()){
+			if(resp.getAccountList() != null && resp.getAccountList().getBankingAccountsAndCreditAccountsAndLoanAccounts()!=null
+											&&	!resp.getAccountList().getBankingAccountsAndCreditAccountsAndLoanAccounts().isEmpty()){
 				AccountList accountslist = new AccountList();
-				for(com.nibbledebt.intuit.cad.data.Account acct : resp.getAccountList().getBankingAccountOrCreditAccountOrLoanAccount()){
+				for(com.nibbledebt.intuit.cad.data.Account acct : resp.getAccountList().getBankingAccountsAndCreditAccountsAndLoanAccounts()){
 					if(acct instanceof com.nibbledebt.intuit.cad.data.BankingAccount)
 						accountslist.getBankingAccountsAndCreditAccountsAndLoanAccounts().add(mapper.map(acct, BankingAccount.class));
 					else if(acct instanceof com.nibbledebt.intuit.cad.data.LoanAccount)
@@ -99,7 +99,7 @@ public class CADSao implements IIntuitSao{
 	@Override
 	public void deleteCustomers() throws ServiceException{
 		try {
-			(AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "system")).deleteCustomer("json");
+			(AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "system")).deleteCustomer();
 		} catch (AggCatException e) {
 			throw new ServiceException("Error while deleting all customers", e);
 		}
@@ -109,7 +109,7 @@ public class CADSao implements IIntuitSao{
 	public List<Institution> getInstitutions() throws ServiceException {
 		List<Institution> institutions = new ArrayList<>();
 		try {
-			com.nibbledebt.intuit.cad.data.Institutions intuitInsts = (AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "system")).getInstitutions("json");
+			com.nibbledebt.intuit.cad.data.Institutions intuitInsts = (AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "system")).getInstitutions();
 			for(com.nibbledebt.intuit.cad.data.Institution intuitInst : intuitInsts.getInstitutions()){
 				if(!intuitInst.isVirtual()){
 					Institution inst = new Institution();
@@ -130,7 +130,7 @@ public class CADSao implements IIntuitSao{
 	public InstitutionDetail getInstitution(String institutionId) throws ServiceException {
 		InstitutionDetail instDetail = null;
 		try {
-			com.nibbledebt.intuit.cad.data.InstitutionDetail cadInstDetail = (AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "system")).getInstitutionDetails(Long.valueOf(institutionId), "json");
+			com.nibbledebt.intuit.cad.data.InstitutionDetail cadInstDetail = (AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "system")).getInstitutionDetails(Long.valueOf(institutionId));
 			if(cadInstDetail!=null){
 				instDetail = new InstitutionDetail();
 				instDetail.setInstitutionId(cadInstDetail.getInstitutionId());

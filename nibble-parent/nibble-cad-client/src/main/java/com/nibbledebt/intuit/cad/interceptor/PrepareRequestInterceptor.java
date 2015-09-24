@@ -1,88 +1,81 @@
 package com.nibbledebt.intuit.cad.interceptor;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 import com.nibbledebt.intuit.cad.core.ContentType;
 import com.nibbledebt.intuit.cad.exception.AggCatException;
 import com.nibbledebt.intuit.cad.util.Config;
 import com.nibbledebt.intuit.cad.util.StringUtils;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+public class PrepareRequestInterceptor
+  implements Interceptor
+{
+  private static final org.slf4j.Logger LOG = com.nibbledebt.intuit.cad.util.Logger.getLogger();
 
-public class PrepareRequestInterceptor implements Interceptor {
-	private static final org.slf4j.Logger LOG = com.nibbledebt.intuit.cad.util.Logger
-			.getLogger();
+  public void execute(IntuitMessage intuitMessage)
+    throws AggCatException
+  {
+    LOG.debug("Enter PrepareRequestInterceptor...");
 
-	public void execute(IntuitMessage intuitMessage) throws AggCatException {
-		LOG.debug("Enter PrepareRequestInterceptor...");
+    RequestElements requestElements = intuitMessage.getRequestElements();
+    Map requestParameters = requestElements.getRequestParameters();
 
-		RequestElements requestElements = intuitMessage.getRequestElements();
-		Map requestParameters = requestElements.getRequestParameters();
+    requestParameters.put("resource-url", prepareUri(requestParameters, requestElements.getQueryParameters(), requestElements.getApiType()));
 
-		requestParameters.put(
-				"resource-url",
-				prepareUri(requestParameters,
-						requestElements.getQueryParameters(),
-						requestElements.getApiType()));
+    Map requestHeaders = requestElements.getRequestHeaders();
+    if (!requestHeaders.containsKey("content-type")) {
+      requestHeaders.put("content-type", ContentType.XML.toString());
+    }
 
-		Map requestHeaders = requestElements.getRequestHeaders();
-		if (!requestHeaders.containsKey("content-type")) {
-			if(intuitMessage.getRequestType().equalsIgnoreCase("xml")){
-				requestHeaders.put("content-type", ContentType.XML.toString());
-				requestHeaders.put("Accept", ContentType.XML.toString());
-			}else{
-				requestHeaders.put("content-type", ContentType.JSON.toString());
-				requestHeaders.put("Accept", ContentType.JSON.toString());
-			}
-		}
+    LOG.debug("Exit PrepareRequestInterceptor.");
+  }
 
-		LOG.debug("Exit PrepareRequestInterceptor.");
-	}
+  private String prepareUri(Map<String, String> requestParameters, Map<String, String> queryParameters, String apiType)
+    throws AggCatException
+  {
+    StringBuilder uri = new StringBuilder();
 
-	private String prepareUri(Map<String, String> requestParameters,
-			Map<String, String> queryParameters, String apiType)
-			throws AggCatException {
-		StringBuilder uri = new StringBuilder();
+    if ((apiType != null) && (apiType.equals("Batch")))
+      uri.append(Config.getProperty("baseURL.aggcatBatch"));
+    else {
+      uri.append(Config.getProperty("baseURL.aggcat"));
+    }
 
-		if ((apiType != null) && (apiType.equals("Batch")))
-			uri.append(Config.getProperty("baseURL.aggcatBatch"));
-		else {
-			uri.append(Config.getProperty("baseURL.aggcat"));
-		}
+    if (requestParameters.containsKey("entity-name")) {
+      uri.append("/").append((String)requestParameters.get("entity-name"));
+    }
 
-		if (requestParameters.containsKey("entity-name")) {
-			uri.append("/").append(
-					(String) requestParameters.get("entity-name"));
-		}
+    if (requestParameters.containsKey("id")) {
+      uri.append("/").append((String)requestParameters.get("id"));
+    }
 
-		if (requestParameters.containsKey("id")) {
-			uri.append("/").append((String) requestParameters.get("id"));
-		}
+    if (requestParameters.containsKey("action")) {
+      uri.append("/").append((String)requestParameters.get("action"));
+    }
 
-		if (requestParameters.containsKey("action")) {
-			uri.append("/").append((String) requestParameters.get("action"));
-		}
+    String queryString = buildQueryParams(queryParameters);
 
-		String queryString = buildQueryParams(queryParameters);
+    if (StringUtils.hasText(queryString)) {
+      uri.append("?").append(queryString);
+    }
 
-		if (StringUtils.hasText(queryString)) {
-			uri.append("?").append(queryString);
-		}
+    return uri.toString();
+  }
 
-		return uri.toString();
-	}
+  private String buildQueryParams(Map<String, String> queryParameters)
+  {
+    StringBuilder queryString = new StringBuilder();
+    Set keySet = queryParameters.keySet();
+    Iterator keySetIterator = keySet.iterator();
 
-	private String buildQueryParams(Map<String, String> queryParameters) {
-		StringBuilder queryString = new StringBuilder();
-		Set keySet = queryParameters.keySet();
-		Iterator keySetIterator = keySet.iterator();
+    while (keySetIterator.hasNext()) {
+      String key = (String)keySetIterator.next();
+      String value = (String)queryParameters.get(key);
+      queryString.append(key).append("=").append(value).append("&");
+    }
 
-		while (keySetIterator.hasNext()) {
-			String key = (String) keySetIterator.next();
-			String value = (String) queryParameters.get(key);
-			queryString.append(key).append("=").append(value).append("&");
-		}
-
-		return queryString.toString();
-	}
+    return queryString.toString();
+  }
 }

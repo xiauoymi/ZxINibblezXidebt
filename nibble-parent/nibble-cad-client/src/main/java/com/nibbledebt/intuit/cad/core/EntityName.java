@@ -1,27 +1,30 @@
 package com.nibbledebt.intuit.cad.core;
 
-public enum EntityName {
-	INSTITUTIONS("institutions"),
+public enum EntityName
+{
+  INSTITUTIONS("institutions"), 
 
-	ACCOUNTS("accounts"),
+  ACCOUNTS("accounts"), 
 
-	CUSTOMERS("customers"),
+  CUSTOMERS("customers"), 
 
-	TRANSACTIONS("transactions"),
+  TRANSACTIONS("transactions"), 
 
-	LOGINS("logins"),
+  LOGINS("logins"), 
 
-	FILES("files"),
+  FILES("files"), 
 
-	POSITIONS("positions");
+  POSITIONS("positions");
 
-	private String name = null;
+  private String name = null;
 
-	private EntityName(String name) {
-		this.name = name;
-	}
+  private EntityName(String name)
+  {
+    this.name = name;
+  }
 
-	public String toString() {
-		return this.name;
-	}
+  public String toString()
+  {
+    return this.name;
+  }
 }
