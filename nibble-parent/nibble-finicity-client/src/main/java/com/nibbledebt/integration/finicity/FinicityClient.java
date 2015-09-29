@@ -20,10 +20,7 @@ public class FinicityClient {
 	
 	@Autowired
 	private RestClient restClient;
-		
-	@Autowired
-	private SecurityContext finicitySecurityContext;
-	
+			
 	@Value("${finicity.inst.url}")
 	private String finicityInstUrl;	
 	

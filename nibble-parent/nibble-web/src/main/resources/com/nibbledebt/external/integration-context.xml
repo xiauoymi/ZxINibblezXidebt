@@ -86,9 +86,6 @@
 		<constructor-arg index="2">
 			<value>${intuit.saml.id}</value>
 		</constructor-arg>
-		<constructor-arg index="3">
-			<value>${intuit.user.id}</value>
-		</constructor-arg>
 	</bean>
 	
 	<bean id="intuitContext" class="com.nibbledebt.intuit.cad.core.Context" scope="prototype">

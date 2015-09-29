@@ -4,10 +4,10 @@
 <!-- 		<aggcatBatch>https://financialdatafeed.platform.intuit.com/v1/export</aggcatBatch> -->
 <!-- 	</baseURL> -->
 	<saml>
-		<keystoreFile>nibble.jks</keystoreFile>
-		<keystorePassword>nibblestore</keystorePassword>
-		<keyPassword>nibblekey</keyPassword>
-		<certAlias>nibblecert</certAlias>
+		<keystoreFile>nibbletest2.jks</keystoreFile>
+		<keystorePassword>nibbletest2</keystorePassword>
+		<keyPassword>nibbletest2</keyPassword>
+		<certAlias>nibbletest2</certAlias>
 		<oAuthUrl>https://oauth.intuit.com/oauth/v1/get_access_token_by_saml</oAuthUrl>
 	</saml>
 </intuit-config>

@@ -3,7 +3,6 @@
  */
 package com.nibbledebt.integration.finicity;
 
-import java.security.Timestamp;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;

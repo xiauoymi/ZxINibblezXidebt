@@ -76,7 +76,7 @@ public class CADSaoTest {
 		cadSao.deleteCustomers();
 		
 		Map<String, String> credsMap = new HashMap<>();
-		credsMap.put("Banking Userid", "demo");
+		credsMap.put("Banking Userid", "direct");
 		credsMap.put("Banking Password", "go");
 		
 		LinkResponse response = cadSao.discoverAndAddAccounts("100000", credsMap, "testuser1");
