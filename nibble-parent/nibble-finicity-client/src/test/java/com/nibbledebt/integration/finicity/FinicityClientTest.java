@@ -6,6 +6,9 @@ package com.nibbledebt.integration.finicity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.nibbledebt.integration.finicity.model.*;
+import com.nibbledebt.integration.finicity.model.accounts.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
