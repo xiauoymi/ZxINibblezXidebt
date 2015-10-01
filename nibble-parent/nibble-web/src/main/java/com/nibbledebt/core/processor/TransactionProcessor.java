@@ -58,9 +58,9 @@ public class TransactionProcessor extends AbstractProcessor{
 	private INibblerAccountDao nibblerAcctDao;
 	
 	
-	@Autowired
-	@Qualifier("cadSao")
-	private IIntuitSao cadSao;
+//	@Autowired
+//	@Qualifier("finicitySao")
+//	private IIntegrationSao integrationSao;
 	
 	@Autowired
 	private ITransactionCategoryDao trxCatDao;

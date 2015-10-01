@@ -26,11 +26,11 @@ import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.core.data.dao.IInstitutionDao;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.Field;
-import com.nibbledebt.integration.model.cad.Institution;
-import com.nibbledebt.integration.model.cad.InstitutionDetail;
-import com.nibbledebt.integration.model.cad.Key;
-import com.nibbledebt.integration.model.cad.Keys;
-import com.nibbledebt.integration.sao.intuit.IIntuitSao;
+import com.nibbledebt.integration.model.Institution;
+import com.nibbledebt.integration.model.LoginField;
+import com.nibbledebt.integration.model.LoginForm;
+import com.nibbledebt.integration.sao.intuit.IIntegrationSao;
+import com.nibbledebt.web.rest.model.InstitutionDetail;
 
 /**
  * @author ralam1
@@ -48,8 +48,8 @@ public class InstitutionProcessor {
 	private IInstitutionDao institutionDao;
 	
 	@Autowired
-	@Qualifier("cadSao")
-	private IIntuitSao cadSao;
+	@Qualifier("finicitySao")
+	private IIntegrationSao integrationSao;
 	
 	@Autowired
 	private ThreadPoolTaskExecutor instSyncExecutor;
@@ -63,25 +63,29 @@ public class InstitutionProcessor {
 			if(primaries !=null && !primaries.isEmpty()){
 				insts = new ArrayList<>();
 				for(com.nibbledebt.core.data.model.Institution inst : primaries){
-					InstitutionDetail institution = new InstitutionDetail();
-					institution.setInstitutionName(inst.getName());
-					institution.setInstitutionId(Long.valueOf(inst.getExternalId()));
+					InstitutionDetail institutionDetail = new InstitutionDetail();
+					Institution institution = new Institution();
+					LoginForm loginForm = new LoginForm();
+					institution.setName(inst.getName());
+					institution.setId(inst.getExternalId());
 					institution.setHomeUrl(inst.getHomeUrl());
-					Keys keys = new Keys();
+					List<LoginField> loginFields = new ArrayList<>();
 					for(Field field : inst.getFields()){
-						Key key = new Key();
-						key.setName(field.getName());
-						key.setDescription(field.getDisplayName());
-						key.setMask(field.getIsMasked());
-						key.setValue(field.getValue());
-						key.setDisplayFlag(field.getIsDisplay());
-						key.setDisplayOrder(field.getOrder());
-						key.setInstructions(field.getInstruction());
-						key.setStatus(field.getStatus());
-						keys.getKey().add(key);
+						LoginField lField = new LoginField();
+						lField.setName(field.getName());
+						lField.setDescription(field.getDisplayName());
+						lField.setMask(field.getIsMasked());
+						lField.setValue(field.getValue());
+						lField.setDisplayOrder(field.getOrder());
+						lField.setInstructions(field.getInstruction());
+						lField.setValueLengthMax(field.getValidationMaxLength());
+						lField.setValueLengthMin(field.getValidationMinLength());
+						loginFields.add(lField);
 					}
-					institution.setKeys(keys);
-					insts.add(institution);
+					loginForm.setLoginField(loginFields);
+					institutionDetail.setInstitution(institution);
+					institutionDetail.setLoginForm(loginForm);
+					insts.add(institutionDetail);
 				}
 			}
 			return insts;
@@ -112,7 +116,7 @@ public class InstitutionProcessor {
     }
 	
 //	@Scheduled(cron="0 0 * * * *")
-//	@Scheduled(fixedRate=60000)
+	@Scheduled(fixedRate=60000)
 	@Loggable(logLevel=LogLevel.INFO)
 	public void populateInstitutions() throws ProcessingException{
 		try {
@@ -129,8 +133,8 @@ public class InstitutionProcessor {
 	                }
 	            }
 	        });
-			List<Institution> cadInsts = cadSao.getInstitutions();
-			for(Institution cadInst : cadInsts){
+			List<Institution> insts = integrationSao.getInstitutions();
+			for(Institution cadInst : insts){
 //				InstitutionPopulator pop = context.getBean("instPopulate", InstitutionPopulator.class);
 //				pop.insertInstitution(cadInst);
 				RunnableAsync<Institution> pop = context.getBean("instPopulate", RunnableAsync.class);

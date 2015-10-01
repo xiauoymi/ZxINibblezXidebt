@@ -1,22 +1,22 @@
 /**
  * 
  */
-package com.nibbledebt.integration.finicity.model;
+package com.nibbledebt.integration.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonRootName;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author alam_home
  *
  */
-@JsonRootName("loginForm")
+@XmlRootElement
+@XmlType(propOrder = {"loginField"})
 public class LoginForm {
-	@JacksonXmlProperty(localName = "loginField")
-    @JacksonXmlElementWrapper(useWrapping = false)
+	@XmlElement(name="loginField")
 	private List<LoginField> loginField;
 
 	/**

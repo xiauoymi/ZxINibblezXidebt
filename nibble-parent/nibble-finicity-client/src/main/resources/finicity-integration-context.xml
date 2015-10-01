@@ -30,6 +30,10 @@
 	<aop:aspectj-autoproxy />
 	
 	<ctx:component-scan base-package="com.nibbledebt" scoped-proxy="targetClass"/>
+	
+	<bean id="integrationMapper" class="org.dozer.DozerBeanMapper">
+	  
+	</bean>
 
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">

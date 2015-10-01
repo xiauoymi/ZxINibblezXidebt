@@ -29,7 +29,7 @@ import com.nibbledebt.core.processor.RegistrationProcessor;
 import com.nibbledebt.integration.model.LinkResponse;
 import com.nibbledebt.integration.model.MfaRequest;
 import com.nibbledebt.integration.model.MfaResponse;
-import com.nibbledebt.integration.model.cad.InstitutionDetail;
+import com.nibbledebt.web.rest.model.InstitutionDetail;
 import com.nibbledebt.web.rest.model.JsonListWrapper;
 import com.nibbledebt.web.rest.model.NibblerData;
 

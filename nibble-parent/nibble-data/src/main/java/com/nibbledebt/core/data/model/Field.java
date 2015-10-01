@@ -9,11 +9,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 /**
  * @author ralam
@@ -32,9 +30,6 @@ public class Field extends AbstractModel {
 	@Column(name="value", nullable=true, length=256)
 	private String value;
 	
-	@Column(name="status", nullable=false, length=50)
-	private String status;
-	
 	@Column(name="is_display", nullable=false)
 	private Boolean isDisplay;
 	
@@ -49,6 +44,12 @@ public class Field extends AbstractModel {
 	
 	@Column(name="instruction", nullable=true, length=2056)
 	private String instruction;
+	
+	@Column(name="validation_minimum_length", nullable=true)
+	private Integer validationMinLength;
+	
+	@Column(name="validation_maximum_length", nullable=true)
+	private Integer validationMaxLength;
 	
 	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	@JoinColumn(name="institution_id", updatable=true, nullable=false)
@@ -80,20 +81,6 @@ public class Field extends AbstractModel {
 	 */
 	public void setValue(String value) {
 		this.value = value;
-	}
-
-	/**
-	 * @return the status
-	 */
-	public String getStatus() {
-		return status;
-	}
-
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	/**
@@ -164,6 +151,34 @@ public class Field extends AbstractModel {
 	 */
 	public void setInstruction(String instruction) {
 		this.instruction = instruction;
+	}
+
+	/**
+	 * @return the validationMinLength
+	 */
+	public Integer getValidationMinLength() {
+		return validationMinLength;
+	}
+
+	/**
+	 * @param validationMinLength the validationMinLength to set
+	 */
+	public void setValidationMinLength(Integer validationMinLength) {
+		this.validationMinLength = validationMinLength;
+	}
+
+	/**
+	 * @return the validationMaxLength
+	 */
+	public Integer getValidationMaxLength() {
+		return validationMaxLength;
+	}
+
+	/**
+	 * @param validationMaxLength the validationMaxLength to set
+	 */
+	public void setValidationMaxLength(Integer validationMaxLength) {
+		this.validationMaxLength = validationMaxLength;
 	}
 
 	/**

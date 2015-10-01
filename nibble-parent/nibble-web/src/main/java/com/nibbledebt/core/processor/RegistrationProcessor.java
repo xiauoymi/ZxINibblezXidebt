@@ -43,7 +43,7 @@ import com.nibbledebt.core.data.model.NibblerRoleType;
 import com.nibbledebt.integration.model.Account;
 import com.nibbledebt.integration.model.LinkResponse;
 import com.nibbledebt.integration.model.MfaResponse;
-import com.nibbledebt.integration.sao.intuit.IIntuitSao;
+import com.nibbledebt.integration.sao.intuit.IIntegrationSao;
 import com.nibbledebt.web.rest.model.NibblerData;
 
 /**
@@ -67,9 +67,9 @@ public class RegistrationProcessor extends AbstractProcessor{
 	@Autowired
 	private IInstitutionDao institutionDao;
 	
-	@Autowired
-	@Qualifier("cadSao")
-	private IIntuitSao cadSao;
+//	@Autowired
+//	@Qualifier("finicitySao")
+//	private IIntegrationSao integrationSao;
 	
 	@Autowired
 	private MessageDigestPasswordEncoder encoder;
