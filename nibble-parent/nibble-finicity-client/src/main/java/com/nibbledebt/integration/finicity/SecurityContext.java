@@ -81,7 +81,7 @@ public class SecurityContext {
 			this.appToken = invokeAuthService().getToken();
 			this.lastPullTime = new Date();
 		}else{
-			if(this.lastPullTime!=null && this.lastPullTime.getTime() < System.currentTimeMillis()+360000){
+			if(this.lastPullTime!=null && this.lastPullTime.getTime() < System.currentTimeMillis()+720000){
 				this.appToken = invokeAuthService().getToken();
 				this.lastPullTime = new Date();
 			}
