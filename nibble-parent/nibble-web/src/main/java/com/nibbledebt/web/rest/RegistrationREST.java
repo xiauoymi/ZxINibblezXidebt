@@ -131,10 +131,10 @@ public class RegistrationREST {
 	@Path("/logo/{type}")
 	@Produces("image/*")
 	@Loggable(logLevel=LogLevel.INFO)
-	public Response getBankLogo(@PathParam("type") String type) throws ProcessingException{
+	public Response getBankLogo(@PathParam("id") String id) throws ProcessingException{
 		ResponseBuilder responseBuilder;
-		responseBuilder = Response.ok(instService.getLogoByName(type));
-        responseBuilder.header("Content-Disposition", "attachment; filename=\""+type+"\"");
+		responseBuilder = Response.ok(instService.getLogoById(id));
+        responseBuilder.header("Content-Disposition", "attachment; filename=\""+id+"\"");
         return responseBuilder.build();
 	}
 }

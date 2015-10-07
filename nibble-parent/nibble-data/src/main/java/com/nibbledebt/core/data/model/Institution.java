@@ -3,6 +3,7 @@
  */
 package com.nibbledebt.core.data.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -224,6 +225,7 @@ public class Institution extends AbstractModel {
 	 * @return the fields
 	 */
 	public List<Field> getFields() {
+		if(fields == null) fields = new ArrayList<>();
 		return fields;
 	}
 

@@ -58,11 +58,10 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 			}
 			
 			if(inst == null){
-				Institution instDetail = integrationSao.getInstitution(String.valueOf(instFromLoop.getId()));
-				LoginForm loginForm = integrationSao.getInstitutionLoginForm(String.valueOf(instFromLoop.getId()));
-				
+				Institution instDetail = integrationSao.getInstitution(String.valueOf(instFromLoop.getId()));				
 				String instType = determineType(instDetail.getName());
 				if(!StringUtils.equalsIgnoreCase(instType, "unknown")){
+					LoginForm loginForm = integrationSao.getInstitutionLoginForm(String.valueOf(instFromLoop.getId()));
 					inst = new com.nibbledebt.core.data.model.Institution();
 					inst.setName(instDetail.getName());
 					inst.setExternalId(String.valueOf(instDetail.getId()));
@@ -74,8 +73,7 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 					inst.setLastSyncedTs(new Date());
 					inst.setPriority(1);
 					inst.setType(instType);
-					
-					inst.setFields(convertToFields(loginForm.getLoginField(), inst));
+					convertToFields(loginForm.getLoginField(), inst);
 				}
 			}else if(inst!=null && ( (inst.getUpdatedTs()==null && inst.getCreatedTs().getTime()<System.currentTimeMillis()-86400000) ||  (inst.getUpdatedTs()!=null && inst.getUpdatedTs().getTime()<System.currentTimeMillis()-86400000)) ){
 				Institution instDetail = integrationSao.getInstitution(String.valueOf(instFromLoop.getId()));
@@ -86,7 +84,7 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 				inst.setUpdatedTs(new Date());
 				inst.setUpdatedUser("system");
 				inst.setLastSyncedTs(new Date());
-				inst.setFields(convertToFields(loginForm.getLoginField(), inst));
+				convertToFields(loginForm.getLoginField(), inst);
 			}
 			if(inst != null) {
 				try {
@@ -103,7 +101,7 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 		
 	}
 	
-	private List<com.nibbledebt.core.data.model.Field> convertToFields(List<LoginField> loginFields, com.nibbledebt.core.data.model.Institution inst){
+	private void convertToFields(List<LoginField> loginFields, com.nibbledebt.core.data.model.Institution inst){
 		List<com.nibbledebt.core.data.model.Field> fields = new ArrayList<>();
 		for(LoginField loginField : loginFields){
 			com.nibbledebt.core.data.model.Field field = new com.nibbledebt.core.data.model.Field();
@@ -121,7 +119,8 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 			field.setValidationMinLength(loginField.getValueLengthMin());
 			fields.add(field);
 		}
-		return fields;
+		inst.getFields().clear();
+		inst.getFields().addAll(fields);
 	}
 	
 	private String determineType(String name){
