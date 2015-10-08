@@ -1,0 +1,78 @@
+<RelativeLayout
+    android:id="@+id/trx_item"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
+
+
+            <TextView  xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/trx_name"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:text="Fragment Header"
+                android:textSize="17dp"
+                android:textStyle="bold"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:background="@android:color/transparent" android:gravity="left|center_vertical"/>
+
+            <TextView  xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/trx_amount"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:text="Amount"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:background="@android:color/transparent" android:gravity="right|center_vertical"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
+
+            <LinearLayout
+                android:layout_width="250dp"
+                android:layout_height="40dp"
+                android:orientation="vertical">
+
+
+            </LinearLayout>
+
+
+
+            <TextView  xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/trx_date"
+                android:layout_width="fill_parent"
+                android:layout_height="20dp"
+                android:text="Date"
+                android:textSize="15dp"
+                android:textStyle="normal"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:background="@android:color/transparent" android:gravity="right|center_vertical"/>
+
+
+        </LinearLayout>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"/>
+
+    </LinearLayout>
+</RelativeLayout>

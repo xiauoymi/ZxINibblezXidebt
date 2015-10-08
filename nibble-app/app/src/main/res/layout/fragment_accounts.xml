@@ -1,0 +1,98 @@
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="92dp"
+        android:text="Manage Accounts"
+        android:textSize="30dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:textColor="@android:color/white" />
+
+    <Button android:id="@+id/add_acct_button" style="?android:textAppearanceSmall"
+        android:layout_width="200dp" android:layout_height="wrap_content"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp" android:text="@string/action_add_acct"
+        android:textStyle="bold"
+        android:textColor="#ffffffff"
+        android:shadowRadius="3" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="10dp"/>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <android.support.v4.widget.SwipeRefreshLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/accts_swipe_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+
+                <ScrollView
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="@android:color/white"
+                    android:gravity="top">
+
+                        <LinearLayout
+                            android:layout_height="350dp"
+                            android:layout_width="match_parent"
+                            android:orientation="vertical"
+                            xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="40dp"
+                                android:text="Linked Accounts"
+                                android:textSize="20dp"
+                                android:textStyle="bold"
+                                android:textColor="@android:color/white"
+                                android:gravity="center_horizontal|center_vertical"
+                               />
+
+
+
+                                <LinearLayout
+                                    android:id="@+id/wallet_accts_full"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:gravity="top">
+
+
+                                </LinearLayout>
+
+                        </LinearLayout>
+
+
+                </ScrollView>
+
+
+            </android.support.v4.widget.SwipeRefreshLayout>
+        </RelativeLayout>
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/main_accts_progress_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/progress_bar_bg"
+            android:gravity="center_vertical|center_horizontal"
+            android:visibility="gone">
+            <include layout="@layout/progress_bar" android:id="@+id/main_accts_progress" />
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

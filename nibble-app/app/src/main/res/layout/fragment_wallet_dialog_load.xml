@@ -1,0 +1,53 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_wallet_dialog_load"
+    android:orientation="vertical"
+    android:layout_width="400dp"
+    android:layout_height="270dp"
+    android:gravity="top"
+    android:layout_gravity="center_horizontal|center_vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:scaleType="center"
+        android:textColor="@android:color/white"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="@string/load_dialog_header"
+        android:contentDescription="@string/app_name"
+        android:paddingBottom="10dp"/>
+
+    <Spinner
+        android:id="@+id/load_acct_spinner"
+        android:hint="@string/prompt_acct"
+        style="@android:style/Widget.Spinner.DropDown"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:spinnerMode="dropdown"
+        android:layout_gravity="center_horizontal"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:layout_marginTop="20dp"/>
+    <EditText
+        android:id="@+id/load_amount"
+        android:inputType="number"
+        android:hint="@string/prompt_amount"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif"
+        android:background="@drawable/nibble_main_textbox"
+        android:layout_gravity="center_horizontal"/>
+
+    <Button android:id="@+id/load_money_button" style="?android:textAppearanceSmall"
+        android:layout_width="250dp" android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp" android:text="@string/action_add_card"
+        android:textStyle="bold"
+        android:textColor="#ffffffff"
+        android:background="#FBB543" />
+</LinearLayout>

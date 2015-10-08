@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="line"
+    android:thickness="1dp"
+    android:tint="@color/nibble_main">
+    <solid android:color="#40000000" />
+
+    <stroke
+        android:width="5dp"
+        android:color="@color/nibble_main" />
+</shape>

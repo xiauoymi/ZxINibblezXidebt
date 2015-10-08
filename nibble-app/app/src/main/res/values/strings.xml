@@ -1,0 +1,63 @@
+<resources>
+    <string name="app_name">Nibble</string>
+    <string name="wallet_section">Wallet</string>
+    <string name="trxs_section">Transactions</string>
+    <string name="accts_section">Accounts</string>
+    <string name="help_section">Help</string>
+
+    <string name="action_settings">Log Off</string>
+    <string name="invalid_password">Password is invalid</string>
+    <string name="incorrect_password">Password is incorrect</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_confirm_password">Confirm Password</string>
+    <string name="action_sign_in">Login</string>
+    <string name="field_required">This field is required</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_signup">SignupActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_sign_up">Sign Up</string>
+    <string name="prompt_firstname">First Name</string>
+    <string name="prompt_lastname">Last Name</string>
+
+    <string name="prompt_address1">Address Line 1</string>
+    <string name="prompt_address2">Address Line 2</string>
+    <string name="prompt_city">City</string>
+    <string name="prompt_state">State</string>
+    <string name="prompt_zip">Zip Code</string>
+    <string name="prompt_phone">Phone Number</string>
+    <string name="prompt_email">    Email</string>
+    <string name="drawer_open">Drawer Open</string>
+    <string name="drawer_close">Drawer Close</string>
+    <string name="logout_section">Logout</string>
+    <string name="action_more_trx">VIEW ALL TRANSACTIONS</string>
+    <string name="username_taken">Username already in use</string>
+    <string name="action_add_money">Add Money</string>
+    <string name="action_add_acct">Add Account</string>
+    <string name="na_dialog_header">Add an Account</string>
+    <string name="prompt_acct_name">Account Name</string>
+    <string name="na_acct_name">Account Name</string>
+    <string name="prompt_acct_number">Account Number</string>
+    <string name="prompt_exp_month">Month</string>
+    <string name="prompt_exp_year">Year</string>
+    <string name="prompt_acct_cvv">CVV</string>
+    <string name="action_add_card">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="load_dialog_header">Add Money</string>
+    <string name="prompt_acct">Pick an account</string>
+    <string name="spinner_no_account">No Accounts Found</string>
+    <string name="spinner_select_account">Select an Account</string>
+    <string name="prompt_amount">Amount</string>
+    <string name="prompt_username">Email Address</string>
+    <string name="action_view_all_trxs">VIEW ALL TRANSACTIONS</string>
+
+
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+
+
+    <string name="gcm_default_sender_id">728820095015</string>
+
+</resources>

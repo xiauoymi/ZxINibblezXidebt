@@ -1,0 +1,76 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="192dp"
+        android:text="Transactions"
+        android:textSize="30dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:textColor="@android:color/white" />
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <android.support.v4.widget.SwipeRefreshLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/trxs_swipe_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ScrollView
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="@android:color/white"
+                    android:gravity="top">
+
+
+
+                            <LinearLayout
+                                    android:layout_height="fill_parent"
+                                    android:layout_width="match_parent"
+                                    android:orientation="vertical"
+                                    xmlns:android="http://schemas.android.com/apk/res/android">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="40dp"
+                                        android:text="Vault Transactions"
+                                        android:textSize="20dp"
+                                        android:textStyle="bold"
+                                        android:textColor="@android:color/white"
+                                        android:gravity="center_horizontal|center_vertical"
+                                        />
+
+                                    <LinearLayout
+                                        android:id="@+id/wallet_trxs_full"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="vertical"
+                                        android:gravity="top">
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+
+                </ScrollView>
+            </android.support.v4.widget.SwipeRefreshLayout>
+        </RelativeLayout>
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/main_trxs_progress_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/progress_bar_bg"
+            android:gravity="center_vertical|center_horizontal"
+            android:visibility="gone">
+            <include layout="@layout/progress_bar" android:id="@+id/main_trxs_progress" />
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>
