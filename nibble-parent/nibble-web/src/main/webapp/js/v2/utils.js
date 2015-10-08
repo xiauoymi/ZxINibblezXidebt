@@ -4,7 +4,7 @@ NibbleUtils = function () {
 NibbleUtils.getParameterByName = function (name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
+        results = regex.exec(location.hash);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 };
 
@@ -21,10 +21,14 @@ NibbleUtils.initAlerts = function ($scope) {
 };
 
 NibbleUtils.getServicesUrl = function() {
+    return NibbleUtils.getBaseUrl() +'/services';
+};
+
+NibbleUtils.getBaseUrl = function() {
     var url = window.location.href;
     var arr = url.split("/");
-    url = arr[0] + "//" + arr[2]
-    return url +'/services';
+    url = arr[0] + "//" + arr[2];
+    return url;
 
 };
 

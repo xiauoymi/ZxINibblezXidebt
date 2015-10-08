@@ -54,8 +54,8 @@ public class RegistrationREST {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
 	@Validatable() //TODO - write custom validator
-	public LinkResponse register(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException{
-		return regService.registerNibbler(nibblerData);
+	public void register(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException{
+		regService.registerNibbler(nibblerData);
 	}
 	
 	@POST

@@ -57,7 +57,7 @@
                         type="text" class="form-control empty"
                         placeholder="&#xf05a;    First Name"
                         name="firstname" required
-                        ng-model="newuser.firstname"
+                        ng-model="newuser.firstName"
                         xt-validation-tooltip>
             </div>
             <div class="form-group">
@@ -65,7 +65,7 @@
                         type="text" class="form-control empty"
                         placeholder="&#xf05a;    Last Name"
                         name="lastname" required
-                        ng-model="newuser.lastname"
+                        ng-model="newuser.lastName"
                         xt-validation-tooltip>
             </div>
             <div class="form-group">
@@ -196,13 +196,13 @@
                 <div class="row">
                     <div class="col-md-4 banks"
                          ng-repeat="bank in banks">
-                        <img ng-src="{{bank.logoUrl}}" class="img-responsive nibble-institution-logo"
+                        <img ng-src="{{bank.institution.logoUrl}}" class="img-responsive nibble-institution-logo"
                              ng-click="clickModal($index)">
                     </div>
                 </div>
             </div>
             <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block"
+                <button class="btn btn-lg btn-nibble-primary btn-block" ng-click="finishRegistration()"
                         type="submit" id="register_finish" ng-disabled="isBankNotSelected()">Finish
                 </button>
             </div>
@@ -213,35 +213,34 @@
                 </div>
             </div>
         </div>
-    </form>
-
-    <form id="mfa-form" name="mfa-form" class="form-primary hidden" method="POST">
-        <div id="mfa-form-heading" class="form-group">
-
-        </div>
-        <hr/>
-        <div id="registration_form4_info" class="container-fluid"></div>
-        <div class="form-group">
+        <div ng-switch-when="registrationFinish">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>Congratulations! Your Nibble Account was successfully
+                        created. Please check your email for instructions on how to
+                        activate your account.</p>
+                </div>
+            </div>
             <hr/>
-            <button class="btn btn-lg btn-nibble-primary btn-block " type="submit" id="mfa_submit">Submit</button>
+            <div class="row">
+                <div class="col-md-offset-1 col-md-10">
+                    <small><a href="" ng-click="goToLogin()"><i class="fa fa-arrow-left"></i> Back to login</a></small>
+                </div>
+            </div>
         </div>
     </form>
-    <div id="registration_result" class="hidden">
-        <div class="row">
-            <div class="col-md-12">
-                <p>Congratulations! Your Nibble Account was successfully
-                    created. Please check your email for instructions on how to
-                    activate your account.</p>
-            </div>
-        </div>
-        <hr/>
-        <div class="row">
-            <div class="col-md-offset-1 col-md-10">
-                <small><a href="" id="login_now"><i
-                        class="fa fa-arrow-left"></i> Back to login</a></small>
-            </div>
-        </div>
-    </div>
+
+    <!--<form id="mfa-form" name="mfa-form" class="form-primary hidden" method="POST">-->
+    <!--<div id="mfa-form-heading" class="form-group">-->
+
+    <!--</div>-->
+    <!--<hr/>-->
+    <!--<div id="registration_form4_info" class="container-fluid"></div>-->
+    <!--<div class="form-group">-->
+    <!--<hr/>-->
+    <!--<button class="btn btn-lg btn-nibble-primary btn-block " type="submit" id="mfa_submit">Submit</button>-->
+    <!--</div>-->
+    <!--</form>-->
 
 
     <script type="text/ng-template" id="registermodal.html">

@@ -11,8 +11,8 @@ app.controller('RegisterCtrl',
                     username: "testUser",
                     password: "QWEqweqwe",
                     repassword: "QWEqweqwe",
-                    firstname: "John",
-                    lastname: "Doe"
+                    firstName: "John",
+                    lastName: "Doe"
                 };
                 $scope.banks = [];
                 $scope.selected = undefined;
@@ -98,10 +98,10 @@ app.controller('RegisterCtrl',
                 accountFactory.getInstitutions().success(function(data) {
                     var items = data.items;
                     for (var i=0; i<items.length; i++) {
-                        items[i].logoUrl = NibbleUtils.getServicesUrl() + "/rest/logo/" +
-                        window.encodeURIComponent(items[i].institutionName);
+                        items[i].institution.logoUrl = NibbleUtils.getServicesUrl() + "/rest/logo/" +
+                        window.encodeURIComponent(items[i].institution.name);
                     }
-                    $scope.banks = data.items;
+                    $scope.banks = items;
                     $scope.registration.condition = "linkAccount";
                 })
                 .error(function (error) {
@@ -111,10 +111,30 @@ app.controller('RegisterCtrl',
             };
 
             /**
-             * Finish registration proccess
+             * Finish registration process
              */
             $scope.finishRegistration = function() {
+                var nibbler = {};
+                nibbler.username = $scope.newuser.username;
+                nibbler.firstName = $scope.newuser.firstName;
+                nibbler.lastName = $scope.newuser.lastName;
+                nibbler.password = $scope.newuser.password;
+                nibbler.address1 = $scope.newuser.address1;
+                nibbler.address2 = $scope.newuser.address2;
+                nibbler.city = $scope.newuser.city;
+                nibbler.state = $scope.newuser.state;
+                nibbler.zip = $scope.newuser.zip;
+                nibbler.email = $scope.newuser.email;
+                nibbler.phone = $scope.newuser.phone;
+                nibbler.url = NibbleUtils.getBaseUrl();
 
+                accountFactory.registerNibbler(nibbler).success(function(data){
+                    console.log(data);
+                    $scope.registration.condition = "registrationFinish";
+                })
+                    .error(function(error) {
+                    NibbleUtils.errorCallback($scope, error)
+                });
             };
 
             /**
@@ -124,7 +144,7 @@ app.controller('RegisterCtrl',
             $scope.clickModal = function(bankIndex) {
                 var bank = $scope.banks[bankIndex];
                 if (bank) {
-                    if (bank.keys != null && bank.keys.key.length > 0) {
+                    if (bank.loginForm.loginField != null && bank.loginForm.loginField.length > 0) {
                         var modalInstance = $modal.open({
                             animation: true,
                             templateUrl: 'registermodal.html',
@@ -144,7 +164,7 @@ app.controller('RegisterCtrl',
                             $scope.selected = undefined;
                         });
                     } else {
-                        $scope.msg_alerts= [{type:'danger', msg:"Sorry, we don't have enough information about " + bank.institutionName}];
+                        $scope.msg_alerts= [{type:'danger', msg:"Sorry, we don't have enough information about " + bank.institution.name}];
                     }
                 } else {
                     $scope.msg_alerts= [{type:'danger', msg:"Ops! contact with administrator (variable 'bank' is undefined)"}];

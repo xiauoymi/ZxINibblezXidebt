@@ -125,7 +125,10 @@ public class RegistrationProcessor extends AbstractProcessor{
 	 */
 	@Transactional(isolation=Isolation.READ_COMMITTED)
 	@Notify(notifyMethod=NotifyMethod.EMAIL, notifyType=NotifyType.ACCOUNT_CREATED)
-	public LinkResponse registerNibbler(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException{
+	public void registerNibbler(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException{
+//        if (nibblerData.getInstitution() == null) {
+            register(nibblerData);
+//        }
 //		LinkResponse resp = plaidSao.linkAccount(nibblerData.getInstUsername(), 
 //				nibblerData.getInstPassword(), 
 //				nibblerData.getInstPin(), 
@@ -139,7 +142,7 @@ public class RegistrationProcessor extends AbstractProcessor{
 //			}
 //			return resp;
 //		}else{
-			throw new ProcessingException("There was an issue trying to link the account. Plaid did not respond as expected.");				
+//			throw new ProcessingException("There was an issue trying to link the account. Plaid did not respond as expected.");
 //		}	
 	}
 	
@@ -224,6 +227,55 @@ public class RegistrationProcessor extends AbstractProcessor{
 //			throw new ProcessingException("Error ocurred while parsing a date." , e);
 //		}
 	}
+
+    /**
+     * registration user if account wasn't linked
+     * @param nibblerData - nibbler data
+     * @throws ProcessingException
+     * @throws RepositoryException
+     */
+    private void register(NibblerData nibblerData) throws ProcessingException, RepositoryException {
+
+        Nibbler nibbler = new Nibbler();
+        NibblerDirectory nibblerDir = new NibblerDirectory();
+
+        setCreated(nibbler, nibblerData.getUsername());
+        setCreated(nibblerDir, nibblerData.getUsername());
+
+        nibbler.setFirstName(nibblerData.getFirstName());
+        nibbler.setLastName(nibblerData.getLastName());
+        nibbler.setAddressLine1(nibblerData.getAddress1());
+        nibbler.setAddressLine2(nibblerData.getAddress2());
+        nibbler.setCity(nibblerData.getCity());
+        nibbler.setState(nibblerData.getState());
+        nibbler.setZip(nibblerData.getZip());
+        nibbler.setExtAccessToken(nibblerData.getUsername());
+
+        nibblerDir.setUsername(nibblerData.getUsername());
+        nibblerDir.setPassword(
+                encoder.encodePassword(
+                        String.valueOf(nibblerData.getPassword()),
+                        salt));
+        nibblerDir.setStatus(NibblerDirectoryStatus.CREATED.name());
+
+        String actCode = UUID.randomUUID().toString();
+        nibblerDir.setActivationCode(actCode);
+        nibblerData.setActivationCode(actCode);
+        nibbler.setPhone(nibblerData.getPhone());
+        nibbler.setEmail(nibblerData.getEmail());
+
+        nibbler.setNibblerDir(nibblerDir);
+        nibblerDir.setNibbler(nibbler);
+
+        NibblerPreference prefs = new NibblerPreference();
+        prefs.setNibbler(nibbler);
+        prefs.setWeeklyTargetAmount(new BigDecimal("9.99"));
+        setCreated(prefs, nibblerData.getUsername());
+        nibbler.setNibblerPreferences(prefs);
+        nibblerDao.create(nibbler);
+    }
+
+
 	
 	private void register(	NibblerData nibblerData,
 							String accessToken	) throws ProcessingException, RepositoryException{

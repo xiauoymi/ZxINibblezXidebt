@@ -16,6 +16,11 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
             templateUrl: "/templates/user/register.html",
             controller: "RegisterCtrl"
         })
+        .state('user.activation', {
+            url: "/activate",
+            templateUrl: "/templates/user/activate.html",
+            controller: "ActivateCtrl"
+        })
         .state('error', {
             templateUrl: "/templates/error.html"
         })

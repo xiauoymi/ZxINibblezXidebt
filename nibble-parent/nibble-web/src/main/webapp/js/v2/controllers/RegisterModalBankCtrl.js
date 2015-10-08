@@ -4,13 +4,13 @@ app.controller('RegisterModalBankCtrl',
             $scope.bank = clickedBank;
             $scope.institutionParams = [];
 
-            var mas = clickedBank.keys.key;
+            var mas = clickedBank.loginForm.loginField;
             var filtered = [];
 
             for (var i=0; i < mas.length; i++) {
-                if (mas[i].displayFlag == true) {
+                //if (mas[i].displayFlag == true) {
                     filtered.push(mas[i])
-                }
+                //}
             }
 
             var ordered = [];

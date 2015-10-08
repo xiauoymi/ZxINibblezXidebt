@@ -8,5 +8,15 @@ app.factory('accountFactory', function($http){
         return $http.get(urlBase + '/banks');
     };
 
+    accountFactory.registerNibbler = function(nibbler) {
+        console.log(nibbler);
+        return $http.post(urlBase + '/register', nibbler);
+    };
+
+    accountFactory.activate = function(nibbler) {
+        console.log(nibbler);
+        return $http.post(urlBase + '/activate', nibbler);
+    };
+
     return accountFactory;
 });

@@ -50,7 +50,7 @@ public class NotifyAspect {
 			
 			if(notify.notifyType() == NotifyType.ACCOUNT_CREATED){
 				VelocityContext acCtx = new VelocityContext();
-				acCtx.put("activate_link", nibblerData.getUrl()+"/nibbleuser.html?acode="+nibblerData.getActivationCode());
+				acCtx.put("activate_link", nibblerData.getUrl()+"#/activate?acode="+nibblerData.getActivationCode());
 				Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("account-created.vm");
 				StringWriter acWriter = new StringWriter();
 				acTmpl.merge(acCtx, acWriter);				
