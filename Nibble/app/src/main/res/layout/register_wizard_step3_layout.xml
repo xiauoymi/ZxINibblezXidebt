@@ -32,21 +32,82 @@
             android:layout_weight="1"
             android:gravity="center_vertical|center_horizontal">
 
-            <ScrollView android:id="@+id/register_form_3" android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="vertical">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                    <GridLayout android:id="@+id/register_form_3_layout" android:layout_width="match_parent"
-                                android:layout_height="wrap_content" android:layout_gravity="fill_horizontal">
-
-
-
-
-
-                    </GridLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="15dp">
+                    <ImageView
+                        android:id="@+id/rform11"  android:layout_width="100dp" android:layout_height="100dp" />
+                    <View
+                        android:layout_width="15dp"
+                        android:layout_height="100dp" />
+                    <ImageView
+                        android:id="@+id/rform12" android:layout_width="100dp" android:layout_height="100dp" />
+                    <View
+                        android:layout_width="15dp"
+                        android:layout_height="100dp" />
+                    <ImageView
+                        android:id="@+id/rform13" android:layout_width="100dp" android:layout_height="100dp"  />
                 </LinearLayout>
-            </ScrollView>
+
+                <LinearLayout
+                    android:id="@+id/register_form_3_layout_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="15dp">
+                    <ImageView
+                        android:id="@+id/rform21" android:layout_width="100dp" android:layout_height="100dp" />
+                    <View
+                        android:layout_width="15dp"
+                        android:layout_height="100dp" />
+                    <ImageView
+                        android:id="@+id/rform22" android:layout_width="100dp" android:layout_height="100dp" />
+                    <View
+                        android:layout_width="15dp"
+                        android:layout_height="100dp" />
+                    <ImageView
+                        android:id="@+id/rform23" android:layout_width="100dp" android:layout_height="100dp"  />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/register_form_3_layout_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="15dp">
+                    <ImageView
+                        android:id="@+id/rform31"  android:layout_width="100dp" android:layout_height="100dp" />
+                    <View
+                        android:layout_width="15dp"
+                        android:layout_height="100dp" />
+                    <ImageView
+                        android:id="@+id/rform32" android:layout_width="100dp" android:layout_height="100dp" />
+                    <View
+                        android:layout_width="15dp"
+                        android:layout_height="100dp" />
+                    <ImageView
+                        android:id="@+id/rform33" android:layout_width="100dp" android:layout_height="100dp"  />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/register_form_3_layout_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="15dp">
+                    <ImageView
+                        android:id="@+id/rform41"  android:layout_width="wrap_content" android:layout_height="100dp" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"

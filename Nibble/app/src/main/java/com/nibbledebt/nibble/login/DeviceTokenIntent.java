@@ -1,4 +1,4 @@
-package com.nibbledebt.nibble.registration;
+package com.nibbledebt.nibble.login;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -19,12 +19,12 @@ import java.io.IOException;
 /**
  * Created by ralam on 10/7/15.
  */
-public class RegistrationIntentService extends IntentService {
+public class DeviceTokenIntent extends IntentService {
 
-    private static final String TAG = "RegIntentService";
+    private static final String TAG = "registration_intent";
     private static final String[] TOPICS = {"global"};
 
-    public RegistrationIntentService() {
+    public DeviceTokenIntent() {
         super(TAG);
     }
 
@@ -41,7 +41,7 @@ public class RegistrationIntentService extends IntentService {
             String token = instanceID.getToken(getString(R.string.gcm_default_sender_id),
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
             // [END get_token]
-            Log.i(TAG, "GCM Registration Token: " + token);
+            Log.i(TAG, "Device Token: " + token);
 
             // TODO: Implement this method to send any registration to your app's servers.
             sendRegistrationToServer(token);
@@ -55,7 +55,7 @@ public class RegistrationIntentService extends IntentService {
 //            sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, true).apply();
             // [END register_for_gcm]
         } catch (Exception e) {
-            Log.d(TAG, "Failed to complete token refresh", e);
+            Log.d(TAG, "Failed to obtain token for device", e);
             // If an exception happens while fetching the new token or updating our registration data
             // on a third-party server, this ensures that we'll attempt the update at a later time.
 //            sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false).apply();
@@ -74,7 +74,7 @@ public class RegistrationIntentService extends IntentService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) {
-        SecurityContext.getCurrentContext().getSessionMap().put("token", new TokenObject(token));
+        SecurityContext.getCurrentContext().getSessionMap().put("devicetoken", new TokenObject(token));
         // Add custom implementation, as needed.
     }
 
@@ -86,10 +86,10 @@ public class RegistrationIntentService extends IntentService {
      */
     // [START subscribe_topics]
     private void subscribeTopics(String token) throws IOException {
-        GcmPubSub pubSub = GcmPubSub.getInstance(this);
-        for (String topic : TOPICS) {
-            pubSub.subscribe(token, "/topics/" + topic, null);
-        }
+//        GcmPubSub pubSub = GcmPubSub.getInstance(this);
+//        for (String topic : TOPICS) {
+//            pubSub.subscribe(token, "/topics/" + topic, null);
+//        }
     }
     // [END subscribe_topics]
 

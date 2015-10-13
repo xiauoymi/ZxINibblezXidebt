@@ -3,10 +3,13 @@
  */
 package com.nibbledebt.nibble.integration.model;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 /**
  * @author ralam
  *
  */
+@JsonRootName("institutionDetail")
 public class InstitutionDetail {
 	public Institution institution;
 	private LoginForm loginForm;

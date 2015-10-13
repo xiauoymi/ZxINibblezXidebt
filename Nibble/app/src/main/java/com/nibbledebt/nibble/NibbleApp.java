@@ -1,6 +1,12 @@
 package com.nibbledebt.nibble;
 
 import android.app.Application;
+import android.util.Log;
+
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
+
+import java.io.IOException;
 
 /**
  * Created by ralam on 7/14/15.
@@ -8,7 +14,7 @@ import android.app.Application;
 public class NibbleApp extends Application {
     @Override
     public void onCreate() {
-        // The following line triggers the initialization of ACRA
         super.onCreate();
+
     }
 }

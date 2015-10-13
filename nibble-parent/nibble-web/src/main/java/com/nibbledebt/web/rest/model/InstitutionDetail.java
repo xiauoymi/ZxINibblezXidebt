@@ -3,6 +3,7 @@
  */
 package com.nibbledebt.web.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.nibbledebt.integration.model.Institution;
 import com.nibbledebt.integration.model.LoginForm;
 
@@ -10,6 +11,7 @@ import com.nibbledebt.integration.model.LoginForm;
  * @author ralam
  *
  */
+@JsonRootName("institutionDetail")
 public class InstitutionDetail {
 	public Institution institution;
 	private LoginForm loginForm;

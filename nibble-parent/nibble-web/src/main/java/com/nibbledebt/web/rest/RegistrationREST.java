@@ -113,11 +113,11 @@ public class RegistrationREST {
 	@Path("/banks")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
-	public JsonListWrapper<InstitutionDetail> getSupportedBanks() throws ProcessingException, ServiceException{
-		JsonListWrapper<InstitutionDetail> wrapper = new JsonListWrapper<>();
+	public List<InstitutionDetail> getSupportedBanks() throws ProcessingException, ServiceException{
+//		JsonListWrapper<InstitutionDetail> wrapper = new JsonListWrapper<>();
 		List<InstitutionDetail> insts = instService.getSupportedInstitutions();
-		if(insts!=null) wrapper.getItems().addAll(insts);
-		return wrapper;
+//		if(insts!=null) wrapper.getItems().addAll(insts);
+		return insts;
 	}
 	
 	@GET
@@ -128,7 +128,7 @@ public class RegistrationREST {
 	}
 	
 	@GET
-	@Path("/logo/{type}")
+	@Path("/logo/{id}")
 	@Produces("image/*")
 	@Loggable(logLevel=LogLevel.INFO)
 	public Response getBankLogo(@PathParam("id") String id) throws ProcessingException{

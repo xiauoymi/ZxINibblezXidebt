@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 //apply plugin: 'com.google.gms.google-services'
 
 android {
-    ompileSdkVersion 23
-    buildToolsVersion '23.0.1'
+    compileSdkVersion 22
+    buildToolsVersion "23.0.0 rc2"
 
     defaultConfig {
         applicationId "com.nibbledebt.nibble"
@@ -23,18 +23,22 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/license.txt'
         exclude 'META-INF/notice.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
     }
 }
 
 dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.android.support:support-v4:22.2.0'
     compile 'com.android.support:design:22.2.0'
     compile 'com.android.support:recyclerview-v7:22.2.0'
-    compile 'org.apache.httpcomponents:httpclient:4.5.1'1
+    compile 'org.apache.httpcomponents:httpclient:4.5.1'
     compile 'org.springframework.android:spring-android-rest-template:2.0.0.M1'
     compile 'org.codepond:wizardroid:1.3.0'
-    compile 'com.fasterxml.jackson.core:jackson-annotations:2.5.0'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.3.0'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.3.0'
     compile 'org.apache.commons:commons-lang3:3.0'
 }

@@ -1,7 +1,7 @@
 /**
  * Copyright 2015-2016. All rights reserved by Nibbledebt Inc.
  */
-package com.nibbledebt.web.rest.model;
+package com.nibbledebt.nibble.integration.model;
 
 import java.util.ArrayList;
 import java.util.List;

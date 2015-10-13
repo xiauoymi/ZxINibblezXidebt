@@ -1,156 +1,237 @@
-/**
- * 
- */
 package com.nibbledebt.nibble.integration.model;
 
-/**
- * @author alam_home
- *
- */
+import java.util.HashMap;
+import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+		"id",
+		"name",
+		"value",
+		"description",
+		"instructions",
+		"displayOrder",
+		"mask",
+		"valueLengthMin",
+		"valueLengthMax"
+})
 public class LoginField {
 
-	private String id;
-
+	@JsonProperty("id")
+	private Object id;
+	@JsonProperty("name")
 	private String name;
-
-	private String value;
-
+	@JsonProperty("value")
+	private Object value;
+	@JsonProperty("description")
 	private String description;
-
-	private String instructions;
-
+	@JsonProperty("instructions")
+	private Object instructions;
+	@JsonProperty("displayOrder")
 	private Integer displayOrder;
-
+	@JsonProperty("mask")
 	private Boolean mask;
-
+	@JsonProperty("valueLengthMin")
 	private Integer valueLengthMin;
-
+	@JsonProperty("valueLengthMax")
 	private Integer valueLengthMax;
+	@JsonIgnore
+	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
 	/**
-	 * @return the id
+	 *
+	 * @return
+	 * The id
 	 */
-	public String getId() {
+	@JsonProperty("id")
+	public Object getId() {
 		return id;
 	}
 
 	/**
-	 * @param id the id to set
+	 *
+	 * @param id
+	 * The id
 	 */
-	public void setId(String id) {
+	@JsonProperty("id")
+	public void setId(Object id) {
 		this.id = id;
 	}
 
 	/**
-	 * @return the name
+	 *
+	 * @return
+	 * The name
 	 */
+	@JsonProperty("name")
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * @param name the name to set
+	 *
+	 * @param name
+	 * The name
 	 */
+	@JsonProperty("name")
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	/**
-	 * @return the value
+	 *
+	 * @return
+	 * The value
 	 */
-	public String getValue() {
+	@JsonProperty("value")
+	public Object getValue() {
 		return value;
 	}
 
 	/**
-	 * @param value the value to set
+	 *
+	 * @param value
+	 * The value
 	 */
-	public void setValue(String value) {
+	@JsonProperty("value")
+	public void setValue(Object value) {
 		this.value = value;
 	}
 
 	/**
-	 * @return the description
+	 *
+	 * @return
+	 * The description
 	 */
+	@JsonProperty("description")
 	public String getDescription() {
 		return description;
 	}
 
 	/**
-	 * @param description the description to set
+	 *
+	 * @param description
+	 * The description
 	 */
+	@JsonProperty("description")
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
 	/**
-	 * @return the instructions
+	 *
+	 * @return
+	 * The instructions
 	 */
-	public String getInstructions() {
+	@JsonProperty("instructions")
+	public Object getInstructions() {
 		return instructions;
 	}
 
 	/**
-	 * @param instructions the instructions to set
+	 *
+	 * @param instructions
+	 * The instructions
 	 */
-	public void setInstructions(String instructions) {
+	@JsonProperty("instructions")
+	public void setInstructions(Object instructions) {
 		this.instructions = instructions;
 	}
 
 	/**
-	 * @return the displayOrder
+	 *
+	 * @return
+	 * The displayOrder
 	 */
+	@JsonProperty("displayOrder")
 	public Integer getDisplayOrder() {
 		return displayOrder;
 	}
 
 	/**
-	 * @param displayOrder the displayOrder to set
+	 *
+	 * @param displayOrder
+	 * The displayOrder
 	 */
+	@JsonProperty("displayOrder")
 	public void setDisplayOrder(Integer displayOrder) {
 		this.displayOrder = displayOrder;
 	}
 
 	/**
-	 * @return the mask
+	 *
+	 * @return
+	 * The mask
 	 */
+	@JsonProperty("mask")
 	public Boolean getMask() {
 		return mask;
 	}
 
 	/**
-	 * @param mask the mask to set
+	 *
+	 * @param mask
+	 * The mask
 	 */
+	@JsonProperty("mask")
 	public void setMask(Boolean mask) {
 		this.mask = mask;
 	}
 
 	/**
-	 * @return the valueLengthMin
+	 *
+	 * @return
+	 * The valueLengthMin
 	 */
+	@JsonProperty("valueLengthMin")
 	public Integer getValueLengthMin() {
 		return valueLengthMin;
 	}
 
 	/**
-	 * @param valueLengthMin the valueLengthMin to set
+	 *
+	 * @param valueLengthMin
+	 * The valueLengthMin
 	 */
+	@JsonProperty("valueLengthMin")
 	public void setValueLengthMin(Integer valueLengthMin) {
 		this.valueLengthMin = valueLengthMin;
 	}
 
 	/**
-	 * @return the valueLengthMax
+	 *
+	 * @return
+	 * The valueLengthMax
 	 */
+	@JsonProperty("valueLengthMax")
 	public Integer getValueLengthMax() {
 		return valueLengthMax;
 	}
 
 	/**
-	 * @param valueLengthMax the valueLengthMax to set
+	 *
+	 * @param valueLengthMax
+	 * The valueLengthMax
 	 */
+	@JsonProperty("valueLengthMax")
 	public void setValueLengthMax(Integer valueLengthMax) {
 		this.valueLengthMax = valueLengthMax;
 	}
-	
+
+	@JsonAnyGetter
+	public Map<String, Object> getAdditionalProperties() {
+		return this.additionalProperties;
+	}
+
+	@JsonAnySetter
+	public void setAdditionalProperty(String name, Object value) {
+		this.additionalProperties.put(name, value);
+	}
+
 }

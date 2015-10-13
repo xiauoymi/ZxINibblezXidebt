@@ -1,119 +1,132 @@
-/**
- * 
- */
 package com.nibbledebt.nibble.integration.model;
 
 import android.graphics.Bitmap;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import com.fasterxml.jackson.annotation.JsonRootName;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+		"id",
+		"mfa",
+		"name",
+		"products",
+		"fields"
+})
+public class Institution {
 
-/**
- * @author alam_home
- *
- */
-@JsonRootName("institution")
-public class Institution
-{
-    private String id;
+	@JsonProperty("id")
+	private String id;
+	@JsonProperty("mfa")
+	private List<Object> mfa = new ArrayList<Object>();
+	@JsonProperty("name")
+	private String name;
+	@JsonProperty("products")
+	private List<Object> products = new ArrayList<Object>();
+	@JsonProperty("fields")
+	private List<Object> fields = new ArrayList<Object>();
 
-    private String urlLogonApp;
+	@JsonIgnore
+	private Bitmap logo;
+	@JsonIgnore
+	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    private String name;
-
-    private String urlHomeApp;
-
-    private String accountTypeDescription;
-
-    private Bitmap logo;
-
-    /**
-	 * @return the id
+	/**
+	 *
+	 * @return
+	 * The id
 	 */
+	@JsonProperty("id")
 	public String getId() {
 		return id;
 	}
 
-
-
 	/**
-	 * @param id the id to set
+	 *
+	 * @param id
+	 * The id
 	 */
+	@JsonProperty("id")
 	public void setId(String id) {
 		this.id = id;
 	}
 
-
-
 	/**
-	 * @return the urlLogonApp
+	 *
+	 * @return
+	 * The mfa
 	 */
-	public String getUrlLogonApp() {
-		return urlLogonApp;
+	@JsonProperty("mfa")
+	public List<Object> getMfa() {
+		return mfa;
 	}
 
-
-
 	/**
-	 * @param urlLogonApp the urlLogonApp to set
+	 *
+	 * @param mfa
+	 * The mfa
 	 */
-	public void setUrlLogonApp(String urlLogonApp) {
-		this.urlLogonApp = urlLogonApp;
+	@JsonProperty("mfa")
+	public void setMfa(List<Object> mfa) {
+		this.mfa = mfa;
 	}
 
-
-
 	/**
-	 * @return the name
+	 *
+	 * @return
+	 * The name
 	 */
+	@JsonProperty("name")
 	public String getName() {
 		return name;
 	}
 
-
-
 	/**
-	 * @param name the name to set
+	 *
+	 * @param name
+	 * The name
 	 */
+	@JsonProperty("name")
 	public void setName(String name) {
 		this.name = name;
 	}
 
-
-
 	/**
-	 * @return the urlHomeApp
+	 *
+	 * @return
+	 * The products
 	 */
-	public String getUrlHomeApp() {
-		return urlHomeApp;
+	@JsonProperty("products")
+	public List<Object> getProducts() {
+		return products;
 	}
 
-
-
 	/**
-	 * @param urlHomeApp the urlHomeApp to set
+	 *
+	 * @param products
+	 * The products
 	 */
-	public void setUrlHomeApp(String urlHomeApp) {
-		this.urlHomeApp = urlHomeApp;
+	@JsonProperty("products")
+	public void setProducts(List<Object> products) {
+		this.products = products;
 	}
 
-
-
 	/**
-	 * @return the accountTypeDescription
+	 *
+	 * @return
+	 * The fields
 	 */
-	public String getAccountTypeDescription() {
-		return accountTypeDescription;
-	}
-
-
-
-	/**
-	 * @param accountTypeDescription the accountTypeDescription to set
-	 */
-	public void setAccountTypeDescription(String accountTypeDescription) {
-		this.accountTypeDescription = accountTypeDescription;
+	@JsonProperty("fields")
+	public List<Object> getFields() {
+		return fields;
 	}
 
 	public Bitmap getLogo() {
@@ -124,8 +137,24 @@ public class Institution
 		this.logo = logo;
 	}
 
-	@Override
-    public String toString(){
-    	return ToStringBuilder.reflectionToString(this);
-    }
+	/**
+	 *
+	 * @param fields
+	 * The fields
+	 */
+	@JsonProperty("fields")
+	public void setFields(List<Object> fields) {
+		this.fields = fields;
+	}
+
+	@JsonAnyGetter
+	public Map<String, Object> getAdditionalProperties() {
+		return this.additionalProperties;
+	}
+
+	@JsonAnySetter
+	public void setAdditionalProperty(String name, Object value) {
+		this.additionalProperties.put(name, value);
+	}
+
 }
