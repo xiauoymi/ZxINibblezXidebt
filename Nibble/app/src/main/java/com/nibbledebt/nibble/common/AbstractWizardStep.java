@@ -1,6 +1,7 @@
 package com.nibbledebt.nibble.common;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -23,5 +24,10 @@ public class AbstractWizardStep extends WizardStep {
 
     protected void setStepComplete(ImageView view){
         view.setImageResource(R.drawable.register_wizard_status_dot_complete);
+    }
+
+
+    protected final boolean isValidEmail(CharSequence target) {
+        return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 }

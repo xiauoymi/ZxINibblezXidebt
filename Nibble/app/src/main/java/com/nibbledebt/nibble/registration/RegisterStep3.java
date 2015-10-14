@@ -2,9 +2,6 @@ package com.nibbledebt.nibble.registration;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.StateListDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -88,16 +85,7 @@ public class RegisterStep3 extends AbstractWizardStep {
             List<Bank> banks = ((BanksObject)SecurityContext.getCurrentContext().getSessionMap().get("banks")).getData("banks");
             for(int i=0; i<banks.size(); i++){
                 ImageView imageView = (ImageView)view.findViewById(getGridImageViewId(i + 1));
-                StateListDrawable states = new StateListDrawable();
-
                 imageView.setImageBitmap(banks.get(i).getInstitution().getLogo());
-                Drawable normal = new BitmapDrawable(imageView.getResources(), banks.get(i).getInstitution().getLogo());
-
-                Drawable pressed = new BitmapDrawable(imageView.getResources(), banks.get(i).getInstitution().getLogo());
-                pressed.setAlpha(125);
-                states.addState(new int[] {android.R.attr.state_pressed}, pressed);
-                states.addState(new int[]{}, normal);
-                imageView.setImageDrawable(states);
             }
 
 
@@ -124,8 +112,8 @@ public class RegisterStep3 extends AbstractWizardStep {
 
         private void doLoad() throws Exception {
             // The connection URL
-            String banksurl = "http://192.168.56.1:9000/services/rest/banks";
-            String banklogourl = "http://192.168.56.1:9000/services/rest/logo/";
+            String banksurl = "http://192.168.1.14:9000/services/rest/banks";
+            String banklogourl = "http://192.168.1.14:9000/services/rest/logo/";
 
             // Create a new RestTemplate instance
             RestTemplate restTemplate = RestTemplateCreator.getTemplateCreator().getNewTemplate();

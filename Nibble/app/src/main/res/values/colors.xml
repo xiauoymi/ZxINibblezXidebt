@@ -7,5 +7,6 @@
     <color name="nibble_main">#A1C6EA</color>
     <color name="nibble_main_dark">#507DBC</color>
     <color name="nibble_main_light">#BBD1EA</color>
+    <color name="nibble_main_error">#eaa1c6</color>
 
 </resources>
