@@ -1,8 +1,12 @@
 package com.nibbledebt.nibble.registration;
 
+import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +14,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import android.widget.TextView;
 import com.nibbledebt.nibble.R;
 import com.nibbledebt.nibble.common.AbstractWizardStep;
 
@@ -17,22 +22,26 @@ import org.apache.commons.lang3.StringUtils;
 import org.codepond.wizardroid.WizardStep;
 import org.codepond.wizardroid.persistence.ContextVariable;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Created by ralam on 10/4/15.
  */
-public class RegisterStep1 extends AbstractWizardStep {
+public class RegisterStep1 extends AbstractWizardStep{
 
     @ContextVariable
     private String email;
     @ContextVariable
     private String password;
     @ContextVariable
-    private String passwordRepeat;
-    @ContextVariable
     private String firstname;
     @ContextVariable
     private String lastname;
 
+    private Map<String, Boolean> validations = new HashMap<String, Boolean>();
 
     private EditText emailTextBox;
     private EditText passwordTextBox;
@@ -55,10 +64,66 @@ public class RegisterStep1 extends AbstractWizardStep {
         firstnameTextBox = (EditText) v.findViewById(R.id.register_firstname);
         lastnameTextBox = (EditText) v.findViewById(R.id.register_lastname);
 
+        emailTextBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(StringUtils.isNotBlank(s.toString()) ) validateAndBindEmail();
+                if(validations.size() == 4) notifyCompleted();
+            }
+        });
+        passwordTextBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(StringUtils.isNotBlank(s.toString()) ) validateAndBindPassword();
+                if (validations.size() == 4) notifyCompleted();
+            }
+        });
+        passwordRepeatTextBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(StringUtils.isNotBlank(s.toString()) ) validateAndBindPassword();
+                if (validations.size() == 4) notifyCompleted();
+            }
+        });
+        firstnameTextBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(StringUtils.isNotBlank(s.toString()) ) validateAndBindFirstName();
+                if (validations.size() == 4) notifyCompleted();
+            }
+        });
+        lastnameTextBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(StringUtils.isNotBlank(s.toString()) ) validateAndBindLastName();
+                if (validations.size() == 4) notifyCompleted();
+            }
+        });
+
+
         //and set default values by using Context Variables
         emailTextBox.setText(email);
         passwordTextBox.setText(password);
-        passwordRepeatTextBox.setText(passwordRepeat);
         firstnameTextBox.setText(firstname);
         lastnameTextBox.setText(lastname);
 
@@ -70,45 +135,76 @@ public class RegisterStep1 extends AbstractWizardStep {
     public void onExit(int exitCode) {
         switch (exitCode) {
             case WizardStep.EXIT_NEXT:
-                validateAndBindDataFields();
+
                 break;
             case WizardStep.EXIT_PREVIOUS:
                 break;
         }
     }
 
-    private void validateAndBindDataFields(){
+    private boolean validateAndBindEmail(){
         if(!isValidEmail(emailTextBox.getText().toString())){
             setErrorBackground(emailTextBox, "Invalid Email.");
+            return false;
         }else{
             email = emailTextBox.getText().toString();
-        }
-
-        if(StringUtils.isNotBlank(passwordTextBox.getText().toString()) &&
-                passwordTextBox.getText().toString().length()>6){
-            passwordTextBox.setBackground(getResources().getDrawable(R.drawable.nibble_main_textbox_error));
-        }else{
-            password = passwordTextBox.getText().toString();
+            validations.put("email", true);
+            return true;
         }
     }
 
+    private boolean validateAndBindPassword(){
+        if(StringUtils.isNotBlank(passwordTextBox.getText().toString())){
+            if(passwordTextBox.getText().toString().length()<6){
+                setErrorBackground(passwordTextBox, "Password must be at least 6 characters long");
+                return false;
+            }
+            password = passwordTextBox.getText().toString();
+            if(StringUtils.isNotBlank(passwordRepeatTextBox.getText().toString()) &&
+                    StringUtils.equals(passwordTextBox.getText().toString(), passwordRepeatTextBox.getText().toString())){
+                password = passwordRepeatTextBox.getText().toString();
+                validations.put("password", true);
+                return true;
+            }else{
+                setErrorBackground(passwordRepeatTextBox, "Does not match the password.");
+                return false;
+            }
+        }else{
+            setErrorBackground(passwordTextBox, "Password is required.");
+            return false;
+        }
+    }
 
-    private void bindDataFields() {
-        password = passwordTextBox.getText().toString();
-        passwordRepeat = passwordRepeatTextBox.getText().toString();
-        firstname = firstnameTextBox.getText().toString();
-        lastname = lastnameTextBox.getText().toString();
+    private boolean validateAndBindFirstName(){
+        if(StringUtils.isNotBlank(firstnameTextBox.getText().toString())){
+            firstname = firstnameTextBox.getText().toString();
+            validations.put("firstname", true);
+            return true;
+        }else{
+            setErrorBackground(firstnameTextBox, "Last name is required.");
+            return false;
+        }
+
+    }
+
+    private boolean validateAndBindLastName(){
+        if(StringUtils.isNotBlank(lastnameTextBox.getText().toString())){
+            lastname = lastnameTextBox.getText().toString();
+            validations.put("lastname", true);
+            return true;
+        }else{
+            setErrorBackground(lastnameTextBox, "Last name is required.");
+            return false;
+        }
+
     }
 
     private void setErrorBackground(EditText textField, String message){
-        int sdk = android.os.Build.VERSION.SDK_INT;
-        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            emailTextBox.setBackgroundDrawable(getResources().getDrawable(R.drawable.nibble_main_textbox_error));
-        } else {
-            emailTextBox.setBackground(getResources().getDrawable(R.drawable.nibble_main_textbox_error));
-        }
+//        ((StateListDrawable)textField.getBackground()).addState(StateListDrawable.ConstantState);
 
 
         textField.setError(Html.fromHtml("<font color='red'>"+message+"</font>"), getResources().getDrawable(R.drawable.nibble_main_textbox_error));
     }
+
+
 }

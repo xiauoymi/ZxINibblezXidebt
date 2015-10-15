@@ -60,4 +60,7 @@
 
     <string name="gcm_default_sender_id">728820095015</string>
 
+    <string name="banksurl">http://192.168.56.1:9000/services/rest/banks</string>
+    <string name="banklogourl">http://192.168.56.1:9000/services/rest/logo/</string>
+
 </resources>

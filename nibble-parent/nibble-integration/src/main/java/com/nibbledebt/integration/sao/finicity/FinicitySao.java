@@ -37,7 +37,7 @@ public class FinicitySao implements IIntegrationSao{
 			}
 			return institutions;
 		} catch (Exception e) {
-			throw new ServiceException("Error while retrieving the supported institutions from Intuit CAD.", e);
+			throw new ServiceException("Error while retrieving the supported institutions from Finicity.", e);
 		}
 	}
 	
@@ -45,7 +45,7 @@ public class FinicitySao implements IIntegrationSao{
 		try {
 			return integrationMapper.map(finicityClient.getInstitution(institutionIdentifier), Institution.class);
 		} catch (Exception e) {
-			throw new ServiceException("Error while retrieving the supported institutions from Intuit CAD.", e);
+			throw new ServiceException("Error while retrieving the supported institution from Finicity with id:"+institutionIdentifier, e);
 		}
 	}
 	
@@ -53,7 +53,7 @@ public class FinicitySao implements IIntegrationSao{
 		try {			
 			return integrationMapper.map(finicityClient.getInstitutionLoginForm(institutionIdentifier), LoginForm.class);
 		} catch (Exception e) {
-			throw new ServiceException("Error while retrieving the supported institutions from Intuit CAD.", e);
+			throw new ServiceException("Error while retrieving the login form for institution from Finicity with id:"+institutionIdentifier, e);
 		}
 	}
 }

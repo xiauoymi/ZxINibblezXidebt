@@ -112,14 +112,12 @@ public class RegisterStep3 extends AbstractWizardStep {
 
         private void doLoad() throws Exception {
             // The connection URL
-            String banksurl = "http://192.168.1.14:9000/services/rest/banks";
-            String banklogourl = "http://192.168.1.14:9000/services/rest/logo/";
 
             // Create a new RestTemplate instance
             RestTemplate restTemplate = RestTemplateCreator.getTemplateCreator().getNewTemplate();
 
             // Make the HTTP GET request, marshaling the response to a String
-            Bank[] result = restTemplate.getForObject(banksurl, Bank[].class);
+            Bank[] result = restTemplate.getForObject(getString(R.string.banksurl), Bank[].class);
 
             List<Bank> banks = Arrays.asList(result);
             Iterator<Bank> it = Arrays.asList(result).iterator();
@@ -131,7 +129,7 @@ public class RegisterStep3 extends AbstractWizardStep {
 
             while(it.hasNext()){
                 Bank bank = it.next();
-                ResponseEntity<byte[]> response = restTemplate.exchange(banklogourl + bank.getInstitution().getId(), HttpMethod.GET, entity, byte[].class, "1");
+                ResponseEntity<byte[]> response = restTemplate.exchange(getString(R.string.banklogourl) + bank.getInstitution().getId(), HttpMethod.GET, entity, byte[].class, "1");
 
                 if(response.getStatusCode().equals(HttpStatus.OK))
                     bank.getInstitution().setLogo(BitmapFactory.decodeByteArray(response.getBody(), 0, response.getBody().length));

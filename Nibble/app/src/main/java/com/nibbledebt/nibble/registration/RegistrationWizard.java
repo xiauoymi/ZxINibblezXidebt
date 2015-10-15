@@ -19,8 +19,8 @@ public class RegistrationWizard extends RegistrationWizardLayout{
 
 
         return new WizardFlow.Builder()       //then set the layout container for the steps.
-                .addStep(RegisterStep1.class)           //Add your steps in the order you want them
-                .addStep(RegisterStep2.class)           //Add your steps in the order you want them
+                .addStep(RegisterStep1.class, true)           //Add your steps in the order you want them
+                .addStep(RegisterStep2.class, true)           //Add your steps in the order you want them
                 .addStep(RegisterStep3.class)          //to appear and eventually call create()
                 .create();                              //to create the wizard flow.
     }

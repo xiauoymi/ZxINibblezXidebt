@@ -126,7 +126,7 @@ public class InstitutionProcessor {
     }
 	
 //	@Scheduled(cron="0 0 * * * *")
-	@Scheduled(fixedRate=60000000)
+	@Scheduled(fixedRate=86400000)
 	@Loggable(logLevel=LogLevel.INFO)
 	public void populateInstitutions() throws ProcessingException{
 		try {
