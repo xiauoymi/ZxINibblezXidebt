@@ -1,7 +1,7 @@
 /**
  * Copyright 2015-2016. All rights reserved by Nibbledebt Inc.
  */
-package com.nibbledebt.integration.sao.intuit;
+package com.nibbledebt.integration.sao;
 
 import java.util.List;
 

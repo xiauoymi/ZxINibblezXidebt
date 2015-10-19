@@ -1,11 +1,14 @@
 /**
  * Copyright 2015-2016. All rights reserved by Nibbledebt Inc.
  */
-package com.nibbledebt.integration.sao.mandrill;
+package com.nibbledebt.common.notifier;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.nibbledebt.common.error.NotificationException;
+import com.nibbledebt.common.model.Message;
+import com.nibbledebt.common.model.SendOperationRequest;
+import com.nibbledebt.common.model.SendOperationResponse;
+import com.nibbledebt.common.model.To;
+import com.nibbledebt.common.notifier.JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +16,8 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import com.nibbledebt.common.error.NotificationException;
-import com.nibbledebt.integration.model.mandrill.Message;
-import com.nibbledebt.integration.model.mandrill.SendOperationRequest;
-import com.nibbledebt.integration.model.mandrill.SendOperationResponse;
-import com.nibbledebt.integration.model.mandrill.To;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is an extension of the common NetworkService interface to
@@ -42,8 +42,6 @@ public class MandrillSao {
      * Constructor
      * 
      * @param converter
-     * @param apiKey
-     * @param apiUrl
      */
     @Autowired
     public MandrillSao(JsonMessageConverter converter){
@@ -64,7 +62,7 @@ public class MandrillSao {
      * @param subject
      * @param content
      * @param toEmails
-     * @throws NotificationException
+     * @throws com.nibbledebt.common.error.NotificationException
      */
     public void sendEmail(String subject, String content, List<String> toEmails) throws NotificationException{
     	 SendOperationRequest request = new SendOperationRequest();

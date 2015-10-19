@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +28,7 @@ import com.nibbledebt.core.data.model.Field;
 import com.nibbledebt.integration.model.Institution;
 import com.nibbledebt.integration.model.LoginField;
 import com.nibbledebt.integration.model.LoginForm;
-import com.nibbledebt.integration.sao.intuit.IIntegrationSao;
+import com.nibbledebt.integration.sao.IIntegrationSao;
 import com.nibbledebt.web.rest.model.InstitutionDetail;
 
 /**

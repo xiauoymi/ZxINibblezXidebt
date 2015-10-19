@@ -1,12 +1,14 @@
 /**
  * Copyright 2015-2016. All rights reserved by Nibbledebt Inc.
  */
-package com.nibbledebt.integration.sao.mandrill;
+package com.nibbledebt.common.notifier;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.nio.charset.Charset;
-
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -16,22 +18,17 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.charset.Charset;
 
 /**
  * A message converter using Jackson 2.x that will convert incoming and
  * outgoing HTTP/JSON messages into POJOs using Jackson. This can be
  * used with Spring's RestTemplate.
  * 
- * @see RestTemplate
+ * @see org.springframework.web.client.RestTemplate
  * @author Rocky Alam
  *
  */
@@ -56,7 +53,7 @@ public class JsonMessageConverter extends AbstractHttpMessageConverter<Object> i
 
 	/**
 	 * Set the {@code ObjectMapper} for this view. If not set, a default
-	 * {@link ObjectMapper#ObjectMapper() ObjectMapper} is used.
+	 * {@link com.fasterxml.jackson.databind.ObjectMapper#ObjectMapper() ObjectMapper} is used.
 	 * <p>Setting a custom-configured {@code ObjectMapper} is one way to take further control of the JSON
 	 * serialization process. For example, an extended {@link org.codehaus.jackson.map.SerializerFactory}
 	 * can be configured that provides custom serializers for specific types. The other option for refining
@@ -179,8 +176,8 @@ public class JsonMessageConverter extends AbstractHttpMessageConverter<Object> i
 	}
 
 	/**
-	 * Return the Jackson {@link JavaType} for the specified type and context class.
-	 * <p>The default implementation returns {@link TypeFactory#type(java.lang.reflect.Type)}
+	 * Return the Jackson {@link com.fasterxml.jackson.databind.JavaType} for the specified type and context class.
+	 * <p>The default implementation returns {@link com.fasterxml.jackson.databind.type.TypeFactory#type(java.lang.reflect.Type)}
 	 * or {@code TypeFactory.type(type, TypeFactory.type(contextClass))},
 	 * but this can be overridden in subclasses, to allow for custom generic collection handling.
 	 * For instance:

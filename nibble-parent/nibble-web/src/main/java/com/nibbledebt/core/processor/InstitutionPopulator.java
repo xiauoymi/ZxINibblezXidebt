@@ -24,7 +24,7 @@ import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.integration.model.Institution;
 import com.nibbledebt.integration.model.LoginField;
 import com.nibbledebt.integration.model.LoginForm;
-import com.nibbledebt.integration.sao.intuit.IIntegrationSao;
+import com.nibbledebt.integration.sao.IIntegrationSao;
 
 /**
  * @author ralam

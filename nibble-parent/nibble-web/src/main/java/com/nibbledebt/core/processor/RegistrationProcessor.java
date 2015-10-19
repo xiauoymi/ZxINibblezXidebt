@@ -44,7 +44,7 @@ import com.nibbledebt.core.data.model.NibblerRoleType;
 import com.nibbledebt.integration.model.Account;
 import com.nibbledebt.integration.model.LinkResponse;
 import com.nibbledebt.integration.model.MfaResponse;
-import com.nibbledebt.integration.sao.intuit.IIntegrationSao;
+import com.nibbledebt.integration.sao.IIntegrationSao;
 import com.nibbledebt.web.rest.model.NibblerData;
 
 

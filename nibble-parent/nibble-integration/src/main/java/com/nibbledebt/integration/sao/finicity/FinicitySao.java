@@ -7,23 +7,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.nibbledebt.integration.finicity.AccountClient;
 import com.nibbledebt.integration.finicity.model.LoginField;
-import com.nibbledebt.integration.finicity.model.accounts.Accounts;
 import com.nibbledebt.integration.model.Customer;
 import com.nibbledebt.integration.model.DiscoverAccountsResponse;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.integration.finicity.FinicityClient;
 import com.nibbledebt.integration.model.Institution;
 import com.nibbledebt.integration.model.LoginForm;
-import com.nibbledebt.integration.sao.intuit.IIntegrationSao;
+import com.nibbledebt.integration.sao.IIntegrationSao;
 
 /**
  * @author ralam

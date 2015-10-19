@@ -9,7 +9,7 @@ import java.util.List;
 
 import com.nibbledebt.integration.model.DiscoverAccountsResponse;
 import com.nibbledebt.integration.model.LoginField;
-import com.nibbledebt.integration.sao.intuit.IIntegrationSao;
+import com.nibbledebt.integration.sao.IIntegrationSao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;

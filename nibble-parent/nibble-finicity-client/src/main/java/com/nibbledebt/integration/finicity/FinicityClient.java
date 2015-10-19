@@ -35,17 +35,34 @@ public class FinicityClient {
 	
 	@Value("${finicity.cust.url}")
 	private String finicityCustUrl;
-	
+
+    /**
+     * get list of institutions
+     * @return com.nibbledebt.integration.finicity.model.Institutions
+     * @throws FinicityAccessException
+     */
 	@NeedsToken
 	public Institutions getInstitutions() throws FinicityAccessException{
 		return  restClient.getForObject(finicityInstUrl, Institutions.class);
 	}
-	
+
+    /**
+     * get institution by specific id
+     * @param institutionId institution id
+     * @return com.nibbledebt.integration.finicity.model.Institution
+     * @throws FinicityAccessException
+     */
 	@NeedsToken
 	public Institution getInstitution(String institutionId) throws FinicityAccessException{
 		return  restClient.getForObject(finicityInstUrl+institutionId, Institution.class);
 	}
-	
+
+    /**
+     * get institution login form by institution id
+     * @param institutionId institution is
+     * @return com.nibbledebt.integration.finicity.model.LoginForm
+     * @throws FinicityAccessException
+     */
 	@NeedsToken
 	public LoginForm getInstitutionLoginForm(String institutionId) throws FinicityAccessException{
 		return  restClient.getForObject(finicityInstUrl+institutionId+"/loginForm", LoginForm.class);
@@ -55,12 +72,25 @@ public class FinicityClient {
 	public Customer addTestCustomer(String username, String firstName, String lastName) throws FinicityAccessException{
 		return  restClient.postForObject(finicityCustUrl+"testing", new Customer(username, firstName, lastName), Customer.class);
 	}
-	
+
+    /**
+     * Add customer
+     * @param username - customer login
+     * @param firstName - customer first name
+     * @param lastName - customer last name
+     * @return com.nibbledebt.integration.finicity.model.Customer
+     * @throws FinicityAccessException
+     */
 	@NeedsToken
 	public Customer addCustomer(String username, String firstName, String lastName) throws FinicityAccessException{
 		return  restClient.postForObject(finicityCustUrl+"active", new Customer(username, firstName, lastName), Customer.class);
 	}
-	
+
+    /**
+     * delete customer by id
+     * @param customerId - customer id
+     * @throws FinicityAccessException
+     */
 	@NeedsToken
 	public void deleteCustomer(String customerId) throws FinicityAccessException{
 		restClient.delete(finicityCustUrl+customerId);
