@@ -1,12 +1,13 @@
 /**
  * Copyright 2015-2016. All rights reserved by Nibbledebt Inc.
  */
-package com.nibbledebt.common.notifier;
+package com.nibbledebt.core.aspect;
 
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.nibbledebt.common.error.NotificationException;
+import com.nibbledebt.common.logging.LogLevel;
+import com.nibbledebt.common.logging.Loggable;
+import com.nibbledebt.common.notifier.MandrillSao;
+import com.nibbledebt.web.rest.model.NibblerData;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.aspectj.lang.JoinPoint;
@@ -17,11 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.velocity.VelocityEngineFactoryBean;
 
-import com.nibbledebt.common.error.NotificationException;
-import com.nibbledebt.common.logging.LogLevel;
-import com.nibbledebt.common.logging.Loggable;
-import com.nibbledebt.integration.sao.mandrill.MandrillSao;
-import com.nibbledebt.web.rest.model.NibblerData;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ralam1

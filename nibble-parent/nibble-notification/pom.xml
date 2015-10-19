@@ -19,21 +19,4 @@
   	<artifactId>nibble-parent</artifactId>
   	<version>1.0.0</version>
   </parent>
-  <dependencies>
-  	<dependency>
-  		<groupId>com.nibbledebt</groupId>
-  		<artifactId>nibble-integration</artifactId>
-  		<version>1.0.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>com.nibbledebt</groupId>
-  		<artifactId>nibble-common</artifactId>
-  		<version>1.0.0-SNAPSHOT</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>com.nibbledebt</groupId>
-  		<artifactId>nibble-data</artifactId>
-  		<version>1.0.0-SNAPSHOT</version>
-  	</dependency>
-  </dependencies>
 </project>
