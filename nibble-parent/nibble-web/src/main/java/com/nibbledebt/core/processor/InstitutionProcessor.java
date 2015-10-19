@@ -67,7 +67,7 @@ public class InstitutionProcessor {
 					LoginForm loginForm = new LoginForm();
 					institution.setName(inst.getName());
 					institution.setId(inst.getExternalId());
-					institution.setHomeUrl(inst.getHomeUrl());
+					institution.setUrlHomeApp(inst.getHomeUrl());
 					List<LoginField> loginFields = new ArrayList<>();
 					for(Field field : inst.getFields()){
 						LoginField lField = new LoginField();

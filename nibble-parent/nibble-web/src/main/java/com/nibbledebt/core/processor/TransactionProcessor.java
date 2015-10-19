@@ -11,10 +11,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nibbledebt.web.rest.model.Transaction;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -35,9 +35,6 @@ import com.nibbledebt.core.data.model.Location;
 import com.nibbledebt.core.data.model.Nibbler;
 import com.nibbledebt.core.data.model.NibblerAccount;
 import com.nibbledebt.core.data.model.TransactionCategory;
-import com.nibbledebt.integration.model.Transaction;
-import com.nibbledebt.integration.model.TransactionsResponse;
-import com.nibbledebt.integration.sao.intuit.IIntuitSao;
 import com.nibbledebt.web.rest.model.TransactionSummary;
 
 /**
@@ -56,11 +53,6 @@ public class TransactionProcessor extends AbstractProcessor{
 	
 	@Autowired
 	private INibblerAccountDao nibblerAcctDao;
-	
-	
-//	@Autowired
-//	@Qualifier("finicitySao")
-//	private IIntegrationSao integrationSao;
 	
 	@Autowired
 	private ITransactionCategoryDao trxCatDao;

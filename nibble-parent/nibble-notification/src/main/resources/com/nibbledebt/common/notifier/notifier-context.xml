@@ -22,9 +22,5 @@
 		</property>
 		<property name="ignoreUnresolvablePlaceholders" value="true"/>
 	</bean>
-
-    <bean id="velocityEngineFactory" class="org.springframework.ui.velocity.VelocityEngineFactoryBean"
-          p:resourceLoaderPath="classpath:/com/nibbledebt/templates"
-          p:preferFileSystemAccess="false"/>
 	
 </beans>

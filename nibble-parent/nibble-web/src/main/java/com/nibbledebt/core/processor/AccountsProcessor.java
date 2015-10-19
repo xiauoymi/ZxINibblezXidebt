@@ -69,7 +69,7 @@ public class AccountsProcessor extends AbstractProcessor {
 		}
 	}
 
-    public DiscoverAccountsResponse getAccountsForLink(String institutionId,List<LoginField> fields) {
-        integrationSao.getAccounts(getCurrentUser())
-    }
+//    public DiscoverAccountsResponse getAccountsForLink(String institutionId,List<LoginField> fields) {
+//        integrationSao.getAccounts(getCurrentUser())
+//    }
 }

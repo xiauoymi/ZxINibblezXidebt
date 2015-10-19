@@ -55,11 +55,13 @@
 	<import resource="classpath:/com/nibbledebt/tasks/tasks-context.xml"/>
 	<import resource="classpath:/com/nibbledebt/cache/cache-context.xml"/>
 	<import resource="classpath:/com/nibbledebt/data/data-context.xml"/>
-	<import resource="classpath:finicity-integration-context.xml"/>
+	<!--<import resource="classpath:finicity-integration-context.xml"/>-->
 	<import resource="classpath:/com/nibbledebt/external/integration-context.xml"/>
 	<import resource="classpath:/com/nibbledebt/common/notifier/notifier-context.xml"/>
 	
 	<bean id="jacksonProviderFactory" class="com.nibbledebt.common.validator.JacksonJsonProviderFactory" />
+
+
 	
     <jaxrs:server address="/rest" basePackages="com.nibbledebt.web.rest">     	
         <jaxrs:providers>

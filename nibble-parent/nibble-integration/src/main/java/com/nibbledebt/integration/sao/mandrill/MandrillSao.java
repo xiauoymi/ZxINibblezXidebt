@@ -1,7 +1,7 @@
 /**
  * Copyright 2015-2016. All rights reserved by Nibbledebt Inc.
  */
-package com.nibbledebt.common.notifier;
+package com.nibbledebt.integration.sao.mandrill;
 
 import com.nibbledebt.common.error.NotificationException;
 import com.nibbledebt.common.model.Message;
@@ -9,6 +9,7 @@ import com.nibbledebt.common.model.SendOperationRequest;
 import com.nibbledebt.common.model.SendOperationResponse;
 import com.nibbledebt.common.model.To;
 import com.nibbledebt.common.notifier.JsonMessageConverter;
+import com.nibbledebt.integration.sao.IMessageSao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,8 @@ import java.util.List;
  * @author Rocky Alam
  *
  */
-@Component()
-public class MandrillSao {
+@Component("mandrillSao")
+public class MandrillSao implements IMessageSao{
     private static final String FROM_EMAIL = "admin@nibbledebt.com";
 
     private RestTemplate serviceClient;
@@ -40,18 +41,13 @@ public class MandrillSao {
     
     /**
      * Constructor
-     * 
-     * @param converter
+     * @param converter - Message converter
      */
     @Autowired
     public MandrillSao(JsonMessageConverter converter){
     	serviceClient = new RestTemplate();
 		List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
-
-		// Add the Jackson Message converter
 		messageConverters.add(converter);
-
-		// Add the message converters to the restTemplate
 		serviceClient.setMessageConverters(messageConverters);
 		
     }

@@ -26,9 +26,6 @@ import com.nibbledebt.common.validator.Validatable;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.processor.InstitutionProcessor;
 import com.nibbledebt.core.processor.RegistrationProcessor;
-import com.nibbledebt.integration.model.LinkResponse;
-import com.nibbledebt.integration.model.MfaRequest;
-import com.nibbledebt.integration.model.MfaResponse;
 import com.nibbledebt.web.rest.model.InstitutionDetail;
 import com.nibbledebt.web.rest.model.JsonListWrapper;
 import com.nibbledebt.web.rest.model.NibblerData;
@@ -58,25 +55,25 @@ public class RegistrationREST {
 		regService.registerNibbler(nibblerData);
 	}
 	
-	@POST
-	@Path("/registermfa")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Loggable(logLevel=LogLevel.INFO)
-	@Validatable() //TODO - write custom validator
-	public MfaResponse registerMfa(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException{
-		return regService.registerNibblerWithMfa(nibblerData);
-	}
+//	@POST
+//	@Path("/registermfa")
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	@Loggable(logLevel=LogLevel.INFO)
+//	@Validatable() //TODO - write custom validator
+//	public MfaResponse registerMfa(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException{
+//		return regService.registerNibblerWithMfa(nibblerData);
+//	}
 	
-	@POST
-	@Path("/mfacode")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Loggable(logLevel=LogLevel.INFO)
-	@Validatable() //TODO - write custom validator
-	public void sendCode(MfaRequest request) throws ProcessingException, ServiceException{
-		regService.sendMfaCode(request.getAccessToken(), request.getSendMethod());
-	}
+//	@POST
+//	@Path("/mfacode")
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	@Loggable(logLevel=LogLevel.INFO)
+//	@Validatable() //TODO - write custom validator
+//	public void sendCode(MfaRequest request) throws ProcessingException, ServiceException{
+//		regService.sendMfaCode(request.getAccessToken(), request.getSendMethod());
+//	}
 	
 	
 	@POST

@@ -8,6 +8,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import com.nibbledebt.common.notification.Notify;
+import com.nibbledebt.common.notification.NotifyMethod;
+import com.nibbledebt.common.notification.NotifyType;
 import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -18,9 +21,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nibbledebt.common.error.ProcessingException;
-import com.nibbledebt.common.notifier.Notify;
-import com.nibbledebt.common.notifier.NotifyMethod;
-import com.nibbledebt.common.notifier.NotifyType;
 import com.nibbledebt.core.data.dao.INibblerDao;
 import com.nibbledebt.core.data.dao.INibblerDirectoryDao;
 import com.nibbledebt.core.data.dao.INibblerRoleDao;
@@ -107,7 +107,7 @@ public class UsersProcessor extends AbstractProcessor {
 	}
 	
 	@Transactional(isolation=Isolation.READ_COMMITTED)
-	@Notify(notifyMethod=NotifyMethod.EMAIL, notifyType=NotifyType.PASSWORD_RESET)
+	@Notify(notifyMethod= NotifyMethod.EMAIL, notifyType= NotifyType.PASSWORD_RESET)
 	@CacheEvict(value="nibblerCache", key="#username")
 	public void generateResetCode(String username, String resetCode) throws ProcessingException, RepositoryException{
 		

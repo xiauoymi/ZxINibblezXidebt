@@ -6,6 +6,7 @@ package com.nibbledebt.common.security;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nibbledebt.common.model.NibblerData;
 import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -20,7 +21,6 @@ import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.NibblerDirectoryStatus;
-import com.nibbledebt.web.rest.model.NibblerData;
 
 /**
  * @author ralam1

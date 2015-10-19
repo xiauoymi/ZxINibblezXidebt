@@ -35,7 +35,6 @@ import com.nibbledebt.integration.sao.IIntegrationSao;
 public class InstitutionPopulator implements RunnableAsync<Institution>{
 	
 	private static final String[] SUPPORTED_TYPES = {"JP Morgan Chase Bank", "Capital One 360", "Bank of America", "PNC Bank", "Discover Bank", "Bank of America", "U.S. Bank - TrustNow", "USAA Bank", "American Express Credit Card", "BBVA Compass" };
-//	private static final String AGGREGATOR_INTTUIT = "intuit";
 	private static final String AGGREGATOR_FINICITY = "finicity";
 	
 	@Autowired
@@ -66,7 +65,7 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 					inst.setName(instDetail.getName());
 					inst.setExternalId(String.valueOf(instDetail.getId()));
 					inst.setAggregatorName(AGGREGATOR_FINICITY);
-					inst.setHomeUrl(instDetail.getHomeUrl());
+					inst.setHomeUrl(instDetail.getUrlHomeApp());
 					inst.setCreatedTs(new Date());
 					inst.setCreatedUser("system");
 					inst.setIsPrimary((Arrays.asList((SUPPORTED_TYPES)).contains(instDetail.getName()) ? true : false));
@@ -79,8 +78,8 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 				Institution instDetail = integrationSao.getInstitution(String.valueOf(instFromLoop.getId()));
 				LoginForm loginForm = integrationSao.getInstitutionLoginForm(String.valueOf(instFromLoop.getId()));
 				inst.setExternalId(String.valueOf(instDetail.getId()));
-				inst.setHomeUrl(instDetail.getHomeUrl());
-				inst.setPhone(instFromLoop.getPhone());
+				inst.setHomeUrl(instDetail.getUrlHomeApp());
+				inst.setPhone("N/A");
 				inst.setUpdatedTs(new Date());
 				inst.setUpdatedUser("system");
 				inst.setLastSyncedTs(new Date());
