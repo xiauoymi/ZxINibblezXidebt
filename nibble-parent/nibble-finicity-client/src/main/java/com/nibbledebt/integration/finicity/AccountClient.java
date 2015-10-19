@@ -1,5 +1,6 @@
 package com.nibbledebt.integration.finicity;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.nibbledebt.integration.finicity.error.FinicityAccessException;
 import com.nibbledebt.integration.finicity.model.LoginField;
 import com.nibbledebt.integration.finicity.model.accounts.*;
@@ -13,6 +14,7 @@ import java.util.Arrays;
 /**
  * @author a.salachyonok
  */
+@Deprecated
 @Component
 public class AccountClient {
 
@@ -26,16 +28,17 @@ public class AccountClient {
 
     /**
      * Discover customer accounts
-     * @param customerId - customer ID
+     *
+     * @param customerId    - customer ID
      * @param institutionId - institution ID
-     * @param fields - login fields
+     * @param fields        - login fields
      * @return Accounts object or null if MFA
      * @throws FinicityAccessException
      */
 
     @NeedsToken
     public Accounts discoverCustomerAccounts(String customerId, String institutionId,
-                                         LoginField[] fields) throws FinicityAccessException {
+                                             LoginField[] fields) throws FinicityAccessException {
         CustomerAccountsRequest request = new CustomerAccountsRequest();
         request.setFields(fields);
         Accounts accounts = restClient.postForObject(
@@ -45,16 +48,15 @@ public class AccountClient {
     }
 
     /**
-     *
-     * @param customerId - customer Id
+     * @param customerId    - customer Id
      * @param institutionId - institution Id
-     * @param fields - login fields
+     * @param fields        - login fields
      * @return Response Entity. If
      * @throws FinicityAccessException
      */
     @NeedsToken
     public ResponseEntity<String> discoverCustomerAccountsString(String customerId, String institutionId,
-                                             LoginField[] fields) throws FinicityAccessException {
+                                                                 LoginField[] fields) throws FinicityAccessException {
         CustomerAccountsRequest request = new CustomerAccountsRequest();
         request.setFields(fields);
         ResponseEntity<String> entity = restClient.postForEntity(
@@ -63,18 +65,61 @@ public class AccountClient {
         return entity;
     }
 
+    /**
+     * Discover Accounts
+     * @param customerId - customerId
+     * @param institutionId - institutionId
+     * @param fields login fields
+     * @return - Discover Account Response
+     * @throws FinicityAccessException
+     */
+    @NeedsToken
+    public DiscoverAccountsResponse discoverAccounts(String customerId, String institutionId,
+                                                     LoginField[] fields) throws FinicityAccessException {
+        XmlMapper mapper = new XmlMapper();
+        DiscoverAccountsResponse response = new DiscoverAccountsResponse();
+        ResponseEntity<String> entity = discoverCustomerAccountsString(customerId, institutionId, fields);
+        if (entity.getStatusCode() == HttpStatus.OK) {
+            response.setType(MfaType.NON_MFA);
+            try {
+                response.setAccounts(mapper.readValue(entity.getBody(), Accounts.class));
+            } catch (Exception e) {
+                throw new FinicityAccessException(e);
+            }
+        } else if (entity.getStatusCode() == HttpStatus.NON_AUTHORITATIVE_INFORMATION) {
+            MfaChallenges challenges;
+            try {
+                challenges = mapper.readValue(entity.getBody(), TextMfaChallenges.class);
+                response.setType(MfaType.TEXT);
+            } catch (Exception e) {
+                try {
+                    challenges = mapper.readValue(entity.getBody(), ImageMfaChallenges.class);
+                    response.setType(MfaType.IMAGE);
+                } catch (Exception e1) {
+                    try {
+                        challenges = mapper.readValue(entity.getBody(), ImageChoiceMfaChallenges.class);
+                        response.setType(MfaType.IMAGE_CHOOSE);
+                    } catch (Exception e2) {
+                        throw new FinicityAccessException(e2);
+                    }
+                }
+            }
+            response.setMfaChallenges(challenges);
+        }
+        return response;
+    }
+
 
     /**
-     *
-     * @param customerId - customer Id
+     * @param customerId    - customer Id
      * @param institutionId - institution Id
-     * @param fields - login fields
+     * @param fields        - login fields
      * @return Response Entity. If
      * @throws FinicityAccessException
      */
     @NeedsToken
     public ResponseEntity<String> addAllCustomerAccountsString(String customerId, String institutionId,
-                                                                 LoginField[] fields) throws FinicityAccessException {
+                                                               LoginField[] fields) throws FinicityAccessException {
         CustomerAccountsRequest request = new CustomerAccountsRequest();
         request.setFields(fields);
         ResponseEntity<String> entity = restClient.postForEntity(
@@ -84,8 +129,7 @@ public class AccountClient {
     }
 
     /**
-     *
-     * @param customerId - customer Id
+     * @param customerId    - customer Id
      * @param institutionId - institution Id
      * @return Response Entity. If
      * @throws FinicityAccessException
@@ -117,8 +161,7 @@ public class AccountClient {
     }
 
     /**
-     *
-     * @param customerId - customer Id
+     * @param customerId    - customer Id
      * @param institutionId - institution Id
      * @return Response Entity. If
      * @throws FinicityAccessException
@@ -152,8 +195,7 @@ public class AccountClient {
     }
 
     /**
-     *
-     * @param customerId - customer Id
+     * @param customerId    - customer Id
      * @param institutionId - institution Id
      * @return Response Entity. If
      * @throws FinicityAccessException
@@ -172,8 +214,7 @@ public class AccountClient {
 
 
     /**
-     *
-     * @param customerId - customer Id
+     * @param customerId    - customer Id
      * @param institutionId - institution Id
      * @return Response Entity. If
      * @throws FinicityAccessException
@@ -189,5 +230,6 @@ public class AccountClient {
                 HttpMethod.PUT, requestEntity, String.class);
         return entity;
     }
+
 
 }

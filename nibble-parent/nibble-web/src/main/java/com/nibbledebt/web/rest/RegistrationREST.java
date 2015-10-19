@@ -114,9 +114,7 @@ public class RegistrationREST {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
 	public List<InstitutionDetail> getSupportedBanks() throws ProcessingException, ServiceException{
-//		JsonListWrapper<InstitutionDetail> wrapper = new JsonListWrapper<>();
 		List<InstitutionDetail> insts = instService.getSupportedInstitutions();
-//		if(insts!=null) wrapper.getItems().addAll(insts);
 		return insts;
 	}
 	

@@ -7,8 +7,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.nibbledebt.integration.finicity.AccountClient;
+import com.nibbledebt.integration.finicity.model.LoginField;
+import com.nibbledebt.integration.finicity.model.accounts.Accounts;
+import com.nibbledebt.integration.model.Customer;
+import com.nibbledebt.integration.model.DiscoverAccountsResponse;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.nibbledebt.common.error.ServiceException;
@@ -56,4 +64,29 @@ public class FinicitySao implements IIntegrationSao{
 			throw new ServiceException("Error while retrieving the login form for institution from Finicity with id:"+institutionIdentifier, e);
 		}
 	}
+
+    public DiscoverAccountsResponse getAccounts(String customerId, String institutionId,
+                                                com.nibbledebt.integration.model.LoginField[] fields)
+            throws ServiceException {
+        try {
+            LoginField[] loginFields = new LoginField[fields.length];
+            for (int i = 0; i < fields.length; i++) {
+                loginFields[i] = integrationMapper.map(fields[i], LoginField.class);
+            }
+
+            return integrationMapper.map(finicityClient.discoverAccounts(customerId, institutionId,
+                            loginFields),
+                    DiscoverAccountsResponse.class);
+        } catch (Exception e) {
+            throw new ServiceException("Error while retrieving accounts from Finicity", e);
+        }
+    }
+
+    public Customer addCustomer(String userName, String firstName, String lastName) throws ServiceException {
+        try {
+            return integrationMapper.map(finicityClient.addCustomer(userName, firstName, lastName), Customer.class);
+        } catch (Exception e) {
+            throw new ServiceException("Error while creating customer for Finicity", e);
+        }
+    }
 }

@@ -26,11 +26,7 @@ import javax.persistence.Table;
 	@NamedQuery(name="findNibblerByUsername", query="from Nibbler n where n.nibblerDir.username = :username")
 })
 @Entity()
-@Table(	name="nibbler"
-//		uniqueConstraints = {
-//			@UniqueConstraint(columnNames = {"activation_code", ""})
-//		}
-		)
+@Table(	name="nibbler")
 @AttributeOverrides({
 	@AttributeOverride(name="id", column=@Column(name="nibbler_id"))
 })

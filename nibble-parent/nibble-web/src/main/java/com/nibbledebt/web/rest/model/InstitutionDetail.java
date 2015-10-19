@@ -11,6 +11,7 @@ import com.nibbledebt.integration.model.LoginForm;
  * @author ralam
  *
  */
+@Deprecated
 @JsonRootName("institutionDetail")
 public class InstitutionDetail {
 	public Institution institution;

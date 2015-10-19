@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<customer>
+    <id>4969749</id>
+    <createdDate>1443057839</createdDate>
+</customer>
+
+
+<accounts>
+<loginField>
+    <credentials>
+        <id>101732001</id>
+        <name>Banking Userid</name>
+        <value>demo</value>
+        <description/>
+        <instructions/>
+        <displayOrder/>
+        <mask/>
+        <valueLengthMin/>
+        <valueLengthMax/>
+    </credentials>
+    <credentials>
+        <id>101732002</id>
+        <name>Banking Password</name>
+        <value>go</value>
+        <description/>
+        <instructions/>
+        <displayOrder/>
+        <mask/>
+        <valueLengthMin/>
+        <valueLengthMax/>
+    </credentials>
+</loginField>
+</accounts>

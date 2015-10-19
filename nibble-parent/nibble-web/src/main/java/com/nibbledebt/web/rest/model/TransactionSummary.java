@@ -10,6 +10,7 @@ import java.util.List;
  * @author ralam
  *
  */
+@Deprecated
 public class TransactionSummary {
 	private List<Transaction> trxs;
 	private BigDecimal day0total = BigDecimal.ZERO;

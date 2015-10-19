@@ -7,7 +7,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nibbledebt.integration.model.DiscoverAccountsResponse;
+import com.nibbledebt.integration.model.LoginField;
+import com.nibbledebt.integration.sao.intuit.IIntegrationSao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -26,6 +30,12 @@ import com.nibbledebt.web.rest.model.Account;
 public class AccountsProcessor extends AbstractProcessor {
 	@Autowired
 	private INibblerAccountDao nibblerAcctDao;
+
+    @Autowired
+    @Qualifier("finicitySao")
+    private IIntegrationSao integrationSao;
+
+
 	
 	@Transactional(readOnly=true, isolation=Isolation.REPEATABLE_READ)
 	public List<Account> getAccounts() throws RepositoryException{
@@ -58,4 +68,8 @@ public class AccountsProcessor extends AbstractProcessor {
 			nibblerAcctDao.update(acct);
 		}
 	}
+
+    public DiscoverAccountsResponse getAccountsForLink(String institutionId,List<LoginField> fields) {
+        integrationSao.getAccounts(getCurrentUser())
+    }
 }

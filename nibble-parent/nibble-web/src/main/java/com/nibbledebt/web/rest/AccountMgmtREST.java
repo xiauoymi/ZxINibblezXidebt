@@ -87,4 +87,9 @@ public class AccountMgmtREST {
 	public void updateRoundingAccts(List<Long> acctountIds) throws ProcessingException, RepositoryException{
 		accountsProcessor.updateRoundingAccounts(acctountIds);
 	}
+
+
+    public void getInstitutionAccounts() throws ProcessingException, RepositoryException{
+
+    }
 }

@@ -6,13 +6,4 @@ app.controller('LoginCtrl',
         $scope.registerNow = function () {
             $state.go('user.register');
         };
-
-        $scope.login = function () {
-            if ($scope.xtForm.form.$valid) {
-                alert("111111");
-            }
-
-        };
-
-
     });

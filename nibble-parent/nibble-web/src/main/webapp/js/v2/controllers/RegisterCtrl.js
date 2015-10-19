@@ -8,7 +8,7 @@ app.controller('RegisterCtrl',
             $scope.initData = function() {
                 $scope.registration = {};
                 $scope.newuser = {
-                    username: "testUser",
+                    username: "testUser2",
                     password: "QWEqweqwe",
                     repassword: "QWEqweqwe",
                     firstName: "John",
@@ -96,10 +96,10 @@ app.controller('RegisterCtrl',
              */
             $scope.linkAccount = function() {
                 accountFactory.getInstitutions().success(function(data) {
-                    var items = data.items;
+                    var items = data;
                     for (var i=0; i<items.length; i++) {
                         items[i].institution.logoUrl = NibbleUtils.getServicesUrl() + "/rest/logo/" +
-                        window.encodeURIComponent(items[i].institution.name);
+                        window.encodeURIComponent(items[i].institution.id);
                     }
                     $scope.banks = items;
                     $scope.registration.condition = "linkAccount";

@@ -80,6 +80,7 @@ public class InstitutionProcessor {
 						lField.setInstructions(field.getInstruction());
 						lField.setValueLengthMax(field.getValidationMaxLength());
 						lField.setValueLengthMin(field.getValidationMinLength());
+                        lField.setId(String.valueOf(field.getId()));
 						loginFields.add(lField);
 					}
 					loginForm.setLoginField(loginFields);
@@ -126,7 +127,7 @@ public class InstitutionProcessor {
     }
 	
 //	@Scheduled(cron="0 0 * * * *")
-	@Scheduled(fixedRate=86400000)
+//	@Scheduled(fixedRate=86400000)
 	@Loggable(logLevel=LogLevel.INFO)
 	public void populateInstitutions() throws ProcessingException{
 		try {

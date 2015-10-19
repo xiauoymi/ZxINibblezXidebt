@@ -5,34 +5,46 @@ package com.nibbledebt.app;
 
 import java.io.File;
 
+import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 
 /**
- * 
  * This is the main class that runs the embedded tomcat container to
  * run this web application.
- * 
- * @author ralam1
  *
+ * @author ralam1
  */
 public class TomcatMain {
-	public static void main(String[] args) throws Exception {
-		  String webappDirLocation = "src/main/webapp/";
-	      Tomcat tomcat = new Tomcat();
+    public static void main(String[] args) throws Exception {
+        String webappDirLocation = "nibble-web/src/main/webapp/";
+        Tomcat tomcat = new Tomcat();
 
-	      //The port that we should run on can be set into an environment variable
-	      //Look for that variable and default to 8080 if it isn't there.
-	      String webPort = System.getenv("PORT");
-	      if(webPort == null || webPort.isEmpty()) {
-	          webPort = "9000";
-	      }
+        //The port that we should run on can be set into an environment variable
+        //Look for that variable and default to 8080 if it isn't there.
+        String webPort = System.getenv("PORT");
+        if (webPort == null || webPort.isEmpty()) {
+            webPort = "9000";
+        }
 
-	      tomcat.setPort(Integer.valueOf(webPort));
+        tomcat.setPort(Integer.valueOf(webPort));
 
-	      tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
-	      System.out.println("configuring app with basedir: " + new File("./" + webappDirLocation).getAbsolutePath());
+        tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
+        System.out.println("configuring app with basedir: " + new File("./" + webappDirLocation).getAbsolutePath());
 
-	      tomcat.start();
-	      tomcat.getServer().await();
-	  }
+//        Connector httpsConnector = new Connector();
+//        httpsConnector.setPort(443);
+//        httpsConnector.setSecure(true);
+//        httpsConnector.setScheme("https");
+//        httpsConnector.setAttribute("keyAlias", "selfsigned");
+//        httpsConnector.setAttribute("keystorePass", "Antoshik169corel");
+//        httpsConnector.setAttribute("keystoreFile", "/Users/antonsalachyonok1/work/private/keystore.jks");
+//        httpsConnector.setAttribute("clientAuth", "false");
+//        httpsConnector.setAttribute("sslProtocol", "TLS");
+//        httpsConnector.setAttribute("SSLEnabled", true);
+//
+//        tomcat.setConnector(httpsConnector);
+//        tomcat.getService().addConnector(httpsConnector);
+        tomcat.start();
+        tomcat.getServer().await();
+    }
 }

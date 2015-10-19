@@ -10,6 +10,7 @@ import java.util.Date;
  * @author ralam
  *
  */
+@Deprecated
 public class Transaction {
 	private String trxId;
 	private String institutionName;

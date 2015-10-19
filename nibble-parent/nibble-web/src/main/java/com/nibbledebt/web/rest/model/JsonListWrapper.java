@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
  * @author ralam1
  *
  */
+@Deprecated
 @JsonRootName("response")
 public class JsonListWrapper<T> {
 	private List<T> items;

@@ -9,6 +9,7 @@ import java.math.BigDecimal;
  * @author ralam
  *
  */
+@Deprecated
 public class Account {
 	private Long accountId;
 	private String accountNumber;
