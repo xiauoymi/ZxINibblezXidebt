@@ -23,7 +23,7 @@
     <string name="prompt_address1">Address Line 1</string>
     <string name="prompt_address2">Address Line 2</string>
     <string name="prompt_city">City</string>
-    <string name="prompt_state">State</string>
+    <string name="prompt_state">Pick a State</string>
     <string name="prompt_zip">Zip Code</string>
     <string name="prompt_phone">Phone Number</string>
     <string name="prompt_email">    Email</string>
@@ -62,5 +62,59 @@
 
     <string name="banksurl">http://192.168.56.1:9000/services/rest/banks</string>
     <string name="banklogourl">http://192.168.56.1:9000/services/rest/logo/</string>
+
+    <string-array name="us_states_list">
+        <item>Alabama</item>
+        <item>Alaska</item>
+        <item>Arizona</item>
+        <item>Arkansas</item>
+        <item>California</item>
+        <item>Colorado</item>
+        <item>Connecticut</item>
+        <item>Delaware</item>
+        <item>Florida</item>
+        <item>Georgia</item>
+        <item>Hawaii</item>
+        <item>Idaho</item>
+        <item>Illinois</item>
+        <item>Indiana</item>
+        <item>Iowa</item>
+        <item>Kansas</item>
+        <item>Kentucky</item>
+        <item>Louisiana</item>
+        <item>Maine</item>
+        <item>Maryland</item>
+        <item>Massachusetts</item>
+        <item>Michigan</item>
+        <item>Minnesota</item>
+        <item>Mississippi</item>
+        <item>Missouri</item>
+        <item>Montana</item>
+        <item>Nebraska</item>
+        <item>Nevada</item>
+        <item>New Hampshire</item>
+        <item>New Jersey</item>
+        <item>New Mexico</item>
+        <item>New York</item>
+        <item>North Carolina</item>
+        <item>North Dakota</item>
+        <item>Ohio</item>
+        <item>Oklahoma</item>
+        <item>Oregon</item>
+        <item>Pennsylvania</item>
+        <item>Rhode Island</item>
+        <item>South Carolina</item>
+        <item>South Dakota</item>
+        <item>Tenessee</item>
+        <item>Texas</item>
+        <item>Utah</item>
+        <item>Vermont</item>
+        <item>Virginia</item>
+        <item>Washington</item>
+        <item>West Virginia</item>
+        <item>Wisconsin</item>
+        <item>Wyoming</item>
+
+    </string-array>
 
 </resources>

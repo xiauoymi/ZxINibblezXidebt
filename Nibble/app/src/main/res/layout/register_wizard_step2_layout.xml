@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
         android:layout_height="match_parent" android:gravity="center_vertical|center_horizontal"
@@ -79,18 +80,28 @@
                             android:paddingLeft="15dp"
                             android:textColor="#FFFFFF"  />
 
-                        <EditText android:id="@+id/register_state" android:layout_width="match_parent"
-                            android:layout_height="wrap_content" android:hint="@string/prompt_state"
-                            android:inputType="text" android:drawablePadding="15dp"
-                            android:maxLines="1" android:singleLine="true"
-                            android:layout_marginBottom="10dp"
-                            android:textColorHint="#B3FFFFFF"
-                            android:paddingTop="5dp"
-                            android:paddingBottom="5dp"
-                            android:background="@drawable/nibble_main_textbox"
-                            android:drawableLeft="@drawable/ic_person_white_24dp"
-                            android:paddingLeft="15dp"
-                            android:textColor="#FFFFFF"  />
+                        <Spinner
+                                android:id="@+id/register_state"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:paddingStart="15dp"
+                                android:entries="@array/us_states_list"
+                                android:scrollbars="none" />
+
+
+                        <!--<EditText android:id="@+id/register_state" android:layout_width="match_parent"-->
+                            <!--android:layout_height="wrap_content" android:hint="@string/prompt_state"-->
+                            <!--android:inputType="text" android:drawablePadding="15dp"-->
+                            <!--android:maxLines="1" android:singleLine="true"-->
+                            <!--android:layout_marginBottom="10dp"-->
+                            <!--android:textColorHint="#B3FFFFFF"-->
+                            <!--android:paddingTop="5dp"-->
+                            <!--android:paddingBottom="5dp"-->
+                            <!--android:background="@drawable/nibble_main_textbox"-->
+                            <!--android:drawableLeft="@drawable/ic_person_white_24dp"-->
+                            <!--android:paddingLeft="15dp"-->
+                            <!--android:textColor="#FFFFFF"  />-->
 
                         <EditText android:id="@+id/register_zip" android:layout_width="match_parent"
                             android:layout_height="wrap_content" android:hint="@string/prompt_zip"

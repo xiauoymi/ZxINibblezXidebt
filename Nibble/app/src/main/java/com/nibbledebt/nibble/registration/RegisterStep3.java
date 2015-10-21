@@ -2,9 +2,15 @@ package com.nibbledebt.nibble.registration;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
@@ -19,6 +25,7 @@ import com.nibbledebt.nibble.security.BanksObject;
 import com.nibbledebt.nibble.security.SecurityContext;
 import com.nibbledebt.nibble.security.SessionObject;
 
+import org.codepond.wizardroid.persistence.ContextVariable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -38,7 +45,10 @@ import java.util.List;
  * Created by ralam on 10/4/15.
  */
 public class RegisterStep3 extends AbstractWizardStep {
-    private SupportedAccountsTask saTask;
+    private SupportedBanksTask saTask;
+
+    @ContextVariable
+    private String companyid;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,7 +63,7 @@ public class RegisterStep3 extends AbstractWizardStep {
         setCurrentStepAnimation(v.getContext(), R.anim.dot_pulse, (ImageView) v.findViewById(R.id.animated_dot_3));
 
         // load supported accounts
-        saTask = new SupportedAccountsTask();
+        saTask = new SupportedBanksTask();
         saTask.setView(v);
         saTask.execute();
 
@@ -61,7 +71,7 @@ public class RegisterStep3 extends AbstractWizardStep {
         return v;
     }
 
-    private class SupportedAccountsTask extends AsyncTask<String, Void, Boolean> {
+    private class SupportedBanksTask extends AsyncTask<String, Void, Boolean> {
         private View view;
 
         public void setView(View view){
@@ -84,8 +94,38 @@ public class RegisterStep3 extends AbstractWizardStep {
         protected void onPostExecute(Boolean loginSuccessful) {
             List<Bank> banks = ((BanksObject)SecurityContext.getCurrentContext().getSessionMap().get("banks")).getData("banks");
             for(int i=0; i<banks.size(); i++){
-                ImageView imageView = (ImageView)view.findViewById(getGridImageViewId(i + 1));
-                imageView.setImageBitmap(banks.get(i).getInstitution().getLogo());
+                final ImageView imageView = (ImageView)view.findViewById(getGridImageViewId(i + 1));
+//                imageView.setImageBitmap(banks.get(i).getInstitution().getLogo());
+
+                Drawable drawable = new BitmapDrawable(getResources(), banks.get(i).getInstitution().getLogo());
+                imageView.setBackground(drawable);
+                imageView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(v!=null && v instanceof ImageView) {
+                            switch (event.getAction()) {
+                                case MotionEvent.ACTION_DOWN:
+                                    v.getBackground().setAlpha(100);
+                                    v.invalidate();
+                                    break;
+
+                                case MotionEvent.ACTION_UP:
+                                case MotionEvent.ACTION_CANCEL: {
+                                    v.getBackground().setAlpha(255);
+                                    v.invalidate();
+                                    break;
+                                }
+                            }
+                        }
+                        return false;
+                    }
+                });
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
             }
 
 
@@ -154,5 +194,9 @@ public class RegisterStep3 extends AbstractWizardStep {
                 default : return R.id.rform41;
             }
         }
+    }
+
+    protected Boolean hasAllRequiredFields(){
+        return true;
     }
 }

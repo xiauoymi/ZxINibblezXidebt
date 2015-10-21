@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.nibbledebt.nibble.R;
 import com.nibbledebt.nibble.common.AbstractWizardStep;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codepond.wizardroid.WizardStep;
 import org.codepond.wizardroid.persistence.ContextVariable;
@@ -72,7 +73,8 @@ public class RegisterStep1 extends AbstractWizardStep{
             @Override
             public void afterTextChanged(Editable s) {
                 if(StringUtils.isNotBlank(s.toString()) ) validateAndBindEmail();
-                if(validations.size() == 4) notifyCompleted();
+                if(hasAllRequiredFields()) notifyCompleted();
+                else notifyIncomplete();
             }
         });
         passwordTextBox.addTextChangedListener(new TextWatcher() {
@@ -83,7 +85,8 @@ public class RegisterStep1 extends AbstractWizardStep{
             @Override
             public void afterTextChanged(Editable s) {
                 if(StringUtils.isNotBlank(s.toString()) ) validateAndBindPassword();
-                if (validations.size() == 4) notifyCompleted();
+                if (hasAllRequiredFields()) notifyCompleted();
+                else notifyIncomplete();
             }
         });
         passwordRepeatTextBox.addTextChangedListener(new TextWatcher() {
@@ -94,7 +97,8 @@ public class RegisterStep1 extends AbstractWizardStep{
             @Override
             public void afterTextChanged(Editable s) {
                 if(StringUtils.isNotBlank(s.toString()) ) validateAndBindPassword();
-                if (validations.size() == 4) notifyCompleted();
+                if (hasAllRequiredFields()) notifyCompleted();
+                else notifyIncomplete();
             }
         });
         firstnameTextBox.addTextChangedListener(new TextWatcher() {
@@ -105,7 +109,8 @@ public class RegisterStep1 extends AbstractWizardStep{
             @Override
             public void afterTextChanged(Editable s) {
                 if(StringUtils.isNotBlank(s.toString()) ) validateAndBindFirstName();
-                if (validations.size() == 4) notifyCompleted();
+                if (hasAllRequiredFields()) notifyCompleted();
+                else notifyIncomplete();
             }
         });
         lastnameTextBox.addTextChangedListener(new TextWatcher() {
@@ -116,7 +121,8 @@ public class RegisterStep1 extends AbstractWizardStep{
             @Override
             public void afterTextChanged(Editable s) {
                 if(StringUtils.isNotBlank(s.toString()) ) validateAndBindLastName();
-                if (validations.size() == 4) notifyCompleted();
+                if (hasAllRequiredFields()) notifyCompleted();
+                else notifyIncomplete();
             }
         });
 
@@ -126,6 +132,8 @@ public class RegisterStep1 extends AbstractWizardStep{
         passwordTextBox.setText(password);
         firstnameTextBox.setText(firstname);
         lastnameTextBox.setText(lastname);
+
+        notifyCompleted();
 
         // return the view
         return v;
@@ -199,12 +207,14 @@ public class RegisterStep1 extends AbstractWizardStep{
 
     }
 
-    private void setErrorBackground(EditText textField, String message){
-//        ((StateListDrawable)textField.getBackground()).addState(StateListDrawable.ConstantState);
-
-
-        textField.setError(Html.fromHtml("<font color='red'>"+message+"</font>"), getResources().getDrawable(R.drawable.nibble_main_textbox_error));
+    protected Boolean hasAllRequiredFields(){
+        if(BooleanUtils.isTrue(validations.get("email")) &&
+                BooleanUtils.isTrue(validations.get("password"))  &&
+                BooleanUtils.isTrue(validations.get("firstname")) &&
+                BooleanUtils.isTrue(validations.get("lastname"))) return true;
+        else return false;
     }
+
 
 
 }
