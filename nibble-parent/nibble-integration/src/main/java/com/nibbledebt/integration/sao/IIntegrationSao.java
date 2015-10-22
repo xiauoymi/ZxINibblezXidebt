@@ -16,7 +16,7 @@ public interface IIntegrationSao {
 	public List<Institution> getInstitutions() throws ServiceException;
 	public Institution getInstitution(String institutionIdentifier) throws ServiceException;
 	public LoginForm getInstitutionLoginForm(String institutionIdentifier) throws ServiceException;
-    public DiscoverAccountsResponse getAccounts(String customerId, String institutionId,
+    public DiscoverAccountsResponse getAccounts(String customerId, Long institutionId,
                                                 LoginField[] fields) throws ServiceException;
     public Customer addCustomer(String userName, String firstName, String lastName) throws ServiceException;
 

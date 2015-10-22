@@ -5,14 +5,17 @@ package com.nibbledebt.core.processor;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import com.nibbledebt.common.notification.Notify;
 import com.nibbledebt.common.notification.NotifyMethod;
 import com.nibbledebt.common.notification.NotifyType;
 import com.nibbledebt.integration.model.Customer;
+import com.nibbledebt.integration.model.DiscoverAccountsResponse;
+import com.nibbledebt.integration.model.LoginField;
+import com.nibbledebt.web.rest.model.AccountModel;
+import com.nibbledebt.web.rest.model.RegisterNibblerRequest;
+import com.nibbledebt.web.rest.model.RegisterNibblerResponse;
 import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -118,32 +121,44 @@ public class RegistrationProcessor extends AbstractProcessor {
     /**
      * Returns a null if no MFA is required, otherwise returns the details of the MFA challenge.
      *
-     * @param nibblerData
-     * @return
+     * @param request - Register nibbler data
+     * @return - Register nibbler response
      * @throws ProcessingException
      * @throws ServiceException
      */
     @Transactional(isolation = Isolation.READ_COMMITTED)
     @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_CREATED)
-    public void registerNibbler(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException {
-        Customer customer = integrationSao.addCustomer(nibblerData.getUsername(), nibblerData.getFirstName(), nibblerData.getLastName());
-        register(nibblerData, customer.getId());
-//        }
-//		LinkResponse resp = plaidSao.linkAccount(nibblerData.getInstUsername(), 
-//				nibblerData.getInstPassword(), 
-//				nibblerData.getInstPin(), 
-//				nibblerData.getInstitution());	
-//		if(resp!=null){
-//			register(nibblerData, resp.getAccessToken());
-//			try {
-//				updateAccount(nibblerData, resp);
-//			} catch (ParseException e) {
-//				throw new ProcessingException("Error ocurred while parsing a date." , e);
-//			}
-//			return resp;
-//		}else{
-//			throw new ProcessingException("There was an issue trying to link the account. Plaid did not respond as expected.");
-//		}	
+    public RegisterNibblerResponse registerNibbler(RegisterNibblerRequest request) throws ProcessingException, ServiceException, RepositoryException {
+        Customer customer = integrationSao.addCustomer(request.getUsername(), request.getFirstName(), request.getLastName());
+        register(request, customer.getId());
+        DiscoverAccountsResponse discoverAccountsResponse;
+        if (request.getLoginForm() != null) {
+            discoverAccountsResponse =
+                    integrationSao.getAccounts(customer.getId(), Long.valueOf(request.getLoginForm().getInstitutionId()),
+                            request.getLoginForm().getLoginField().toArray(new LoginField[]{}));
+        } else {
+            discoverAccountsResponse = new DiscoverAccountsResponse();
+        }
+        RegisterNibblerResponse response = new RegisterNibblerResponse();
+        if (discoverAccountsResponse.getAccounts() != null) {
+            response.setHasMfa(false);
+            response.setAccounts(new ArrayList<AccountModel>());
+            for (Account acc : discoverAccountsResponse.getAccounts().getAccount()) {
+                response.getAccounts().add(convert2rest(acc));
+            }
+        }
+        return response;
+    }
+
+    private AccountModel convert2rest(Account account) {
+        AccountModel model = new AccountModel();
+        model.setExternalId(account.getId());
+        model.setAccountNumber(account.getNumber());
+        model.setAccountType(account.getType());
+        model.setBalance(account.getBalance());
+        model.setAvailable(account.getBalance());
+        model.setInstitutionName(account.getInstitutionId());
+        return model;
     }
 
     /**
@@ -279,40 +294,39 @@ public class RegistrationProcessor extends AbstractProcessor {
     }
 
 
-    private void register(NibblerData nibblerData,
-                          String accessToken) throws ProcessingException, RepositoryException {
-        if (accessToken == null) {
-            throw new ProcessingException("There was an issue trying to link the account. Plaid did not respond as expected.");
+    private void register(RegisterNibblerRequest request,
+                          String customerId) throws ProcessingException, RepositoryException {
+        if (customerId == null) {
+            throw new ProcessingException("There was an issue trying to link the account. Finicity did not respond as expected.");
         }
 
         Nibbler nibbler = new Nibbler();
         NibblerDirectory nibblerDir = new NibblerDirectory();
 
 
-        setCreated(nibbler, nibblerData.getUsername());
-        setCreated(nibblerDir, nibblerData.getUsername());
+        setCreated(nibbler, request.getUsername());
+        setCreated(nibblerDir, request.getUsername());
 
-        nibbler.setExtAccessToken(accessToken);
+        nibbler.setExtAccessToken(customerId);
 
-        nibbler.setFirstName(nibblerData.getFirstName());
-        nibbler.setLastName(nibblerData.getLastName());
-        nibbler.setAddressLine1(nibblerData.getAddress1());
-        nibbler.setAddressLine2(nibblerData.getAddress2());
-        nibbler.setCity(nibblerData.getCity());
-        nibbler.setState(nibblerData.getState());
-        nibbler.setZip(nibblerData.getZip());
-        nibblerDir.setUsername(nibblerData.getUsername());
+        nibbler.setFirstName(request.getFirstName());
+        nibbler.setLastName(request.getLastName());
+        nibbler.setAddressLine1(request.getAddress1());
+        nibbler.setAddressLine2(request.getAddress2());
+        nibbler.setCity(request.getCity());
+        nibbler.setState(request.getState());
+        nibbler.setZip(request.getZip());
+        nibblerDir.setUsername(request.getUsername());
         nibblerDir.setPassword(
                 encoder.encodePassword(
-                        String.valueOf(nibblerData.getPassword()),
+                        String.valueOf(request.getPassword()),
                         salt));
         nibblerDir.setStatus(NibblerDirectoryStatus.CREATED.name());
 
         String actCode = UUID.randomUUID().toString();
         nibblerDir.setActivationCode(actCode);
-        nibblerData.setActivationCode(actCode);
-        nibbler.setPhone(nibblerData.getPhone());
-        nibbler.setEmail(nibblerData.getEmail());
+        nibbler.setPhone(request.getPhone());
+        nibbler.setEmail(request.getEmail());
 
         nibbler.setNibblerDir(nibblerDir);
         nibblerDir.setNibbler(nibbler);
@@ -320,7 +334,7 @@ public class RegistrationProcessor extends AbstractProcessor {
         NibblerPreference prefs = new NibblerPreference();
         prefs.setNibbler(nibbler);
         prefs.setWeeklyTargetAmount(new BigDecimal("9.99"));
-        setCreated(prefs, nibblerData.getUsername());
+        setCreated(prefs, request.getUsername());
         nibbler.setNibblerPreferences(prefs);
         nibblerDao.create(nibbler);
     }

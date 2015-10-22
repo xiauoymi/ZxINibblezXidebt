@@ -57,7 +57,7 @@ public class NibblerData {
     @JsonProperty("send_method")
     private String sendMethod;
 
-    private List<Account> accounts = new ArrayList<>();
+    private List<AccountModel> accounts = new ArrayList<>();
 
     private List<String> roles = new ArrayList<>();
 
@@ -432,7 +432,7 @@ public class NibblerData {
     /**
      * @return the accounts
      */
-    public List<Account> getAccounts() {
+    public List<AccountModel> getAccounts() {
         return accounts;
     }
 
@@ -440,7 +440,7 @@ public class NibblerData {
     /**
      * @param accounts the accounts to set
      */
-    public void setAccounts(List<Account> accounts) {
+    public void setAccounts(List<AccountModel> accounts) {
         this.accounts = accounts;
     }
 

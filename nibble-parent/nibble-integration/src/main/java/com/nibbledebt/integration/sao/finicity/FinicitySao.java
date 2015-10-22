@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.nibbledebt.core.data.dao.InstitutionDao;
 import com.nibbledebt.integration.finicity.model.LoginField;
 import com.nibbledebt.integration.model.Customer;
 import com.nibbledebt.integration.model.DiscoverAccountsResponse;
@@ -31,6 +32,9 @@ public class FinicitySao implements IIntegrationSao{
 	
 	@Autowired
 	private FinicityClient finicityClient;
+
+    @Autowired
+    private InstitutionDao institutionDao;
 	
 	public List<Institution> getInstitutions() throws ServiceException {
 		List<Institution> institutions = new ArrayList<>();
@@ -60,7 +64,7 @@ public class FinicitySao implements IIntegrationSao{
 		}
 	}
 
-    public DiscoverAccountsResponse getAccounts(String customerId, String institutionId,
+    public DiscoverAccountsResponse getAccounts(String customerId, Long institutionId,
                                                 com.nibbledebt.integration.model.LoginField[] fields)
             throws ServiceException {
         try {
@@ -69,9 +73,11 @@ public class FinicitySao implements IIntegrationSao{
                 loginFields[i] = integrationMapper.map(fields[i], LoginField.class);
             }
 
-            return integrationMapper.map(finicityClient.discoverAccounts(customerId, institutionId,
-                            loginFields),
-                    DiscoverAccountsResponse.class);
+//            com.nibbledebt.core.data.model.Institution institution = institutionDao.findOne(institutionId);
+            DiscoverAccountsResponse response = integrationMapper.map(finicityClient.discoverAccounts(customerId, String.valueOf(institutionId),
+                            loginFields), DiscoverAccountsResponse.class);
+
+            return response;
         } catch (Exception e) {
             throw new ServiceException("Error while retrieving accounts from Finicity", e);
         }
@@ -79,7 +85,9 @@ public class FinicitySao implements IIntegrationSao{
 
     public Customer addCustomer(String userName, String firstName, String lastName) throws ServiceException {
         try {
-            return integrationMapper.map(finicityClient.addCustomer(userName, firstName, lastName), Customer.class);
+            //TODO:asa change when switch to prod
+//            return integrationMapper.map(finicityClient.addCustomer(userName, firstName, lastName), Customer.class);
+            return integrationMapper.map(finicityClient.addTestCustomer(userName, firstName, lastName), Customer.class);
         } catch (Exception e) {
             throw new ServiceException("Error while creating customer for Finicity", e);
         }

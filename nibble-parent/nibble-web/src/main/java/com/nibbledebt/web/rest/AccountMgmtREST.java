@@ -25,7 +25,7 @@ import com.nibbledebt.common.security.MemberDetails;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.processor.AccountsProcessor;
 import com.nibbledebt.core.processor.TransactionProcessor;
-import com.nibbledebt.web.rest.model.Account;
+import com.nibbledebt.web.rest.model.AccountModel;
 import com.nibbledebt.web.rest.model.JsonListWrapper;
 import com.nibbledebt.web.rest.model.TransactionSummary;
 
@@ -55,8 +55,8 @@ public class AccountMgmtREST {
 	@Path("/useraccounts")
 	@Loggable(logLevel=LogLevel.INFO)
 	@PreAuthorize("hasRole('nibbler_level_1')")
-	public JsonListWrapper<Account> getUserAccounts() throws ProcessingException, RepositoryException{
-		JsonListWrapper<Account> wrapper = new JsonListWrapper<>();
+	public JsonListWrapper<AccountModel> getUserAccounts() throws ProcessingException, RepositoryException{
+		JsonListWrapper<AccountModel> wrapper = new JsonListWrapper<>();
 		wrapper.setItems(accountsProcessor.getAccounts());
 		return wrapper;
 	}

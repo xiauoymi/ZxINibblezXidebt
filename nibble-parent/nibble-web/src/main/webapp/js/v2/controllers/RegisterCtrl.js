@@ -127,6 +127,11 @@ app.controller('RegisterCtrl',
                 nibbler.email = $scope.newuser.email;
                 nibbler.phone = $scope.newuser.phone;
                 nibbler.url = NibbleUtils.getBaseUrl();
+                if ($scope.selected != undefined) {
+                    nibbler.loginForm = {};
+                    nibbler.loginForm.institutionId = $scope.selected.institution.id;
+                    nibbler.loginForm.loginField = $scope.selected.loginForm.loginField;
+                }
 
                 accountFactory.registerNibbler(nibbler).success(function(data){
                     console.log(data);

@@ -3,7 +3,7 @@ package com.nibbledebt.integration.model;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.nibbledebt.integration.finicity.model.accounts.Account;
+import com.nibbledebt.integration.model.Account;
 
 /**
  * @author a.salachyonok

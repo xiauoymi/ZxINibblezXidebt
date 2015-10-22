@@ -9,14 +9,14 @@ import java.math.BigDecimal;
  * @author ralam
  *
  */
-@Deprecated
-public class Account {
+public class AccountModel {
 	private Long accountId;
 	private String accountNumber;
 	private String institutionName;
 	private String accountType;
-	private BigDecimal balance;
-	private BigDecimal available;
+	private String balance;
+	private String available;
+    private String externalId;
 
 	private Boolean useForRounding;
 	
@@ -71,25 +71,25 @@ public class Account {
 	/**
 	 * @return the balance
 	 */
-	public BigDecimal getBalance() {
+	public String getBalance() {
 		return balance;
 	}
 	/**
 	 * @param balance the balance to set
 	 */
-	public void setBalance(BigDecimal balance) {
+	public void setBalance(String balance) {
 		this.balance = balance;
 	}
 	/**
 	 * @return the available
 	 */
-	public BigDecimal getAvailable() {
+	public String getAvailable() {
 		return available;
 	}
 	/**
 	 * @param available the available to set
 	 */
-	public void setAvailable(BigDecimal available) {
+	public void setAvailable(String available) {
 		this.available = available;
 	}
 	/**
@@ -104,6 +104,12 @@ public class Account {
 	public void setUseForRounding(Boolean useForRounding) {
 		this.useForRounding = useForRounding;
 	}
-	
-	
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
 }

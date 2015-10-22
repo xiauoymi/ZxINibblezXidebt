@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import com.nibbledebt.web.rest.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,9 +27,6 @@ import com.nibbledebt.common.validator.Validatable;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.processor.InstitutionProcessor;
 import com.nibbledebt.core.processor.RegistrationProcessor;
-import com.nibbledebt.web.rest.model.InstitutionDetail;
-import com.nibbledebt.web.rest.model.JsonListWrapper;
-import com.nibbledebt.web.rest.model.NibblerData;
 
 /**
  * @author Rocky Alam
@@ -51,8 +49,8 @@ public class RegistrationREST {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
 	@Validatable() //TODO - write custom validator
-	public void register(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException{
-		regService.registerNibbler(nibblerData);
+	public RegisterNibblerResponse register(RegisterNibblerRequest request) throws ProcessingException, ServiceException, RepositoryException{
+		return regService.registerNibbler(request);
 	}
 	
 //	@POST

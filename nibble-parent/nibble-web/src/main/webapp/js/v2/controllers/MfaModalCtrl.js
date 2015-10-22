@@ -1,7 +1,13 @@
 'use strict';
-app.controller('RegisterModalBankCtrl',
-    function RegisterModalBankCtrl($scope, $modalInstance, clickedBank) {
-        $scope.bank = clickedBank;
+app.controller('MfaModalCtrl',
+    function MfaModalCtrl($scope, $modalInstance, withMfaResponse) {
+        $scope.withMfaResponse = withMfaResponse;
+        $scope.mfa = {
+            condition: "default"
+        };
+
+        withMfaResponse
+
         $scope.institutionParams = [];
 
         var mas = clickedBank.loginForm.loginField;
@@ -19,7 +25,7 @@ app.controller('RegisterModalBankCtrl',
         $scope.keys = ordered;
 
         $scope.ok = function () {
-            $modalInstance.close($scope.bank);
+            $modalInstance.close($scope.institutionParams);
         };
 
         $scope.cancel = function () {

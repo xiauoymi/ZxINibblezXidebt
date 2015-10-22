@@ -23,6 +23,7 @@ NibbleUtils.initAlerts = function ($scope) {
     };
 };
 
+
 NibbleUtils.getServicesUrl = function () {
     return NibbleUtils.getBaseUrl() + '/services';
 };

@@ -1,6 +1,11 @@
 package com.nibbledebt.core.processor;
 
+import com.google.gson.Gson;
+import com.nibbledebt.integration.model.LoginField;
+import com.nibbledebt.web.rest.model.LoginFormModel;
+import com.nibbledebt.web.rest.model.RegisterNibblerRequest;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.FormHttpMessageConverter;
@@ -8,6 +13,8 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
 
 public class LoginTest {
 	
@@ -33,4 +40,37 @@ public class LoginTest {
         
         System.out.println(result.getHeaders().get("Set-Cookie").toArray()[0]);
 	}
+
+    @Test
+    public void testRegister() {
+        RegisterNibblerRequest request = new RegisterNibblerRequest();
+        request.setAddress1("Address1");
+        request.setAddress2("Address2");
+        request.setCity("Austin");
+        request.setState("TX");
+        request.setEmail("email@email.com");
+        request.setFirstName("first name");
+        request.setLastName("last name");
+        request.setUrl("url");
+        LoginFormModel form = new LoginFormModel();
+        form.setInstitutionId("institutionId");
+        LoginField f1 = new LoginField();
+        f1.setId("first id");
+        f1.setName("first field name");
+        LoginField f2 = new LoginField();
+        f2.setId("first id");
+        f2.setName("first field name");
+
+        form.setLoginField(new ArrayList<LoginField>());
+        form.getLoginField().add(f1);
+        form.getLoginField().add(f2);
+        request.setLoginForm(form);
+
+        Gson gson = new Gson();
+
+        String str = gson.toJson(request);
+
+        Assert.assertNotNull(str);
+
+    }
 }
