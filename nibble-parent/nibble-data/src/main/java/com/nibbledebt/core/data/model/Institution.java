@@ -50,6 +50,9 @@ public class Institution extends AbstractModel {
 	@Column(name="external_id", nullable=false, length=50)
 	private String externalId;
 	
+	@Column(name="logoCode", nullable=true, length=256)
+	private String logoCode;
+	
 	@Column(name="name", nullable=false, length=256)
 	private String name;
 	
@@ -93,6 +96,20 @@ public class Institution extends AbstractModel {
 	 */
 	public void setExternalId(String externalId) {
 		this.externalId = externalId;
+	}
+
+	/**
+	 * @return the logoCode
+	 */
+	public String getLogoCode() {
+		return logoCode;
+	}
+
+	/**
+	 * @param logoCode the logoCode to set
+	 */
+	public void setLogoCode(String logoCode) {
+		this.logoCode = logoCode;
 	}
 
 	/**
