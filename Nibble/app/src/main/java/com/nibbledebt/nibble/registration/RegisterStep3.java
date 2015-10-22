@@ -209,7 +209,7 @@ public class RegisterStep3 extends AbstractWizardStep {
 
             while(it.hasNext()){
                 Bank bank = it.next();
-                ResponseEntity<byte[]> response = restTemplate.exchange(getString(R.string.banklogourl) + bank.getInstitution().getId(), HttpMethod.GET, entity, byte[].class, "1");
+                ResponseEntity<byte[]> response = restTemplate.exchange(getString(R.string.banklogourl) + bank.getInstitution().getLogoCode(), HttpMethod.GET, entity, byte[].class, "1");
 
                 if(response.getStatusCode().equals(HttpStatus.OK))
                     bank.getInstitution().setLogo(BitmapFactory.decodeByteArray(response.getBody(), 0, response.getBody().length));

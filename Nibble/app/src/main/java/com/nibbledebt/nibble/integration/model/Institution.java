@@ -29,6 +29,8 @@ public class Institution {
 	private List<Object> mfa = new ArrayList<Object>();
 	@JsonProperty("name")
 	private String name;
+	@JsonProperty("logoCode")
+	private String logoCode;
 	@JsonProperty("products")
 	private List<Object> products = new ArrayList<Object>();
 	@JsonProperty("fields")
@@ -97,6 +99,14 @@ public class Institution {
 	@JsonProperty("name")
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getLogoCode() {
+		return logoCode;
+	}
+
+	public void setLogoCode(String logoCode) {
+		this.logoCode = logoCode;
 	}
 
 	/**

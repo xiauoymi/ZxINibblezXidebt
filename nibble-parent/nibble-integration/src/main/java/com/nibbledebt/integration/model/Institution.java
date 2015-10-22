@@ -24,7 +24,7 @@ public class Institution
 
     private String accountTypeDescription;
 
-    
+    private String logoCode;
 
     /**
 	 * @return the id
@@ -112,6 +112,24 @@ public class Institution
 	 */
 	public void setAccountTypeDescription(String accountTypeDescription) {
 		this.accountTypeDescription = accountTypeDescription;
+	}
+
+
+
+	/**
+	 * @return the logoCode
+	 */
+	public String getLogoCode() {
+		return logoCode;
+	}
+
+
+
+	/**
+	 * @param logoCode the logoCode to set
+	 */
+	public void setLogoCode(String logoCode) {
+		this.logoCode = logoCode;
 	}
 
 
