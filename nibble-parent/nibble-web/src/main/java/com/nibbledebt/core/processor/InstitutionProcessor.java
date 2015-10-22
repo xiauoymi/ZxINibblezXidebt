@@ -29,7 +29,7 @@ import com.nibbledebt.core.data.model.Field;
 import com.nibbledebt.integration.model.Institution;
 import com.nibbledebt.integration.model.LoginField;
 import com.nibbledebt.integration.model.LoginForm;
-import com.nibbledebt.integration.sao.intuit.IIntegrationSao;
+import com.nibbledebt.integration.sao.IIntegrationSao;
 import com.nibbledebt.web.rest.model.InstitutionDetail;
 
 /**
@@ -68,7 +68,7 @@ public class InstitutionProcessor {
 					LoginForm loginForm = new LoginForm();
 					institution.setName(inst.getName());
 					institution.setId(inst.getExternalId());
-					institution.setHomeUrl(inst.getHomeUrl());
+					institution.setUrlHomeApp(inst.getHomeUrl());
 					List<LoginField> loginFields = new ArrayList<>();
 					for(Field field : inst.getFields()){
 						LoginField lField = new LoginField();
@@ -119,7 +119,10 @@ public class InstitutionProcessor {
     @Transactional(readOnly = true)
     public byte[] getLogoById(String institutionId) throws ProcessingException{
         try {
-            return IOUtils.toByteArray(this.getClass().getClassLoader().getResourceAsStream(LOGO_LOCATION+institutionId));
+        	if(this.getClass().getClassLoader().getResourceAsStream(LOGO_LOCATION+institutionId) != null)
+        		return IOUtils.toByteArray(this.getClass().getClassLoader().getResourceAsStream(LOGO_LOCATION+institutionId));
+        	else
+        		return null;
         } catch (IOException e) {
             throw new ProcessingException("Error while converting logo inputstream to byte[].", e);
         }

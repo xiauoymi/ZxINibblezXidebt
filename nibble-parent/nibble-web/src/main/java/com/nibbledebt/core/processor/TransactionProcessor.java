@@ -6,15 +6,12 @@ package com.nibbledebt.core.processor;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -31,13 +28,8 @@ import com.nibbledebt.core.data.dao.INibblerDao;
 import com.nibbledebt.core.data.dao.ITransactionCategoryDao;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.AccountTransaction;
-import com.nibbledebt.core.data.model.Location;
 import com.nibbledebt.core.data.model.Nibbler;
 import com.nibbledebt.core.data.model.NibblerAccount;
-import com.nibbledebt.core.data.model.TransactionCategory;
-import com.nibbledebt.integration.model.Transaction;
-import com.nibbledebt.integration.model.TransactionsResponse;
-import com.nibbledebt.integration.sao.intuit.IIntuitSao;
 import com.nibbledebt.web.rest.model.TransactionSummary;
 
 /**
@@ -158,58 +150,58 @@ public class TransactionProcessor extends AbstractProcessor{
 	@Loggable(logLevel=LogLevel.INFO)
 	@Transactional(propagation=Propagation.REQUIRES_NEW, isolation=Isolation.READ_COMMITTED)
 	public void syncTrxs() throws ProcessingException, ServiceException, RepositoryException{
-		try {
-			List<NibblerAccount> accts = nibblerAcctDao.findAll();			
-			for(NibblerAccount acct : accts){
-				if(acct.getUseForRounding()){
-					SimpleDateFormat timeformat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-//					TransactionsResponse tresp = plaidSao.retrieveTransactions(acct.getNibbler().getExtAccessToken(), acct.getExternalId(), acct.getLastTransactionPull()==null ? null : timeformat.format(acct.getLastTransactionPull()));
-					TransactionsResponse tresp = new TransactionsResponse();
-					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-					for(Transaction trx : tresp.getTransactions()){
-						AccountTransaction atrx = new AccountTransaction();
-						atrx.setAccount(acct);
-						atrx.setAmount(BigDecimal.valueOf(trx.getAmount()));
-						atrx.setDate(format.parse(trx.getDate()));
-						atrx.setTransactionId(trx.getId());
-						atrx.setPending(trx.getPending());
-
-						setCreated(atrx, SYS_USER);
-						
-						Location location = new Location();
-						location.setAddress(trx.getMeta().getLocation().getAddress());
-						location.setCity(trx.getMeta().getLocation().getCity());
-						location.setName(trx.getName());
-						location.setState(trx.getMeta().getLocation().getState());
-						if(trx.getMeta().getLocation().getCoordinates() != null){
-							location.setLatitude(trx.getMeta().getLocation().getCoordinates().getLat());
-							location.setLongitude(trx.getMeta().getLocation().getCoordinates().getLon());
-						}
-						location.setType(trx.getType().getPrimary());
-						
-						for(String cat : trx.getCategory()){
-							TransactionCategory trxCat = trxCatDao.find(cat);
-							if(trxCat == null){
-								trxCat = new TransactionCategory();
-								trxCat.setName(cat);
-								trxCat.setDescription(cat);
-								trxCat.getTransactions().add(atrx);
-								setCreated(trxCat, SYS_USER);	
-							}
-							atrx.getCategories().add(trxCat);
-						}
-						atrx.setLocation(location);
-						acct.getTransactions().add(atrx);
-					}
-					acct.setLastTransactionPull(new Date(System.currentTimeMillis()));
-
-					setUpdated(acct, SYS_USER);
-					nibblerAcctDao.update(acct);
-				}
+//		try {
+//			List<NibblerAccount> accts = nibblerAcctDao.findAll();			
+//			for(NibblerAccount acct : accts){
+//				if(acct.getUseForRounding()){
+//					SimpleDateFormat timeformat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+////					TransactionsResponse tresp = plaidSao.retrieveTransactions(acct.getNibbler().getExtAccessToken(), acct.getExternalId(), acct.getLastTransactionPull()==null ? null : timeformat.format(acct.getLastTransactionPull()));
+//					TransactionsResponse tresp = new TransactionsResponse();
+//					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+//					for(Transaction trx : tresp.getTransactions()){
+//						AccountTransaction atrx = new AccountTransaction();
+//						atrx.setAccount(acct);
+//						atrx.setAmount(BigDecimal.valueOf(trx.getAmount()));
+//						atrx.setDate(format.parse(trx.getDate()));
+//						atrx.setTransactionId(trx.getId());
+//						atrx.setPending(trx.getPending());
+//
+//						setCreated(atrx, SYS_USER);
+//						
+//						Location location = new Location();
+//						location.setAddress(trx.getMeta().getLocation().getAddress());
+//						location.setCity(trx.getMeta().getLocation().getCity());
+//						location.setName(trx.getName());
+//						location.setState(trx.getMeta().getLocation().getState());
+//						if(trx.getMeta().getLocation().getCoordinates() != null){
+//							location.setLatitude(trx.getMeta().getLocation().getCoordinates().getLat());
+//							location.setLongitude(trx.getMeta().getLocation().getCoordinates().getLon());
+//						}
+//						location.setType(trx.getType().getPrimary());
+//						
+//						for(String cat : trx.getCategory()){
+//							TransactionCategory trxCat = trxCatDao.find(cat);
+//							if(trxCat == null){
+//								trxCat = new TransactionCategory();
+//								trxCat.setName(cat);
+//								trxCat.setDescription(cat);
+//								trxCat.getTransactions().add(atrx);
+//								setCreated(trxCat, SYS_USER);	
+//							}
+//							atrx.getCategories().add(trxCat);
+//						}
+//						atrx.setLocation(location);
+//						acct.getTransactions().add(atrx);
+//					}
+//					acct.setLastTransactionPull(new Date(System.currentTimeMillis()));
+//
+//					setUpdated(acct, SYS_USER);
+//					nibblerAcctDao.update(acct);
+//				}
 				
-			}
-		} catch (ParseException e) {
-			throw new ProcessingException("Error while parsing date.", e);
-		}
+//			}
+//		} catch (ParseException e) {
+//			throw new ProcessingException("Error while parsing date.", e);
+//		}
 	}
 }

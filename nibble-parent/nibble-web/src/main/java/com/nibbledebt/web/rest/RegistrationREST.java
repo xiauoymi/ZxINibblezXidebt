@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,11 +27,7 @@ import com.nibbledebt.common.validator.Validatable;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.processor.InstitutionProcessor;
 import com.nibbledebt.core.processor.RegistrationProcessor;
-import com.nibbledebt.integration.model.LinkResponse;
-import com.nibbledebt.integration.model.MfaRequest;
-import com.nibbledebt.integration.model.MfaResponse;
 import com.nibbledebt.web.rest.model.InstitutionDetail;
-import com.nibbledebt.web.rest.model.JsonListWrapper;
 import com.nibbledebt.web.rest.model.NibblerData;
 
 /**
@@ -57,26 +54,26 @@ public class RegistrationREST {
 	public void register(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException{
 		regService.registerNibbler(nibblerData);
 	}
-	
-	@POST
-	@Path("/registermfa")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Loggable(logLevel=LogLevel.INFO)
-	@Validatable() //TODO - write custom validator
-	public MfaResponse registerMfa(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException{
-		return regService.registerNibblerWithMfa(nibblerData);
-	}
-	
-	@POST
-	@Path("/mfacode")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Loggable(logLevel=LogLevel.INFO)
-	@Validatable() //TODO - write custom validator
-	public void sendCode(MfaRequest request) throws ProcessingException, ServiceException{
-		regService.sendMfaCode(request.getAccessToken(), request.getSendMethod());
-	}
+//	
+//	@POST
+//	@Path("/registermfa")
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	@Loggable(logLevel=LogLevel.INFO)
+//	@Validatable() //TODO - write custom validator
+//	public MfaResponse registerMfa(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException{
+//		return regService.registerNibblerWithMfa(nibblerData);
+//	}
+//	
+//	@POST
+//	@Path("/mfacode")
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	@Loggable(logLevel=LogLevel.INFO)
+//	@Validatable() //TODO - write custom validator
+//	public void sendCode(MfaRequest request) throws ProcessingException, ServiceException{
+//		regService.sendMfaCode(request.getAccessToken(), request.getSendMethod());
+//	}
 	
 	
 	@POST
@@ -133,8 +130,14 @@ public class RegistrationREST {
 	@Loggable(logLevel=LogLevel.INFO)
 	public Response getBankLogo(@PathParam("id") String id) throws ProcessingException{
 		ResponseBuilder responseBuilder;
-		responseBuilder = Response.ok(instService.getLogoById(id));
-        responseBuilder.header("Content-Disposition", "attachment; filename=\""+id+"\"");
-        return responseBuilder.build();
+		if(instService.getLogoById(id) != null){
+			responseBuilder = Response.ok(instService.getLogoById(id));
+	        responseBuilder.header("Content-Disposition", "attachment; filename=\""+id+"\"");
+	        return responseBuilder.build();
+		}else{
+			responseBuilder = Response.noContent();
+			responseBuilder.status(Status.NOT_FOUND);
+			return responseBuilder.build();
+		}
 	}
 }

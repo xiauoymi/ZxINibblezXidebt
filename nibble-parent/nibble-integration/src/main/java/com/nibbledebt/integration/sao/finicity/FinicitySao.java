@@ -15,7 +15,7 @@ import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.integration.finicity.FinicityClient;
 import com.nibbledebt.integration.model.Institution;
 import com.nibbledebt.integration.model.LoginForm;
-import com.nibbledebt.integration.sao.intuit.IIntegrationSao;
+import com.nibbledebt.integration.sao.IIntegrationSao;
 
 /**
  * @author ralam

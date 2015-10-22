@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.nibbledebt.integration.model.Institution;
 
 /**
  * @author ralam1
