@@ -24,7 +24,7 @@ import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.integration.model.Institution;
 import com.nibbledebt.integration.model.LoginField;
 import com.nibbledebt.integration.model.LoginForm;
-import com.nibbledebt.integration.sao.intuit.IIntegrationSao;
+import com.nibbledebt.integration.sao.IIntegrationSao;
 
 /**
  * @author ralam
@@ -34,7 +34,7 @@ import com.nibbledebt.integration.sao.intuit.IIntegrationSao;
 @Scope("prototype")
 public class InstitutionPopulator implements RunnableAsync<Institution>{
 	
-	private static final String[] SUPPORTED_TYPES = {"JP Morgan Chase Bank", "Capital One 360", "Bank of America", "PNC Bank", "Discover Bank", "Bank of America", "U.S. Bank - TrustNow", "USAA Bank", "American Express Credit Card", "BBVA Compass" };
+	private static final String[] SUPPORTED_TYPES = {"JP Morgan Chase Bank", "Capital One 360", "Bank of America (TX)", "PNC Bank", "Discover Bank", "U.S. Bank - TrustNow", "USAA Bank", "Citibank Credit Card", "American Express Credit Card", "BBVA Compass" };
 //	private static final String AGGREGATOR_INTTUIT = "intuit";
 	private static final String AGGREGATOR_FINICITY = "finicity";
 	
@@ -59,16 +59,17 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 			
 			if(inst == null && Arrays.asList((SUPPORTED_TYPES)).contains(instFromLoop.getName())){
 				Institution instDetail = integrationSao.getInstitution(String.valueOf(instFromLoop.getId()));				
-				String instType = determineType(instDetail.getName());
+				String instType = determineType(instDetail.getAccountTypeDescription());
 				if(!StringUtils.equalsIgnoreCase(instType, "unknown")){
 					LoginForm loginForm = integrationSao.getInstitutionLoginForm(String.valueOf(instFromLoop.getId()));
 					inst = new com.nibbledebt.core.data.model.Institution();
 					inst.setName(instDetail.getName());
 					inst.setExternalId(String.valueOf(instDetail.getId()));
 					inst.setAggregatorName(AGGREGATOR_FINICITY);
-					inst.setHomeUrl(instDetail.getHomeUrl());
+					inst.setHomeUrl(instDetail.getUrlHomeApp());
 					inst.setCreatedTs(new Date());
 					inst.setCreatedUser("system");
+					inst.setLogoCode(StringUtils.lowerCase(StringUtils.deleteWhitespace(instDetail.getName())));
 					inst.setIsPrimary((Arrays.asList((SUPPORTED_TYPES)).contains(instDetail.getName()) ? true : false));
 					inst.setLastSyncedTs(new Date());
 					inst.setPriority(1);
@@ -81,8 +82,7 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 				Institution instDetail = integrationSao.getInstitution(String.valueOf(instFromLoop.getId()));
 				LoginForm loginForm = integrationSao.getInstitutionLoginForm(String.valueOf(instFromLoop.getId()));
 				inst.setExternalId(String.valueOf(instDetail.getId()));
-				inst.setHomeUrl(instDetail.getHomeUrl());
-				inst.setPhone(instFromLoop.getPhone());
+				inst.setHomeUrl(instDetail.getUrlHomeApp());
 				inst.setUpdatedTs(new Date());
 				inst.setUpdatedUser("system");
 				inst.setLastSyncedTs(new Date());
