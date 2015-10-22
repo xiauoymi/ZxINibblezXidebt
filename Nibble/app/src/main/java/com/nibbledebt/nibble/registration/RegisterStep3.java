@@ -19,6 +19,7 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import com.nibbledebt.nibble.R;
 import com.nibbledebt.nibble.common.AbstractWizardStep;
 import com.nibbledebt.nibble.common.RestTemplateCreator;
@@ -134,6 +135,9 @@ public class RegisterStep3 extends AbstractWizardStep {
                                         }
                                     });
                                     AlertDialog dialog = builder.create();
+                                    TextView dialogHeader = new TextView(view.getContext());
+                                    dialogHeader.setText(banks.get(idx).getInstitution().getName() + " Authentication");
+                                   dialog.addContentView(dialogHeader, new ViewGroup.LayoutParams(500, 100));
                                     dialog.show();
                                     break;
 
