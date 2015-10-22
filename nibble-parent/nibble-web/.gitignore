@@ -8,3 +8,4 @@ target
 /tomcat.8081/
 /tomcat.9000/
 /${env:MY_ROOT}/
+/target/

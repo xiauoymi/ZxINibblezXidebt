@@ -57,7 +57,7 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 				LoggerFactory.getLogger(InstitutionProcessor.class).warn("Error while retrieving Intuit institution from database. ", e);
 			}
 			
-			if(inst == null){
+			if(inst == null && Arrays.asList((SUPPORTED_TYPES)).contains(instFromLoop.getName())){
 				Institution instDetail = integrationSao.getInstitution(String.valueOf(instFromLoop.getId()));				
 				String instType = determineType(instDetail.getName());
 				if(!StringUtils.equalsIgnoreCase(instType, "unknown")){
@@ -75,7 +75,9 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 					inst.setType(instType);
 					convertToFields(loginForm.getLoginField(), inst);
 				}
-			}else if(inst!=null && ( (inst.getUpdatedTs()==null && inst.getCreatedTs().getTime()<System.currentTimeMillis()-86400000) ||  (inst.getUpdatedTs()!=null && inst.getUpdatedTs().getTime()<System.currentTimeMillis()-86400000)) ){
+			}else if(inst!=null  && Arrays.asList((SUPPORTED_TYPES)).contains(instFromLoop.getName())
+					&& ( (inst.getUpdatedTs()==null && inst.getCreatedTs().getTime()<System.currentTimeMillis()-86400000) 
+							||  (inst.getUpdatedTs()!=null && inst.getUpdatedTs().getTime()<System.currentTimeMillis()-86400000)) ){
 				Institution instDetail = integrationSao.getInstitution(String.valueOf(instFromLoop.getId()));
 				LoginForm loginForm = integrationSao.getInstitutionLoginForm(String.valueOf(instFromLoop.getId()));
 				inst.setExternalId(String.valueOf(instDetail.getId()));
