@@ -1,31 +1,45 @@
 /**
  * 
  */
-package com.nibbledebt.nibble.integration.model;
+package com.nibbledebt.web.rest.model;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author alam_home
  *
  */
+@XmlRootElement
+@XmlType(propOrder = {"id", "name", "value", "description", "instructions", "displayOrder", "mask", "valueLengthMin", "valueLengthMax"})
 public class LoginField {
 
+	@XmlElement
 	private String id;
 
+	@XmlElement
 	private String name;
 
+	@XmlElement
 	private String value;
 
+	@XmlElement
 	private String description;
 
+	@XmlElement
 	private String instructions;
 
+	@XmlElement
 	private Integer displayOrder;
 
+	@XmlElement
 	private Boolean mask;
 
+	@XmlElement
 	private Integer valueLengthMin;
 
+	@XmlElement
 	private Integer valueLengthMax;
 
 	/**

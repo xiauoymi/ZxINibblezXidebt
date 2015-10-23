@@ -47,7 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:gravity="center_horizontal"
-                android:background="@color/transparent" android:orientation="horizontal">
+                android:background="@color/white" android:orientation="horizontal">
 
             <Button android:id="@+id/register_step3_dialog_add_btn"
                     android:layout_width="match_parent" android:layout_height="40dp"
@@ -71,6 +71,6 @@
         </LinearLayout>
 
         <View android:layout_width="match_parent" android:layout_height="2dp"
-              android:background="@color/nibble_main"/>
+              android:background="@color/nibble_main" android:layout_marginBottom="15dp" />
     </LinearLayout>
 </LinearLayout>

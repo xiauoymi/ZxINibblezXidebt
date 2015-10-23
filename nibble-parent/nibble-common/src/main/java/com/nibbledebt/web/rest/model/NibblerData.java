@@ -8,8 +8,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * @author ralam1
  *
@@ -26,7 +24,7 @@ public class NibblerData {
 	private String city;	
 	private String state;	
 	private Integer zip;
-	private Institution institution;
+	private Bank bank;
 	private String activationCode;
 	private String url;
 	
@@ -34,6 +32,12 @@ public class NibblerData {
 	private String resetCode;
 	
 	private Boolean isFirstLogin;
+	
+	private List<Account> accounts = new ArrayList<>();
+	
+	private List<String> roles = new ArrayList<>();	 
+	
+
 
 	/**
 	 * @return the isFirstLogin
@@ -49,21 +53,6 @@ public class NibblerData {
 	public void setIsFirstLogin(Boolean isFirstLogin) {
 		this.isFirstLogin = isFirstLogin;
 	}
-
-
-	private String instUsername;		
-	private String instPassword;		
-	private String instPin;
-	
-	private String[] mfa;
-	@JsonProperty("access_token")
-	private String accessToken;
-	@JsonProperty("send_method")
-	private String sendMethod;
-	
-	private List<Account> accounts = new ArrayList<>();
-	
-	private List<String> roles = new ArrayList<>();	 
 	
 	/**
 	 * @return the username
@@ -257,19 +246,22 @@ public class NibblerData {
 		this.roles = roles;
 	}
 	
+	
+
+
 	/**
-	 * @return the institution
+	 * @return the bank
 	 */
-	public Institution getInstitution() {
-		return institution;
+	public Bank getBank() {
+		return bank;
 	}
 
 
 	/**
-	 * @param institution the institution to set
+	 * @param bank the bank to set
 	 */
-	public void setInstitution(Institution institution) {
-		this.institution = institution;
+	public void setBank(Bank bank) {
+		this.bank = bank;
 	}
 
 
@@ -304,56 +296,6 @@ public class NibblerData {
 		this.url = url;
 	}
 
-
-	/**
-	 * @return the instUsername
-	 */
-	public String getInstUsername() {
-		return instUsername;
-	}
-
-
-	/**
-	 * @param instUsername the instUsername to set
-	 */
-	public void setInstUsername(String instUsername) {
-		this.instUsername = instUsername;
-	}
-
-
-	/**
-	 * @return the instPassword
-	 */
-	public String getInstPassword() {
-		return instPassword;
-	}
-
-
-	/**
-	 * @param instPassword the instPassword to set
-	 */
-	public void setInstPassword(String instPassword) {
-		this.instPassword = instPassword;
-	}
-
-
-	/**
-	 * @return the instPin
-	 */
-	public String getInstPin() {
-		return instPin;
-	}
-
-
-	/**
-	 * @param instPin the instPin to set
-	 */
-	public void setInstPin(String instPin) {
-		this.instPin = instPin;
-	}
-
-
-
 	/**
 	 * @return the status
 	 */
@@ -384,54 +326,6 @@ public class NibblerData {
 	public void setResetCode(String resetCode) {
 		this.resetCode = resetCode;
 	}
-
-	/**
-	 * @return the mfa
-	 */
-	public String[] getMfa() {
-		return mfa;
-	}
-
-
-	/**
-	 * @param mfa the mfa to set
-	 */
-	public void setMfa(String[] mfa) {
-		this.mfa = mfa;
-	}
-
-
-	/**
-	 * @return the accessToken
-	 */
-	public String getAccessToken() {
-		return accessToken;
-	}
-
-
-	/**
-	 * @param accessToken the accessToken to set
-	 */
-	public void setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
-	}
-
-
-	/**
-	 * @return the sendMethod
-	 */
-	public String getSendMethod() {
-		return sendMethod;
-	}
-
-
-	/**
-	 * @param sendMethod the sendMethod to set
-	 */
-	public void setSendMethod(String sendMethod) {
-		this.sendMethod = sendMethod;
-	}
-
 
 	/**
 	 * @return the accounts

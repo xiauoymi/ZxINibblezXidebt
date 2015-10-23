@@ -16,16 +16,16 @@ public class Institution
 {
     private String id;
 
-    private String urlLogonApp;
-
     private String name;
 
-    private String urlHomeApp;
-
-    private String accountTypeDescription;
-
+    private String description;
     
+    private String logoCode;
 
+    private String username;
+    
+    private String password;
+    
     /**
 	 * @return the id
 	 */
@@ -40,24 +40,6 @@ public class Institution
 	 */
 	public void setId(String id) {
 		this.id = id;
-	}
-
-
-
-	/**
-	 * @return the urlLogonApp
-	 */
-	public String getUrlLogonApp() {
-		return urlLogonApp;
-	}
-
-
-
-	/**
-	 * @param urlLogonApp the urlLogonApp to set
-	 */
-	public void setUrlLogonApp(String urlLogonApp) {
-		this.urlLogonApp = urlLogonApp;
 	}
 
 
@@ -81,39 +63,74 @@ public class Institution
 
 
 	/**
-	 * @return the urlHomeApp
+	 * @return the username
 	 */
-	public String getUrlHomeApp() {
-		return urlHomeApp;
+	public String getUsername() {
+		return username;
 	}
 
 
 
 	/**
-	 * @param urlHomeApp the urlHomeApp to set
+	 * @param username the username to set
 	 */
-	public void setUrlHomeApp(String urlHomeApp) {
-		this.urlHomeApp = urlHomeApp;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 
 
 	/**
-	 * @return the accountTypeDescription
+	 * @return the password
 	 */
-	public String getAccountTypeDescription() {
-		return accountTypeDescription;
+	public String getPassword() {
+		return password;
 	}
 
 
 
 	/**
-	 * @param accountTypeDescription the accountTypeDescription to set
+	 * @param password the password to set
 	 */
-	public void setAccountTypeDescription(String accountTypeDescription) {
-		this.accountTypeDescription = accountTypeDescription;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
+
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+
+
+	/**
+	 * @return the logoCode
+	 */
+	public String getLogoCode() {
+		return logoCode;
+	}
+
+
+
+	/**
+	 * @param logoCode the logoCode to set
+	 */
+	public void setLogoCode(String logoCode) {
+		this.logoCode = logoCode;
+	}
 
 
 	@Override

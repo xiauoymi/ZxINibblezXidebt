@@ -9,8 +9,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import org.h2.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.nibbledebt.common.error.ProcessingException;
 import com.nibbledebt.common.error.ServiceException;
+import com.nibbledebt.common.error.ValidationException;
 import com.nibbledebt.common.notifier.Notify;
 import com.nibbledebt.common.notifier.NotifyMethod;
 import com.nibbledebt.common.notifier.NotifyType;
@@ -29,18 +31,16 @@ import com.nibbledebt.core.data.dao.INibblerDao;
 import com.nibbledebt.core.data.dao.INibblerDirectoryDao;
 import com.nibbledebt.core.data.dao.INibblerRoleDao;
 import com.nibbledebt.core.data.error.RepositoryException;
-import com.nibbledebt.core.data.model.AccountBalance;
-import com.nibbledebt.core.data.model.AccountLimit;
-import com.nibbledebt.core.data.model.AccountType;
 import com.nibbledebt.core.data.model.Nibbler;
-import com.nibbledebt.core.data.model.NibblerAccount;
 import com.nibbledebt.core.data.model.NibblerDirectory;
 import com.nibbledebt.core.data.model.NibblerDirectoryStatus;
 import com.nibbledebt.core.data.model.NibblerPreference;
 import com.nibbledebt.core.data.model.NibblerRole;
 import com.nibbledebt.core.data.model.NibblerRoleType;
-import com.nibbledebt.integration.model.Account;
 import com.nibbledebt.integration.model.cad.LinkResponse;
+import com.nibbledebt.integration.sao.IIntegrationSao;
+import com.nibbledebt.web.rest.model.Bank;
+import com.nibbledebt.web.rest.model.LoginField;
 import com.nibbledebt.web.rest.model.NibblerData;
 
 /**
@@ -64,9 +64,9 @@ public class RegistrationProcessor extends AbstractProcessor{
 	@Autowired
 	private IInstitutionDao institutionDao;
 	
-//	@Autowired
-//	@Qualifier("finicitySao")
-//	private IIntegrationSao integrationSao;
+	@Autowired
+	@Qualifier("finicitySao")
+	private IIntegrationSao integrationSao;
 	
 	@Autowired
 	private MessageDigestPasswordEncoder encoder;
@@ -122,14 +122,18 @@ public class RegistrationProcessor extends AbstractProcessor{
 	 */
 	@Transactional(isolation=Isolation.READ_COMMITTED)
 	@Notify(notifyMethod=NotifyMethod.EMAIL, notifyType=NotifyType.ACCOUNT_CREATED)
-	public void registerNibbler(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException{
-//        if (nibblerData.getInstitution() == null) {
-            register(nibblerData);
-//        }
+	public void registerNibbler(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
+		register(nibblerData);
+        if(externalAuthReqsValid(nibblerData.getBank())){
+        	
+        }else{
+        	throw new ValidationException("External financial institution requires fields that have failed validation.");
+        }
+        
 //		LinkResponse resp = plaidSao.linkAccount(nibblerData.getInstUsername(), 
 //				nibblerData.getInstPassword(), 
-//				nibblerData.getInstPin(), 
-//				nibblerData.getInstitution());	
+//				nibblerData.getInstPin(),
+//				nibblerData.getInstitution());
 //		if(resp!=null){
 //			register(nibblerData, resp.getAccessToken());
 //			try {
@@ -140,9 +144,19 @@ public class RegistrationProcessor extends AbstractProcessor{
 //			return resp;
 //		}else{
 //			throw new ProcessingException("There was an issue trying to link the account. Plaid did not respond as expected.");
-//		}	
+//		}
 	}
 	
+	private boolean externalAuthReqsValid(Bank bank) {
+		boolean isValid = true;
+		for(LoginField field : bank.getLoginForm().getLoginField()){
+			if(field.getValue().length()<field.getValueLengthMin() || field.getValue().length() > field.getValueLengthMax()){
+				isValid = false;
+			}
+		}
+		return isValid;
+	}
+
 	/**
 	 * Returns a null if no MFA is required, otherwise returns the details of the MFA challenge.
 	 * @param nibblerData
@@ -236,8 +250,8 @@ public class RegistrationProcessor extends AbstractProcessor{
         Nibbler nibbler = new Nibbler();
         NibblerDirectory nibblerDir = new NibblerDirectory();
 
-        setCreated(nibbler, nibblerData.getUsername());
-        setCreated(nibblerDir, nibblerData.getUsername());
+        setCreated(nibbler, nibblerData.getEmail());
+        setCreated(nibblerDir, nibblerData.getEmail());
 
         nibbler.setFirstName(nibblerData.getFirstName());
         nibbler.setLastName(nibblerData.getLastName());
@@ -246,9 +260,9 @@ public class RegistrationProcessor extends AbstractProcessor{
         nibbler.setCity(nibblerData.getCity());
         nibbler.setState(nibblerData.getState());
         nibbler.setZip(nibblerData.getZip());
-        nibbler.setExtAccessToken(nibblerData.getUsername());
+        nibbler.setExtAccessToken(nibblerData.getEmail());
 
-        nibblerDir.setUsername(nibblerData.getUsername());
+        nibblerDir.setUsername(nibblerData.getEmail());
         nibblerDir.setPassword(
                 encoder.encodePassword(
                         String.valueOf(nibblerData.getPassword()),
@@ -267,7 +281,7 @@ public class RegistrationProcessor extends AbstractProcessor{
         NibblerPreference prefs = new NibblerPreference();
         prefs.setNibbler(nibbler);
         prefs.setWeeklyTargetAmount(new BigDecimal("9.99"));
-        setCreated(prefs, nibblerData.getUsername());
+        setCreated(prefs, nibblerData.getEmail());
         nibbler.setNibblerPreferences(prefs);
         nibblerDao.create(nibbler);
     }
@@ -284,8 +298,8 @@ public class RegistrationProcessor extends AbstractProcessor{
 		NibblerDirectory nibblerDir = new NibblerDirectory();
 
 		
-		setCreated(nibbler, nibblerData.getUsername());
-		setCreated(nibblerDir, nibblerData.getUsername());
+		setCreated(nibbler, nibblerData.getEmail());
+		setCreated(nibblerDir, nibblerData.getEmail());
 		
 		nibbler.setExtAccessToken(accessToken);
 				
@@ -296,7 +310,7 @@ public class RegistrationProcessor extends AbstractProcessor{
 		nibbler.setCity(nibblerData.getCity());
 		nibbler.setState(nibblerData.getState());
 		nibbler.setZip(nibblerData.getZip());
-		nibblerDir.setUsername(nibblerData.getUsername());
+		nibblerDir.setUsername(nibblerData.getEmail());
 		nibblerDir.setPassword(
 				encoder.encodePassword(
 						String.valueOf(nibblerData.getPassword()),
@@ -315,7 +329,7 @@ public class RegistrationProcessor extends AbstractProcessor{
 		NibblerPreference prefs = new NibblerPreference();
 		prefs.setNibbler(nibbler);
 		prefs.setWeeklyTargetAmount(new BigDecimal("9.99"));
-		setCreated(prefs, nibblerData.getUsername());
+		setCreated(prefs, nibblerData.getEmail());
 		nibbler.setNibblerPreferences(prefs);
 		nibblerDao.create(nibbler);
 	}
@@ -323,7 +337,7 @@ public class RegistrationProcessor extends AbstractProcessor{
 	@Transactional(propagation=Propagation.REQUIRED)
 	private void updateAccount(NibblerData nibblerData, LinkResponse accountData) throws ServiceException, ParseException, RepositoryException{
 					
-		Nibbler nibbler = nibblerDao.find(nibblerData.getUsername());
+		Nibbler nibbler = nibblerDao.find(nibblerData.getEmail());
 		
 //		for(Account account : accountData.getAccounts()){
 //			AccountType accountType = accountTypeDao.find(account.getType());
@@ -368,7 +382,7 @@ public class RegistrationProcessor extends AbstractProcessor{
 ////			naccount.setLastTransactionPull(new Date(System.currentTimeMillis()-8640000));
 //			nibbler.getAccounts().add(naccount);
 //		}
-		setUpdated(nibbler, nibblerData.getUsername());
+		setUpdated(nibbler, nibblerData.getEmail());
 		nibblerDao.update(nibbler);
 		nibblerData.setActivationCode(nibbler.getNibblerDir().getActivationCode());
 	}

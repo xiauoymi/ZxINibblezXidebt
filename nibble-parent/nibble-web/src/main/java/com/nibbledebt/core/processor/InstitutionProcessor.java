@@ -26,11 +26,11 @@ import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.core.data.dao.IInstitutionDao;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.Field;
-import com.nibbledebt.integration.model.Institution;
-import com.nibbledebt.integration.model.LoginField;
-import com.nibbledebt.integration.model.LoginForm;
 import com.nibbledebt.integration.sao.IIntegrationSao;
-import com.nibbledebt.web.rest.model.InstitutionDetail;
+import com.nibbledebt.web.rest.model.Bank;
+import com.nibbledebt.web.rest.model.Institution;
+import com.nibbledebt.web.rest.model.LoginField;
+import com.nibbledebt.web.rest.model.LoginForm;
 
 /**
  * @author ralam1
@@ -56,20 +56,19 @@ public class InstitutionProcessor {
 	
 	@Cacheable(value="instCache", unless="#result == null")
 	@Transactional(readOnly=true)
-	public List<InstitutionDetail> getSupportedInstitutions() throws ProcessingException, ServiceException{
+	public List<Bank> getSupportedInstitutions() throws ProcessingException, ServiceException{
 		try {
-			List<InstitutionDetail> insts = null;
+			List<Bank> banks = null;
 			List<com.nibbledebt.core.data.model.Institution> primaries = institutionDao.listPrimaries();
 			if(primaries !=null && !primaries.isEmpty()){
-				insts = new ArrayList<>();
+				banks = new ArrayList<>();
 				for(com.nibbledebt.core.data.model.Institution inst : primaries){
-					InstitutionDetail institutionDetail = new InstitutionDetail();
+					Bank bank = new Bank();
 					Institution institution = new Institution();
 					LoginForm loginForm = new LoginForm();
 					institution.setName(inst.getName());
 					institution.setId(inst.getExternalId());
 					institution.setLogoCode(inst.getLogoCode());
-					institution.setUrlHomeApp(inst.getHomeUrl());
 					List<LoginField> loginFields = new ArrayList<>();
 					for(Field field : inst.getFields()){
 						LoginField lField = new LoginField();
@@ -84,12 +83,12 @@ public class InstitutionProcessor {
 						loginFields.add(lField);
 					}
 					loginForm.setLoginField(loginFields);
-					institutionDetail.setInstitution(institution);
-					institutionDetail.setLoginForm(loginForm);
-					insts.add(institutionDetail);
+					bank.setLoginForm(loginForm);
+					bank.setInstitution(institution);
+					banks.add(bank);
 				}
 			}
-			return insts;
+			return banks;
 		} catch (RepositoryException e) {
 			throw new ProcessingException("Error while retrieving supported institutions.", e);
 		}
@@ -147,11 +146,11 @@ public class InstitutionProcessor {
 	                }
 	            }
 	        });
-			List<Institution> insts = integrationSao.getInstitutions();
-			for(Institution cadInst : insts){
+			List<com.nibbledebt.integration.model.Institution> insts = integrationSao.getInstitutions();
+			for(com.nibbledebt.integration.model.Institution cadInst : insts){
 //				InstitutionPopulator pop = context.getBean("instPopulate", InstitutionPopulator.class);
 //				pop.insertInstitution(cadInst);
-				RunnableAsync<Institution> pop = context.getBean("instPopulate", RunnableAsync.class);
+				RunnableAsync<com.nibbledebt.integration.model.Institution> pop = context.getBean("instPopulate", RunnableAsync.class);
 				pop.setEntity(cadInst);
 				instSyncExecutor.execute(pop);
 			}

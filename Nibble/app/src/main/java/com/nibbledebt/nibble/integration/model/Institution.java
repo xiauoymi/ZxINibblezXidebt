@@ -1,142 +1,158 @@
+/**
+ * 
+ */
 package com.nibbledebt.nibble.integration.model;
 
 import android.graphics.Bitmap;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-		"id",
-		"mfa",
-		"name",
-		"products",
-		"fields"
-})
-public class Institution {
+/**
+ * @author alam_home
+ *
+ */
+@JsonRootName("institution")
+public class Institution
+{
+    private String id;
 
-	@JsonProperty("id")
-	private String id;
-	@JsonProperty("mfa")
-	private List<Object> mfa = new ArrayList<Object>();
-	@JsonProperty("name")
-	private String name;
-	@JsonProperty("logoCode")
-	private String logoCode;
-	@JsonProperty("products")
-	private List<Object> products = new ArrayList<Object>();
-	@JsonProperty("fields")
-	private List<Object> fields = new ArrayList<Object>();
+    private String name;
 
-	@JsonIgnore
+    private String description;
+    
+    private String logoCode;
+
+    private String username;
+    
+    private String password;
+
 	private Bitmap logo;
-	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    
+    private LoginForm form;
 
-	/**
-	 *
-	 * @return
-	 * The id
+    /**
+	 * @return the id
 	 */
-	@JsonProperty("id")
 	public String getId() {
 		return id;
 	}
 
+
+
 	/**
-	 *
-	 * @param id
-	 * The id
+	 * @param id the id to set
 	 */
-	@JsonProperty("id")
 	public void setId(String id) {
 		this.id = id;
 	}
 
-	/**
-	 *
-	 * @return
-	 * The mfa
-	 */
-	@JsonProperty("mfa")
-	public List<Object> getMfa() {
-		return mfa;
-	}
+
 
 	/**
-	 *
-	 * @param mfa
-	 * The mfa
+	 * @return the name
 	 */
-	@JsonProperty("mfa")
-	public void setMfa(List<Object> mfa) {
-		this.mfa = mfa;
-	}
-
-	/**
-	 *
-	 * @return
-	 * The name
-	 */
-	@JsonProperty("name")
 	public String getName() {
 		return name;
 	}
 
+
+
 	/**
-	 *
-	 * @param name
-	 * The name
+	 * @param name the name to set
 	 */
-	@JsonProperty("name")
 	public void setName(String name) {
 		this.name = name;
 	}
 
+
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+
+
+
+	/**
+	 * @param username the username to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+
+
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
+	}
+
+
+
+	/**
+	 * @param password the password to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+
+
+	/**
+	 * @return the logoCode
+	 */
 	public String getLogoCode() {
 		return logoCode;
 	}
 
+
+
+	/**
+	 * @param logoCode the logoCode to set
+	 */
 	public void setLogoCode(String logoCode) {
 		this.logoCode = logoCode;
 	}
 
-	/**
-	 *
-	 * @return
-	 * The products
-	 */
-	@JsonProperty("products")
-	public List<Object> getProducts() {
-		return products;
-	}
+
 
 	/**
-	 *
-	 * @param products
-	 * The products
+	 * @return the form
 	 */
-	@JsonProperty("products")
-	public void setProducts(List<Object> products) {
-		this.products = products;
+	public LoginForm getForm() {
+		return form;
 	}
 
+
+
 	/**
-	 *
-	 * @return
-	 * The fields
+	 * @param form the form to set
 	 */
-	@JsonProperty("fields")
-	public List<Object> getFields() {
-		return fields;
+	public void setForm(LoginForm form) {
+		this.form = form;
 	}
 
 	public Bitmap getLogo() {
@@ -147,24 +163,8 @@ public class Institution {
 		this.logo = logo;
 	}
 
-	/**
-	 *
-	 * @param fields
-	 * The fields
-	 */
-	@JsonProperty("fields")
-	public void setFields(List<Object> fields) {
-		this.fields = fields;
-	}
-
-	@JsonAnyGetter
-	public Map<String, Object> getAdditionalProperties() {
-		return this.additionalProperties;
-	}
-
-	@JsonAnySetter
-	public void setAdditionalProperty(String name, Object value) {
-		this.additionalProperties.put(name, value);
-	}
-
+	@Override
+    public String toString(){
+    	return ToStringBuilder.reflectionToString(this);
+    }
 }

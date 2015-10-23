@@ -63,7 +63,7 @@ public class UsersProcessor extends AbstractProcessor {
 			NibblerData mData = new NibblerData();
 			mData.setFirstName(nibbler.getFirstName());
 			mData.setLastName(nibbler.getLastName());
-			mData.setUsername(nibbler.getNibblerDir().getUsername());
+			mData.setEmail(nibbler.getNibblerDir().getUsername());
 			mData.setPassword(nibbler.getNibblerDir().getPassword());
 			mData.setStatus(nibbler.getNibblerDir().getStatus());
 			mData.setResetCode(nibbler.getNibblerDir().getResetCode());

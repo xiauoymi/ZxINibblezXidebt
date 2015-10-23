@@ -22,7 +22,6 @@ import com.nibbledebt.nibble.R;
 import com.nibbledebt.nibble.common.AbstractWizardStep;
 import com.nibbledebt.nibble.common.RestTemplateCreator;
 import com.nibbledebt.nibble.integration.model.Bank;
-import com.nibbledebt.nibble.integration.model.InstitutionDetail;
 import com.nibbledebt.nibble.integration.model.LoginField;
 import com.nibbledebt.nibble.security.BanksObject;
 import com.nibbledebt.nibble.security.SecurityContext;

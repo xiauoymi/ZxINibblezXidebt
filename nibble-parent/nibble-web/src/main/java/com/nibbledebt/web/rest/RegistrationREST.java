@@ -21,13 +21,14 @@ import org.springframework.stereotype.Component;
 
 import com.nibbledebt.common.error.ProcessingException;
 import com.nibbledebt.common.error.ServiceException;
+import com.nibbledebt.common.error.ValidationException;
 import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.common.validator.Validatable;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.processor.InstitutionProcessor;
 import com.nibbledebt.core.processor.RegistrationProcessor;
-import com.nibbledebt.web.rest.model.InstitutionDetail;
+import com.nibbledebt.web.rest.model.Bank;
 import com.nibbledebt.web.rest.model.NibblerData;
 
 /**
@@ -51,7 +52,7 @@ public class RegistrationREST {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
 	@Validatable() //TODO - write custom validator
-	public void register(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException{
+	public void register(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
 		regService.registerNibbler(nibblerData);
 	}
 //	
@@ -102,7 +103,7 @@ public class RegistrationREST {
 	@Loggable(logLevel=LogLevel.INFO)
 	@Validatable() //TODO - write custom validator
 	public void activate(NibblerData nibblerData) throws ProcessingException, RepositoryException{
-		regService.activateNibbler(nibblerData.getUsername(), nibblerData.getPassword(), nibblerData.getActivationCode());
+		regService.activateNibbler(nibblerData.getEmail(), nibblerData.getPassword(), nibblerData.getActivationCode());
 	}
 	
 	
@@ -110,11 +111,8 @@ public class RegistrationREST {
 	@Path("/banks")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
-	public List<InstitutionDetail> getSupportedBanks() throws ProcessingException, ServiceException{
-//		JsonListWrapper<InstitutionDetail> wrapper = new JsonListWrapper<>();
-		List<InstitutionDetail> insts = instService.getSupportedInstitutions();
-//		if(insts!=null) wrapper.getItems().addAll(insts);
-		return insts;
+	public List<Bank> getSupportedBanks() throws ProcessingException, ServiceException{
+		return instService.getSupportedInstitutions();
 	}
 	
 	@GET

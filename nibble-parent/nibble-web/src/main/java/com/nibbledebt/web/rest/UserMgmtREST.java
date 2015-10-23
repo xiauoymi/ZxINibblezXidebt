@@ -40,7 +40,7 @@ public class UserMgmtREST {
 	@Loggable(logLevel=LogLevel.INFO)
 	@Validatable() //TODO - write custom validator
 	public void reset(NibblerData nibblerData) throws ProcessingException, RepositoryException{
-		usersProcessor.resetPassword(nibblerData.getUsername(), nibblerData.getResetCode());
+		usersProcessor.resetPassword(nibblerData.getEmail(), nibblerData.getResetCode());
 	}
 	
 	@POST
@@ -49,7 +49,7 @@ public class UserMgmtREST {
 	@Loggable(logLevel=LogLevel.INFO)
 	@Validatable() //TODO - write custom validator
 	public void sendResetCode(NibblerData nibblerData) throws ProcessingException, RepositoryException{
-		usersProcessor.generateResetCode(nibblerData.getUsername(), null);
+		usersProcessor.generateResetCode(nibblerData.getEmail(), null);
 	}	
 
 	
