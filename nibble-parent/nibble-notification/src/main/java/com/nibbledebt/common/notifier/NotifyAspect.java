@@ -20,8 +20,8 @@ import org.springframework.ui.velocity.VelocityEngineFactoryBean;
 import com.nibbledebt.common.error.NotificationException;
 import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
+import com.nibbledebt.domain.model.NibblerData;
 import com.nibbledebt.integration.sao.mandrill.MandrillSao;
-import com.nibbledebt.web.rest.model.NibblerData;
 
 /**
  * @author ralam1

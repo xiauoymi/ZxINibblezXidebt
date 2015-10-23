@@ -30,7 +30,7 @@ import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.AccountTransaction;
 import com.nibbledebt.core.data.model.Nibbler;
 import com.nibbledebt.core.data.model.NibblerAccount;
-import com.nibbledebt.web.rest.model.TransactionSummary;
+import com.nibbledebt.domain.model.TransactionSummary;
 
 /**
  * @author Rocky Alam
@@ -66,7 +66,7 @@ public class TransactionProcessor extends AbstractProcessor{
 		BigDecimal weeklyTotal = BigDecimal.ZERO;
 		LocalDate now = new LocalDate();
 
-		List<com.nibbledebt.web.rest.model.Transaction> wtrxs = new ArrayList<>();
+		List<com.nibbledebt.domain.model.Transaction> wtrxs = new ArrayList<>();
 		for(NibblerAccount nacct : nibbler.getAccounts()){
 			if(nacct.getUseForRounding()){
 				for(int i=7; i>0; i--){
@@ -74,7 +74,7 @@ public class TransactionProcessor extends AbstractProcessor{
 					Date day = new Date(now.withDayOfWeek(DateTimeConstants.SATURDAY).minusDays(i).toDate().getTime());
 					List<AccountTransaction> trxsForDay = accountTrxDao.retrieveTrxs(nacct.getId(), day, day);
 					for(AccountTransaction trx : trxsForDay){
-						com.nibbledebt.web.rest.model.Transaction dtrx = new com.nibbledebt.web.rest.model.Transaction();
+						com.nibbledebt.domain.model.Transaction dtrx = new com.nibbledebt.domain.model.Transaction();
 						dtrx.setCity(trx.getLocation().getCity());
 						dtrx.setRoundupAmount(trx.getRoundupAmount());
 						dtrx.setState(trx.getLocation().getState());
@@ -109,11 +109,11 @@ public class TransactionProcessor extends AbstractProcessor{
 	}
 	
 	@Transactional(propagation=Propagation.REQUIRES_NEW, isolation=Isolation.READ_COMMITTED)
-	public List<com.nibbledebt.web.rest.model.Transaction> retrieveTransactions(Long accountId) throws ProcessingException, RepositoryException{
+	public List<com.nibbledebt.domain.model.Transaction> retrieveTransactions(Long accountId) throws ProcessingException, RepositoryException{
 		List<AccountTransaction> transactions = accountTrxDao.retrieveTrxs(accountId);
-		List<com.nibbledebt.web.rest.model.Transaction> wtrxs = new ArrayList<>();
+		List<com.nibbledebt.domain.model.Transaction> wtrxs = new ArrayList<>();
 		for(AccountTransaction trx : transactions){
-			com.nibbledebt.web.rest.model.Transaction wtrx = new com.nibbledebt.web.rest.model.Transaction();
+			com.nibbledebt.domain.model.Transaction wtrx = new com.nibbledebt.domain.model.Transaction();
 			wtrx.setCity(trx.getLocation().getCity());
 			wtrx.setRoundupAmount(trx.getRoundupAmount());
 			wtrx.setState(trx.getLocation().getState());

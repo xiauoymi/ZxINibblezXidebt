@@ -28,8 +28,8 @@ import com.nibbledebt.common.validator.Validatable;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.processor.InstitutionProcessor;
 import com.nibbledebt.core.processor.RegistrationProcessor;
-import com.nibbledebt.web.rest.model.Bank;
-import com.nibbledebt.web.rest.model.NibblerData;
+import com.nibbledebt.domain.model.Bank;
+import com.nibbledebt.domain.model.NibblerData;
 
 /**
  * @author Rocky Alam

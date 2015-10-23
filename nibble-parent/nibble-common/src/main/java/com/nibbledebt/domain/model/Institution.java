@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.nibbledebt.web.rest.model;
+package com.nibbledebt.domain.model;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 

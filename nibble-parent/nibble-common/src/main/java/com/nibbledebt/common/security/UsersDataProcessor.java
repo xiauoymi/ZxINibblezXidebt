@@ -17,7 +17,7 @@ import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.Nibbler;
 import com.nibbledebt.core.data.model.NibblerRole;
 import com.nibbledebt.core.processor.AbstractProcessor;
-import com.nibbledebt.web.rest.model.NibblerData;
+import com.nibbledebt.domain.model.NibblerData;
 
 /**
  * @author alam_home

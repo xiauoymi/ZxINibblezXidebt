@@ -25,9 +25,9 @@ import com.nibbledebt.common.security.MemberDetails;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.processor.AccountsProcessor;
 import com.nibbledebt.core.processor.TransactionProcessor;
-import com.nibbledebt.web.rest.model.Account;
-import com.nibbledebt.web.rest.model.JsonListWrapper;
-import com.nibbledebt.web.rest.model.TransactionSummary;
+import com.nibbledebt.domain.model.Account;
+import com.nibbledebt.domain.model.JsonListWrapper;
+import com.nibbledebt.domain.model.TransactionSummary;
 
 /**
  * @author ralam
@@ -65,8 +65,8 @@ public class AccountMgmtREST {
 	@Path("/acctrxs/{accountId}")
 	@Loggable(logLevel=LogLevel.INFO)
 	@PreAuthorize("hasRole('nibbler_level_1')")
-	public JsonListWrapper<com.nibbledebt.web.rest.model.Transaction> getAccountTransactions(@PathParam("accountId") Long accountId) throws ProcessingException, RepositoryException{
-		JsonListWrapper<com.nibbledebt.web.rest.model.Transaction> wrapper = new JsonListWrapper<>();
+	public JsonListWrapper<com.nibbledebt.domain.model.Transaction> getAccountTransactions(@PathParam("accountId") Long accountId) throws ProcessingException, RepositoryException{
+		JsonListWrapper<com.nibbledebt.domain.model.Transaction> wrapper = new JsonListWrapper<>();
 		wrapper.setItems(trxsProcessor.retrieveTransactions(accountId));
 		return wrapper;
 	}

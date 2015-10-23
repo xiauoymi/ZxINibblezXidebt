@@ -26,11 +26,11 @@ import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.core.data.dao.IInstitutionDao;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.Field;
+import com.nibbledebt.domain.model.Bank;
+import com.nibbledebt.domain.model.Institution;
+import com.nibbledebt.domain.model.LoginField;
+import com.nibbledebt.domain.model.LoginForm;
 import com.nibbledebt.integration.sao.IIntegrationSao;
-import com.nibbledebt.web.rest.model.Bank;
-import com.nibbledebt.web.rest.model.Institution;
-import com.nibbledebt.web.rest.model.LoginField;
-import com.nibbledebt.web.rest.model.LoginForm;
 
 /**
  * @author ralam1

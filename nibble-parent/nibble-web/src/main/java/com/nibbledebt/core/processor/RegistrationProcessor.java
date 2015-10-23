@@ -37,11 +37,11 @@ import com.nibbledebt.core.data.model.NibblerDirectoryStatus;
 import com.nibbledebt.core.data.model.NibblerPreference;
 import com.nibbledebt.core.data.model.NibblerRole;
 import com.nibbledebt.core.data.model.NibblerRoleType;
+import com.nibbledebt.domain.model.Bank;
+import com.nibbledebt.domain.model.LoginField;
+import com.nibbledebt.domain.model.NibblerData;
 import com.nibbledebt.integration.model.cad.LinkResponse;
 import com.nibbledebt.integration.sao.IIntegrationSao;
-import com.nibbledebt.web.rest.model.Bank;
-import com.nibbledebt.web.rest.model.LoginField;
-import com.nibbledebt.web.rest.model.NibblerData;
 
 /**
  * @author ralam1

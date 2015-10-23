@@ -1,7 +1,7 @@
 /**
  * Copyright 2015-2016. All rights reserved by Nibbledebt Inc.
  */
-package com.nibbledebt.web.rest.model;
+package com.nibbledebt.domain.model;
 
 import java.math.BigDecimal;
 

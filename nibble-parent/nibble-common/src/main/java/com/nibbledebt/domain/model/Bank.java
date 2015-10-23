@@ -1,4 +1,4 @@
-package com.nibbledebt.web.rest.model;
+package com.nibbledebt.domain.model;
 
 import java.io.Serializable;
 import java.util.HashMap;

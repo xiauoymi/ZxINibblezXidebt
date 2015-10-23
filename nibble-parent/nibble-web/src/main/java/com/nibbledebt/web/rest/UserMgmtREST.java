@@ -20,7 +20,7 @@ import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.common.validator.Validatable;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.processor.UsersProcessor;
-import com.nibbledebt.web.rest.model.NibblerData;
+import com.nibbledebt.domain.model.NibblerData;
 
 /**
  * @author ralam

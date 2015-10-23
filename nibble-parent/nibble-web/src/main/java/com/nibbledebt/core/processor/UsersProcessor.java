@@ -30,7 +30,7 @@ import com.nibbledebt.core.data.model.NibblerDirectory;
 import com.nibbledebt.core.data.model.NibblerDirectoryStatus;
 import com.nibbledebt.core.data.model.NibblerRole;
 import com.nibbledebt.core.data.model.NibblerRoleType;
-import com.nibbledebt.web.rest.model.NibblerData;
+import com.nibbledebt.domain.model.NibblerData;
 
 /**
  * @author ralam

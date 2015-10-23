@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.nibbledebt.core.data.dao.INibblerAccountDao;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.NibblerAccount;
-import com.nibbledebt.web.rest.model.Account;
+import com.nibbledebt.domain.model.Account;
 
 /**
  * @author ralam

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.nibbledebt.web.rest.model;
+package com.nibbledebt.domain.model;
 
 import java.util.List;
 

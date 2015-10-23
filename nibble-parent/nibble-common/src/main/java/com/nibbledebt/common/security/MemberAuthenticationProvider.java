@@ -20,7 +20,7 @@ import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.NibblerDirectoryStatus;
-import com.nibbledebt.web.rest.model.NibblerData;
+import com.nibbledebt.domain.model.NibblerData;
 
 /**
  * @author ralam1
