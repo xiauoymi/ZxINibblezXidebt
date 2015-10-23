@@ -9,4 +9,8 @@
     <color name="nibble_main_light">#BBD1EA</color>
     <color name="nibble_main_error">#eaa1c6</color>
 
+
+    <color name="hint_text">#B3FFFFFF</color>
+    <color name="white">#FFFFFF</color>
+
 </resources>

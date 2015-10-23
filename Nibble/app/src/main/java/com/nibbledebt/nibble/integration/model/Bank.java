@@ -1,5 +1,6 @@
 package com.nibbledebt.nibble.integration.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -14,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "institution",
         "loginForm"
 })
-public class Bank {
+public class Bank implements Serializable{
 
     @JsonProperty("institution")
     private Institution institution;

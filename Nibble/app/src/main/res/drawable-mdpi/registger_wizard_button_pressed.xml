@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <shape android:shape="rectangle" android:tint="@color/nibble_main">
-            <solid android:color="@color/nibble_main_dark" />
-
-        </shape>
-    </item>
-</layer-list>

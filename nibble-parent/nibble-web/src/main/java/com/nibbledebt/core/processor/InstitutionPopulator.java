@@ -34,7 +34,7 @@ import com.nibbledebt.integration.sao.IIntegrationSao;
 @Scope("prototype")
 public class InstitutionPopulator implements RunnableAsync<Institution>{
 	
-	private static final String[] SUPPORTED_TYPES = {"JP Morgan Chase Bank", "Capital One 360", "Bank of America (TX)", "PNC Bank", "Discover Bank", "U.S. Bank - TrustNow", "USAA Bank", "Citibank Credit Card", "American Express Credit Card", "BBVA Compass" };
+	private static final String[] SUPPORTED_TYPES = {"FinBank", "JP Morgan Chase Bank", "Capital One 360", "Bank of America (TX)", "PNC Bank", "Discover Bank", "U.S. Bank - TrustNow", "USAA Bank", "Citibank Credit Card", "American Express Credit Card", "BBVA Compass" };
 //	private static final String AGGREGATOR_INTTUIT = "intuit";
 	private static final String AGGREGATOR_FINICITY = "finicity";
 	

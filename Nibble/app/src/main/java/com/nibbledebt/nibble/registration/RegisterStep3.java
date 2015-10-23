@@ -1,6 +1,7 @@
 package com.nibbledebt.nibble.registration;
 
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
@@ -11,20 +12,18 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.GridLayout;
-import android.widget.ImageView;
+import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
+import android.util.TypedValue;
+import android.view.*;
+import android.widget.*;
 
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import com.nibbledebt.nibble.R;
 import com.nibbledebt.nibble.common.AbstractWizardStep;
 import com.nibbledebt.nibble.common.RestTemplateCreator;
 import com.nibbledebt.nibble.integration.model.Bank;
 import com.nibbledebt.nibble.integration.model.InstitutionDetail;
+import com.nibbledebt.nibble.integration.model.LoginField;
 import com.nibbledebt.nibble.security.BanksObject;
 import com.nibbledebt.nibble.security.SecurityContext;
 import com.nibbledebt.nibble.security.SessionObject;
@@ -42,18 +41,19 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by ralam on 10/4/15.
  */
-public class RegisterStep3 extends AbstractWizardStep {
+public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Dialog.RegisterStep3DialogListener{
     private SupportedBanksTask saTask;
 
     @ContextVariable
     private String bankId;
+
+    @ContextVariable
+    private Map<String, String> bankCreds = new HashMap<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,20 +69,26 @@ public class RegisterStep3 extends AbstractWizardStep {
 
         // load supported accounts
         saTask = new SupportedBanksTask();
-        saTask.setView(v);
         saTask.execute();
 
         // return the view
         return v;
     }
 
+    @Override
+    public void onDialogPositiveClick(android.support.v4.app.DialogFragment dialog, Map<String, String> formData) {
+        dialog.dismiss();
+
+    }
+
+    @Override
+    public void onDialogNegativeClick(android.support.v4.app.DialogFragment dialog) {
+        deselectAll();
+        dialog.dismiss();
+
+    }
+
     private class SupportedBanksTask extends AsyncTask<String, Void, Boolean> {
-        private View view;
-
-        public void setView(View view){
-            this.view = view;
-        }
-
         @Override
         protected Boolean doInBackground(String... data) {
             try {
@@ -99,7 +105,7 @@ public class RegisterStep3 extends AbstractWizardStep {
         protected void onPostExecute(Boolean loginSuccessful) {
             final List<Bank> banks = ((BanksObject)SecurityContext.getCurrentContext().getSessionMap().get("banks")).getData("banks");
             for(int i=0; i<banks.size(); i++){
-                final ImageView imageView = (ImageView)view.findViewById(getGridImageViewId(i + 1));
+                final ImageView imageView = (ImageView)getActivity().findViewById(getGridImageViewId(i + 1));
 //                imageView.setImageBitmap(banks.get(i).getInstitution().getLogo());
                 final int idx = i;
                 Drawable drawable = new BitmapDrawable(getResources(), banks.get(i).getInstitution().getLogo());
@@ -111,36 +117,15 @@ public class RegisterStep3 extends AbstractWizardStep {
                         if(v!=null && v instanceof ImageView) {
                             switch (event.getAction()) {
                                 case MotionEvent.ACTION_DOWN:
-
                                     if(!StringUtils.equalsIgnoreCase(bankId, banks.get(idx).getInstitution().getId())){
                                         v.getBackground().setAlpha(255);
-                                        deselectOthers(v.getId(), v.getLayoutParams().width, v.getLayoutParams().height);
+                                        deselectOthers(v.getId());
                                         v.setLayoutParams(new LinearLayout.LayoutParams((int)((double)v.getLayoutParams().width*1.2d), (int)((double)v.getLayoutParams().height*1.2d)));
                                         v.invalidate();
                                     }
                                     bankId = banks.get(idx).getInstitution().getId();
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                                    builder.setView(R.layout.register_wizard_step3_dialog_layout);
-                                    builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                            //save info where you want it
-                                        }
-                                    });
-                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    AlertDialog dialog = builder.create();
-                                    TextView dialogHeader = new TextView(view.getContext());
-                                    dialogHeader.setText(banks.get(idx).getInstitution().getName() + " Authentication");
-                                   dialog.addContentView(dialogHeader, new ViewGroup.LayoutParams(500, 100));
-                                    dialog.show();
+                                    createDialog(banks.get(idx)).show(getActivity().getSupportFragmentManager(), "RegisterStep3Dialog");
                                     break;
-
                                 case MotionEvent.ACTION_UP: {
 
                                     break;
@@ -154,38 +139,9 @@ public class RegisterStep3 extends AbstractWizardStep {
                         }
                         return true;
                     }
-
-                    private void deselectOthers(int imageViewId, int originalWidth, int originalHeight){
-                        for(int ivid : getAllGridImageViewIds()){
-                            if(imageViewId!=ivid){
-                                ImageView imageView = (ImageView)view.findViewById(ivid);
-                                if(imageView != null){
-                                    if(imageView.getBackground()!=null) imageView.getBackground().setAlpha(150);
-                                    imageView.setLayoutParams(new LinearLayout.LayoutParams(originalWidth, originalHeight));
-                                    imageView.invalidate();
-                                }
-                            }
-                        }
-                    }
-
-
                 });
             }
 
-
-//            if(!loginSuccessful){
-//                passwordTextView.setError(getString(R.string.incorrect_password));
-//                passwordTextView.requestFocus();
-//                loginTask = null;
-//
-//                hideProgress();
-//                //textView.setText("No network connection available.");
-//            }else{
-//                startActivity(new Intent(getBaseContext(), MainActivity.class));
-//                loginTask = null;
-//                hideProgress();
-//                finish();
-//            }
         }
 
         @Override
@@ -222,25 +178,63 @@ public class RegisterStep3 extends AbstractWizardStep {
             SecurityContext.getCurrentContext().getSessionMap().put("banks", new BanksObject(banks));
         }
 
-        public int getGridImageViewId(int columnCount){
-            switch(columnCount){
-                case 1 : return R.id.rform11;
-                case 2 : return R.id.rform12;
-                case 3 : return R.id.rform13;
-                case 4 : return R.id.rform21;
-                case 5 : return R.id.rform22;
-                case 6 : return R.id.rform23;
-                case 7 : return R.id.rform31;
-                case 8 : return R.id.rform32;
-                case 9 : return R.id.rform33;
-                default : return R.id.rform41;
+    }
+
+    private final void deselectOthers(int imageViewId){
+        for(int ivid : getAllGridImageViewIds()){
+            if(imageViewId!=ivid){
+                ImageView imageView = (ImageView)getActivity().findViewById(ivid);
+                if(imageView != null){
+                    if(imageView.getBackground()!=null) imageView.getBackground().setAlpha(150);
+                    imageView.setLayoutParams(new LinearLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics()), (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics())));
+                    imageView.invalidate();
+                }
             }
         }
+    }
 
-        public int[] getAllGridImageViewIds(){
-            return new int[]{R.id.rform11,R.id.rform12,R.id.rform13,R.id.rform21,R.id.rform22,R.id.rform23,R.id.rform31,R.id.rform32,R.id.rform33};
+
+    private final int[] getAllGridImageViewIds(){
+        return new int[]{R.id.rform11,R.id.rform12,R.id.rform13,R.id.rform21,R.id.rform22,R.id.rform23,R.id.rform31,R.id.rform32,R.id.rform33};
+    }
+
+
+    private final int getGridImageViewId(int columnCount){
+        switch(columnCount){
+            case 1 : return R.id.rform11;
+            case 2 : return R.id.rform12;
+            case 3 : return R.id.rform13;
+            case 4 : return R.id.rform21;
+            case 5 : return R.id.rform22;
+            case 6 : return R.id.rform23;
+            case 7 : return R.id.rform31;
+            case 8 : return R.id.rform32;
+            case 9 : return R.id.rform33;
+            default : return R.id.rform41;
         }
     }
+
+
+    private final void deselectAll(){
+        for(int ivid : getAllGridImageViewIds()){
+            ImageView imageView = (ImageView)getActivity().findViewById(ivid);
+            if(imageView != null){
+                if(imageView.getBackground()!=null) imageView.getBackground().setAlpha(150);
+                imageView.setLayoutParams(new LinearLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics()), (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics())));
+                imageView.invalidate();
+            }
+        }
+    }
+
+    private RegisterStep3Dialog createDialog(Bank bank){
+        RegisterStep3Dialog dialog = new RegisterStep3Dialog();
+        dialog.setTargetFragment(this, 0);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("bank", bank);
+        dialog.setArguments(bundle);
+        return dialog;
+    }
+
 
     protected Boolean hasAllRequiredFields(){
         return true;
