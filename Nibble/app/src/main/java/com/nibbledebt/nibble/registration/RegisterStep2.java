@@ -151,6 +151,8 @@ public class RegisterStep2 extends AbstractWizardStep {
         zipTextBox.setText(zip);
         phoneTextBox.setText(phone);
 
+        if (hasAllRequiredFields()) notifyCompleted();
+
         // return the view
         return v;
     }

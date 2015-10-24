@@ -62,6 +62,7 @@
 
     <string name="banksurl">http://192.168.56.1:9000/services/rest/banks</string>
     <string name="banklogourl">http://192.168.56.1:9000/services/rest/logo/</string>
+    <string name="regurl">http://192.168.56.1:9000/services/rest/register</string>
 
     <string-array name="us_states_list">
         <item>Alabama</item>

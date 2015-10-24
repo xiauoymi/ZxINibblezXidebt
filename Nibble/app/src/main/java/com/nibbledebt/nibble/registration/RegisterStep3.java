@@ -75,15 +75,18 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
     }
 
     @Override
-    public void onDialogPositiveClick(android.support.v4.app.DialogFragment dialog, Map<String, String> formData) {
+    public void onDialogPositiveClick(android.support.v4.app.DialogFragment dialog, Map<String, String> formData, Bank selectedBank) {
         dialog.dismiss();
         for(String formFieldKey : formData.keySet()){
             bankCreds.put(formFieldKey, formData.get(formFieldKey));
         }
+        bank = selectedBank;
+        notifyCompleted();
     }
 
     @Override
     public void onDialogNegativeClick(android.support.v4.app.DialogFragment dialog) {
+        bankCreds.clear();
         deselectAll();
         dialog.dismiss();
 
@@ -125,12 +128,8 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
                                         v.invalidate();
                                     }
                                     bank = banks.get(idx);
-                                    createDialog(banks.get(idx)).show(getActivity().getSupportFragmentManager(), "RegisterStep3Dialog");
+                                    createDialog(bank).show(getActivity().getSupportFragmentManager(), "RegisterStep3Dialog");
                                     break;
-                                case MotionEvent.ACTION_UP: {
-
-                                    break;
-                                }
                                 case MotionEvent.ACTION_CANCEL: {
                                     v.getBackground().setAlpha(255);
                                     v.invalidate();

@@ -29,7 +29,7 @@ public class RegisterStep3Dialog extends DialogFragment {
     private Map<String, EditText> formEditTextList;
 
     public interface RegisterStep3DialogListener {
-        void onDialogPositiveClick(DialogFragment dialog, Map<String, String> formData);
+        void onDialogPositiveClick(DialogFragment dialog, Map<String, String> formData, Bank selectedBank);
         void onDialogNegativeClick(DialogFragment dialog);
     }
 
@@ -53,14 +53,14 @@ public class RegisterStep3Dialog extends DialogFragment {
                         formEditTextList.get(field.getName()).setError(field.getName()+" is required.");
                         valid = false;
                     }else if(formEditTextList.get(field.getName()).getText().toString().length()<=field.getValueLengthMin() ||
-                            formEditTextList.get(field.getName()).getText().toString().length()>field.getValueLengthMax()  ){
-                        formEditTextList.get(field.getName()).setError("Must be between "+field.getValueLengthMin()+" and "+field.getValueLengthMax()+" characters.");
+                            (field.getValueLengthMax()>0 && formEditTextList.get(field.getName()).getText().toString().length()>field.getValueLengthMax())){
+                        formEditTextList.get(field.getName()).setError("Must be between "+field.getValueLengthMin() + " and " + field.getValueLengthMax() + " characters.");
                         valid = false;
                     }else{
                         formData.put(field.getName(), formEditTextList.get(field.getName()).getText().toString());
                     }
                 }
-                if(valid) mListener.onDialogPositiveClick(RegisterStep3Dialog.this, formData);
+                if(valid) mListener.onDialogPositiveClick(RegisterStep3Dialog.this, formData, bank);
             }
         });
         (view.findViewById(R.id.register_step3_dialog_cancel_btn)).setOnClickListener(new View.OnClickListener() {

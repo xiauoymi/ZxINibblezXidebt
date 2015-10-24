@@ -133,6 +133,8 @@ public class RegisterStep1 extends AbstractWizardStep{
         firstnameTextBox.setText(firstname);
         lastnameTextBox.setText(lastname);
 
+        if (hasAllRequiredFields()) notifyCompleted();
+
         // return the view
         return v;
     }
