@@ -35,4 +35,6 @@ public class RegistrationWizard extends RegistrationWizardLayout{
         getActivity().finish();     //Terminate the wizard
     }
 
+
+
 }
