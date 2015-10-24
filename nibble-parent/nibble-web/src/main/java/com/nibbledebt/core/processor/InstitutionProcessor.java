@@ -4,6 +4,7 @@
 package com.nibbledebt.core.processor;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -53,38 +54,6 @@ public class InstitutionProcessor {
 	
 	@Autowired
 	private ThreadPoolTaskExecutor instSyncExecutor;
-
-
-    //TODO:asa stub method remove when switch to prod
-    private Bank getTestInstitution() {
-        Bank institutionDetail = new Bank();
-        Institution institution = new Institution();
-        LoginForm loginForm = new LoginForm();
-        institution.setName("FinBank");
-        institution.setId("101732");
-        institution.setUrlHomeApp("http://www.finbank.com");
-        List<LoginField> loginFields = new ArrayList<>();
-        LoginField lField = new LoginField();
-        lField.setName("Banking Userid");
-        lField.setDescription("user id");
-        lField.setMask(false);
-        lField.setDisplayOrder(1);
-        lField.setInstructions("no instructions");
-        lField.setId("101732001");
-        loginFields.add(lField);
-        LoginField pField = new LoginField();
-        pField.setName("Banking Password");
-        pField.setDescription("Banking Password");
-        pField.setMask(true);
-        pField.setDisplayOrder(2);
-        pField.setInstructions("no instructions");
-        pField.setId("101732002");
-        loginFields.add(pField);
-        loginForm.setLoginField(loginFields);
-        institutionDetail.setInstitution(institution);
-        institutionDetail.setLoginForm(loginForm);
-        return institutionDetail;
-    }
 	
 	@Cacheable(value="instCache", unless="#result == null")
 	@Transactional(readOnly=true)
@@ -120,42 +89,18 @@ public class InstitutionProcessor {
 					banks.add(bank);
 				}
 			}
-            banks.add(getTestInstitution());
 			return banks;
 		} catch (RepositoryException e) {
 			throw new ProcessingException("Error while retrieving supported institutions.", e);
 		}
 	}
 	
-	@Cacheable(value="logoCache")
-	@Transactional(readOnly=true)
-	public byte[] getLogo(String institutionType) throws ProcessingException{
-		try {	
-			return IOUtils.toByteArray(this.getClass().getClassLoader().getResourceAsStream(LOGO_LOCATION+institutionType));
-		} catch (IOException e) {
-			throw new ProcessingException("Error while converting logo inputstream to byte[].", e);
-		}
-	}
-
-    @Cacheable(value="logoCache")
-    @Transactional(readOnly = true)
-    public byte[] getLogoByName(String name) throws ProcessingException{
-        String prepared = name.replaceAll("-", "").replaceAll("\\.", "").replaceAll(" ", "_").toLowerCase();
-        try {
-            return IOUtils.toByteArray(this.getClass().getClassLoader().getResourceAsStream(LOGO_LOCATION+prepared));
-        } catch (IOException e) {
-            throw new ProcessingException("Error while converting logo inputstream to byte[].", e);
-        }
-    }
-    
     @Cacheable(value="logoCache")
     @Transactional(readOnly = true)
     public byte[] getLogoById(String institutionId) throws ProcessingException{
         try {
-        	if(this.getClass().getClassLoader().getResourceAsStream(LOGO_LOCATION+institutionId) != null)
-        		return IOUtils.toByteArray(this.getClass().getClassLoader().getResourceAsStream(LOGO_LOCATION+institutionId));
-        	else
-        		return null;
+			InputStream fis = this.getClass().getClassLoader().getResourceAsStream(LOGO_LOCATION+institutionId);
+			return IOUtils.toByteArray(fis==null ? this.getClass().getClassLoader().getResourceAsStream(LOGO_LOCATION+"genericbank") : fis);
         } catch (IOException e) {
             throw new ProcessingException("Error while converting logo inputstream to byte[].", e);
         }

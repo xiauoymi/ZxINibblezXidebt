@@ -124,45 +124,34 @@ public class RegistrationProcessor extends AbstractProcessor{
 	@Notify(notifyMethod=NotifyMethod.EMAIL, notifyType=NotifyType.ACCOUNT_CREATED)
 	public void registerNibbler(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
         String customerId = integrationSao.addCustomer(nibblerData.getUsername(), nibblerData.getFirstName(), nibblerData.getLastName());
-		register(nibblerData, customerId);
-        AddAccountsResponse response = null;
+        if(StringUtils.isNotBlank(customerId))  saveCustomerData(nibblerData, customerId);
         if (nibblerData.getBank() != null && nibblerData.getBank().getInstitution() != null) {
-            response = integrationSao.addAccounts(customerId, Long.valueOf(nibblerData.getBank().getInstitution().getId()),
-                    nibblerData.getBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
+        	if(externalAuthReqsValid(nibblerData.getBank())){
+                AddAccountsResponse response = integrationSao.addAccounts(customerId, Long.valueOf(nibblerData.getBank().getInstitution().getId()),
+                            nibblerData.getBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
 
+                
+
+                if (response != null && response.getMfaType() == MfaType.NON_MFA) {
+                    saveCustomerAccounts(nibblerData, response.getAccounts());
+                }
+            }else{
+            	throw new ValidationException("Financial institution requires fields that have failed validation.");
+            }
+        }else{
+        	throw new ValidationException("Financial institution not available.");
         }
-
-        if (response != null && response.getMfaType() == MfaType.NON_MFA) {
-            updateAccount(nibblerData, response.getAccounts());
-        }
-
-        
-//		LinkResponse resp = plaidSao.linkAccount(nibblerData.getInstUsername(), 
-//				nibblerData.getInstPassword(), 
-//				nibblerData.getInstPin(),
-//				nibblerData.getInstitution());
-//		if(resp!=null){
-//			register(nibblerData, resp.getAccessToken());
-//			try {
-//				updateAccount(nibblerData, resp);
-//			} catch (ParseException e) {
-//				throw new ProcessingException("Error ocurred while parsing a date." , e);
-//			}
-//			return resp;
-//		}else{
-//			throw new ProcessingException("There was an issue trying to link the account. Plaid did not respond as expected.");
-//		}
 	}
 	
-//	private boolean externalAuthReqsValid(Bank bank) {
-//		boolean isValid = true;
-//		for(LoginField field : bank.getLoginForm().getLoginField()){
-//			if(field.getValue().length()<field.getValueLengthMin() || field.getValue().length() > field.getValueLengthMax()){
-//				isValid = false;
-//			}
-//		}
-//		return isValid;
-//	}
+	private boolean externalAuthReqsValid(Bank bank) {
+		boolean isValid = true;
+		for(LoginField field : bank.getLoginForm().getLoginField()){
+			if(field.getValue().length()<field.getValueLengthMin() || field.getValue().length() > field.getValueLengthMax()){
+				isValid = false;
+			}
+		}
+		return isValid;
+	}
 
 	/**
 	 * Returns a null if no MFA is required, otherwise returns the details of the MFA challenge.
@@ -246,53 +235,6 @@ public class RegistrationProcessor extends AbstractProcessor{
 //		}
 	}
 
-    /**
-     * registration user if account wasn't linked
-     * @param nibblerData - nibbler data
-     * @throws ProcessingException
-     * @throws RepositoryException
-     */
-    private void register(NibblerData nibblerData) throws ProcessingException, RepositoryException {
-
-        Nibbler nibbler = new Nibbler();
-        NibblerDirectory nibblerDir = new NibblerDirectory();
-
-        setCreated(nibbler, nibblerData.getEmail());
-        setCreated(nibblerDir, nibblerData.getEmail());
-
-        nibbler.setFirstName(nibblerData.getFirstName());
-        nibbler.setLastName(nibblerData.getLastName());
-        nibbler.setAddressLine1(nibblerData.getAddress1());
-        nibbler.setAddressLine2(nibblerData.getAddress2());
-        nibbler.setCity(nibblerData.getCity());
-        nibbler.setState(nibblerData.getState());
-        nibbler.setZip(nibblerData.getZip());
-        nibbler.setExtAccessToken(nibblerData.getEmail());
-
-        nibblerDir.setUsername(nibblerData.getEmail());
-        nibblerDir.setPassword(
-                encoder.encodePassword(
-                        String.valueOf(nibblerData.getPassword()),
-                        salt));
-        nibblerDir.setStatus(NibblerDirectoryStatus.CREATED.name());
-
-        String actCode = UUID.randomUUID().toString();
-        nibblerDir.setActivationCode(actCode);
-        nibblerData.setActivationCode(actCode);
-        nibbler.setPhone(nibblerData.getPhone());
-        nibbler.setEmail(nibblerData.getEmail());
-
-        nibbler.setNibblerDir(nibblerDir);
-        nibblerDir.setNibbler(nibbler);
-
-        NibblerPreference prefs = new NibblerPreference();
-        prefs.setNibbler(nibbler);
-        prefs.setWeeklyTargetAmount(new BigDecimal("9.99"));
-        setCreated(prefs, nibblerData.getEmail());
-        nibbler.setNibblerPreferences(prefs);
-        nibblerDao.create(nibbler);
-    }
-
 
     /**
      * Register nibbler with customerId
@@ -301,8 +243,9 @@ public class RegistrationProcessor extends AbstractProcessor{
      * @throws ProcessingException
      * @throws RepositoryException
      */
-	private void register(	NibblerData nibblerData,
-							String customerId) throws ProcessingException, RepositoryException{
+	@Transactional(propagation=Propagation.REQUIRED)
+	private void saveCustomerData(	NibblerData nibblerData,
+										String customerId) throws ProcessingException, RepositoryException{
 		Nibbler nibbler = new Nibbler();
 		NibblerDirectory nibblerDir = new NibblerDirectory();
 
@@ -344,7 +287,7 @@ public class RegistrationProcessor extends AbstractProcessor{
 	}
 	
 	@Transactional(propagation=Propagation.REQUIRED)
-	private void updateAccount(NibblerData nibblerData, Accounts accounts) throws ServiceException, RepositoryException{
+	private void saveCustomerAccounts(NibblerData nibblerData, Accounts accounts) throws ServiceException, RepositoryException{
 					
 		Nibbler nibbler = nibblerDao.find(nibblerData.getUsername());
 

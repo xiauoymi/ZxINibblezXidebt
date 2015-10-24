@@ -49,7 +49,7 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
     private SupportedBanksTask saTask;
 
     @ContextVariable
-    private String bankId;
+    private Bank bank;
 
     @ContextVariable
     private Map<String, String> bankCreds = new HashMap<>();
@@ -77,7 +77,9 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
     @Override
     public void onDialogPositiveClick(android.support.v4.app.DialogFragment dialog, Map<String, String> formData) {
         dialog.dismiss();
-
+        for(String formFieldKey : formData.keySet()){
+            bankCreds.put(formFieldKey, formData.get(formFieldKey));
+        }
     }
 
     @Override
@@ -116,13 +118,13 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
                         if(v!=null && v instanceof ImageView) {
                             switch (event.getAction()) {
                                 case MotionEvent.ACTION_DOWN:
-                                    if(!StringUtils.equalsIgnoreCase(bankId, banks.get(idx).getInstitution().getId())){
+                                    if(bank!=null && !StringUtils.equalsIgnoreCase(bank.getInstitution().getId(), banks.get(idx).getInstitution().getId())){
                                         v.getBackground().setAlpha(255);
                                         deselectOthers(v.getId());
                                         v.setLayoutParams(new LinearLayout.LayoutParams((int)((double)v.getLayoutParams().width*1.2d), (int)((double)v.getLayoutParams().height*1.2d)));
                                         v.invalidate();
                                     }
-                                    bankId = banks.get(idx).getInstitution().getId();
+                                    bank = banks.get(idx);
                                     createDialog(banks.get(idx)).show(getActivity().getSupportFragmentManager(), "RegisterStep3Dialog");
                                     break;
                                 case MotionEvent.ACTION_UP: {

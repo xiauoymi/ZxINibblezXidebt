@@ -58,14 +58,14 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 			
 			if(inst == null && Arrays.asList((SUPPORTED_TYPES)).contains(instFromLoop.getName())){
 				Institution instDetail = integrationSao.getInstitution(String.valueOf(instFromLoop.getId()));				
-				String instType = determineType(instDetail.getAccountTypeDescription());
+				String instType = determineType(instDetail.getType());
 				if(!StringUtils.equalsIgnoreCase(instType, "unknown")){
 					LoginForm loginForm = integrationSao.getInstitutionLoginForm(String.valueOf(instFromLoop.getId()));
 					inst = new com.nibbledebt.core.data.model.Institution();
 					inst.setName(instDetail.getName());
 					inst.setExternalId(String.valueOf(instDetail.getId()));
 					inst.setAggregatorName(AGGREGATOR_FINICITY);
-					inst.setHomeUrl(instDetail.getUrlHomeApp());
+					inst.setHomeUrl(instDetail.getHomeUrl());
 					inst.setCreatedTs(new Date());
 					inst.setCreatedUser("system");
 					inst.setLogoCode(StringUtils.lowerCase(StringUtils.deleteWhitespace(instDetail.getName())));
@@ -81,7 +81,7 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 				Institution instDetail = integrationSao.getInstitution(String.valueOf(instFromLoop.getId()));
 				LoginForm loginForm = integrationSao.getInstitutionLoginForm(String.valueOf(instFromLoop.getId()));
 				inst.setExternalId(String.valueOf(instDetail.getId()));
-				inst.setHomeUrl(instDetail.getUrlHomeApp());
+				inst.setHomeUrl(instDetail.getHomeUrl());
 				inst.setUpdatedTs(new Date());
 				inst.setUpdatedUser("system");
 				inst.setLastSyncedTs(new Date());
@@ -131,6 +131,7 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 		else if(StringUtils.containsIgnoreCase(name, "car") || StringUtils.containsIgnoreCase(name, "auto")) return "auto_loan";
 		else if(StringUtils.containsIgnoreCase(name, "mortgage")) return "home_loan";
 		else if(StringUtils.containsIgnoreCase(name, "401k")) return "401k";
+		else if(StringUtils.containsIgnoreCase(name, "test")) return "test";
 		else return "unknown";
 	}
 

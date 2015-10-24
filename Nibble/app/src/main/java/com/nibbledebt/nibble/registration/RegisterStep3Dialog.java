@@ -13,6 +13,7 @@ import android.widget.*;
 import com.nibbledebt.nibble.R;
 import com.nibbledebt.nibble.integration.model.Bank;
 import com.nibbledebt.nibble.integration.model.LoginField;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +47,20 @@ public class RegisterStep3Dialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 Map<String, String> formData = new HashMap<>();
-                for(String etKey : formEditTextList.keySet())  formData.put(etKey, formEditTextList.get(etKey).getText().toString());
-                mListener.onDialogPositiveClick(RegisterStep3Dialog.this, formData);
+                boolean valid = true;
+                for(LoginField field : bank.getLoginForm().getLoginField())  {
+                    if(!StringUtils.isNotBlank(formEditTextList.get(field.getName()).getText().toString()) ){
+                        formEditTextList.get(field.getName()).setError(field.getName()+" is required.");
+                        valid = false;
+                    }else if(formEditTextList.get(field.getName()).getText().toString().length()<=field.getValueLengthMin() ||
+                            formEditTextList.get(field.getName()).getText().toString().length()>field.getValueLengthMax()  ){
+                        formEditTextList.get(field.getName()).setError("Must be between "+field.getValueLengthMin()+" and "+field.getValueLengthMax()+" characters.");
+                        valid = false;
+                    }else{
+                        formData.put(field.getName(), formEditTextList.get(field.getName()).getText().toString());
+                    }
+                }
+                if(valid) mListener.onDialogPositiveClick(RegisterStep3Dialog.this, formData);
             }
         });
         (view.findViewById(R.id.register_step3_dialog_cancel_btn)).setOnClickListener(new View.OnClickListener() {

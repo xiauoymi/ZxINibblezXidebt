@@ -31,6 +31,10 @@ public class Institution
     
     private LoginForm form;
 
+	private String homeUrl;
+
+	private String type;
+
     /**
 	 * @return the id
 	 */
@@ -153,6 +157,22 @@ public class Institution
 	 */
 	public void setForm(LoginForm form) {
 		this.form = form;
+	}
+
+	public String getHomeUrl() {
+		return homeUrl;
+	}
+
+	public void setHomeUrl(String homeUrl) {
+		this.homeUrl = homeUrl;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public Bitmap getLogo() {
