@@ -12,8 +12,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  *
  */
 @JsonRootName("institution")
-public class Institution
-{
+public class Institution {
     private String id;
 
     private String urlLogonApp;

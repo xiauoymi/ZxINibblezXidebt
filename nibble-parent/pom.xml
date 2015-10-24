@@ -18,7 +18,6 @@
 	</properties>
 
 	<modules>
-<!-- 		<module>nibble-cad-client</module> -->
 		<module>nibble-web</module>
 		<module>nibble-finicity-client</module>
 		<module>nibble-integration</module>

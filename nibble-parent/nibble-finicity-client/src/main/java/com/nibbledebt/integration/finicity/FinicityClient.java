@@ -3,10 +3,12 @@
  */
 package com.nibbledebt.integration.finicity;
 
-import java.util.List;
-
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.nibbledebt.integration.finicity.model.accounts.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.nibbledebt.integration.finicity.error.FinicityAccessException;
@@ -15,8 +17,6 @@ import com.nibbledebt.integration.finicity.model.Institution;
 import com.nibbledebt.integration.finicity.model.Institutions;
 import com.nibbledebt.integration.finicity.model.LoginField;
 import com.nibbledebt.integration.finicity.model.LoginForm;
-import com.nibbledebt.integration.finicity.model.accounts.Accounts;
-import com.nibbledebt.integration.finicity.model.accounts.CustomerAccountsRequest;
 
 /**
  * @author alam_home
@@ -64,13 +64,132 @@ public class FinicityClient {
 	public void deleteCustomer(String customerId) throws FinicityAccessException{
 		restClient.delete(finicityCustUrl+customerId);
 	}
-	
-	@NeedsToken
-	public Accounts discoverAccounts(String customerId, String institutionId, List<LoginField> fields) throws FinicityAccessException{
-		CustomerAccountsRequest req = new CustomerAccountsRequest();
-		LoginField[] fieldArray = fields.toArray(new LoginField[fields.size()]);
-		req.setFields(fieldArray);
-		return restClient.postForObject(finicityCustUrl+customerId+"/institutions/"+institutionId+"/accounts", req, Accounts.class);
-	}
+
+    /**
+     * Discover customer accounts. (Need to activate accounts)
+     * @param customerId    - customer Id
+     * @param institutionId - institution Id
+     * @param fields        - login fields
+     * @return Response Entity.
+     * @throws FinicityAccessException
+     */
+    @NeedsToken
+    public ResponseEntity<String> addCustomerAccountsString(String customerId, String institutionId,
+                                                                 LoginField[] fields) throws FinicityAccessException {
+        CustomerAccountsRequest request = new CustomerAccountsRequest();
+        request.setFields(fields);
+        ResponseEntity<String> entity = restClient.postForEntity(
+                finicityCustUrl + customerId + "/institutions/" + institutionId + "/accounts/addall",
+                request, String.class);
+        return entity;
+    }
+
+    /**
+     * Discover customer accounts
+     * @param customerId    - customer Id
+     * @param institutionId - institution Id
+     * @param fields        - login fields
+     * @return Response Entity.
+     * @throws FinicityAccessException
+     */
+    @NeedsToken
+    public ResponseEntity<String> discoverCustomerAccountsString(String customerId, String institutionId,
+                                                                 LoginField[] fields) throws FinicityAccessException {
+        CustomerAccountsRequest request = new CustomerAccountsRequest();
+        request.setFields(fields);
+        ResponseEntity<String> entity = restClient.postForEntity(
+                finicityCustUrl + customerId + "/institutions/" + institutionId + "/accounts",
+                request, String.class);
+        return entity;
+    }
+
+    /**
+     * Discover Accounts
+     * @param customerId - customerId
+     * @param institutionId - institutionId
+     * @param fields login fields
+     * @return - Discover Account Response
+     * @throws FinicityAccessException
+     */
+    @NeedsToken
+    public DiscoverAccountsResponse discoverAccounts(String customerId, String institutionId,
+                                                     LoginField[] fields) throws FinicityAccessException {
+        XmlMapper mapper = new XmlMapper();
+        DiscoverAccountsResponse response = new DiscoverAccountsResponse();
+        ResponseEntity<String> entity = discoverCustomerAccountsString(customerId, institutionId, fields);
+        if (entity.getStatusCode() == HttpStatus.OK) {
+            response.setType(MfaType.NON_MFA);
+            try {
+                response.setAccounts(mapper.readValue(entity.getBody(), Accounts.class));
+            } catch (Exception e) {
+                throw new FinicityAccessException(e);
+            }
+        } else if (entity.getStatusCode() == HttpStatus.NON_AUTHORITATIVE_INFORMATION) {
+            MfaChallenges challenges;
+            try {
+                challenges = mapper.readValue(entity.getBody(), TextMfaChallenges.class);
+                response.setType(MfaType.TEXT);
+            } catch (Exception e) {
+                try {
+                    challenges = mapper.readValue(entity.getBody(), ImageMfaChallenges.class);
+                    response.setType(MfaType.IMAGE);
+                } catch (Exception e1) {
+                    try {
+                        challenges = mapper.readValue(entity.getBody(), ImageChoiceMfaChallenges.class);
+                        response.setType(MfaType.IMAGE_CHOOSE);
+                    } catch (Exception e2) {
+                        throw new FinicityAccessException(e2);
+                    }
+                }
+            }
+            response.setMfaChallenges(challenges);
+        }
+        return response;
+    }
+
+
+    /**
+     * Add Accounts
+     * @param customerId - customerId
+     * @param institutionId - institutionId
+     * @param fields login fields
+     * @return - Discover Account Response
+     * @throws FinicityAccessException
+     */
+    @NeedsToken
+    public AddAccountsResponse addAccounts(String customerId, String institutionId,
+                                                     LoginField[] fields) throws FinicityAccessException {
+        XmlMapper mapper = new XmlMapper();
+        AddAccountsResponse response = new AddAccountsResponse();
+        ResponseEntity<String> entity = addCustomerAccountsString(customerId, institutionId, fields);
+        if (entity.getStatusCode() == HttpStatus.OK) {
+            response.setType(MfaType.NON_MFA);
+            try {
+                response.setAccounts(mapper.readValue(entity.getBody(), Accounts.class));
+            } catch (Exception e) {
+                throw new FinicityAccessException(e);
+            }
+        } else if (entity.getStatusCode() == HttpStatus.NON_AUTHORITATIVE_INFORMATION) {
+            MfaChallenges challenges;
+            try {
+                challenges = mapper.readValue(entity.getBody(), TextMfaChallenges.class);
+                response.setType(MfaType.TEXT);
+            } catch (Exception e) {
+                try {
+                    challenges = mapper.readValue(entity.getBody(), ImageMfaChallenges.class);
+                    response.setType(MfaType.IMAGE);
+                } catch (Exception e1) {
+                    try {
+                        challenges = mapper.readValue(entity.getBody(), ImageChoiceMfaChallenges.class);
+                        response.setType(MfaType.IMAGE_CHOOSE);
+                    } catch (Exception e2) {
+                        throw new FinicityAccessException(e2);
+                    }
+                }
+            }
+            response.setMfaChallenges(challenges);
+        }
+        return response;
+    }
 	
 }

@@ -34,6 +34,8 @@ public class Account {
 
     private String lastUpdatedDate;
 
+    private AccountDetail detail;
+
     public String getId() {
         return id;
     }
@@ -136,5 +138,13 @@ public class Account {
 
     public void setLastUpdatedDate(String lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
+    }
+
+    public AccountDetail getDetail() {
+        return detail;
+    }
+
+    public void setDetail(AccountDetail detail) {
+        this.detail = detail;
     }
 }

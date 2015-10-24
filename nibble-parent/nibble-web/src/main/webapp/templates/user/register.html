@@ -262,6 +262,7 @@
                 <div class="form-group" ng-repeat="key in keys">
                     <input type="{{fieldType(key)}}" class="form-control empty"
                            placeholder="{{fieldPlaceholder(key)}}"
+                           value=""
                            name="{{key.name}}" required
                            ng-model="keys[$index].value"
                            xt-validation-tooltip>

@@ -11,6 +11,11 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
             templateUrl: "/templates/user/login.html",
             controller: "LoginCtrl"
         })
+        .state('user.login.hash', {
+            url: "/",
+            templateUrl: "/templates/user/login.html",
+            controller: "LoginCtrl"
+        })
         .state('user.register', {
             url: "/register",
             templateUrl: "/templates/user/register.html",

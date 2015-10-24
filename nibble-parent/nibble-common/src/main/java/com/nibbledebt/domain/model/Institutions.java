@@ -1,32 +1,19 @@
-/**
- * 
- */
-package com.nibbledebt.integration.model;
+package com.nibbledebt.domain.model;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import com.fasterxml.jackson.annotation.JsonRootName;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 /**
  * @author alam_home
  *
  */
-@JsonRootName("institutions")
-public class Institutions
-{
-	@JacksonXmlProperty(isAttribute=true)
+public class Institutions {
     private String moreAvailable;
 
-	@JacksonXmlProperty(isAttribute=true)
     private String displaying;
 
-	@JacksonXmlProperty(isAttribute=true)
     private String found;
 
-	@JacksonXmlProperty(localName = "institution")
-    @JacksonXmlElementWrapper(useWrapping = false)
     private Institution[] institution;
 
     /**

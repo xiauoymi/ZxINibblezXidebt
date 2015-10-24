@@ -96,10 +96,10 @@ app.controller('RegisterCtrl',
              */
             $scope.linkAccount = function() {
                 accountFactory.getInstitutions().success(function(data) {
-                    var items = data.items;
+                    var items = data;
                     for (var i=0; i<items.length; i++) {
                         items[i].institution.logoUrl = NibbleUtils.getServicesUrl() + "/rest/logo/" +
-                        window.encodeURIComponent(items[i].institution.name);
+                        window.encodeURIComponent(items[i].institution.logoCode);
                     }
                     $scope.banks = items;
                     $scope.registration.condition = "linkAccount";
@@ -127,6 +127,14 @@ app.controller('RegisterCtrl',
                 nibbler.email = $scope.newuser.email;
                 nibbler.phone = $scope.newuser.phone;
                 nibbler.url = NibbleUtils.getBaseUrl();
+                if ($scope.selected != undefined) {
+                    nibbler.bank = {
+                        institution : {},
+                        loginForm : {}
+                    };
+                    nibbler.bank.institution.id = $scope.selected.institution.id;
+                    nibbler.bank.loginForm.loginField = $scope.selected.loginForm.loginField;
+                }
 
                 accountFactory.registerNibbler(nibbler).success(function(data){
                     console.log(data);

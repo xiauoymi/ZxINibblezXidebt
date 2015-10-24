@@ -6,6 +6,7 @@ package com.nibbledebt.domain.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nibbledebt.domain.model.account.Account;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**

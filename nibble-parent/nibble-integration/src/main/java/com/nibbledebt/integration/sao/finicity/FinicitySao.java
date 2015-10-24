@@ -7,14 +7,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.nibbledebt.domain.model.Institution;
+import com.nibbledebt.domain.model.LoginForm;
+import com.nibbledebt.domain.model.account.AddAccountsResponse;
+import com.nibbledebt.integration.finicity.model.LoginField;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.integration.finicity.FinicityClient;
-import com.nibbledebt.integration.model.Institution;
-import com.nibbledebt.integration.model.LoginForm;
 import com.nibbledebt.integration.sao.IIntegrationSao;
 
 /**
@@ -56,4 +58,28 @@ public class FinicitySao implements IIntegrationSao{
 			throw new ServiceException("Error while retrieving the login form for institution from Finicity with id:"+institutionIdentifier, e);
 		}
 	}
+
+    public AddAccountsResponse addAccounts(String customerId, Long institutionId,
+                                           com.nibbledebt.domain.model.LoginField[] fields) throws ServiceException {
+        try {
+            LoginField[] loginFields = new LoginField[fields.length];
+            for (int i = 0; i < fields.length; i++) {
+                loginFields[i] = integrationMapper.map(fields[i], LoginField.class);
+            }
+            AddAccountsResponse response = integrationMapper.map(finicityClient.addAccounts(customerId, String.valueOf(institutionId),
+                    loginFields), AddAccountsResponse.class);
+            return response;
+        } catch (Exception e) {
+            throw new ServiceException("Error while retrieving accounts from Finicity", e);
+        }
+    }
+
+    public String addCustomer(String userName, String firstName, String lastName) throws ServiceException {
+        try {
+            //TODO:asa change when switch to prod {return finicityClient.addCustomer(userName, firstName, lastName).getId();}
+            return finicityClient.addTestCustomer(userName, firstName, lastName).getId();
+        } catch (Exception e) {
+            throw new ServiceException("Error while creating customer for Finicity", e);
+        }
+    }
 }

@@ -1,19 +1,12 @@
-package com.nibbledebt.integration.model;
-
-import com.fasterxml.jackson.annotation.JsonRootName;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
+package com.nibbledebt.domain.model.account;
 
 /**
  * @author a.salachyonok
  */
-@JsonRootName("imageChoice")
 public class ImageChoice {
 
-    @JacksonXmlProperty(isAttribute = true)
     private String value;
 
-    @JacksonXmlText
     private String body;
 
     public String getValue() {

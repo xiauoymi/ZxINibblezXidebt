@@ -1,6 +1,4 @@
-package com.nibbledebt.integration.model;
-
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+package com.nibbledebt.domain.model.account;
 
 /**
  * @author a.salachyonok
@@ -8,7 +6,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 public class ImageQuestion extends Question {
 
-    @JacksonXmlProperty(localName = "image")
     private String image;
 
     public String getImage() {

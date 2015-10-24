@@ -1,11 +1,8 @@
-package com.nibbledebt.integration.model;
-
-import com.fasterxml.jackson.annotation.JsonRootName;
+package com.nibbledebt.domain.model.account;
 
 /**
  * @author a.salachyonok
  */
-@JsonRootName("question")
 public abstract class Question {
 
     private String text;

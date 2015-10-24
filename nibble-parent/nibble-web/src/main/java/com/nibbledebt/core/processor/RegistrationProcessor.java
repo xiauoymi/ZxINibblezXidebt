@@ -5,10 +5,16 @@ package com.nibbledebt.core.processor;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import com.nibbledebt.core.data.model.*;
+import com.nibbledebt.domain.model.account.Account;
+import com.nibbledebt.domain.model.account.Accounts;
+import com.nibbledebt.domain.model.account.AddAccountsResponse;
+import com.nibbledebt.domain.model.account.MfaType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,12 +37,6 @@ import com.nibbledebt.core.data.dao.INibblerDao;
 import com.nibbledebt.core.data.dao.INibblerDirectoryDao;
 import com.nibbledebt.core.data.dao.INibblerRoleDao;
 import com.nibbledebt.core.data.error.RepositoryException;
-import com.nibbledebt.core.data.model.Nibbler;
-import com.nibbledebt.core.data.model.NibblerDirectory;
-import com.nibbledebt.core.data.model.NibblerDirectoryStatus;
-import com.nibbledebt.core.data.model.NibblerPreference;
-import com.nibbledebt.core.data.model.NibblerRole;
-import com.nibbledebt.core.data.model.NibblerRoleType;
 import com.nibbledebt.domain.model.Bank;
 import com.nibbledebt.domain.model.LoginField;
 import com.nibbledebt.domain.model.NibblerData;
@@ -115,7 +115,7 @@ public class RegistrationProcessor extends AbstractProcessor{
 	
 	/**
 	 * Returns a null if no MFA is required, otherwise returns the details of the MFA challenge.
-	 * @param nibblerData
+	 * @param nibblerData -nibbler registration data
 	 * @return
 	 * @throws ProcessingException
 	 * @throws ServiceException
@@ -123,12 +123,19 @@ public class RegistrationProcessor extends AbstractProcessor{
 	@Transactional(isolation=Isolation.READ_COMMITTED)
 	@Notify(notifyMethod=NotifyMethod.EMAIL, notifyType=NotifyType.ACCOUNT_CREATED)
 	public void registerNibbler(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
-		register(nibblerData);
-        if(externalAuthReqsValid(nibblerData.getBank())){
-        	
-        }else{
-        	throw new ValidationException("External financial institution requires fields that have failed validation.");
+        String customerId = integrationSao.addCustomer(nibblerData.getUsername(), nibblerData.getFirstName(), nibblerData.getLastName());
+		register(nibblerData, customerId);
+        AddAccountsResponse response = null;
+        if (nibblerData.getBank() != null && nibblerData.getBank().getInstitution() != null) {
+            response = integrationSao.addAccounts(customerId, Long.valueOf(nibblerData.getBank().getInstitution().getId()),
+                    nibblerData.getBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
+
         }
+
+        if (response != null && response.getMfaType() == MfaType.NON_MFA) {
+            updateAccount(nibblerData, response.getAccounts());
+        }
+
         
 //		LinkResponse resp = plaidSao.linkAccount(nibblerData.getInstUsername(), 
 //				nibblerData.getInstPassword(), 
@@ -147,15 +154,15 @@ public class RegistrationProcessor extends AbstractProcessor{
 //		}
 	}
 	
-	private boolean externalAuthReqsValid(Bank bank) {
-		boolean isValid = true;
-		for(LoginField field : bank.getLoginForm().getLoginField()){
-			if(field.getValue().length()<field.getValueLengthMin() || field.getValue().length() > field.getValueLengthMax()){
-				isValid = false;
-			}
-		}
-		return isValid;
-	}
+//	private boolean externalAuthReqsValid(Bank bank) {
+//		boolean isValid = true;
+//		for(LoginField field : bank.getLoginForm().getLoginField()){
+//			if(field.getValue().length()<field.getValueLengthMin() || field.getValue().length() > field.getValueLengthMax()){
+//				isValid = false;
+//			}
+//		}
+//		return isValid;
+//	}
 
 	/**
 	 * Returns a null if no MFA is required, otherwise returns the details of the MFA challenge.
@@ -287,13 +294,15 @@ public class RegistrationProcessor extends AbstractProcessor{
     }
 
 
-	
+    /**
+     * Register nibbler with customerId
+     * @param nibblerData - nibbler data
+     * @param customerId - customer id
+     * @throws ProcessingException
+     * @throws RepositoryException
+     */
 	private void register(	NibblerData nibblerData,
-							String accessToken	) throws ProcessingException, RepositoryException{
-		if(accessToken==null){
-			throw new ProcessingException("There was an issue trying to link the account. Plaid did not respond as expected.");
-		}
-
+							String customerId) throws ProcessingException, RepositoryException{
 		Nibbler nibbler = new Nibbler();
 		NibblerDirectory nibblerDir = new NibblerDirectory();
 
@@ -301,7 +310,7 @@ public class RegistrationProcessor extends AbstractProcessor{
 		setCreated(nibbler, nibblerData.getEmail());
 		setCreated(nibblerDir, nibblerData.getEmail());
 		
-		nibbler.setExtAccessToken(accessToken);
+		nibbler.setExtAccessToken(customerId);
 				
 		nibbler.setFirstName(nibblerData.getFirstName());
 		nibbler.setLastName(nibblerData.getLastName());
@@ -335,54 +344,46 @@ public class RegistrationProcessor extends AbstractProcessor{
 	}
 	
 	@Transactional(propagation=Propagation.REQUIRED)
-	private void updateAccount(NibblerData nibblerData, LinkResponse accountData) throws ServiceException, ParseException, RepositoryException{
+	private void updateAccount(NibblerData nibblerData, Accounts accounts) throws ServiceException, RepositoryException{
 					
-		Nibbler nibbler = nibblerDao.find(nibblerData.getEmail());
-		
-//		for(Account account : accountData.getAccounts()){
-//			AccountType accountType = accountTypeDao.find(account.getType());
-//			if(accountType == null){
-//				accountType = new AccountType();
-//				accountType.setCode(account.getType());
-//				accountType.setDescription(account.getType());
-//				setCreated(accountType, nibblerData.getUsername());	
-//				accountTypeDao.create(accountType);
-//			}
-//			
-//			NibblerAccount naccount = new NibblerAccount();
-//			naccount.setAccountType(accountType);
-////			naccount.setWireRoutingNumber(account.getn().getWireRouting());
-////			naccount.setRoutingNumber(account.getNumbers().getRouting());
-//			naccount.setNumber(account.getNumbers().getAccount());
-//			naccount.setInstitution(institutionDao.findOne(Long.valueOf(nibblerData.getInstitution().getId())));
-//			naccount.setInstitutionType(account.getInstitutionType());
-//			naccount.setNibbler(nibbler);
-//			naccount.setName(account.getMeta().getName());
-//			naccount.setNumberMask(account.getMeta().getNumber());
-//			naccount.setExternalId(account.getId());
-//			setCreated(naccount, nibblerData.getUsername());
-//			
-//			if(account.getBalance() !=null){
-//				AccountBalance balance = new AccountBalance();
-//				balance.setAvailable(BigDecimal.valueOf(account.getBalance().getAvailable()));
-//				balance.setCurrent(BigDecimal.valueOf(account.getBalance().getCurrent()));
-//				balance.setAccount(naccount);
-//				setCreated(balance, nibblerData.getUsername());
-//				naccount.getBalances().add(balance);
-//			}
-//			
-//			if(account.getMeta().getLimit() !=null){
-//				AccountLimit limit = new AccountLimit();
-//				limit.setValue(account.getMeta().getLimit());
-//				limit.setAccount(naccount);
-//				setCreated(limit, nibblerData.getUsername());
-//				naccount.getLimits().add(limit);
-//			}
-//			
-////			naccount.setLastTransactionPull(new Date(System.currentTimeMillis()-8640000));
-//			nibbler.getAccounts().add(naccount);
-//		}
-		setUpdated(nibbler, nibblerData.getEmail());
+		Nibbler nibbler = nibblerDao.find(nibblerData.getUsername());
+
+        for (Account account : accounts.getAccount()) {
+            AccountType accountType = accountTypeDao.find(account.getAccountType());
+            if (accountType == null) {
+                accountType = new AccountType();
+                accountType.setCode(account.getAccountType());
+                accountType.setDescription(account.getAccountType());
+                setCreated(accountType, nibblerData.getUsername());
+                accountTypeDao.create(accountType);
+            }
+
+            NibblerAccount nibblerAccount = new NibblerAccount();
+            nibblerAccount.setAccountType(accountType);
+            nibblerAccount.setWireRoutingNumber(account.getAccountNumber());
+            nibblerAccount.setWireRoutingNumber(account.getAccountNumber());
+            nibblerAccount.setNumber(account.getAccountNumber());
+            nibblerAccount.setInstitution(institutionDao.findByName(nibblerData.getBank().getInstitution().getName()));
+            nibblerAccount.setNibbler(nibbler);
+            nibblerAccount.setName(account.getAccountType() + " - " + account.getAccountNumber());
+            nibblerAccount.setNumberMask("N/A");
+            nibblerAccount.setExternalId(String.valueOf(account.getAccountId()));
+            setCreated(nibblerAccount, nibblerData.getUsername());
+
+            if (account.getBalance() != null) {
+                AccountBalance balance = new AccountBalance();
+				balance.setAvailable(account.getAvailable());
+				balance.setCurrent(account.getBalance());
+				balance.setAccount(nibblerAccount);
+				setCreated(balance, nibblerData.getUsername());
+				nibblerAccount.getBalances().add(balance);
+            }
+
+            nibblerAccount.setLastTransactionPull(new Date(System.currentTimeMillis()-86400000));
+            nibbler.getAccounts().add(nibblerAccount);
+        }
+
+		setUpdated(nibbler, nibblerData.getUsername());
 		nibblerDao.update(nibbler);
 		nibblerData.setActivationCode(nibbler.getNibblerDir().getActivationCode());
 	}

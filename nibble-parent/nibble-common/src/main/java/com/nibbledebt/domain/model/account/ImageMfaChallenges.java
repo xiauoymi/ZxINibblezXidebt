@@ -1,4 +1,4 @@
-package com.nibbledebt.integration.model;
+package com.nibbledebt.domain.model.account;
 
 /**
  * @author a.salachyonok

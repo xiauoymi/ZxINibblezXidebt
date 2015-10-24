@@ -53,6 +53,38 @@ public class InstitutionProcessor {
 	
 	@Autowired
 	private ThreadPoolTaskExecutor instSyncExecutor;
+
+
+    //TODO:asa stub method remove when switch to prod
+    private Bank getTestInstitution() {
+        Bank institutionDetail = new Bank();
+        Institution institution = new Institution();
+        LoginForm loginForm = new LoginForm();
+        institution.setName("FinBank");
+        institution.setId("101732");
+        institution.setUrlHomeApp("http://www.finbank.com");
+        List<LoginField> loginFields = new ArrayList<>();
+        LoginField lField = new LoginField();
+        lField.setName("Banking Userid");
+        lField.setDescription("user id");
+        lField.setMask(false);
+        lField.setDisplayOrder(1);
+        lField.setInstructions("no instructions");
+        lField.setId("101732001");
+        loginFields.add(lField);
+        LoginField pField = new LoginField();
+        pField.setName("Banking Password");
+        pField.setDescription("Banking Password");
+        pField.setMask(true);
+        pField.setDisplayOrder(2);
+        pField.setInstructions("no instructions");
+        pField.setId("101732002");
+        loginFields.add(pField);
+        loginForm.setLoginField(loginFields);
+        institutionDetail.setInstitution(institution);
+        institutionDetail.setLoginForm(loginForm);
+        return institutionDetail;
+    }
 	
 	@Cacheable(value="instCache", unless="#result == null")
 	@Transactional(readOnly=true)
@@ -88,6 +120,7 @@ public class InstitutionProcessor {
 					banks.add(bank);
 				}
 			}
+            banks.add(getTestInstitution());
 			return banks;
 		} catch (RepositoryException e) {
 			throw new ProcessingException("Error while retrieving supported institutions.", e);
@@ -146,12 +179,10 @@ public class InstitutionProcessor {
 	                }
 	            }
 	        });
-			List<com.nibbledebt.integration.model.Institution> insts = integrationSao.getInstitutions();
-			for(com.nibbledebt.integration.model.Institution cadInst : insts){
-//				InstitutionPopulator pop = context.getBean("instPopulate", InstitutionPopulator.class);
-//				pop.insertInstitution(cadInst);
-				RunnableAsync<com.nibbledebt.integration.model.Institution> pop = context.getBean("instPopulate", RunnableAsync.class);
-				pop.setEntity(cadInst);
+			List<Institution> institutions = integrationSao.getInstitutions();
+			for(Institution institution : institutions){
+				RunnableAsync<Institution> pop = context.getBean("instPopulate", RunnableAsync.class);
+				pop.setEntity(institution);
 				instSyncExecutor.execute(pop);
 			}
 		}  catch (ServiceException e) {

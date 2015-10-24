@@ -8,6 +8,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.nibbledebt.domain.model.Institution;
+import com.nibbledebt.domain.model.LoginField;
+import com.nibbledebt.domain.model.LoginForm;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.core.data.dao.IInstitutionDao;
 import com.nibbledebt.core.data.error.RepositoryException;
-import com.nibbledebt.integration.model.Institution;
-import com.nibbledebt.integration.model.LoginField;
-import com.nibbledebt.integration.model.LoginForm;
 import com.nibbledebt.integration.sao.IIntegrationSao;
 
 /**
@@ -35,7 +35,6 @@ import com.nibbledebt.integration.sao.IIntegrationSao;
 public class InstitutionPopulator implements RunnableAsync<Institution>{
 	
 	private static final String[] SUPPORTED_TYPES = {"FinBank", "JP Morgan Chase Bank", "Capital One 360", "Bank of America (TX)", "PNC Bank", "Discover Bank", "U.S. Bank - TrustNow", "USAA Bank", "Citibank Credit Card", "American Express Credit Card", "BBVA Compass" };
-//	private static final String AGGREGATOR_INTTUIT = "intuit";
 	private static final String AGGREGATOR_FINICITY = "finicity";
 	
 	@Autowired
