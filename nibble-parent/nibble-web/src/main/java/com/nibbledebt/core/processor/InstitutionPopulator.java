@@ -4,13 +4,11 @@
 package com.nibbledebt.core.processor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import com.nibbledebt.domain.model.Institution;
-import com.nibbledebt.domain.model.LoginField;
-import com.nibbledebt.domain.model.LoginForm;
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.core.data.dao.IInstitutionDao;
 import com.nibbledebt.core.data.error.RepositoryException;
+import com.nibbledebt.domain.model.Institution;
+import com.nibbledebt.domain.model.LoginField;
+import com.nibbledebt.domain.model.LoginForm;
 import com.nibbledebt.integration.sao.IIntegrationSao;
 
 /**
@@ -33,8 +34,12 @@ import com.nibbledebt.integration.sao.IIntegrationSao;
 @Component("instPopulate")
 @Scope("prototype")
 public class InstitutionPopulator implements RunnableAsync<Institution>{
+	@Resource
+	private List<String> suppInstitutionTypes;
 	
-	private static final String[] SUPPORTED_TYPES = {"FinBank", "JP Morgan Chase Bank", "Capital One 360", "Bank of America (TX)", "PNC Bank", "Discover Bank", "U.S. Bank - TrustNow", "USAA Bank", "Citibank Credit Card", "American Express Credit Card", "BBVA Compass" };
+	@Resource
+	private List<String> testInstitutionTypes;
+	
 	private static final String AGGREGATOR_FINICITY = "finicity";
 	
 	@Autowired
@@ -56,7 +61,7 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 				LoggerFactory.getLogger(InstitutionProcessor.class).warn("Error while retrieving Intuit institution from database. ", e);
 			}
 			
-			if(inst == null && Arrays.asList((SUPPORTED_TYPES)).contains(instFromLoop.getName())){
+			if(inst == null && suppInstitutionTypes.contains(instFromLoop.getName())){
 				Institution instDetail = integrationSao.getInstitution(String.valueOf(instFromLoop.getId()));				
 				String instType = determineType(instDetail.getType());
 				if(!StringUtils.equalsIgnoreCase(instType, "unknown")){
@@ -69,13 +74,14 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 					inst.setCreatedTs(new Date());
 					inst.setCreatedUser("system");
 					inst.setLogoCode(StringUtils.lowerCase(StringUtils.deleteWhitespace(instDetail.getName())));
-					inst.setIsPrimary((Arrays.asList((SUPPORTED_TYPES)).contains(instDetail.getName()) ? true : false));
+					inst.setIsPrimary(suppInstitutionTypes.contains(instDetail.getName()) ? true : false);
+					inst.setIsTest(testInstitutionTypes.contains(instDetail.getName()) ? true : false);
 					inst.setLastSyncedTs(new Date());
 					inst.setPriority(1);
 					inst.setType(instType);
 					convertToFields(loginForm.getLoginField(), inst);
 				}
-			}else if(inst!=null  && Arrays.asList((SUPPORTED_TYPES)).contains(instFromLoop.getName())
+			}else if(inst!=null  && suppInstitutionTypes.contains(instFromLoop.getName())
 					&& ( (inst.getUpdatedTs()==null && inst.getCreatedTs().getTime()<System.currentTimeMillis()-86400000) 
 							||  (inst.getUpdatedTs()!=null && inst.getUpdatedTs().getTime()<System.currentTimeMillis()-86400000)) ){
 				Institution instDetail = integrationSao.getInstitution(String.valueOf(instFromLoop.getId()));

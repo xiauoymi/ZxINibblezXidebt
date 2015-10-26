@@ -30,7 +30,8 @@ import javax.persistence.UniqueConstraint;
 	@NamedQuery(name="findInstitutionByName", query="from Institution i where i.name = :name"),
 	@NamedQuery(name="findInstitutionByNameAndId", query="from Institution i where i.name = :name and i.externalId = :external_id"),
 	@NamedQuery(name="findInstitutionByType", query="from Institution i where i.type = :type"),
-	@NamedQuery(name="listPrimaryInstitutions", query="from Institution i where i.isPrimary = true")
+	@NamedQuery(name="listPrimaryInstitutions", query="from Institution i where i.isPrimary = true"),
+	@NamedQuery(name="listTestPrimaryInstitutions", query="from Institution i where i.isPrimary = true and i.isTest = true")
 })
 @Entity()
 @Table(	name="institution",
@@ -67,6 +68,9 @@ public class Institution extends AbstractModel {
 	
 	@Column(name="isPrimary", nullable=false)
 	private Boolean isPrimary;
+	
+	@Column(name="isTest", nullable=true)
+	private Boolean isTest;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "last_synced_ts", nullable = true)
@@ -173,6 +177,20 @@ public class Institution extends AbstractModel {
 	 */
 	public Boolean getIsPrimary() {
 		return isPrimary;
+	}
+
+	/**
+	 * @return the isTest
+	 */
+	public Boolean getIsTest() {
+		return isTest;
+	}
+
+	/**
+	 * @param isTest the isTest to set
+	 */
+	public void setIsTest(Boolean isTest) {
+		this.isTest = isTest;
 	}
 
 	/**

@@ -35,7 +35,7 @@ public class LoggingAspect {
             log(startTs, System.currentTimeMillis(), pjp, loggable.logLevel(), pjp.getArgs());
             return proceed;
         } catch (Exception e) {
-            log(startTs, System.currentTimeMillis(), pjp, loggable.logLevel(), e, pjp.getArgs());
+            log(startTs, System.currentTimeMillis(), pjp, LogLevel.ERROR, e, pjp.getArgs());
             throw e;
         } 
     }
@@ -58,7 +58,7 @@ public class LoggingAspect {
     			long pTs = endTs - startTs;
 	            String methodName = pjp.getSignature().getName();
 	            String logMsg = "[Execution complete] "+ methodName + " : " + pTs + " ms";
-	            logAtLevel(LoggerFactory.getLogger(pjp.getSignature().getDeclaringType()), logLevel, logMsg, data);
+	            logAtLevel(LoggerFactory.getLogger(pjp.getSignature().getDeclaringType()), logLevel, logMsg, data, null);
     		}
     	});    
     }
@@ -81,8 +81,8 @@ public class LoggingAspect {
 			public void run() {
 				long pTs = endTs - startTs;
 				String methodName = pjp.getSignature().getName();
-				String logMsg = "[Execution error] "+ methodName + " : " + pTs + " ms" + " : " + throwable;
-				logAtLevel(LoggerFactory.getLogger(pjp.getSignature().getDeclaringType()), logLevel, logMsg, data);
+				String logMsg = "[Execution error] "+ methodName + " : " + pTs + " ms";
+				logAtLevel(LoggerFactory.getLogger(pjp.getSignature().getDeclaringType()), logLevel, logMsg, data, throwable);
 			}
 		});
 	}
@@ -94,7 +94,7 @@ public class LoggingAspect {
 	 * @param level
 	 * @param message
 	 */
-	private void logAtLevel(Logger logger, LogLevel level, String message,  Object[] data){
+	private void logAtLevel(Logger logger, LogLevel level, String message,  Object[] data, Throwable t){
 		if(level == LogLevel.DEBUG)
 			logger.debug(message, data);
 		else if(level == LogLevel.INFO)
@@ -102,7 +102,7 @@ public class LoggingAspect {
 		else if(level == LogLevel.WARN)
 			logger.warn(message);		
 		else if (level == LogLevel.ERROR)
-			logger.error(message);
+			logger.error(message, t);
 		else if(level == LogLevel.TRACE)
 			logger.trace(message);
 		

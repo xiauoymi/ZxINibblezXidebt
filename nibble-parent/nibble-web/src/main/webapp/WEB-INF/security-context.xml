@@ -35,7 +35,10 @@
         				default-target-url="/nibblehome.html"
         				password-parameter="nibbler_password"
         				username-parameter="nibbler_username"/>
-        <sec:session-management  session-fixation-protection="newSession" invalid-session-url="/?message=Your previous session has expired."/>
+        
+        <sec:session-management  session-fixation-protection="newSession" invalid-session-url="/?message=Your previous session has expired.">
+        	<sec:concurrency-control max-sessions="1" />
+        </sec:session-management>
 <!--         <sec:csrf /> -->
  
 	    <!-- enable remember me -->

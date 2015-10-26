@@ -7,16 +7,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.nibbledebt.domain.model.Institution;
-import com.nibbledebt.domain.model.LoginForm;
-import com.nibbledebt.domain.model.account.AddAccountsResponse;
-import com.nibbledebt.integration.finicity.model.LoginField;
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.nibbledebt.common.error.ServiceException;
+import com.nibbledebt.domain.model.Institution;
+import com.nibbledebt.domain.model.LoginForm;
+import com.nibbledebt.domain.model.account.AddAccountsResponse;
 import com.nibbledebt.integration.finicity.FinicityClient;
+import com.nibbledebt.integration.finicity.model.LoginField;
 import com.nibbledebt.integration.sao.IIntegrationSao;
 
 /**
@@ -27,6 +31,9 @@ import com.nibbledebt.integration.sao.IIntegrationSao;
 public class FinicitySao implements IIntegrationSao{
 	@Autowired
 	private Mapper integrationMapper;
+	
+	@Resource
+	private Environment env;
 	
 	@Autowired
 	private FinicityClient finicityClient;
@@ -77,7 +84,7 @@ public class FinicitySao implements IIntegrationSao{
     public String addCustomer(String userName, String firstName, String lastName) throws ServiceException {
         try {
             //TODO:asa change when switch to prod {return finicityClient.addCustomer(userName, firstName, lastName).getId();}
-            return finicityClient.addTestCustomer(userName, firstName, lastName).getId();
+            return !StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod") ? finicityClient.addTestCustomer(userName, firstName, lastName).getId() : finicityClient.addCustomer(userName, firstName, lastName).getId();
         } catch (Exception e) {
             throw new ServiceException("Error while creating customer for Finicity", e);
         }

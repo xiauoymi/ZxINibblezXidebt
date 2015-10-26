@@ -129,7 +129,7 @@ public class RegistrationProcessor extends AbstractProcessor{
 	@Transactional(isolation=Isolation.READ_COMMITTED)
 	@Notify(notifyMethod=NotifyMethod.EMAIL, notifyType=NotifyType.ACCOUNT_CREATED)
 	public void registerNibbler(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
-        String customerId = integrationSao.addCustomer(nibblerData.getUsername(), nibblerData.getFirstName(), nibblerData.getLastName());
+        String customerId = integrationSao.addCustomer(nibblerData.getEmail(), nibblerData.getFirstName(), nibblerData.getLastName());
         if(StringUtils.isNotBlank(customerId))  saveCustomerData(nibblerData, customerId);
         if (nibblerData.getBank() != null && nibblerData.getBank().getInstitution() != null) {
         	if(externalAuthReqsValid(nibblerData.getBank())){
@@ -152,9 +152,15 @@ public class RegistrationProcessor extends AbstractProcessor{
 	private boolean externalAuthReqsValid(Bank bank) {
 		boolean isValid = true;
 		for(LoginField field : bank.getLoginForm().getLoginField()){
-			if(field.getValue().length()<field.getValueLengthMin() || field.getValue().length() > field.getValueLengthMax()){
+			if(StringUtils.isNotBlank(field.getValue())){
+				if(field.getValue().length()<=field.getValueLengthMin() || 
+						(field.getValueLengthMax() != 0 && field.getValue().length() > field.getValueLengthMax())){
+					isValid = false;
+				}
+			}else{
 				isValid = false;
 			}
+			
 		}
 		return isValid;
 	}

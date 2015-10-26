@@ -10,11 +10,15 @@ import java.util.List;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -42,6 +46,9 @@ public class InstitutionProcessor {
 	private static final String LOGO_LOCATION = "com/nibbledebt/institutions/";
 //	private static final String[] SUPPORTED_PLAID_TYPES = {"amex", "capone360", "citi", "fidelity", "pnc", "schwab", "svb", "us", "wells", "bofa", "usaa", "chase"};
 	
+	@Resource
+	private Environment env;
+	
 	@Autowired
 	private ApplicationContext context;
 	
@@ -60,7 +67,7 @@ public class InstitutionProcessor {
 	public List<Bank> getSupportedInstitutions() throws ProcessingException, ServiceException{
 		try {
 			List<Bank> banks = null;
-			List<com.nibbledebt.core.data.model.Institution> primaries = institutionDao.listPrimaries();
+			List<com.nibbledebt.core.data.model.Institution> primaries = !StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod") ? institutionDao.listTestPrimaries(): institutionDao.listPrimaries();
 			if(primaries !=null && !primaries.isEmpty()){
 				banks = new ArrayList<>();
 				for(com.nibbledebt.core.data.model.Institution inst : primaries){
@@ -73,6 +80,7 @@ public class InstitutionProcessor {
 					List<LoginField> loginFields = new ArrayList<>();
 					for(Field field : inst.getFields()){
 						LoginField lField = new LoginField();
+						lField.setId(String.valueOf(field.getId()));
 						lField.setName(field.getName());
 						lField.setDescription(field.getDisplayName());
 						lField.setMask(field.getIsMasked());

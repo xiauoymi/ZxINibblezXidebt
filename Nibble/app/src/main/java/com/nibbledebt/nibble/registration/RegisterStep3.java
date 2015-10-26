@@ -52,7 +52,7 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
     private Bank bank;
 
     @ContextVariable
-    private Map<String, String> bankCreds = new HashMap<>();
+    private HashMap<String, String> bankCreds = new HashMap<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,8 +67,10 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
         setCurrentStepAnimation(v.getContext(), R.anim.dot_pulse, (ImageView) v.findViewById(R.id.animated_dot_3));
 
         // load supported accounts
-        saTask = new SupportedBanksTask();
-        saTask.execute();
+        if(saTask == null) {
+            saTask = new SupportedBanksTask();
+            saTask.execute();
+        }
 
         // return the view
         return v;
@@ -231,6 +233,7 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
         dialog.setTargetFragment(this, 0);
         Bundle bundle = new Bundle();
         bundle.putSerializable("bank", bank);
+        bundle.putSerializable("bankCreds", bankCreds);
         dialog.setArguments(bundle);
         return dialog;
     }

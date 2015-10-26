@@ -71,4 +71,14 @@ public class InstitutionDao extends AbstractHibernateDao<Institution> implements
 			  throw new RepositoryException(e);
 		}
 	}
+	
+	@Override
+	public List<Institution> listTestPrimaries() throws RepositoryException {
+		try {
+			Query query = this.getCurrentSession().getNamedQuery("listTestPrimaryInstitutions");
+			return query.list();
+		} catch (Exception e) {
+			  throw new RepositoryException(e);
+		}
+	}
 }

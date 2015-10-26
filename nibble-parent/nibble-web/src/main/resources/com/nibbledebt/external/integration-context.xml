@@ -2,7 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 	 <bean id="velocityEngineFactory" class="org.springframework.ui.velocity.VelocityEngineFactoryBean" 
           p:resourceLoaderPath="classpath:/com/nibbledebt/templates" 
@@ -11,10 +13,59 @@
 	<import resource="classpath:finicity-integration-context.xml"/>
 	
 	<beans profile="postgres-local, embedded-local">
-		
+		<util:list id="suppInstitutionTypes" value-type="java.lang.String">
+			<value>JP Morgan Chase Bank</value>
+			<value>Capital One 360</value>
+			<value>Bank of America (TX)</value>
+			<value>PNC Bank</value>
+			<value>Discover Bank</value>
+			<value>U.S. Bank - TrustNow</value>
+			<value>USAA Bank</value>
+			<value>Citibank Credit Card</value>
+			<value>American Express Credit Card</value>
+			<value>BBVA Compass</value>
+			<value>FinBank</value>
+		</util:list>
+		<util:list id="testInstitutionTypes" value-type="java.lang.String">
+			<value>FinBank</value>
+		</util:list>
 	</beans>
 	
 	<beans profile="heroku-dev">
-		
+		<util:list id="suppInstitutionTypes" value-type="java.lang.String">
+			<value>JP Morgan Chase Bank</value>
+			<value>Capital One 360</value>
+			<value>Bank of America (TX)</value>
+			<value>PNC Bank</value>
+			<value>Discover Bank</value>
+			<value>U.S. Bank - TrustNow</value>
+			<value>USAA Bank</value>
+			<value>Citibank Credit Card</value>
+			<value>American Express Credit Card</value>
+			<value>BBVA Compass</value>
+			<value>FinBank</value>
+		</util:list>
+		<util:list id="testInstitutionTypes" value-type="java.lang.String">
+			<value>FinBank</value>
+		</util:list>
+	</beans>
+	
+	<beans profile="prod">
+		<util:list id="suppInstitutionTypes" value-type="java.lang.String">
+			<value>JP Morgan Chase Bank</value>
+			<value>Capital One 360</value>
+			<value>Bank of America (TX)</value>
+			<value>PNC Bank</value>
+			<value>Discover Bank</value>
+			<value>U.S. Bank - TrustNow</value>
+			<value>USAA Bank</value>
+			<value>Citibank Credit Card</value>
+			<value>American Express Credit Card</value>
+			<value>BBVA Compass</value>
+			<value>FinBank</value>
+		</util:list>
+		<util:list id="testInstitutionTypes" value-type="java.lang.String">
+			<value>FinBank</value>
+		</util:list>
 	</beans>
 </beans>

@@ -27,6 +27,7 @@ public class RegisterStep3Dialog extends DialogFragment {
     private Bank bank;
     private View view;
     private Map<String, EditText> formEditTextList;
+    private HashMap<String, String> bankCreds;
 
     public interface RegisterStep3DialogListener {
         void onDialogPositiveClick(DialogFragment dialog, Map<String, String> formData, Bank selectedBank);
@@ -40,6 +41,7 @@ public class RegisterStep3Dialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mListener = (RegisterStep3DialogListener)this.getTargetFragment();
         bank = (Bank)getArguments().getSerializable("bank");
+        bankCreds = (HashMap<String, String>)getArguments().getSerializable("bankCreds");
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         view = getActivity().getLayoutInflater().inflate(R.layout.register_wizard_step3_dialog_layout, null);
@@ -96,6 +98,7 @@ public class RegisterStep3Dialog extends DialogFragment {
             loginFieldEditText.setCompoundDrawablePadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics()));
             if(field.getMask()) loginFieldEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
             fieldLayout.addView(loginFieldEditText, params);
+            if(bankCreds.get(field.getName()) != null) loginFieldEditText.setText(bankCreds.get(field.getName()));
             formEditTextList.put(field.getName(),loginFieldEditText );
 
         }
