@@ -32,6 +32,10 @@
       <a>type</a>
       <b>category</b>
     </field>
+    <field>
+      <a>amount</a>
+      <b>trxAmount</b>
+    </field>
     <field custom-converter="com.nibbledebt.integration.finicity.model.DateToUtilDate">
     	<a>transactionDate</a>
     	<b>trxDate</b>

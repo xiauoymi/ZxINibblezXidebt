@@ -152,22 +152,24 @@ public class TransactionProcessor extends AbstractProcessor{
 		}
 	}
 	
-	@Scheduled(fixedDelay=60000)
+//	@Scheduled(fixedDelay=60000)
 	@Loggable(logLevel=LogLevel.INFO)
 	@Transactional(propagation=Propagation.REQUIRES_NEW, isolation=Isolation.READ_COMMITTED)
 	public void syncTrxs() throws ProcessingException, ServiceException, RepositoryException{
 		try {
 			List<NibblerAccount> accts = nibblerAcctDao.findAll();	
-			LocalDate now = new LocalDate();
+
+			Long toDate = System.currentTimeMillis();
+			Long fromDate = toDate-5184000000l; //60 days
 			for(NibblerAccount acct : accts){
 				if(acct.getUseForRounding()){
-					List<Transaction> extTrxs = integrationSao.retrieveTransactions(acct.getNibbler().getExtAccessToken(), acct.getExternalId(), acct.getLastTransactionPull()==null ? now.toDateTimeAtStartOfDay().minusDays(180).toDate() : acct.getLastTransactionPull(), now.toDate(), "desc");
+					List<Transaction> extTrxs = integrationSao.retrieveTransactions(acct.getNibbler().getExtAccessToken(), acct.getExternalId(), acct.getLastTransactionPull()==null ? new Date(fromDate) : acct.getLastTransactionPull(), new Date(toDate), "desc");
 					for(Transaction trx : extTrxs){
 						AccountTransaction atrx = new AccountTransaction();
 						atrx.setAccount(acct);
 						atrx.setAmount(trx.getTrxAmount());
 						atrx.setDate(trx.getTrxDate());
-						atrx.setTransactionId(trx.getTrxId());
+						atrx.setTransactionId(trx.getTrxId() == null ? trx.getAggregatorTrxId() : trx.getTrxId());
 						atrx.setPending(false);
 
 						setCreated(atrx, SYS_USER);
@@ -176,20 +178,22 @@ public class TransactionProcessor extends AbstractProcessor{
 						location.setAddress(trx.getDescription());
 						location.setName(trx.getDescription());
 						
-						TransactionCategory trxCat = trxCatDao.find(trx.getCategory());
-						if(trxCat == null){
-							trxCat = new TransactionCategory();
-							trxCat.setName(trx.getCategory());
-							trxCat.setDescription(trx.getCategory());
-							trxCat.getTransactions().add(atrx);
-							setCreated(trxCat, SYS_USER);	
+						if(trx.getCategory() != null){
+							TransactionCategory trxCat = trxCatDao.find(trx.getCategory());
+							if(trxCat == null){
+								trxCat = new TransactionCategory();
+								trxCat.setName(trx.getCategory());
+								trxCat.setDescription(trx.getCategory());
+								trxCat.getTransactions().add(atrx);
+								setCreated(trxCat, SYS_USER);	
+							}
+							atrx.getCategories().add(trxCat);
 						}
-						atrx.getCategories().add(trxCat);
 						
 						atrx.setLocation(location);
 						acct.getTransactions().add(atrx);
 					}
-					acct.setLastTransactionPull(new Date(System.currentTimeMillis()));
+					acct.setLastTransactionPull(new Date((toDate/1000)*1000));
 
 					setUpdated(acct, SYS_USER);
 					nibblerAcctDao.update(acct);
