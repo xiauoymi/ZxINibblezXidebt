@@ -4,9 +4,8 @@
 package com.nibbledebt.integration.finicity;
 
 import java.io.IOException;
+import java.util.Date;
 
-import com.nibbledebt.integration.finicity.model.Customer;
-import com.nibbledebt.integration.finicity.model.Customers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +17,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.nibbledebt.integration.finicity.error.FinicityAccessException;
 import com.nibbledebt.integration.finicity.error.PartnerAuthenticationException;
+import com.nibbledebt.integration.finicity.model.Customer;
+import com.nibbledebt.integration.finicity.model.Customers;
 import com.nibbledebt.integration.finicity.model.Institution;
 import com.nibbledebt.integration.finicity.model.LoginField;
 import com.nibbledebt.integration.finicity.model.accounts.Accounts;
@@ -43,6 +44,11 @@ public class FinicityClientTest {
 
 	@Autowired
 	AccountClient accountClient;
+	
+	@Test
+	public void testGetTrxs() throws FinicityAccessException{
+		finicityClient.getCustomerAccountTransactions("5048815", "6443352", new Date(System.currentTimeMillis()-1000000), new Date(), 1, 1000, "desc");
+	}
 	
 	@Test
 	public void getToken() throws FinicityAccessException, PartnerAuthenticationException {

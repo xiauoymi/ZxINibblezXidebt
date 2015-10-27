@@ -97,12 +97,13 @@ public class FinicitySao implements IIntegrationSao{
 		 try {
 			 Transactions ftrxs = finicityClient.getCustomerAccountTransactions(customerId, accountId, fromDate, toDate, 1, 1000, sort);
 			 List<Transaction> trxs = new ArrayList<>();
-			 for(com.nibbledebt.integration.finicity.model.trxs.Transaction ftrx: ftrxs.getTransaction())
-				 trxs.add(integrationMapper.map(ftrx, Transaction.class));
-			 
+			 if(ftrxs != null){
+				 for(com.nibbledebt.integration.finicity.model.trxs.Transaction ftrx: ftrxs.getTransaction())
+					 trxs.add(integrationMapper.map(ftrx, Transaction.class));
+			 }
 			 return trxs;
 		 } catch (Exception e) {
-            throw new ServiceException("Error while creating customer for Finicity", e);
+            throw new ServiceException("Error while retrieving transactions for customer with customerId["+customerId+"] and accountId["+accountId+"].", e);
         }
 	}
 }

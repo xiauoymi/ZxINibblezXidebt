@@ -161,7 +161,7 @@ public class TransactionProcessor extends AbstractProcessor{
 			LocalDate now = new LocalDate();
 			for(NibblerAccount acct : accts){
 				if(acct.getUseForRounding()){
-					List<Transaction> extTrxs = integrationSao.retrieveTransactions(acct.getNibbler().getExtAccessToken(), acct.getExternalId(), acct.getLastTransactionPull()==null ? now.toDateTimeAtStartOfDay().toDate() : acct.getLastTransactionPull(), null, "desc");
+					List<Transaction> extTrxs = integrationSao.retrieveTransactions(acct.getNibbler().getExtAccessToken(), acct.getExternalId(), acct.getLastTransactionPull()==null ? now.toDateTimeAtStartOfDay().minusDays(180).toDate() : acct.getLastTransactionPull(), now.toDate(), "desc");
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 					for(Transaction trx : extTrxs){
 						AccountTransaction atrx = new AccountTransaction();

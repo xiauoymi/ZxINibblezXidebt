@@ -309,11 +309,10 @@ public class RegistrationProcessor extends AbstractProcessor{
             nibblerAccount.setNumber(account.getAccountNumber());
             Institution institution = institutionDao.findByName(nibblerData.getBank().getInstitution().getName());
             nibblerAccount.setInstitution(institution);
-            nibblerAccount.setInstitutionType(institution.getType());
             nibblerAccount.setNibbler(nibbler);
             nibblerAccount.setName(account.getAccountType() + " - " + account.getAccountNumber());
             nibblerAccount.setNumberMask("N/A");
-            nibblerAccount.setExternalId(String.valueOf(account.getAccountId()));
+            nibblerAccount.setExternalId(String.valueOf(account.getAccountExternalId()));
             setCreated(nibblerAccount, nibblerData.getUsername());
 
             if (account.getBalance() != null) {

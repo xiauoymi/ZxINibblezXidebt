@@ -89,6 +89,7 @@ public class RegistrationWizard extends RegistrationWizardLayout{
         }
         CustomerData customerData = new CustomerData();
         customerData.setEmail(email);
+        customerData.setUsername(email);
         customerData.setPassword(password);
         customerData.setFirstName(firstname);
         customerData.setLastName(lastname);

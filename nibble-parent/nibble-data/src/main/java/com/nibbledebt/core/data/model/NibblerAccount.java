@@ -50,10 +50,7 @@ public class NibblerAccount extends AbstractModel{
 	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	@JoinColumn(name="institution_id", updatable=true, nullable=false)
 	private Institution institution;
-	
-	@Column(name="institution_type", nullable=false, length=50)
-	private String institutionType;	
-	
+		
 	@Column(name="number", nullable=true, length=50)
 	private String number;
 	
@@ -121,20 +118,6 @@ public class NibblerAccount extends AbstractModel{
 	 */
 	public void setInstitution(Institution institution) {
 		this.institution = institution;
-	}
-
-	/**
-	 * @return the institutionType
-	 */
-	public String getInstitutionType() {
-		return institutionType;
-	}
-
-	/**
-	 * @param institutionType the institutionType to set
-	 */
-	public void setInstitutionType(String institutionType) {
-		this.institutionType = institutionType;
 	}
 
 	/**

@@ -109,38 +109,42 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(Boolean loginSuccessful) {
-            final List<Bank> banks = ((BanksObject)SecurityContext.getCurrentContext().getSessionMap().get("banks")).getData("banks");
-            for(int i=0; i<banks.size(); i++){
-                final ImageView imageView = (ImageView)getActivity().findViewById(getGridImageViewId(i + 1));
+            if(SecurityContext.getCurrentContext().getSessionMap().get("banks") != null){
+                final List<Bank> banks = ((BanksObject)SecurityContext.getCurrentContext().getSessionMap().get("banks")).getData("banks");
+                for(int i=0; i<banks.size(); i++){
+                    final ImageView imageView = (ImageView)getActivity().findViewById(getGridImageViewId(i + 1));
 //                imageView.setImageBitmap(banks.get(i).getInstitution().getLogo());
-                final int idx = i;
-                Drawable drawable = new BitmapDrawable(getResources(), banks.get(i).getInstitution().getLogo());
-                drawable.setAlpha(150);
-                imageView.setBackground(drawable);
-                imageView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if(v!=null && v instanceof ImageView) {
-                            switch (event.getAction()) {
-                                case MotionEvent.ACTION_DOWN:
-                                    v.getBackground().setAlpha(255);
-                                    deselectOthers(v.getId());
-                                    v.setLayoutParams(new LinearLayout.LayoutParams((int)(80d*1.2d), (int)(80d*1.2d)));
-                                    v.invalidate();
-                                    bank = banks.get(idx);
-                                    createDialog(bank).show(getActivity().getSupportFragmentManager(), "RegisterStep3Dialog");
-                                    break;
-                                case MotionEvent.ACTION_CANCEL: {
-                                    v.getBackground().setAlpha(255);
-                                    v.invalidate();
-                                    break;
+                    final int idx = i;
+                    Drawable drawable = new BitmapDrawable(getResources(), banks.get(i).getInstitution().getLogo());
+                    drawable.setAlpha(150);
+                    imageView.setBackground(drawable);
+                    imageView.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            if(v!=null && v instanceof ImageView) {
+                                switch (event.getAction()) {
+                                    case MotionEvent.ACTION_DOWN:
+                                        v.getBackground().setAlpha(255);
+                                        deselectOthers(v.getId());
+                                        v.setLayoutParams(new LinearLayout.LayoutParams((int)(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics())*1.2d),
+                                                (int)(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics())*1.2d)));
+                                        v.invalidate();
+                                        bank = banks.get(idx);
+                                        createDialog(bank).show(getActivity().getSupportFragmentManager(), "RegisterStep3Dialog");
+                                        break;
+                                    case MotionEvent.ACTION_CANCEL: {
+                                        v.getBackground().setAlpha(255);
+                                        v.invalidate();
+                                        break;
+                                    }
                                 }
                             }
+                            return true;
                         }
-                        return true;
-                    }
-                });
+                    });
+                }
             }
+
 
         }
 
@@ -159,23 +163,27 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
             // Make the HTTP GET request, marshaling the response to a String
             Bank[] result = restTemplate.getForObject(getString(R.string.banksurl), Bank[].class);
 
-            List<Bank> banks = Arrays.asList(result);
-            Iterator<Bank> it = Arrays.asList(result).iterator();
+            if(result == null || result.length == 0){
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(Arrays.asList(MediaType.IMAGE_PNG));
-            HttpEntity<String> entity = new HttpEntity<String>(headers);
+            }else{
+                List<Bank> banks = Arrays.asList(result);
+                Iterator<Bank> it = Arrays.asList(result).iterator();
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setAccept(Arrays.asList(MediaType.IMAGE_PNG));
+                HttpEntity<String> entity = new HttpEntity<String>(headers);
 
 
-            while(it.hasNext()){
-                Bank bank = it.next();
-                ResponseEntity<byte[]> response = restTemplate.exchange(getString(R.string.banklogourl) + bank.getInstitution().getLogoCode(), HttpMethod.GET, entity, byte[].class, "1");
+                while(it.hasNext()){
+                    Bank bank = it.next();
+                    ResponseEntity<byte[]> response = restTemplate.exchange(getString(R.string.banklogourl) + bank.getInstitution().getLogoCode(), HttpMethod.GET, entity, byte[].class, "1");
 
-                if(response.getStatusCode().equals(HttpStatus.OK))
-                    bank.getInstitution().setLogo(BitmapFactory.decodeByteArray(response.getBody(), 0, response.getBody().length));
+                    if(response.getStatusCode().equals(HttpStatus.OK))
+                        bank.getInstitution().setLogo(BitmapFactory.decodeByteArray(response.getBody(), 0, response.getBody().length));
 
+                }
+                SecurityContext.getCurrentContext().getSessionMap().put("banks", new BanksObject(banks));
             }
-            SecurityContext.getCurrentContext().getSessionMap().put("banks", new BanksObject(banks));
         }
 
     }
