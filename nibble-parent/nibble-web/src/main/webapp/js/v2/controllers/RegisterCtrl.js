@@ -132,8 +132,8 @@ app.controller('RegisterCtrl',
                         institution : {},
                         loginForm : {}
                     };
-                    nibbler.bank.institution.id = $scope.selected.institution.id;
-                    nibbler.bank.institution.name = $scope.selected.institution.name;
+
+                    nibbler.bank.institution = $scope.selected.institution;
                     nibbler.bank.loginForm.loginField = $scope.selected.loginForm.loginField;
                 }
 

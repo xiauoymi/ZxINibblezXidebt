@@ -110,6 +110,7 @@ public class InstitutionProcessor {
 					institution.setName(inst.getName());
 					institution.setId(inst.getExternalId());
 					institution.setLogoCode(inst.getLogoCode());
+                    institution.setType(inst.getType());
 					List<LoginField> loginFields = new ArrayList<>();
 					for(Field field : inst.getFields()){
 						LoginField lField = new LoginField();
