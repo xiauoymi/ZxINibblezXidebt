@@ -144,7 +144,7 @@ public class RegistrationWizard extends RegistrationWizardLayout{
             // Make the HTTP GET request, marshaling the response to a String
             ResponseEntity<Void> response = restTemplate.postForEntity(getString(R.string.regurl), data, Void.class);
 
-            if(response.getStatusCode().equals(HttpStatus.OK)){
+            if(response.getStatusCode().equals(HttpStatus.valueOf(204)) || response.getStatusCode().equals(HttpStatus.valueOf(200))){
                 SecurityContext.getCurrentContext().getSessionMap().put("customerData", new RegisterObject(data));
                 getActivity().finish();
             }else if(response.getStatusCode().equals(HttpStatus.valueOf(203))){

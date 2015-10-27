@@ -5,10 +5,13 @@ package com.nibbledebt.integration.finicity.model.trxs;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 /**
  * @author alam_home
  *
  */
+@JsonRootName("transaction")
 public class Transaction {
 	private BigDecimal amount;
 	private BigDecimal bonusAmount;

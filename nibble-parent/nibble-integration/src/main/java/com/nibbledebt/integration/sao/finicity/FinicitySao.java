@@ -97,7 +97,7 @@ public class FinicitySao implements IIntegrationSao{
 		 try {
 			 Transactions ftrxs = finicityClient.getCustomerAccountTransactions(customerId, accountId, fromDate, toDate, 1, 1000, sort);
 			 List<Transaction> trxs = new ArrayList<>();
-			 if(ftrxs != null){
+			 if(ftrxs != null && ftrxs.getTransaction()!=null){
 				 for(com.nibbledebt.integration.finicity.model.trxs.Transaction ftrx: ftrxs.getTransaction())
 					 trxs.add(integrationMapper.map(ftrx, Transaction.class));
 			 }

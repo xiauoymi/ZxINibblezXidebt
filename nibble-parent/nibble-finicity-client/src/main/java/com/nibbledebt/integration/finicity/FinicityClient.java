@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -222,6 +223,6 @@ public class FinicityClient {
 		if(StringUtils.isNotBlank(sort)) builder.queryParam("sort", sort);
 		if(fromDate != null ) builder.queryParam("fromDate", String.valueOf(fromDate.getTime()/1000));
 		if(toDate != null ) builder.queryParam("toDate", String.valueOf(toDate.getTime()/1000));
-		return restClient.getForObject(builder.build().encode().toUriString(), Transactions.class);
+		return restClient.getForEntity(builder.build().encode().toUriString(), Transactions.class).getBody();
 	}
 }

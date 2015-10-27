@@ -162,7 +162,6 @@ public class TransactionProcessor extends AbstractProcessor{
 			for(NibblerAccount acct : accts){
 				if(acct.getUseForRounding()){
 					List<Transaction> extTrxs = integrationSao.retrieveTransactions(acct.getNibbler().getExtAccessToken(), acct.getExternalId(), acct.getLastTransactionPull()==null ? now.toDateTimeAtStartOfDay().minusDays(180).toDate() : acct.getLastTransactionPull(), now.toDate(), "desc");
-					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 					for(Transaction trx : extTrxs){
 						AccountTransaction atrx = new AccountTransaction();
 						atrx.setAccount(acct);
@@ -198,7 +197,7 @@ public class TransactionProcessor extends AbstractProcessor{
 				
 			}
 		} catch (Exception e) {
-			throw new ProcessingException("Error while parsing date.", e);
+			throw new ProcessingException("Error while processing transactions.", e);
 		}
 	}
 }

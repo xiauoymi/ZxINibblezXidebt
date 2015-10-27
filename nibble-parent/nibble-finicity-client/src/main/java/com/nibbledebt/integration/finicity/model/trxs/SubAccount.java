@@ -3,10 +3,13 @@
  */
 package com.nibbledebt.integration.finicity.model.trxs;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 /**
  * @author alam_home
  *
  */
+@JsonRootName("subaccount")
 public class SubAccount {
 	private String name;
 	private String number;

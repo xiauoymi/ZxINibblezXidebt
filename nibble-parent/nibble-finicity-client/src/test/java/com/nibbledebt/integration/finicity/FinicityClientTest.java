@@ -47,7 +47,7 @@ public class FinicityClientTest {
 	
 	@Test
 	public void testGetTrxs() throws FinicityAccessException{
-		finicityClient.getCustomerAccountTransactions("5048815", "6443352", new Date(System.currentTimeMillis()-1000000), new Date(), 1, 1000, "desc");
+		Assert.assertNotNull(finicityClient.getCustomerAccountTransactions("5049649", "6444339", new Date(1435952168000l), new Date(1445952168000l), 1, 1000, "desc").getTransaction());
 	}
 	
 	@Test

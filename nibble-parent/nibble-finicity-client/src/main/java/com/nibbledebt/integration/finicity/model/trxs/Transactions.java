@@ -13,7 +13,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
  * @author alam_home
  *
  */
-@JsonRootName("institutions")
+@JsonRootName("transactions")
 public class Transactions
 {
 	@JacksonXmlProperty(isAttribute=true)

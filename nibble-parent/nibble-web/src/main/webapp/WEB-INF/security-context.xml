@@ -19,7 +19,7 @@
 		<constructor-arg name="loginUrl" value="/nibbleuser.html"/>
 	</bean>
 
-	<sec:http use-expressions="true" auto-config="true" entry-point-ref="authEntryPoint">	
+	<sec:http use-expressions="true" entry-point-ref="authEntryPoint">	
 <!--         <sec:intercept-url pattern="/login*" access="permitAll"/> -->
 <!--         <sec:intercept-url pattern="/rest/register/**" access="permitAll"/> -->
 <!--         <sec:intercept-url pattern="/rest/logo/**" access="permitAll"/> -->
