@@ -3,20 +3,34 @@
  */
 package com.nibbledebt.integration.finicity;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.nibbledebt.integration.finicity.model.accounts.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.nibbledebt.integration.finicity.error.FinicityAccessException;
 import com.nibbledebt.integration.finicity.model.Customer;
 import com.nibbledebt.integration.finicity.model.Institution;
 import com.nibbledebt.integration.finicity.model.Institutions;
 import com.nibbledebt.integration.finicity.model.LoginField;
 import com.nibbledebt.integration.finicity.model.LoginForm;
+import com.nibbledebt.integration.finicity.model.accounts.Accounts;
+import com.nibbledebt.integration.finicity.model.accounts.AddAccountsResponse;
+import com.nibbledebt.integration.finicity.model.accounts.CustomerAccountsRequest;
+import com.nibbledebt.integration.finicity.model.accounts.DiscoverAccountsResponse;
+import com.nibbledebt.integration.finicity.model.accounts.ImageChoiceMfaChallenges;
+import com.nibbledebt.integration.finicity.model.accounts.ImageMfaChallenges;
+import com.nibbledebt.integration.finicity.model.accounts.MfaChallenges;
+import com.nibbledebt.integration.finicity.model.accounts.MfaType;
+import com.nibbledebt.integration.finicity.model.accounts.TextMfaChallenges;
+import com.nibbledebt.integration.finicity.model.trxs.Transactions;
 
 /**
  * @author alam_home
@@ -34,6 +48,8 @@ public class FinicityClient {
 	@Value("${finicity.cust.url}")
 	private String finicityCustUrl;	
 	
+	@Value("${finicity.cust.acct.trxs.url}")
+	private String finicityCustAcctTrxsUrl;	
 	
 	@NeedsToken
 	public Institutions getInstitutions() throws FinicityAccessException{
@@ -192,4 +208,13 @@ public class FinicityClient {
         return response;
     }
 	
+	@NeedsToken
+	public Transactions getCustomerAccountTransactions(String customerId, String accountId, Date fromDate, Date toDate, int start, int limit, String sort) throws FinicityAccessException{
+		Map<String, String> urlVariables = new HashMap<>();
+		if(StringUtils.isNotBlank(sort)) urlVariables.put("sort", sort);
+		if(fromDate != null ) urlVariables.put("fromDate", String.valueOf(fromDate.getTime()));
+		if(toDate != null ) urlVariables.put("toDate", String.valueOf(toDate.getTime()));
+		return urlVariables.isEmpty() ? restClient.getForObject(finicityCustAcctTrxsUrl+customerId+"/accounts/"+accountId+"/transactions", Transactions.class) : 
+			restClient.getForObject(finicityCustAcctTrxsUrl+customerId+"/accounts/"+accountId+"/transactions", Transactions.class, urlVariables);
+	}
 }

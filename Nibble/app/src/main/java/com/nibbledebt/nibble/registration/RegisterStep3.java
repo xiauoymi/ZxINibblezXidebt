@@ -123,12 +123,10 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
                         if(v!=null && v instanceof ImageView) {
                             switch (event.getAction()) {
                                 case MotionEvent.ACTION_DOWN:
-                                    if(bank!=null && !StringUtils.equalsIgnoreCase(bank.getInstitution().getId(), banks.get(idx).getInstitution().getId())){
-                                        v.getBackground().setAlpha(255);
-                                        deselectOthers(v.getId());
-                                        v.setLayoutParams(new LinearLayout.LayoutParams((int)((double)v.getLayoutParams().width*1.2d), (int)((double)v.getLayoutParams().height*1.2d)));
-                                        v.invalidate();
-                                    }
+                                    v.getBackground().setAlpha(255);
+                                    deselectOthers(v.getId());
+                                    v.setLayoutParams(new LinearLayout.LayoutParams((int)(80d*1.2d), (int)(80d*1.2d)));
+                                    v.invalidate();
                                     bank = banks.get(idx);
                                     createDialog(bank).show(getActivity().getSupportFragmentManager(), "RegisterStep3Dialog");
                                     break;

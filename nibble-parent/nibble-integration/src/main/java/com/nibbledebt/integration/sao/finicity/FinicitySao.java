@@ -5,6 +5,7 @@ package com.nibbledebt.integration.sao.finicity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -18,9 +19,11 @@ import org.springframework.stereotype.Component;
 import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.domain.model.Institution;
 import com.nibbledebt.domain.model.LoginForm;
+import com.nibbledebt.domain.model.Transaction;
 import com.nibbledebt.domain.model.account.AddAccountsResponse;
 import com.nibbledebt.integration.finicity.FinicityClient;
 import com.nibbledebt.integration.finicity.model.LoginField;
+import com.nibbledebt.integration.finicity.model.trxs.Transactions;
 import com.nibbledebt.integration.sao.IIntegrationSao;
 
 /**
@@ -89,4 +92,18 @@ public class FinicitySao implements IIntegrationSao{
             throw new ServiceException("Error while creating customer for Finicity", e);
         }
     }
+
+	@Override
+	public List<Transaction> retrieveTransactions(String customerId, String accountId, Date fromDate, Date toDate, String sort) throws ServiceException{
+		 try {
+			 Transactions ftrxs = finicityClient.getCustomerAccountTransactions(customerId, accountId, fromDate, toDate, 1, 1000, sort);
+			 List<Transaction> trxs = new ArrayList<>();
+			 for(com.nibbledebt.integration.finicity.model.trxs.Transaction ftrx: ftrxs.getTransaction())
+				 trxs.add(integrationMapper.map(ftrx, Transaction.class));
+			 
+			 return trxs;
+		 } catch (Exception e) {
+            throw new ServiceException("Error while creating customer for Finicity", e);
+        }
+	}
 }

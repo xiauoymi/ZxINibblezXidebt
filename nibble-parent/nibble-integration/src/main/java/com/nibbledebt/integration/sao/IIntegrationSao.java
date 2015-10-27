@@ -3,12 +3,14 @@
  */
 package com.nibbledebt.integration.sao;
 
+import java.util.Date;
 import java.util.List;
 
 import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.domain.model.Institution;
 import com.nibbledebt.domain.model.LoginField;
 import com.nibbledebt.domain.model.LoginForm;
+import com.nibbledebt.domain.model.Transaction;
 import com.nibbledebt.domain.model.account.AddAccountsResponse;
 
 
@@ -23,4 +25,5 @@ public interface IIntegrationSao {
     public AddAccountsResponse addAccounts(String customerId, Long institutionId,
                                            LoginField[] fields) throws ServiceException;
     public String addCustomer(String userName, String firstName, String lastName) throws ServiceException;
+    public List<Transaction> retrieveTransactions(String customerId, String accountId, Date fromDate, Date toDate, String sort) throws ServiceException;
 }

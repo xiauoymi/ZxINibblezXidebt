@@ -24,7 +24,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 
 /**
  * @author Rocky Alam
@@ -57,6 +56,18 @@ public class AccountTransaction extends AbstractModel {
 	@Column(name="amount", nullable=false, scale=2, precision=10)
 	private BigDecimal amount;	
 	
+	@Column(name="escrow_amount", nullable=true, scale=2, precision=10)
+	private BigDecimal escrowAmount;
+	
+	@Column(name="fee_amount", nullable=true, scale=2, precision=10)
+	private BigDecimal feeAmount;
+	
+	@Column(name="interest_amount", nullable=true, scale=2, precision=10)
+	private BigDecimal interestAmount;
+	
+	@Column(name="principal_amount", nullable=true, scale=2, precision=10)
+	private BigDecimal principalAmount;
+	
 	@Column(name="roundup_amount", nullable=true, scale=2, precision=10)
 	private BigDecimal roundupAmount;	
 	
@@ -76,8 +87,8 @@ public class AccountTransaction extends AbstractModel {
 	@ManyToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	@JoinTable(
 			name="transaction_category_transaction",  
-			joinColumns={@JoinColumn(name="account_transaction_id", nullable=false, updatable=true)}, 
-			inverseJoinColumns={@JoinColumn(name="transaction_category_id", nullable=false, updatable=true)})
+			joinColumns={@JoinColumn(name="account_transaction_id", nullable=true, updatable=true)}, 
+			inverseJoinColumns={@JoinColumn(name="transaction_category_id", nullable=true, updatable=true)})
 	private List<TransactionCategory> categories;
 
 	/**
@@ -148,6 +159,62 @@ public class AccountTransaction extends AbstractModel {
 	 */
 	public void setRounded(Boolean rounded) {
 		this.rounded = rounded;
+	}
+
+	/**
+	 * @return the escrowAmount
+	 */
+	public BigDecimal getEscrowAmount() {
+		return escrowAmount;
+	}
+
+	/**
+	 * @param escrowAmount the escrowAmount to set
+	 */
+	public void setEscrowAmount(BigDecimal escrowAmount) {
+		this.escrowAmount = escrowAmount;
+	}
+
+	/**
+	 * @return the feeAmount
+	 */
+	public BigDecimal getFeeAmount() {
+		return feeAmount;
+	}
+
+	/**
+	 * @param feeAmount the feeAmount to set
+	 */
+	public void setFeeAmount(BigDecimal feeAmount) {
+		this.feeAmount = feeAmount;
+	}
+
+	/**
+	 * @return the interestAmount
+	 */
+	public BigDecimal getInterestAmount() {
+		return interestAmount;
+	}
+
+	/**
+	 * @param interestAmount the interestAmount to set
+	 */
+	public void setInterestAmount(BigDecimal interestAmount) {
+		this.interestAmount = interestAmount;
+	}
+
+	/**
+	 * @return the principalAmount
+	 */
+	public BigDecimal getPrincipalAmount() {
+		return principalAmount;
+	}
+
+	/**
+	 * @param principalAmount the principalAmount to set
+	 */
+	public void setPrincipalAmount(BigDecimal principalAmount) {
+		this.principalAmount = principalAmount;
 	}
 
 	/**

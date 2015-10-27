@@ -16,5 +16,30 @@
       <b>type</b>
     </field>
   </mapping>  
+  
+  <mapping> 
+    <class-a>com.nibbledebt.integration.finicity.model.trxs.Transaction</class-a>
+    <class-b>com.nibbledebt.domain.model.Transaction</class-b>   
+    <field>
+      <a>institutionTransactionId</a>
+      <b>trxId</b>
+    </field>
+    <field>
+      <a>id</a>
+      <b>aggregatorTrxId</b>
+    </field>
+    <field>
+      <a>type</a>
+      <b>category</b>
+    </field>
+    <field custom-converter="com.nibbledebt.integration.finicity.model.DateToUtilDate">
+    	<a>transactionDate</a>
+    	<b>trxDate</b>
+  	</field>
+    <field custom-converter="com.nibbledebt.integration.finicity.model.DateToUtilDate">
+    	<a>postedDate</a>
+    	<b>trxPostDate</b>
+  	</field>
+  </mapping>  
 
 </mappings> 
