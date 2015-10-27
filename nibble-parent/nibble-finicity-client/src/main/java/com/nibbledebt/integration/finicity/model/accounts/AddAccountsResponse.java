@@ -9,11 +9,11 @@ public class AddAccountsResponse  {
 
     private MfaChallenges mfaChallenges;
 
-    private MfaType type;
+    private MfaType mfaType;
 
 
     public AddAccountsResponse() {
-        this.type = MfaType.NON_MFA;
+        this.mfaType = MfaType.NON_MFA;
     }
 
     public Accounts getAccounts() {
@@ -32,12 +32,12 @@ public class AddAccountsResponse  {
         this.mfaChallenges = mfaChallenges;
     }
 
-    public MfaType getType() {
-        return type;
+    public MfaType getMfaType() {
+        return mfaType;
     }
 
-    public void setType(MfaType type) {
-        this.type = type;
+    public void setMfaType(MfaType mfaType) {
+        this.mfaType = mfaType;
     }
 }
 

@@ -5,6 +5,8 @@ package com.nibbledebt.integration.finicity;
 
 import java.io.IOException;
 
+import com.nibbledebt.integration.finicity.model.Customer;
+import com.nibbledebt.integration.finicity.model.Customers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -117,6 +119,15 @@ public class FinicityClientTest {
                         accounts.getHeaders().get(AccountClient.MFA_SESSION_HEADER).get(0),
                         mfa.getQuestion()[0].getText(), "answer");
         Assert.assertNotNull(responseEntity);
+    }
+
+    @Test
+    public void deleteCustomers() throws FinicityAccessException, IOException {
+        Customers customers= finicityClient.getCustomers();
+        customers.getCustomers();
+        for (Customer customer : customers.getCustomers()) {
+            finicityClient.deleteCustomer(customer.getId());
+        }
     }
 
     @Test

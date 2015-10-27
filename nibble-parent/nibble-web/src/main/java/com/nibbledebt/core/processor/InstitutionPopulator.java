@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.nibbledebt.core.data.model.Field;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +112,7 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 	private void convertToFields(List<LoginField> loginFields, com.nibbledebt.core.data.model.Institution inst){
 		List<com.nibbledebt.core.data.model.Field> fields = new ArrayList<>();
 		for(LoginField loginField : loginFields){
-			com.nibbledebt.core.data.model.Field field = new com.nibbledebt.core.data.model.Field();
+			Field field = new Field();
 			field.setName(loginField.getName());
 			field.setDisplayName(loginField.getDescription());
 			field.setIsMasked(loginField.getMask());
@@ -124,7 +125,9 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 			field.setOrder(loginField.getDisplayOrder());
 			field.setValidationMaxLength(loginField.getValueLengthMax());
 			field.setValidationMinLength(loginField.getValueLengthMin());
+            field.setExternalId(loginField.getId());
 			fields.add(field);
+
 		}
 		inst.getFields().clear();
 		inst.getFields().addAll(fields);

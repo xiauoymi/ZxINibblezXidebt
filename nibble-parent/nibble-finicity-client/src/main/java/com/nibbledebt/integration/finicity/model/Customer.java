@@ -15,6 +15,7 @@ public class Customer {
 	private String firstName;
 	private String lastName;
 	private String id;
+    private String type;
 	private Long createdDate;
 	
 	/**
@@ -106,5 +107,12 @@ public class Customer {
 	public void setCreatedDate(Long createdDate) {
 		this.createdDate = createdDate;
 	}
-	
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

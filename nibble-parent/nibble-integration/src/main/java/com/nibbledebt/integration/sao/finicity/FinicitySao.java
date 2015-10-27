@@ -86,7 +86,6 @@ public class FinicitySao implements IIntegrationSao{
 
     public String addCustomer(String userName, String firstName, String lastName) throws ServiceException {
         try {
-            //TODO:asa change when switch to prod {return finicityClient.addCustomer(userName, firstName, lastName).getId();}
             return !StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod") ? finicityClient.addTestCustomer(userName, firstName, lastName).getId() : finicityClient.addCustomer(userName, firstName, lastName).getId();
         } catch (Exception e) {
             throw new ServiceException("Error while creating customer for Finicity", e);

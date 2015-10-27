@@ -50,6 +50,9 @@ public class Field extends AbstractModel {
 	
 	@Column(name="validation_maximum_length", nullable=true)
 	private Integer validationMaxLength;
+
+    @Column(name="external_id", nullable = false)
+    private String externalId;
 	
 	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	@JoinColumn(name="institution_id", updatable=true, nullable=false)
@@ -181,7 +184,15 @@ public class Field extends AbstractModel {
 		this.validationMaxLength = validationMaxLength;
 	}
 
-	/**
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
+
+    /**
 	 * @return the institution
 	 */
 	public Institution getInstitution() {

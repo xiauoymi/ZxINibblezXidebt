@@ -61,6 +61,39 @@ public class InstitutionProcessor {
 	
 	@Autowired
 	private ThreadPoolTaskExecutor instSyncExecutor;
+
+
+    //TODO:asa stub method remove when switch to prod
+    private Bank getTestInstitution() {
+        Bank institutionDetail = new Bank();
+        Institution institution = new Institution();
+        LoginForm loginForm = new LoginForm();
+        institution.setName("FinBank");
+        institution.setId("101732");
+        institution.setLogoCode("finbank");
+        institution.setHomeUrl("http://www.finbank.com");
+        List<LoginField> loginFields = new ArrayList<>();
+        LoginField lField = new LoginField();
+        lField.setName("Banking Userid");
+        lField.setDescription("user id");
+        lField.setMask(false);
+        lField.setDisplayOrder(1);
+        lField.setInstructions("no instructions");
+        lField.setId("101732001");
+        loginFields.add(lField);
+        LoginField pField = new LoginField();
+        pField.setName("Banking Password");
+        pField.setDescription("Banking Password");
+        pField.setMask(true);
+        pField.setDisplayOrder(2);
+        pField.setInstructions("no instructions");
+        pField.setId("101732002");
+        loginFields.add(pField);
+        loginForm.setLoginField(loginFields);
+        institutionDetail.setInstitution(institution);
+        institutionDetail.setLoginForm(loginForm);
+        return institutionDetail;
+    }
 	
 	@Cacheable(value="instCache", unless="#result == null")
 	@Transactional(readOnly=true)
@@ -80,7 +113,7 @@ public class InstitutionProcessor {
 					List<LoginField> loginFields = new ArrayList<>();
 					for(Field field : inst.getFields()){
 						LoginField lField = new LoginField();
-						lField.setId(String.valueOf(field.getId()));
+						lField.setId(String.valueOf(field.getExternalId()));
 						lField.setName(field.getName());
 						lField.setDescription(field.getDisplayName());
 						lField.setMask(field.getIsMasked());
@@ -115,7 +148,7 @@ public class InstitutionProcessor {
     }
 	
 //	@Scheduled(cron="0 0 * * * *")
-	@Scheduled(fixedRate=86400000)
+//	@Scheduled(fixedRate=86400000)
 	@Loggable(logLevel=LogLevel.INFO)
 	public void populateInstitutions() throws ProcessingException{
 		try {

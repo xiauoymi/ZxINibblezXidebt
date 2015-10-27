@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.nibbledebt.integration.finicity.model.*;
+import com.nibbledebt.integration.finicity.model.accounts.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -80,6 +83,11 @@ public class FinicityClient {
 	public void deleteCustomer(String customerId) throws FinicityAccessException{
 		restClient.delete(finicityCustUrl+customerId);
 	}
+
+    @NeedsToken
+    public Customers getCustomers() throws FinicityAccessException {
+        return restClient.getForEntity(finicityCustUrl, Customers.class).getBody();
+    }
 
     /**
      * Discover customer accounts. (Need to activate accounts)
@@ -179,7 +187,7 @@ public class FinicityClient {
         AddAccountsResponse response = new AddAccountsResponse();
         ResponseEntity<String> entity = addCustomerAccountsString(customerId, institutionId, fields);
         if (entity.getStatusCode() == HttpStatus.OK) {
-            response.setType(MfaType.NON_MFA);
+            response.setMfaType(MfaType.NON_MFA);
             try {
                 response.setAccounts(mapper.readValue(entity.getBody(), Accounts.class));
             } catch (Exception e) {
@@ -189,15 +197,15 @@ public class FinicityClient {
             MfaChallenges challenges;
             try {
                 challenges = mapper.readValue(entity.getBody(), TextMfaChallenges.class);
-                response.setType(MfaType.TEXT);
+                response.setMfaType(MfaType.TEXT);
             } catch (Exception e) {
                 try {
                     challenges = mapper.readValue(entity.getBody(), ImageMfaChallenges.class);
-                    response.setType(MfaType.IMAGE);
+                    response.setMfaType(MfaType.IMAGE);
                 } catch (Exception e1) {
                     try {
                         challenges = mapper.readValue(entity.getBody(), ImageChoiceMfaChallenges.class);
-                        response.setType(MfaType.IMAGE_CHOOSE);
+                        response.setMfaType(MfaType.IMAGE_CHOOSE);
                     } catch (Exception e2) {
                         throw new FinicityAccessException(e2);
                     }

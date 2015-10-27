@@ -135,9 +135,6 @@ public class RegistrationProcessor extends AbstractProcessor{
         	if(externalAuthReqsValid(nibblerData.getBank())){
                 AddAccountsResponse response = integrationSao.addAccounts(customerId, Long.valueOf(nibblerData.getBank().getInstitution().getId()),
                             nibblerData.getBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
-
-                
-
                 if (response != null && response.getMfaType() == MfaType.NON_MFA) {
                     saveCustomerAccounts(nibblerData, response.getAccounts());
                 }
@@ -301,7 +298,7 @@ public class RegistrationProcessor extends AbstractProcessor{
 	@Transactional(propagation=Propagation.REQUIRED)
 	private void saveCustomerAccounts(NibblerData nibblerData, Accounts accounts) throws ServiceException, RepositoryException{
 					
-		Nibbler nibbler = nibblerDao.find(nibblerData.getUsername());
+		Nibbler nibbler = nibblerDao.find(nibblerData.getEmail());
 
         for (Account account : accounts.getAccount()) {
             AccountType accountType = accountTypeDao.find(account.getAccountType());
@@ -327,8 +324,8 @@ public class RegistrationProcessor extends AbstractProcessor{
 
             if (account.getBalance() != null) {
                 AccountBalance balance = new AccountBalance();
-				balance.setAvailable(account.getAvailable());
-				balance.setCurrent(account.getBalance());
+				balance.setAvailable(new BigDecimal(account.getAvailable() != null ? account.getAvailable() : "0.00"));
+				balance.setCurrent(new BigDecimal(account.getBalance() != null ? account.getBalance() : "0.00"));
 				balance.setAccount(nibblerAccount);
 				setCreated(balance, nibblerData.getUsername());
 				nibblerAccount.getBalances().add(balance);

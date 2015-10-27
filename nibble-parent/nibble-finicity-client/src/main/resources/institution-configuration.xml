@@ -40,6 +40,34 @@
     	<a>postedDate</a>
     	<b>trxPostDate</b>
   	</field>
-  </mapping>  
+  </mapping>
+    <mapping>
+        <class-a>com.nibbledebt.integration.finicity.model.accounts.Account</class-a>
+        <class-b>com.nibbledebt.domain.model.account.Account</class-b>
+        <field>
+            <a>id</a>
+            <b>accountExternalId</b>
+        </field>
+        <field>
+            <a>number</a>
+            <b>accountNumber</b>
+        </field>
+        <field>
+            <a>type</a>
+            <b>accountType</b>
+        </field>
+        <field>
+            <a>institutionId</a>
+            <b>institutionExternalId</b>
+        </field>
+        <field>
+            <a>balance</a>
+            <b>available</b>
+        </field>
+        <field>
+            <a>balance</a>
+            <b>balance</b>
+        </field>
+    </mapping>
 
 </mappings> 
