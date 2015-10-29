@@ -9,6 +9,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import android.widget.TextView;
 import com.nibbledebt.nibble.R;
 
 import org.codepond.wizardroid.WizardStep;
@@ -19,9 +20,12 @@ import org.codepond.wizardroid.WizardStep;
 public abstract class AbstractWizardStep extends WizardStep {
 
 
-    protected void setCurrentStepAnimation(Context context, int animationId, View view){
+    protected void setCurrentStepAnimation(Context context, int animationId, View view, View[] hideViews){
         Animation pulse = AnimationUtils.loadAnimation(context, R.anim.dot_pulse);
         view.startAnimation(pulse);
+        for(View v : hideViews){
+            v.setVisibility(View.INVISIBLE);
+        }
     }
 
     protected void setStepComplete(ImageView view){

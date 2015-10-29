@@ -22,12 +22,15 @@ import com.nibbledebt.nibble.R;
 import com.nibbledebt.nibble.common.AbstractWizardStep;
 import com.nibbledebt.nibble.common.RestTemplateCreator;
 import com.nibbledebt.nibble.integration.model.Bank;
+import com.nibbledebt.nibble.integration.model.CustomerData;
 import com.nibbledebt.nibble.integration.model.LoginField;
 import com.nibbledebt.nibble.security.BanksObject;
+import com.nibbledebt.nibble.security.RegisterObject;
 import com.nibbledebt.nibble.security.SecurityContext;
 import com.nibbledebt.nibble.security.SessionObject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codepond.wizardroid.WizardStep;
 import org.codepond.wizardroid.persistence.ContextVariable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -35,12 +38,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Created by ralam on 10/4/15.
@@ -48,11 +53,39 @@ import java.util.*;
 public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Dialog.RegisterStep3DialogListener{
     private SupportedBanksTask saTask;
 
+    // step 1
+    @ContextVariable
+    private String email;
+    @ContextVariable
+    private String password;
+    @ContextVariable
+    private String firstname;
+    @ContextVariable
+    private String lastname;
+
+    // step 2
+    @ContextVariable
+    private String address1;
+    @ContextVariable
+    private String address2;
+    @ContextVariable
+    private String city;
+    @ContextVariable
+    private String state;
+    @ContextVariable
+    private int stateIdx;
+    @ContextVariable
+    private String zip;
+    @ContextVariable
+    private String phone;
+
+    // step 3
     @ContextVariable
     private Bank bank;
-
     @ContextVariable
     private HashMap<String, String> bankCreds = new HashMap<>();
+
+    @ContextVariable Integer statusCode;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,7 +97,7 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
         setStepComplete((ImageView) v.findViewById(R.id.animated_dot_2));
 
         // start the current step animation
-        setCurrentStepAnimation(v.getContext(), R.anim.dot_pulse, (ImageView) v.findViewById(R.id.animated_dot_3));
+        setCurrentStepAnimation(v.getContext(), R.anim.dot_pulse, (ImageView) v.findViewById(R.id.animated_dot_3), new View[]{v.findViewById(R.id.subtext_step_1), v.findViewById(R.id.subtext_step_2), v.findViewById(R.id.subtext_step_4)});
 
         // load supported accounts
         if(saTask == null) {
@@ -83,7 +116,6 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
             bankCreds.put(formFieldKey, formData.get(formFieldKey));
         }
         bank = selectedBank;
-        notifyCompleted();
     }
 
     @Override
@@ -188,6 +220,9 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
 
     }
 
+
+
+
     private final void deselectOthers(int imageViewId){
         for(int ivid : getAllGridImageViewIds()){
             if(imageViewId!=ivid){
@@ -200,6 +235,8 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
             }
         }
     }
+
+
 
 
     private final int[] getAllGridImageViewIds(){

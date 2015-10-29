@@ -56,7 +56,7 @@ public class RegisterStep1 extends AbstractWizardStep{
         View v = inflater.inflate(R.layout.register_wizard_step1_layout, container, false);
 
         // start the current step animation
-        setCurrentStepAnimation(v.getContext(), R.anim.dot_pulse, (ImageView) v.findViewById(R.id.animated_dot_1));
+        setCurrentStepAnimation(v.getContext(), R.anim.dot_pulse, v.findViewById(R.id.animated_dot_1), new View[]{v.findViewById(R.id.subtext_step_2), v.findViewById(R.id.subtext_step_4)});
 
         //Get reference to the textboxes
         emailTextBox = (EditText) v.findViewById(R.id.register_email);

@@ -1,25 +1,18 @@
 package com.nibbledebt.nibble.registration;
 
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.os.Bundle;
 import com.nibbledebt.nibble.R;
 import com.nibbledebt.nibble.common.RestTemplateCreator;
 import com.nibbledebt.nibble.integration.model.Bank;
 import com.nibbledebt.nibble.integration.model.CustomerData;
 import com.nibbledebt.nibble.integration.model.LoginField;
-import com.nibbledebt.nibble.security.BanksObject;
 import com.nibbledebt.nibble.security.RegisterObject;
 import com.nibbledebt.nibble.security.SecurityContext;
-import org.apache.commons.lang3.StringUtils;
 import org.codepond.wizardroid.WizardFlow;
 import org.codepond.wizardroid.persistence.ContextVariable;
 import org.springframework.http.*;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -60,7 +53,6 @@ public class RegistrationWizard extends RegistrationWizardLayout{
     @ContextVariable
     private Map<String, String> bankCreds = new HashMap<>();
 
-    private RegistrationTask raTask;
 
     //You must override this method and create a wizard flow by
     //using WizardFlow.Builder as shown in this example
@@ -73,35 +65,17 @@ public class RegistrationWizard extends RegistrationWizardLayout{
 
 
 
-        return new WizardFlow.Builder()       //then set the layout container for the steps.
-                .addStep(RegisterStep1.class, true)           //Add your steps in the order you want them
-                .addStep(RegisterStep2.class, true)           //Add your steps in the order you want them
-                .addStep(RegisterStep3.class)          //to appear and eventually call create()
-                .create();                              //to create the wizard flow.
+        return new WizardFlow.Builder()
+                .addStep(RegisterStep1.class, true)
+                .addStep(RegisterStep2.class, true)
+                .addStep(RegisterStep3.class)
+                .addStep(RegisterStep4.class)
+                .create();
     }
 
     @Override
     public void onWizardComplete() {
         super.onWizardComplete();   //Make sure to first call the super method before anything else
-
-        for(LoginField field : bank.getLoginForm().getLoginField()){
-            field.setValue(bankCreds.get(field.getName()));
-        }
-        CustomerData customerData = new CustomerData();
-        customerData.setEmail(email);
-        customerData.setUsername(email);
-        customerData.setPassword(password);
-        customerData.setFirstName(firstname);
-        customerData.setLastName(lastname);
-        customerData.setAddress1(address1);
-        customerData.setAddress2(address2);
-        customerData.setCity(city);
-        customerData.setState(state);
-        customerData.setZip(Integer.valueOf(zip));
-        customerData.setBank(bank);
-
-        raTask = new RegistrationTask();
-        raTask.execute(new CustomerData[]{customerData});
 
         //... Access context variables here before terminating the wizard
         //...
@@ -110,50 +84,7 @@ public class RegistrationWizard extends RegistrationWizardLayout{
              //Terminate the wizard
     }
 
-    private class RegistrationTask extends AsyncTask<CustomerData, Void, Boolean> {
-        @Override
-        protected Boolean doInBackground(CustomerData... data) {
-            try {
-                doRegister(data[0]);
-                return true;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-
-        }
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(Boolean loginSuccessful) {
 
 
-        }
-
-        @Override
-        protected void onCancelled() {
-            raTask = null;
-//            hideProgress();
-        }
-
-        private void doRegister(CustomerData data) throws Exception {
-            // The connection URL
-
-            // Create a new RestTemplate instance
-            RestTemplate restTemplate = RestTemplateCreator.getTemplateCreator().getNewTemplate();
-
-            // Make the HTTP GET request, marshaling the response to a String
-            ResponseEntity<Void> response = restTemplate.postForEntity(getString(R.string.regurl), data, Void.class);
-
-            if(response.getStatusCode().equals(HttpStatus.valueOf(204)) || response.getStatusCode().equals(HttpStatus.valueOf(200))){
-                SecurityContext.getCurrentContext().getSessionMap().put("customerData", new RegisterObject(data));
-                getActivity().finish();
-            }else if(response.getStatusCode().equals(HttpStatus.valueOf(203))){
-
-            }else{
-
-            }
-        }
-
-    }
 
 }
