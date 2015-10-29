@@ -44,4 +44,17 @@ public class NibblerAccountDao extends AbstractHibernateDao<NibblerAccount> impl
 			  throw new RepositoryException(e);
 		}
 	}
+	
+	@Override
+	public NibblerAccount findByExternalId(String externalId) throws RepositoryException {
+		try {
+			Query query = this.getCurrentSession().getNamedQuery("findAcctByExtId");
+			query.setString("externalId", externalId);
+			return (NibblerAccount)query.uniqueResult();
+		} catch (Exception e) {
+			  throw new RepositoryException(e);
+		}
+	}
+	
+	
 }

@@ -12,5 +12,7 @@ import com.nibbledebt.core.data.model.NibblerAccount;
 public interface INibblerAccountDao extends IDao<NibblerAccount>{
 	public abstract List<NibblerAccount> find(Date lastTrxPull)  throws RepositoryException;
 	public abstract List<NibblerAccount> find(String username) throws RepositoryException ;
+	abstract NibblerAccount findByExternalId(String externalId)
+			throws RepositoryException;
 
 }

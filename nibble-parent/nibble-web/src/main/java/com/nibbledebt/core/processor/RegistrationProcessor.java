@@ -304,8 +304,6 @@ public class RegistrationProcessor extends AbstractProcessor{
 
             NibblerAccount nibblerAccount = new NibblerAccount();
             nibblerAccount.setAccountType(accountType);
-            nibblerAccount.setWireRoutingNumber(account.getAccountNumber());
-            nibblerAccount.setWireRoutingNumber(account.getAccountNumber());
             nibblerAccount.setNumber(account.getAccountNumber());
             Institution institution = institutionDao.findByName(nibblerData.getBank().getInstitution().getName());
             nibblerAccount.setInstitution(institution);

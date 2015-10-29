@@ -72,6 +72,12 @@ public class Institution extends AbstractModel {
 	@Column(name="isTest", nullable=true)
 	private Boolean isTest;
 	
+	@Column(name="routing_number", nullable=true, length=50)
+	private String routingNumber;
+	
+	@Column(name="wire_routing_number", nullable=true, length=50)
+	private String wireRoutingNumber;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "last_synced_ts", nullable = true)
 	private Date lastSyncedTs;
@@ -191,6 +197,34 @@ public class Institution extends AbstractModel {
 	 */
 	public void setIsTest(Boolean isTest) {
 		this.isTest = isTest;
+	}
+
+	/**
+	 * @return the routingNumber
+	 */
+	public String getRoutingNumber() {
+		return routingNumber;
+	}
+
+	/**
+	 * @param routingNumber the routingNumber to set
+	 */
+	public void setRoutingNumber(String routingNumber) {
+		this.routingNumber = routingNumber;
+	}
+
+	/**
+	 * @return the wireRoutingNumber
+	 */
+	public String getWireRoutingNumber() {
+		return wireRoutingNumber;
+	}
+
+	/**
+	 * @param wireRoutingNumber the wireRoutingNumber to set
+	 */
+	public void setWireRoutingNumber(String wireRoutingNumber) {
+		this.wireRoutingNumber = wireRoutingNumber;
 	}
 
 	/**

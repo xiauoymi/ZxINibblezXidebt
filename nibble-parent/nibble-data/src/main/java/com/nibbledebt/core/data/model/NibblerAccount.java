@@ -30,12 +30,14 @@ import javax.persistence.UniqueConstraint;
  */
 @NamedQueries({
 	@NamedQuery(name="findAcctByLastPull", query="from NibblerAccount na where na.lastTransactionPull < :lastTransactionPull"),
-	@NamedQuery(name="findAcctByUser", query="from NibblerAccount na where na.nibbler.nibblerDir.username = :username")
+	@NamedQuery(name="findAcctByUser", query="from NibblerAccount na where na.nibbler.nibblerDir.username = :username"),
+	@NamedQuery(name="findAcctByExtId", query="from NibblerAccount na where na.externalId = :externalId")
 	
 })
 @Entity()
 @Table(	name="nibbler_account",
-		uniqueConstraints={@UniqueConstraint(columnNames={"nibbler_id","number","institution_id","account_type_id"})}
+		uniqueConstraints={@UniqueConstraint(columnNames={"nibbler_id","number","institution_id","account_type_id"}), 
+							@UniqueConstraint(columnNames={"nibbler_id","external_id"})}
 		)
 @AttributeOverrides({
 	@AttributeOverride(name="id", column=@Column(name="nibbler_account_id"))
@@ -59,12 +61,6 @@ public class NibblerAccount extends AbstractModel{
 	
 	@Column(name="number_mask", nullable=true, length=50)
 	private String numberMask;
-	
-	@Column(name="routing_number", nullable=true, length=50)
-	private String routingNumber;
-	
-	@Column(name="wire_routing_number", nullable=true, length=50)
-	private String wireRoutingNumber;
 	
 	@Column(name="last_transaction_pull", nullable=true)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -160,34 +156,6 @@ public class NibblerAccount extends AbstractModel{
 	 */
 	public void setNumberMask(String numberMask) {
 		this.numberMask = numberMask;
-	}
-
-	/**
-	 * @return the routingNumber
-	 */
-	public String getRoutingNumber() {
-		return routingNumber;
-	}
-
-	/**
-	 * @param routingNumber the routingNumber to set
-	 */
-	public void setRoutingNumber(String routingNumber) {
-		this.routingNumber = routingNumber;
-	}
-
-	/**
-	 * @return the wireRoutingNumber
-	 */
-	public String getWireRoutingNumber() {
-		return wireRoutingNumber;
-	}
-
-	/**
-	 * @param wireRoutingNumber the wireRoutingNumber to set
-	 */
-	public void setWireRoutingNumber(String wireRoutingNumber) {
-		this.wireRoutingNumber = wireRoutingNumber;
 	}
 
 	/**

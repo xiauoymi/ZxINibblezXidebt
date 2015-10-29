@@ -8,15 +8,16 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
+import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.nibbledebt.common.error.ProcessingException;
 import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
-import com.nibbledebt.common.security.MemberDetails;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.processor.TransactionProcessor;
 import com.nibbledebt.integration.finicity.model.hooks.Event;
@@ -36,7 +37,7 @@ public class SyncHook {
 	@POST
 	@Path("/event")
 	@Loggable(logLevel=LogLevel.INFO)
-	public Boolean receiveEvent(Event event) throws ProcessingException, RepositoryException{
-		return ((MemberDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getIsFirstLogin();
+	public Response receiveEvent(Event event) throws ProcessingException, RepositoryException{
+		return (new ResponseBuilderImpl()).status(Status.OK).build();
 	}
 }
