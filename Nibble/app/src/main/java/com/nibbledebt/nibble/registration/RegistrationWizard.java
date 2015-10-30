@@ -1,7 +1,8 @@
 package com.nibbledebt.nibble.registration;
 
 import android.os.AsyncTask;
-import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.widget.TextView;
 import com.nibbledebt.nibble.R;
 import com.nibbledebt.nibble.common.RestTemplateCreator;
 import com.nibbledebt.nibble.integration.model.Bank;
@@ -21,6 +22,8 @@ import java.util.*;
  * Created by ralam on 10/4/15.
  */
 public class RegistrationWizard extends RegistrationWizardLayout{
+    private RegistrationTask raTask;
+
     // step 1
     @ContextVariable
     private String email = "test@yopmail.com";
@@ -69,7 +72,6 @@ public class RegistrationWizard extends RegistrationWizardLayout{
                 .addStep(RegisterStep1.class, true)
                 .addStep(RegisterStep2.class, true)
                 .addStep(RegisterStep3.class)
-                .addStep(RegisterStep4.class)
                 .create();
     }
 
@@ -77,14 +79,76 @@ public class RegistrationWizard extends RegistrationWizardLayout{
     public void onWizardComplete() {
         super.onWizardComplete();   //Make sure to first call the super method before anything else
 
-        //... Access context variables here before terminating the wizard
-        //...
-        //String fullname = firstname + lastname;
-        //Store the data in the DB or pass it back to the calling activity
-             //Terminate the wizard
+
+        // load supported accounts
+        for(LoginField field : bank.getLoginForm().getLoginField()){
+            field.setValue(bankCreds.get(field.getName()));
+        }
+        CustomerData customerData = new CustomerData();
+        customerData.setEmail(email);
+        customerData.setUsername(email);
+        customerData.setPassword(password);
+        customerData.setFirstName(firstname);
+        customerData.setLastName(lastname);
+        customerData.setAddress1(address1);
+        customerData.setAddress2(address2);
+        customerData.setCity(city);
+        customerData.setState(state);
+        customerData.setZip(Integer.valueOf(zip));
+        customerData.setBank(bank);
+
+        raTask = new RegistrationTask();
+        raTask.execute(new CustomerData[]{customerData});
     }
 
 
+    private class RegistrationTask extends AsyncTask<CustomerData, Void, Integer> {
+        @Override
+        protected Integer doInBackground(CustomerData... data) {
+            try {
+                return doRegister(data[0]);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return 500;
+            }
 
+        }
 
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(Integer statusCode) {
+            if (statusCode >= 200 && statusCode < 300) {
+                ((TextView) (getActivity().findViewById(R.id.register_summary_header))).setText("Awesome! Welcome to Nibble");
+                ((TextView) (getActivity().findViewById(R.id.register_summary_message))).setText("Please check your email on instructions on how to activate your account. You can click on the link to activate.");
+            } else if (statusCode >= 500 && statusCode < 600) {
+                ((TextView) (getActivity().findViewById(R.id.register_summary_header))).setText("Oops Oo");
+                ((TextView) (getActivity().findViewById(R.id.register_summary_message))).setText("System pooped out trying to register you. Try changing your name (..no, really!)");
+            }
+
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            ft.replace(R.id.regisgter_summary_fragment, new RegisterSummary());
+            ft.commit();
+        }
+
+        @Override
+        protected void onCancelled() {
+            raTask = null;
+//            hideProgress();
+        }
+
+        private Integer doRegister(CustomerData data) throws Exception {
+            // Create a new RestTemplate instance
+            RestTemplate restTemplate = RestTemplateCreator.getTemplateCreator().getNewTemplate();
+
+            // Make the HTTP GET request, marshaling the response to a String
+            try {
+                ResponseEntity<Void> response = restTemplate.postForEntity(getString(R.string.regurl), data, Void.class);
+                SecurityContext.getCurrentContext().getSessionMap().put("customerData", new RegisterObject(data));
+                return response.getStatusCode().value();
+            } catch (HttpServerErrorException e) {
+                return e.getStatusCode().value();
+            }
+        }
+    }
 }

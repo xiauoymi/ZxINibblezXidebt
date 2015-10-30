@@ -85,8 +85,6 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
     @ContextVariable
     private HashMap<String, String> bankCreds = new HashMap<>();
 
-    @ContextVariable Integer statusCode;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the step layout view

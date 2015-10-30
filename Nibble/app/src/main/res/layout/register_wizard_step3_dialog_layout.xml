@@ -49,9 +49,10 @@
                 android:gravity="center_horizontal"
                 android:background="@color/white" android:orientation="horizontal">
 
-            <Button android:id="@+id/register_step3_dialog_add_btn"
+
+            <Button android:id="@+id/register_step3_dialog_cancel_btn"
                     android:layout_width="match_parent" android:layout_height="40dp"
-                    android:text="@string/action_add_acct"
+                    android:text="@string/cancel"
                     android:background="@drawable/main_button"
                     android:textColor="@color/main_button_text"
                     android:layout_weight="1"/>
@@ -62,12 +63,13 @@
                   android:background="@android:color/black"
                     />
 
-            <Button android:id="@+id/register_step3_dialog_cancel_btn"
+            <Button android:id="@+id/register_step3_dialog_add_btn"
                     android:layout_width="match_parent" android:layout_height="40dp"
-                    android:text="@string/cancel"
+                    android:text="@string/action_add_acct"
                     android:background="@drawable/main_button"
                     android:textColor="@color/main_button_text"
                     android:layout_weight="1"/>
+
         </LinearLayout>
 
     </LinearLayout>

@@ -8,5 +8,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:name="com.nibbledebt.nibble.registration.RegistrationWizard"/>
+
+    <FrameLayout android:id="@+id/regisgter_summary_fragment" android:layout_weight="1"
+                 android:layout_width="0px"
+                 android:layout_height="match_parent" />
 </FrameLayout>
 

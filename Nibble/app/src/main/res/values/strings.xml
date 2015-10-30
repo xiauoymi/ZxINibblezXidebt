@@ -7,6 +7,8 @@
 
     <string name="action_settings">Log Off</string>
     <string name="invalid_password">Password is invalid</string>
+    <string name="acode_required">Activation code is required</string>
+    <string name="acode_incorrect">Activation code is invalid</string>
     <string name="incorrect_password">Password is incorrect</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_confirm_password">Confirm Password</string>

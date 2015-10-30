@@ -12,7 +12,7 @@
         android:focusableInTouchMode="true">
 
         <TextView
-            android:id="@+id/register_step4_header"
+            android:id="@+id/register_summary_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Register"
@@ -23,11 +23,10 @@
             android:gravity="center_horizontal"
             android:background="@color/transparent"/>
 
-        <include layout="@layout/register_wizard_steps_layout"/>
 
         <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent">
             <TextView
-                    android:id="@+id/register_step4_message"
+                    android:id="@+id/register_summary_message"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text=""
