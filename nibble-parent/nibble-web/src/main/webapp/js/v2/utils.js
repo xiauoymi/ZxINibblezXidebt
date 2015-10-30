@@ -54,3 +54,7 @@ NibbleUtils.exceptedURLs = function() {
         "rest/useruq"
     ];
 };
+
+NibbleUtils.isDebug = function() {
+    return true;
+};

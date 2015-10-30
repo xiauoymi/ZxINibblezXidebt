@@ -17,12 +17,21 @@
             </div>
             <div class="form-group">
                 <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xF007;    Username" name="username"
-                        required ng-minlength="8" ng-model="newuser.username"
+                        type="email" class="form-control empty"
+                        placeholder="&#xf0e0;    Email"
+                        name="email" required
+                        ng-model="newuser.email"
                         unique-name msg-uniquename="user already exist"
                         autofocus xt-validation-tooltip>
             </div>
+            <!--<div class="form-group">-->
+                <!--<input-->
+                        <!--type="text" class="form-control empty"-->
+                        <!--placeholder="&#xF007;    Username" name="username"-->
+                        <!--required ng-minlength="8" ng-model="newuser.username"-->
+                        <!---->
+                        <!--autofocus xt-validation-tooltip>-->
+            <!--</div>-->
             <div class="form-group">
                 <input
                         type="password" class="form-control empty"
@@ -84,8 +93,6 @@
                 </div>
             </div>
         </div>
-
-
         <div ng-switch-when="registrationForm2">
             <div class="form-group">
                 <button class="btn btn-lg btn-nibble-primary btn-block"
@@ -134,14 +141,6 @@
                         placeholder="&#xf015;    Zip"
                         name="zipcode" required
                         ng-model="newuser.zip"
-                        xt-validation-tooltip>
-            </div>
-            <div class="form-group">
-                <input
-                        type="email" class="form-control empty"
-                        placeholder="&#xf0e0;    Email"
-                        name="email" required
-                        ng-model="newuser.email"
                         xt-validation-tooltip>
             </div>
             <div class="form-group">
@@ -228,19 +227,181 @@
                 </div>
             </div>
         </div>
+
+
+        <div ng-switch-when="mfaText">
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        ng-click="backToLinkAccount()">
+                    <i class="fa fa-md fa-arrow-left font-color-white"></i> Back
+                </button>
+            </div>
+            <div class="form-group">
+                <h4 class="form-primary-heading text-center">Question:</h4>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <p>{{registration.mfa.mfaQuestion}}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <input
+                        type="text" class="form-control empty"
+                        placeholder="Mfa Answer"
+                        name="mfaTextAnswer" required
+                        ng-model="registration.mfa.mfaAnswer">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        ng-click="finishRegistrationWithMfa()"
+                        ng-disabled="invalidMfaText()">
+                    Finish Registration
+                    <i class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+                </button>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-offset-1">
+                    <small><a href="" ng-click="goToLogin()"><i
+                            class="fa fa-arrow-left"></i> Back to login</a></small>
+                </div>
+            </div>
+        </div>
+
+        <div ng-switch-when="mfaImage">
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        ng-click="backToLinkAccount()">
+                    <i class="fa fa-md fa-arrow-left font-color-white"></i> Back
+                </button>
+            </div>
+            <div class="form-group">
+                <h4 class="form-primary-heading text-center">Question:</h4>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <p>{{registration.mfa.mfaQuestion}}</p>
+                </div>
+            </div>
+            <div class="form-group text-center">
+                <img ng-src="{{registration.mfa.mfaImage}}" class="img-mfa">
+                <input
+                        type="text" class="form-control empty"
+                        placeholder="Mfa Answer"
+                        name="mfaImageAnswer" required
+                        ng-model="registration.mfa.mfaAnswer">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        ng-click="finishRegistrationWithMfa()"
+                        ng-disabled="invalidMfaImage()">
+                    Finish Registration
+                    <i class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+                </button>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-offset-1">
+                    <small><a href="" ng-click="goToLogin()"><i
+                            class="fa fa-arrow-left"></i> Back to login</a></small>
+                </div>
+            </div>
+        </div>
+
+        <div ng-switch-when="mfaTextChoice">
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        ng-click="backToLinkAccount()">
+                    <i class="fa fa-md fa-arrow-left font-color-white"></i> Back
+                </button>
+            </div>
+            <div class="form-group">
+                <h4 class="form-primary-heading text-center">Question:</h4>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <p>{{registration.mfa.mfaQuestion}}</p>
+                </div>
+            </div>
+
+            <div class="row" ng-repeat="choose in registration.mfa.choose">
+                <div class="col-md-12">
+                    <input type="radio" required ng-model="registration.mfa.mfaAnswer" name="radioAnswer" ng-value="choose.value" ng-init="$index==0?(registration.mfa.mfaAnswer=choose.value):''"/>&nbsp;
+                    {{choose.body}}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <p></p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        ng-click="finishRegistrationWithMfa()"
+                        ng-disabled="invalidMfaTextChoice()">
+                    Finish Registration
+                    <i class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+                </button>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-offset-1">
+                    <small><a href="" ng-click="goToLogin()"><i
+                            class="fa fa-arrow-left"></i> Back to login</a></small>
+                </div>
+            </div>
+        </div>
+
+
+        <div ng-switch-when="mfaImageChoice">
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        ng-click="backToLinkAccount()">
+                    <i class="fa fa-md fa-arrow-left font-color-white"></i> Back
+                </button>
+            </div>
+            <div class="form-group">
+                <h4 class="form-primary-heading text-center">Question:</h4>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <p>{{registration.mfa.mfaQuestion}}</p>
+                </div>
+            </div>
+
+            <div class="row" ng-repeat="choose in registration.mfa.imageChoose">
+                <div class="col-md-12">
+                    <input type="radio" required ng-model="registration.mfa.mfaAnswer" name="radioImageAnswer" ng-value="choose.value" ng-init="$index==0?(registration.mfa.mfaAnswer=choose.value):''"/>&nbsp;
+                    <img ng-src="{{choose.body}}" class="img-mfa">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <p></p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        ng-click="finishRegistrationWithMfa()"
+                        ng-disabled="invalidMfaImageChoice()">
+                    Finish Registration
+                    <i class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+                </button>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-offset-1">
+                    <small><a href="" ng-click="goToLogin()"><i
+                            class="fa fa-arrow-left"></i> Back to login</a></small>
+                </div>
+            </div>
+        </div>
+
     </form>
-
-    <!--<form id="mfa-form" name="mfa-form" class="form-primary hidden" method="POST">-->
-    <!--<div id="mfa-form-heading" class="form-group">-->
-
-    <!--</div>-->
-    <!--<hr/>-->
-    <!--<div id="registration_form4_info" class="container-fluid"></div>-->
-    <!--<div class="form-group">-->
-    <!--<hr/>-->
-    <!--<button class="btn btn-lg btn-nibble-primary btn-block " type="submit" id="mfa_submit">Submit</button>-->
-    <!--</div>-->
-    <!--</form>-->
 
 
     <script type="text/ng-template" id="registermodal.html">

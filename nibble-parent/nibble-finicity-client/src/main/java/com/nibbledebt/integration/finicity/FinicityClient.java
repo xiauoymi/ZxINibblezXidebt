@@ -7,12 +7,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.nibbledebt.integration.finicity.model.accounts.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -25,15 +24,6 @@ import com.nibbledebt.integration.finicity.model.Institution;
 import com.nibbledebt.integration.finicity.model.Institutions;
 import com.nibbledebt.integration.finicity.model.LoginField;
 import com.nibbledebt.integration.finicity.model.LoginForm;
-import com.nibbledebt.integration.finicity.model.accounts.Accounts;
-import com.nibbledebt.integration.finicity.model.accounts.AddAccountsResponse;
-import com.nibbledebt.integration.finicity.model.accounts.CustomerAccountsRequest;
-import com.nibbledebt.integration.finicity.model.accounts.DiscoverAccountsResponse;
-import com.nibbledebt.integration.finicity.model.accounts.ImageChoiceMfaChallenges;
-import com.nibbledebt.integration.finicity.model.accounts.ImageMfaChallenges;
-import com.nibbledebt.integration.finicity.model.accounts.MfaChallenges;
-import com.nibbledebt.integration.finicity.model.accounts.MfaType;
-import com.nibbledebt.integration.finicity.model.accounts.TextMfaChallenges;
 import com.nibbledebt.integration.finicity.model.trxs.Transactions;
 
 /**
@@ -53,7 +43,12 @@ public class FinicityClient {
 	private String finicityCustUrl;	
 	
 	@Value("${finicity.cust.acct.trxs.url}")
-	private String finicityCustAcctTrxsUrl;	
+	private String finicityCustAcctTrxsUrl;
+
+    @Autowired
+    private SecurityContext securityContext;
+
+    private final String MFA_SESSION_HEADER = "MFA-Session";
 	
 	@NeedsToken
 	public Institutions getInstitutions() throws FinicityAccessException{
@@ -110,6 +105,40 @@ public class FinicityClient {
     }
 
     /**
+     *
+     * @param customerId - customer Id
+     * @param institutionId - institution Id
+     * @return Response Entity. If
+     * @throws FinicityAccessException
+     */
+    @NeedsToken
+    public ResponseEntity<String> addCustomerAccountsMfaString(
+            String customerId, String institutionId, String text, String answer)
+            throws FinicityAccessException {
+
+        CustomerAccountMfaRequest request = new CustomerAccountMfaRequest();
+        ChallengesRequest challenges = new ChallengesRequest();
+        QuestionRequest question = new QuestionRequest();
+
+        question.setText(text);
+        question.setAnswer(answer);
+
+        challenges.setQuestion(new QuestionRequest[]{question});
+
+        request.setMfaChallenges(challenges);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(MFA_SESSION_HEADER, securityContext.getMfaToken());
+        HttpEntity<CustomerAccountMfaRequest> requestEntity =
+                new HttpEntity<CustomerAccountMfaRequest>(request, headers);
+
+        ResponseEntity<String> entity = restClient.exchange(
+                finicityCustUrl + customerId + "/institutions/" + institutionId + "/accounts/addall/mfa",
+                HttpMethod.POST, requestEntity, String.class);
+        return entity;
+    }
+
+    /**
      * Discover customer accounts
      * @param customerId    - customer Id
      * @param institutionId - institution Id
@@ -151,6 +180,7 @@ public class FinicityClient {
             }
         } else if (entity.getStatusCode() == HttpStatus.NON_AUTHORITATIVE_INFORMATION) {
             MfaChallenges challenges;
+
             try {
                 challenges = mapper.readValue(entity.getBody(), TextMfaChallenges.class);
                 response.setType(MfaType.TEXT);
@@ -178,15 +208,36 @@ public class FinicityClient {
      * @param customerId - customerId
      * @param institutionId - institutionId
      * @param fields login fields
-     * @return - Discover Account Response
+     * @return - Add Account Response
      * @throws FinicityAccessException
      */
     @NeedsToken
     public AddAccountsResponse addAccounts(String customerId, String institutionId,
                                                      LoginField[] fields) throws FinicityAccessException {
+        ResponseEntity<String> entity = addCustomerAccountsString(customerId, institutionId, fields);
+        return getAddAccountResponse(entity);
+    }
+
+    /**
+     * Add Accounts with WFA answer
+     * @param customerId
+     * @param institutionId
+     * @param fields
+     * @param text
+     * @param answer
+     * @return - Add Account Response
+     * @throws FinicityAccessException
+     */
+    @NeedsToken
+    public AddAccountsResponse addAccountsWithMfaAnswers(String customerId, String institutionId,
+                                                         String text, String answer) throws FinicityAccessException {
+        ResponseEntity<String> entity = addCustomerAccountsMfaString(customerId, institutionId, text, answer);
+        return getAddAccountResponse(entity);
+    };
+
+    private AddAccountsResponse getAddAccountResponse(ResponseEntity<String> entity) throws FinicityAccessException{
         XmlMapper mapper = new XmlMapper();
         AddAccountsResponse response = new AddAccountsResponse();
-        ResponseEntity<String> entity = addCustomerAccountsString(customerId, institutionId, fields);
         if (entity.getStatusCode() == HttpStatus.OK) {
             response.setMfaType(MfaType.NON_MFA);
             try {
@@ -196,6 +247,7 @@ public class FinicityClient {
             }
         } else if (entity.getStatusCode() == HttpStatus.NON_AUTHORITATIVE_INFORMATION) {
             MfaChallenges challenges;
+            securityContext.setMfaToken(entity.getHeaders().get(MFA_SESSION_HEADER).get(0));
             try {
                 challenges = mapper.readValue(entity.getBody(), TextMfaChallenges.class);
                 response.setMfaType(MfaType.TEXT);
@@ -208,7 +260,12 @@ public class FinicityClient {
                         challenges = mapper.readValue(entity.getBody(), ImageChoiceMfaChallenges.class);
                         response.setMfaType(MfaType.IMAGE_CHOOSE);
                     } catch (Exception e2) {
-                        throw new FinicityAccessException(e2);
+                        try {
+                            challenges = mapper.readValue(entity.getBody(), TextChoiceMfaChallenges.class);
+                            response.setMfaType(MfaType.TEXT_CHOOSE);
+                        } catch (Exception e3) {
+                            throw new FinicityAccessException(e3);
+                        }
                     }
                 }
             }
@@ -216,6 +273,8 @@ public class FinicityClient {
         }
         return response;
     }
+
+
 	
 	@NeedsToken
 	public Transactions getCustomerAccountTransactions(String customerId, String accountId, Date fromDate, Date toDate, int start, int limit, String sort) throws FinicityAccessException{

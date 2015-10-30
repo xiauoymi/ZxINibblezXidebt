@@ -37,6 +37,8 @@ public class SecurityContext {
 	
 	@Value("${finicity.app.key}")
 	private String appKey;
+
+    private String mfaToken;
 		
 	private String appToken;
 	private Date lastPullTime;
@@ -88,8 +90,16 @@ public class SecurityContext {
 		}
 		headerInterceptor.setToken(this.appToken);		
 	}
-	
-	/**
+
+    public String getMfaToken() {
+        return mfaToken;
+    }
+
+    public void setMfaToken(String mfaToken) {
+        this.mfaToken = mfaToken;
+    }
+
+    /**
 	 * @param appToken the appToken to set
 	 */
 	public void setAppToken(String appToken) {

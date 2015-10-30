@@ -11,7 +11,6 @@ public class AddAccountsResponse  {
 
     private MfaType mfaType;
 
-
     public AddAccountsResponse() {
         this.mfaType = MfaType.NON_MFA;
     }
@@ -39,5 +38,6 @@ public class AddAccountsResponse  {
     public void setMfaType(MfaType mfaType) {
         this.mfaType = mfaType;
     }
+
 }
 

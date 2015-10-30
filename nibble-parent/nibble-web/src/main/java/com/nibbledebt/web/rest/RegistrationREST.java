@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
+import com.nibbledebt.domain.model.account.AddAccountsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -52,9 +53,22 @@ public class RegistrationREST {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
 	@Validatable() //TODO - write custom validator
-	public void register(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
-		regService.registerNibbler(nibblerData);
+	public AddAccountsResponse register(NibblerData nibblerData) throws ProcessingException, ServiceException,
+            RepositoryException, ValidationException{
+		return regService.registerNibbler(nibblerData);
 	}
+
+    @POST
+    @Path("/submitMfa")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Loggable(logLevel=LogLevel.INFO)
+    @Validatable() //TODO - write custom validator
+    public AddAccountsResponse submitMfa(NibblerData nibblerData) throws  ProcessingException, ServiceException, RepositoryException,
+            ValidationException {
+        return regService.submitMfaAnswer(nibblerData);
+
+    }
 //	
 //	@POST
 //	@Path("/registermfa")

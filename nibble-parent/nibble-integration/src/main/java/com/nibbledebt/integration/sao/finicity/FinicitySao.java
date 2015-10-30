@@ -10,6 +10,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.nibbledebt.domain.model.account.MfaType;
+import com.nibbledebt.integration.finicity.SecurityContext;
 import org.apache.commons.lang.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,15 +71,28 @@ public class FinicitySao implements IIntegrationSao{
 		}
 	}
 
-    public AddAccountsResponse addAccounts(String customerId, Long institutionId,
+    @Override
+    public AddAccountsResponse addAccounts(String customerId, String institutionId,
                                            com.nibbledebt.domain.model.LoginField[] fields) throws ServiceException {
         try {
             LoginField[] loginFields = new LoginField[fields.length];
             for (int i = 0; i < fields.length; i++) {
                 loginFields[i] = integrationMapper.map(fields[i], LoginField.class);
             }
-            AddAccountsResponse response = integrationMapper.map(finicityClient.addAccounts(customerId, String.valueOf(institutionId),
+            AddAccountsResponse response = integrationMapper.map(finicityClient.addAccounts(customerId, institutionId,
                     loginFields), AddAccountsResponse.class);
+            return response;
+        } catch (Exception e) {
+            throw new ServiceException("Error while retrieving accounts from Finicity", e);
+        }
+    }
+
+    @Override
+    public AddAccountsResponse addAccountsMfaAnswer(String customerId, String institutionId, String question,
+                                                    String answer) throws ServiceException {
+        try {
+             AddAccountsResponse response = integrationMapper.
+                     map(finicityClient.addAccountsWithMfaAnswers(customerId, institutionId, question, answer), AddAccountsResponse.class);
             return response;
         } catch (Exception e) {
             throw new ServiceException("Error while retrieving accounts from Finicity", e);

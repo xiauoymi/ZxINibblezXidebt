@@ -20,6 +20,11 @@ input.ng-invalid.ng-dirty{
     transition: all 0.2s ease-in-out;
 }
 
+.img-mfa {
+    max-height: 150px;
+    margin: 10px auto;
+}
+
 .col-md-4.banks {
     padding-bottom: 5px;
     padding-top: 5px;

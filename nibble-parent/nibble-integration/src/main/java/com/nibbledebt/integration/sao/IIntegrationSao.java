@@ -22,8 +22,10 @@ public interface IIntegrationSao {
 	public List<Institution> getInstitutions() throws ServiceException;
 	public Institution getInstitution(String institutionIdentifier) throws ServiceException;
 	public LoginForm getInstitutionLoginForm(String institutionIdentifier) throws ServiceException;
-    public AddAccountsResponse addAccounts(String customerId, Long institutionId,
+    public AddAccountsResponse addAccounts(String customerId, String institutionId,
                                            LoginField[] fields) throws ServiceException;
+    public AddAccountsResponse addAccountsMfaAnswer(String customerId, String institutionId,
+                                                    String question, String answer) throws ServiceException;
     public String addCustomer(String userName, String firstName, String lastName) throws ServiceException;
     public List<Transaction> retrieveTransactions(String customerId, String accountId, Date fromDate, Date toDate, String sort) throws ServiceException;
 }

@@ -8,7 +8,7 @@ app.controller('RegisterCtrl',
             $scope.initData = function() {
                 $scope.registration = {};
                 $scope.newuser = {
-                    username: "testUser",
+                    email: "test001@yopmail.com",
                     password: "QWEqweqwe",
                     repassword: "QWEqweqwe",
                     firstName: "John",
@@ -58,11 +58,18 @@ app.controller('RegisterCtrl',
             };
 
             /**
+             * back to link account
+             */
+            $scope.backToLinkAccount = function() {
+                $scope.registration.condition = "linkAccount";
+            };
+
+            /**
              * check that first registration form is invalid
              * @returns {boolean|FormController.$invalid|*|ngModel.NgModelController.$invalid|context.ctrl.$invalid}
              */
             $scope.invalidRegisterForm1 = function() {
-                return $scope.registration.form.username.$invalid ||
+                return $scope.registration.form.email.$invalid ||
                         $scope.registration.form.password.$invalid ||
                         $scope.registration.form.repassword.$invalid ||
                         $scope.registration.form.firstname.$invalid ||
@@ -79,10 +86,46 @@ app.controller('RegisterCtrl',
                         $scope.registration.form.city.$invalid ||
                         $scope.registration.form.regstate.$invalid ||
                         $scope.registration.form.zipcode.$invalid ||
-                        $scope.registration.form.email.$invalid ||
                         $scope.registration.form.phone.$invalid;
 
             };
+
+            /**
+             * check that mfa text registration form is invalid
+             * @returns {boolean|FormController.$invalid|*|ngModel.NgModelController.$invalid|context.ctrl.$invalid}
+             */
+            $scope.invalidMfaText = function() {
+                return $scope.registration.form.mfaTextAnswer.$invalid;
+
+            };
+
+            /**
+             * check that mfa image registration form is invalid
+             * @returns {boolean|FormController.$invalid|*|ngModel.NgModelController.$invalid|context.ctrl.$invalid}
+             */
+            $scope.invalidMfaImage = function() {
+                return $scope.registration.form.mfaImageAnswer.$invalid;
+
+            };
+
+            /**
+             * check that mfa image registration form is invalid
+             * @returns {boolean|FormController.$invalid|*|ngModel.NgModelController.$invalid|context.ctrl.$invalid}
+             */
+            $scope.invalidMfaTextChoice = function() {
+                return $scope.registration.form.radioAnswer.$invalid;
+
+            };
+
+            /**
+             * check that mfa image registration form is invalid
+             * @returns {boolean|FormController.$invalid|*|ngModel.NgModelController.$invalid|context.ctrl.$invalid}
+             */
+            $scope.invalidMfaImageChoice = function() {
+                return $scope.registration.form.radioImageAnswer.$invalid;
+
+            };
+
 
             /**
              * forward to login page
@@ -114,6 +157,19 @@ app.controller('RegisterCtrl',
              * Finish registration process
              */
             $scope.finishRegistration = function() {
+                var nibbler = $scope.createNibblerObject();
+                accountFactory.registerNibbler(nibbler).success(function(data){
+                    if (NibbleUtils.isDebug()) {
+                        console.log("Register Nibbler response data : ", data);
+                    }
+                    $scope.parseRegisterResponse(data);
+                })
+                    .error(function(error) {
+                    NibbleUtils.errorCallback($scope, error)
+                });
+            };
+
+            $scope.createNibblerObject = function() {
                 var nibbler = {};
                 nibbler.username = $scope.newuser.username;
                 nibbler.firstName = $scope.newuser.firstName;
@@ -132,19 +188,56 @@ app.controller('RegisterCtrl',
                         institution : {},
                         loginForm : {}
                     };
-
                     nibbler.bank.institution = $scope.selected.institution;
                     nibbler.bank.loginForm.loginField = $scope.selected.loginForm.loginField;
                 }
+                return nibbler;
+            };
 
-                accountFactory.registerNibbler(nibbler).success(function(data){
-                    console.log(data);
+            /**
+             * parse response and forward
+             */
+            $scope.parseRegisterResponse = function(data) {
+                $scope.registration.mfa = {};
+                if (data.mfaType == "NON_MFA") {
                     $scope.registration.condition = "registrationFinish";
+                } else if (data.mfaType == "TEXT") {
+                    $scope.registration.mfa.mfaQuestion = data.mfaChallenges.question[0].text;
+                    $scope.registration.mfa.mfaAnswer = "";
+                    $scope.registration.condition = "mfaText";
+                } else if (data.mfaType == "IMAGE") {
+                    $scope.registration.mfa.mfaQuestion = data.mfaChallenges.question[0].text;
+                    $scope.registration.mfa.mfaImage = data.mfaChallenges.question[0].image;
+                    $scope.registration.condition = "mfaImage";
+                } else if (data.mfaType == "TEXT_CHOOSE") {
+                    $scope.registration.mfa.mfaQuestion = data.mfaChallenges.question[0].text;
+                    $scope.registration.mfa.choose = data.mfaChallenges.question[0].choice;
+                    $scope.registration.condition = "mfaTextChoice";
+                } else if (data.mfaType == "IMAGE_CHOOSE") {
+                    $scope.registration.mfa.mfaQuestion = data.mfaChallenges.question[0].text;
+                    $scope.registration.mfa.imageChoose = data.mfaChallenges.question[0].imageChoice;
+                    $scope.registration.condition = "mfaImageChoice";
+                }
+            };
+
+            /**
+             * Finish registration process
+             */
+            $scope.finishRegistrationWithMfa = function() {
+                var nibbler = $scope.createNibblerObject();
+                nibbler.mfaQuestion = $scope.registration.mfa.mfaQuestion;
+                nibbler.mfaAnswer = $scope.registration.mfa.mfaAnswer;
+
+                accountFactory.submitMfa(nibbler).success(function(data){
+                    console.log(data);
+                    $scope.parseRegisterResponse(data);
                 })
                     .error(function(error) {
-                    NibbleUtils.errorCallback($scope, error)
-                });
+                        NibbleUtils.errorCallback($scope, error)
+                    });
             };
+
+
 
             /**
              * Open modal form with institution credentials form

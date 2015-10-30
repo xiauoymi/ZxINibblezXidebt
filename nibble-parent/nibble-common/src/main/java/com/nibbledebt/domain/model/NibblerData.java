@@ -14,7 +14,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  */
 public class NibblerData {
-	private String username;		
 	private String password;	
 	private String firstName;	
 	private String lastName;
@@ -31,6 +30,9 @@ public class NibblerData {
 	
 	private String status;
 	private String resetCode;
+
+    private String mfaQuestion;
+    private String mfaAnswer;
 	
 	private Boolean isFirstLogin;
 	
@@ -54,22 +56,6 @@ public class NibblerData {
 	public void setIsFirstLogin(Boolean isFirstLogin) {
 		this.isFirstLogin = isFirstLogin;
 	}
-	
-	/**
-	 * @return the username
-	 */
-	public String getUsername() {
-		return username;
-	}
-
-
-	/**
-	 * @param username the username to set
-	 */
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
 
 	/**
 	 * @return the password
@@ -328,7 +314,23 @@ public class NibblerData {
 		this.resetCode = resetCode;
 	}
 
-	/**
+    public String getMfaQuestion() {
+        return mfaQuestion;
+    }
+
+    public void setMfaQuestion(String mfaQuestion) {
+        this.mfaQuestion = mfaQuestion;
+    }
+
+    public String getMfaAnswer() {
+        return mfaAnswer;
+    }
+
+    public void setMfaAnswer(String mfaAnswer) {
+        this.mfaAnswer = mfaAnswer;
+    }
+
+    /**
 	 * @return the accounts
 	 */
 	public List<Account> getAccounts() {
