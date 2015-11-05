@@ -21,10 +21,10 @@ public class MemberDetails implements UserDetails {
 	private String firstName;
 	private String lastName;
 	private String username;
-	private Boolean isAccountNonLocked;
-	private Boolean isAccountNonExpired;
-	private Boolean isCredentialsNonExpired;
-	private Boolean isAccountEnabled;
+	private Boolean isAccountNonLocked = true;
+	private Boolean isAccountNonExpired = true;
+	private Boolean isCredentialsNonExpired = true;
+	private Boolean isAccountEnabled = true;
 	private Boolean isFirstLogin;
 	
 	/* (non-Javadoc)

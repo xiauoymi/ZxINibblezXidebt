@@ -22,6 +22,10 @@ import android.widget.TextView;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import com.nibbledebt.nibble.common.BaseLoaderActivity;
+import com.nibbledebt.nibble.common.RestTemplateCreator;
+import com.nibbledebt.nibble.integration.model.CustomerData;
+import com.nibbledebt.nibble.integration.model.MemberDetails;
+import com.nibbledebt.nibble.security.RegisterObject;
 import com.nibbledebt.nibble.security.SecurityContext;
 import com.nibbledebt.nibble.security.TokenObject;
 
@@ -40,6 +44,7 @@ public class LoginActivity extends BaseLoaderActivity {
     private EditText usernameTextView;
     private EditText passwordTextView;
     private TextView registerTextView;
+    private TextView activationTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,12 +81,27 @@ public class LoginActivity extends BaseLoaderActivity {
         registerTextView.setPaintFlags(registerTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         Linkify.addLinks(registerTextView, Linkify.ALL);
 
+
+        activationTextView = (TextView) findViewById(R.id.activateTextView);
+        activationTextView.setPaintFlags(activationTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        Linkify.addLinks(activationTextView, Linkify.ALL);
+
         registerTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i("LoginActivity", "RegisterActivity activated.");
                 showProgress();
                 startActivity(new Intent(getBaseContext(), RegisterActivity.class));
+                hideProgress();
+            }
+        });
+
+        activationTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("LoginActivity", "ActivationActivity activated.");
+                showProgress();
+                startActivity(new Intent(getBaseContext(), ActivationActivity.class));
                 hideProgress();
             }
         });
@@ -101,6 +121,7 @@ public class LoginActivity extends BaseLoaderActivity {
 
             }
         });
+
     }
 
 
@@ -188,27 +209,29 @@ public class LoginActivity extends BaseLoaderActivity {
         }
 
         private void doLogin(String username, String password) throws Exception {
-            // The connection URL
-            String url = "http://nibble-web.herokuapp.com/sslogin";
-
             MultiValueMap<String, String> values = new LinkedMultiValueMap<>();
             values.add("nibbler_username", username);
             values.add("nibbler_password", password);
 
-            // Create a new RestTemplate instance
-            RestTemplate restTemplate = new RestTemplate();
-
-            // Add the String message converter
-            restTemplate.getMessageConverters().clear();
-            restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
-            restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+            /// Create a new RestTemplate instance
+            RestTemplate restTemplate = RestTemplateCreator.getTemplateCreator().getNewTemplate();
 
             // Make the HTTP GET request, marshaling the response to a String
-            ResponseEntity<String> result = restTemplate.postForEntity(url, values, String.class);
+            ResponseEntity<String> result = restTemplate.postForEntity(getString(R.string.loginurl), values, String.class);
 
             if(result.getStatusCode().value()==302){
                 if(result.getHeaders().getLocation().getPath().equalsIgnoreCase("/nibblehome.html")){
                     SecurityContext.getCurrentContext().setCookie((String)result.getHeaders().get("Set-Cookie").toArray()[0]);
+
+                    ResponseEntity<MemberDetails> profileResult = restTemplate.getForEntity(getString(R.string.profileurl), MemberDetails.class);
+                    if(profileResult.getStatusCode().value()==200){
+                        CustomerData data = new CustomerData();
+                        data.setFirstName(profileResult.getBody().getFirstName());
+                        data.setLastName(profileResult.getBody().getLastName());
+                        data.setUsername(profileResult.getBody().getUsername());
+                        SecurityContext.getCurrentContext().getSessionMap().put("memberDetails", new RegisterObject(data));
+                    }
+
                 }
             }
         }

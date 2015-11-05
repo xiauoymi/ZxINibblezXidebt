@@ -7,17 +7,18 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="92dp"
-        android:text="Manage Accounts"
+        android:text="Your Accounts"
         android:textSize="30dp"
         android:gravity="center_horizontal|center_vertical"
         android:layout_gravity="center_horizontal|center_vertical"
-        android:textColor="@android:color/white" />
+        android:textColor="@color/nibble_main" />
 
     <Button android:id="@+id/add_acct_button" style="?android:textAppearanceSmall"
         android:layout_width="200dp" android:layout_height="wrap_content"
         android:gravity="center_horizontal|center_vertical"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp" android:text="@string/action_add_acct"
+            android:background="@drawable/main_button"
         android:textStyle="bold"
         android:textColor="#ffffffff"
         android:shadowRadius="3" />

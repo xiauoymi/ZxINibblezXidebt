@@ -111,6 +111,12 @@ body {
 				<a href="${activate_link}" class="btn-lg btn-nib-main">Activate</a>
 			</div>
 		</div>	
+		
+		<div class="row">
+			<div class="col-md-9">
+				<b>${activate_link}</b>
+			</div>
+		</div>	
 	</div>
 </body>
 </html>

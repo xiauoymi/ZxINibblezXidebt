@@ -1,31 +1,21 @@
 package com.nibbledebt.nibble.fragments;
 
-import android.content.Context;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.nibbledebt.nibble.R;
 import com.nibbledebt.nibble.common.AbstractFragment;
 
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Locale;
 
 /**
  * Created by ralam on 7/14/15.
  */
-public class TransactionsFragment extends AbstractFragment {
+public class CrowdFragment extends AbstractFragment {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -37,14 +27,14 @@ public class TransactionsFragment extends AbstractFragment {
     private View rootView;
     private SwipeRefreshLayout swipeContainer;
 
-    public TransactionsFragment() {
+    public CrowdFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_transactions, container, false);
-        String title = getResources().getString(R.string.trxs_section);
+        rootView = inflater.inflate(R.layout.fragment_crowd, container, false);
+        String title = getResources().getString(R.string.crowd_section);
 
         int imageId = getResources().getIdentifier(title.toLowerCase(Locale.getDefault()),
                 "drawable", getActivity().getPackageName());

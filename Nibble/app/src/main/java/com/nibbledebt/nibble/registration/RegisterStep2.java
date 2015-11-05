@@ -59,7 +59,7 @@ public class RegisterStep2 extends AbstractWizardStep {
         setStepComplete((ImageView) v.findViewById(R.id.animated_dot_1));
 
         // start the current step animation
-        setCurrentStepAnimation(v.getContext(), R.anim.dot_pulse, (ImageView) v.findViewById(R.id.animated_dot_2), new View[]{v.findViewById(R.id.subtext_step_1), v.findViewById(R.id.subtext_step_3), v.findViewById(R.id.subtext_step_4)});
+        setCurrentStepAnimation(v.getContext(), R.anim.dot_pulse, (ImageView) v.findViewById(R.id.animated_dot_2), new View[]{v.findViewById(R.id.subtext_step_1), v.findViewById(R.id.subtext_step_3)});
 
 
         //Get reference to the textboxes

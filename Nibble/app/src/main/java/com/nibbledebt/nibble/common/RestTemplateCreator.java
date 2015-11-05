@@ -1,5 +1,6 @@
 package com.nibbledebt.nibble.common;
 
+import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -36,6 +37,7 @@ public class RestTemplateCreator extends RestTemplate {
         ObjectMapper mapper = new ObjectMapper();
 //        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 //        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SZZZ"));
 
         for(HttpMessageConverter<?> conv : template.getMessageConverters()){

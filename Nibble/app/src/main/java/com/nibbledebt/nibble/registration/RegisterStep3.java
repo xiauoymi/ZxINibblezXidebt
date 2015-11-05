@@ -95,7 +95,7 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
         setStepComplete((ImageView) v.findViewById(R.id.animated_dot_2));
 
         // start the current step animation
-        setCurrentStepAnimation(v.getContext(), R.anim.dot_pulse, (ImageView) v.findViewById(R.id.animated_dot_3), new View[]{v.findViewById(R.id.subtext_step_1), v.findViewById(R.id.subtext_step_2), v.findViewById(R.id.subtext_step_4)});
+        setCurrentStepAnimation(v.getContext(), R.anim.dot_pulse, v.findViewById(R.id.animated_dot_3), new View[]{v.findViewById(R.id.subtext_step_1), v.findViewById(R.id.subtext_step_2)});
 
         // load supported accounts
         if(saTask == null) {
@@ -114,6 +114,7 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
             bankCreds.put(formFieldKey, formData.get(formFieldKey));
         }
         bank = selectedBank;
+        notifyCompleted();
     }
 
     @Override
@@ -121,6 +122,7 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
         bankCreds.clear();
         deselectAll();
         dialog.dismiss();
+        notifyIncomplete();
 
     }
 

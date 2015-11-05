@@ -14,11 +14,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 import com.nibbledebt.nibble.common.AbstractFragment;
 import com.nibbledebt.nibble.common.BaseLoaderCompatActivity;
 import com.nibbledebt.nibble.fragments.AccountsFragment;
-import com.nibbledebt.nibble.fragments.TransactionsFragment;
-import com.nibbledebt.nibble.fragments.WalletFragment;
+import com.nibbledebt.nibble.fragments.CrowdFragment;
+import com.nibbledebt.nibble.fragments.HomeFragment;
+import com.nibbledebt.nibble.security.RegisterObject;
+import com.nibbledebt.nibble.security.SecurityContext;
 
 public class MainActivity extends BaseLoaderCompatActivity {
       private DrawerLayout mDrawer;
@@ -52,10 +55,10 @@ public class MainActivity extends BaseLoaderCompatActivity {
             setupDrawerContent(nvDrawer);
 
             // Set Nav Header items
-//            ((TextView)findViewById(R.id.nav_header_1)).setText(SecurityContext.getSecurityContext().getProfile().getFirstName() + " " +
-//                                                            SecurityContext.getSecurityContext().getProfile().getLastName() );
-//
-//            ((TextView)findViewById(R.id.nav_header_2)).setText(SecurityContext.getSecurityContext().getCurrentSession().getSignOnCredential());
+            ((TextView)findViewById(R.id.nav_header_1)).setText(((RegisterObject)SecurityContext.getCurrentContext().getSessionMap().get("memberDetails")).getData("").getFirstName() + " " +
+                    ((RegisterObject)SecurityContext.getCurrentContext().getSessionMap().get("memberDetails")).getData("").getLastName() );
+
+            ((TextView)findViewById(R.id.nav_header_2)).setText(((RegisterObject)SecurityContext.getCurrentContext().getSessionMap().get("memberDetails")).getData("").getUsername());
 
             // Tie DrawerLayout events to the ActionBarToggle
             mDrawer.setDrawerListener(drawerToggle);
@@ -67,7 +70,7 @@ public class MainActivity extends BaseLoaderCompatActivity {
 
 
             try {
-                  currentFragment = new WalletFragment();
+                  currentFragment = new HomeFragment();
                   FragmentManager fragmentManager = this.getSupportFragmentManager();
                   fragmentManager.beginTransaction().replace(R.id.flContent, currentFragment).commit();
             } catch (Exception e) {
@@ -113,28 +116,28 @@ public class MainActivity extends BaseLoaderCompatActivity {
       public void selectDrawerItem(MenuItem menuItem) {
             Class fragmentClass;
             switch(menuItem.getItemId()) {
-//                  case R.id.nav_first_fragment:
-//                        fragmentClass = WalletFragment.class;
-//                        break;
-//                  case R.id.nav_second_fragment:
-//                        fragmentClass = AccountsFragment.class;
-//                        break;
-//                  case R.id.nav_third_fragment:
-//                        fragmentClass = TransactionsFragment.class;
-//                        break;
-//                  case R.id.nav_help_fragment:
-//                        fragmentClass = WalletFragment.class;
-//                        break;
-//                  case R.id.nav_logout_fragment:
-//                        fragmentClass = null;
-//                        try {
-//                              signoutTask = new SignoutTask();
-//                              signoutTask.execute();
-//                        } catch (Exception e) {
-//                              e.printStackTrace();
-//                              Log.w(e.getMessage(), "error while loggin out user");
-//                        }
-//                        break;
+                  case R.id.nav_first_fragment:
+                        fragmentClass = HomeFragment.class;
+                        break;
+                  case R.id.nav_second_fragment:
+                        fragmentClass = AccountsFragment.class;
+                        break;
+                  case R.id.nav_third_fragment:
+                        fragmentClass = CrowdFragment.class;
+                        break;
+                  case R.id.nav_help_fragment:
+                        fragmentClass = HomeFragment.class;
+                        break;
+                  case R.id.nav_logout_fragment:
+                        fragmentClass = null;
+                        try {
+                              signoutTask = new SignoutTask();
+                              signoutTask.execute();
+                        } catch (Exception e) {
+                              e.printStackTrace();
+                              Log.w(e.getMessage(), "error while loggin out user");
+                        }
+                        break;
                   default:
                         fragmentClass = null;
             }
@@ -195,6 +198,8 @@ public class MainActivity extends BaseLoaderCompatActivity {
             // onPostExecute displays the results of the AsyncTask.
             @Override
             protected void onPostExecute(String result) {
+                  SecurityContext.getCurrentContext().getSessionMap().clear();
+                  SecurityContext.getCurrentContext().setCookie(null);
                   startActivity(new Intent(getBaseContext(), LoginActivity.class));
                   finish();
                   signoutTask = null;

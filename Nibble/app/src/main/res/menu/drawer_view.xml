@@ -1,32 +1,32 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <!--<item-->
-            <!--android:id="@+id/nav_first_fragment"-->
-            <!--android:icon="@drawable/ic_action_home"-->
-            <!--android:title="@string/wallet_section"-->
-            <!--android:checked="true"/>-->
-        <!--<item-->
-            <!--android:id="@+id/nav_second_fragment"-->
-            <!--android:icon="@drawable/ic_action_creditcard"-->
-            <!--android:title="@string/accts_section"-->
-            <!--/>-->
-        <!--<item-->
-            <!--android:id="@+id/nav_third_fragment"-->
-            <!--android:icon="@drawable/ic_action_list_2"-->
-            <!--android:title="@string/trxs_section" />-->
+        <item
+            android:id="@+id/nav_first_fragment"
+            android:icon="@drawable/ic_home_white_24dp"
+            android:title="@string/home_section"
+            android:checked="true"/>
+        <item
+            android:id="@+id/nav_second_fragment"
+            android:icon="@drawable/ic_account_balance_white_24dp"
+            android:title="@string/accts_section"
+            />
+        <item
+            android:id="@+id/nav_third_fragment"
+            android:icon="@drawable/ic_group_work_white_24dp"
+            android:title="@string/crowd_section" />
     </group>
 
     <item android:title="">
         <menu>
-            <!--<item-->
-                <!--android:id="@+id/nav_help_fragment"-->
-                <!--android:icon="@drawable/ic_action_help"-->
-                <!--android:title="@string/help_section" />-->
-            <!--<item-->
-                <!--android:id="@+id/nav_logout_fragment"-->
-                <!--android:icon="@drawable/ic_action_lock_closed"-->
-                <!--android:title="@string/logout_section" />-->
+            <item
+                android:id="@+id/nav_help_fragment"
+                android:icon="@drawable/ic_help_white_24dp"
+                android:title="@string/help_section" />
+            <item
+                android:id="@+id/nav_logout_fragment"
+                android:icon="@drawable/ic_lock_white_24dp"
+                android:title="@string/logout_section" />
         </menu>
     </item>
 </menu>

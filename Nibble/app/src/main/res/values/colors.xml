@@ -7,7 +7,12 @@
     <color name="nibble_main">#A1C6EA</color>
     <color name="nibble_main_dark">#507DBC</color>
     <color name="nibble_main_light">#BBD1EA</color>
-    <color name="nibble_main_error">#eaa1c6</color>
+    <color name="nibble_main_error">#ef2e64</color>
+    <color name="nibble_main_purp">#ad6ea5</color>
+    <color name="nibble_main_darker">#2b6294</color>
+    <color name="nibble_main_lighter">#c1e6f9</color>
+
+
 
 
     <color name="hint_text">#B3FFFFFF</color>

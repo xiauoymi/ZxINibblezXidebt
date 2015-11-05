@@ -1,6 +1,7 @@
 package com.nibbledebt.nibble.registration;
 
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.TextView;
 import com.nibbledebt.nibble.R;
@@ -71,7 +72,7 @@ public class RegistrationWizard extends RegistrationWizardLayout{
         return new WizardFlow.Builder()
                 .addStep(RegisterStep1.class, true)
                 .addStep(RegisterStep2.class, true)
-                .addStep(RegisterStep3.class)
+                .addStep(RegisterStep3.class, true)
                 .create();
     }
 
@@ -79,11 +80,12 @@ public class RegistrationWizard extends RegistrationWizardLayout{
     public void onWizardComplete() {
         super.onWizardComplete();   //Make sure to first call the super method before anything else
 
-
-        // load supported accounts
-        for(LoginField field : bank.getLoginForm().getLoginField()){
-            field.setValue(bankCreds.get(field.getName()));
+        if(bank!=null && bank.getLoginForm() != null){
+            for(LoginField field : bank.getLoginForm().getLoginField()){
+                field.setValue(bankCreds.get(field.getName()));
+            }
         }
+
         CustomerData customerData = new CustomerData();
         customerData.setEmail(email);
         customerData.setUsername(email);
@@ -117,18 +119,31 @@ public class RegistrationWizard extends RegistrationWizardLayout{
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(Integer statusCode) {
+            RegisterSummary registerSummary = new RegisterSummary();
+            registerSummary.setTargetFragment(getTargetFragment(), 0);
+            Bundle bundle = new Bundle();
             if (statusCode >= 200 && statusCode < 300) {
-                ((TextView) (getActivity().findViewById(R.id.register_summary_header))).setText("Awesome! Welcome to Nibble");
-                ((TextView) (getActivity().findViewById(R.id.register_summary_message))).setText("Please check your email on instructions on how to activate your account. You can click on the link to activate.");
+                registerSummary.setHeader("Awesome! Welcome to Nibble");
+                registerSummary.setMessage("Please check your email on instructions on how to activate your account. You can click on the link to activate.");
+                bundle.putSerializable("header", "Awesome! Welcome to Nibble");
+                bundle.putSerializable("message", "Please check your email on instructions on how to activate your account. You can click on the link to activate.");
+//                ((TextView) (getActivity().findViewById(R.id.register_summary_header))).setText("Awesome! Welcome to Nibble");
+//                ((TextView) (getActivity().findViewById(R.id.register_summary_message))).setText("Please check your email on instructions on how to activate your account. You can click on the link to activate.");
             } else if (statusCode >= 500 && statusCode < 600) {
-                ((TextView) (getActivity().findViewById(R.id.register_summary_header))).setText("Oops Oo");
-                ((TextView) (getActivity().findViewById(R.id.register_summary_message))).setText("System pooped out trying to register you. Try changing your name (..no, really!)");
+                registerSummary.setHeader("Oops Oo");
+                registerSummary.setMessage("System pooped out trying to register you. Try changing your name (..no, really!)");
+                bundle.putSerializable("header", "Oops Oo");
+                bundle.putSerializable("message", "System pooped out trying to register you. Try changing your name (..no, really!)");
+//                ((TextView) (getActivity().findViewById(R.id.register_summary_header))).setText("Oops Oo");
+//                ((TextView) (getActivity().findViewById(R.id.register_summary_message))).setText("System pooped out trying to register you. Try changing your name (..no, really!)");
             }
 
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            ft.replace(R.id.regisgter_summary_fragment, new RegisterSummary());
-            ft.commit();
+            registerSummary.setArguments(bundle);
+            registerSummary.show(getActivity().getSupportFragmentManager(), "SummaryDialog");
+//            FragmentTransaction ft = getFragmentManager().beginTransaction();
+//            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//            ft.attach(registerSummary);
+//            ft.commit();
         }
 
         @Override

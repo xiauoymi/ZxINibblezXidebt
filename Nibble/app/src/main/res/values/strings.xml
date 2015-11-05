@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Nibble</string>
-    <string name="wallet_section">Wallet</string>
-    <string name="trxs_section">Transactions</string>
+    <string name="home_section">Home</string>
+    <string name="crowd_section">Crowd</string>
     <string name="accts_section">Accounts</string>
     <string name="help_section">Help</string>
 
@@ -65,6 +65,10 @@
     <string name="banksurl">http://192.168.56.1:9000/services/rest/banks</string>
     <string name="banklogourl">http://192.168.56.1:9000/services/rest/logo/</string>
     <string name="regurl">http://192.168.56.1:9000/services/rest/register</string>
+    <string name="activurl">http://192.168.56.1:9000/services/rest/activate</string>
+    <string name="profileurl">http://192.168.56.1:9000/services/rest/profile</string>
+    <string name="loginurl">http://192.168.56.1:9000/sslogin</string>
+
 
     <string-array name="us_states_list">
         <item>Alabama</item>

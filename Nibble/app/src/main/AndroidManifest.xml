@@ -29,6 +29,10 @@
             </intent-filter>
         </activity>
         <activity
+                android:name=".ActivationActivity"
+                android:windowSoftInputMode="stateHidden|stateHidden" >
+        </activity>
+        <activity
             android:name=".MainActivity"
             android:windowSoftInputMode="stateHidden|stateHidden" >
         </activity>

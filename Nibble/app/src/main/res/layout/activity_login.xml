@@ -68,8 +68,8 @@
                                 android:paddingBottom="10dp"
                                 android:paddingLeft="5dp"
                                 android:textColor="#FFFFFF"
-                                android:drawableLeft="@drawable/ic_local_post_office_white_24dp"  />
-                            <!--android:text="dqbox@mozido.com"-->
+                                android:drawableLeft="@drawable/ic_local_post_office_white_24dp"
+                                android:text="test31@yopmail.com"/>
 
 
                             <EditText android:id="@+id/password" android:layout_width="match_parent"
@@ -87,7 +87,8 @@
                                 android:paddingBottom="10dp"
                                 android:paddingLeft="5dp"
                                 android:textColor="#FFFFFF"
-                                android:drawableLeft="@drawable/ic_lock_white_24dp" />
+                                android:drawableLeft="@drawable/ic_lock_white_24dp"
+                                      android:text="123456"/>
                             <!--android:text="DqMozido@2014!"-->
 
 
@@ -104,6 +105,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
+                                android:paddingTop="20dp"
                                 android:gravity="bottom|center_horizontal">
 
                                 <TextView
@@ -111,8 +113,25 @@
                                     android:layout_height="match_parent"
                                     android:text="Sign up"
                                     android:id="@+id/signUpTextView"
+                                    android:textStyle="bold"
+                                    android:textSize="20dp"
                                     android:autoLink="web"
-                                    android:textColor="#999999" />
+                                    android:textColor="@color/nibble_main_light" />
+
+                                <View android:layout_width="1dp" android:layout_height="match_parent"
+                                        android:background="@color/nibble_main_light"
+                                        android:layout_marginLeft="10dp" android:layout_marginRight="10dp"/>
+
+
+                                <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:text="Activate"
+                                        android:id="@+id/activateTextView"
+                                        android:textStyle="bold"
+                                        android:textSize="20dp"
+                                        android:autoLink="web"
+                                        android:textColor="@color/nibble_main_light" />
                             </LinearLayout>
 
                         </LinearLayout>
