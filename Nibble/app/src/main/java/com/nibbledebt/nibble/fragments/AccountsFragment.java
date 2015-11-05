@@ -78,7 +78,7 @@ public class AccountsFragment extends AbstractFragment {
         });
 
 
-        showProgress();
+//        showProgress();
 
         swipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.accts_swipe_container);
         // Setup refresh listener which triggers new data loading

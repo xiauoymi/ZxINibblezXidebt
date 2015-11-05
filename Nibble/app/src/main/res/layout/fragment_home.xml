@@ -159,8 +159,7 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:id="@+id/main_wallet_content_container"
-                    android:background="@color/nibble_main_lighter">
+                    android:id="@+id/main_wallet_content_container">
 
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -170,19 +169,16 @@
                     xmlns:android="http://schemas.android.com/apk/res/android"
                     android:id="@+id/wallet_swipe_container"
                     android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="@color/transparent">
+                    android:layout_height="fill_parent">
                 <ScrollView
                         xmlns:android="http://schemas.android.com/apk/res/android"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:orientation="vertical"
-                        android:gravity="top"
-                        android:background="@color/nibble_main_lighter">
+                        android:gravity="top">
                     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                   android:layout_width="match_parent"
                                   android:layout_height="wrap_content"
-                                  android:background="@android:color/white"
                                   android:orientation="vertical"
                                   android:gravity="top">
 

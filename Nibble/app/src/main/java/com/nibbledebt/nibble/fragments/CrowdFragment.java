@@ -45,7 +45,7 @@ public class CrowdFragment extends AbstractFragment {
         progressContainer = rootView.findViewById(R.id.main_trxs_progress_container);
 
 //        mainContainer = rootView.findViewById(R.id.main_wallet_content_container);
-        showProgress();
+//        showProgress();
         swipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.trxs_swipe_container);
         // Setup refresh listener which triggers new data loading
 //        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
