@@ -18,14 +18,17 @@
 	<bean id="authEntryPoint" class="com.nibbledebt.common.security.AjaxAwareEntryPoint" >
 		<constructor-arg name="loginUrl" value="/nibbleuser.html"/>
 	</bean>
-
+	
+<!-- 	<bean id="signatureVeirfyFilter" class="com.nibbledebt.web.sys.rest.SignatureVerificationFilter" -->
+ 
 	<sec:http use-expressions="true" entry-point-ref="authEntryPoint">	
+<!-- 		<sec:custom-filter ref="signatureVeirfyFilter" after="LAST"/> -->
 <!--         <sec:intercept-url pattern="/login*" access="permitAll"/> -->
 <!--         <sec:intercept-url pattern="/rest/register/**" access="permitAll"/> -->
 <!--         <sec:intercept-url pattern="/rest/logo/**" access="permitAll"/> -->
 <!--         <sec:intercept-url pattern="/rest/banks/**" access="permitAll"/> -->
 <!--         <sec:intercept-url pattern="/rest/**" access="isAuthenticated() and hasRole('nibbler-level1')"/> -->
-        <sec:intercept-url pattern="/nibbleuser.html**" access="permitAll"/>
+        <sec:intercept-url pattern="/nibbleuser.html**" access="permitAll" />
         <sec:intercept-url pattern="/index.html**" access="permitAll"/>
         <sec:intercept-url pattern="/nibblehome.html**" access="isAuthenticated() and hasRole('nibbler_level_1')"/>
         

@@ -63,7 +63,18 @@
 	
     <jaxrs:server address="/rest" basePackages="com.nibbledebt.web.rest">     	
         <jaxrs:providers>
-        	<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" factory-bean="jacksonProviderFactory" factory-method="create" />
+        	<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" factory-bean="jacksonProviderFactory" factory-method="createJson" />
+        	<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+        	<bean class="com.nibbledebt.common.error.NotificationExceptionMapper" />
+        	<bean class="com.nibbledebt.common.error.ProcessingExceptionMapper" />
+        	<bean class="com.nibbledebt.common.error.ServiceExceptionMapper" />
+        	<bean class="com.nibbledebt.common.error.RepositoryExceptionMapper" />
+        </jaxrs:providers>
+     </jaxrs:server>
+     
+     <jaxrs:server address="/sysrest" basePackages="com.nibbledebt.web.sys.rest">     	
+        <jaxrs:providers>
+        	<bean class="com.fasterxml.jackson.jaxrs.xml.JacksonXMLProvider" factory-bean="jacksonProviderFactory" factory-method="createXml"/>
         	<bean class="com.nibbledebt.common.error.NotificationExceptionMapper" />
         	<bean class="com.nibbledebt.common.error.ProcessingExceptionMapper" />
         	<bean class="com.nibbledebt.common.error.ServiceExceptionMapper" />

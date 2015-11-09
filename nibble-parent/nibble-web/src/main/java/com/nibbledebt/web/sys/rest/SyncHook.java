@@ -1,7 +1,7 @@
 /**
  * Copyright 2015-2016. All rights reserved by Nibbledebt Inc.
  */
-package com.nibbledebt.web.rest;
+package com.nibbledebt.web.sys.rest;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -28,7 +28,7 @@ import com.nibbledebt.integration.finicity.model.hooks.Event;
  */
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 @Component
 public class SyncHook {
 	@Autowired

@@ -210,6 +210,13 @@
 	  		<version>2.4.2</version>
 	  		<scope>compile</scope>
 	  	</dependency>
+	  	
+	  	<dependency>
+	  		<groupId>com.fasterxml.jackson.jaxrs</groupId>
+	  		<artifactId>jackson-jaxrs-xml-provider</artifactId>
+	  		<version>2.4.2</version>
+	  		<scope>compile</scope>
+	  	</dependency>
 		
 		<!--  Logging stuff -->
        <dependency>
