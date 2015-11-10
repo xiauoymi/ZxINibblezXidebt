@@ -68,6 +68,7 @@
     <string name="activurl">http://192.168.56.1:9000/services/rest/activate</string>
     <string name="profileurl">http://192.168.56.1:9000/services/rest/profile</string>
     <string name="loginurl">http://192.168.56.1:9000/sslogin</string>
+    <string name="summaryurl">http://192.168.56.1:9000/services/rest/weeksummary</string>
 
 
     <string-array name="us_states_list">

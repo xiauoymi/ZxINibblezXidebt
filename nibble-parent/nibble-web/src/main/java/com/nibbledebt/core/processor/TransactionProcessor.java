@@ -63,7 +63,9 @@ public class TransactionProcessor extends AbstractProcessor{
 	
 	@Autowired
 	private ITransactionCategoryDao trxCatDao;
-	
+//	public static void main(String[] args){
+//		System.out.println(System.currentTimeMillis()/1000);
+//	}
 	
 	@Transactional(readOnly=true)
 	public TransactionSummary getWeeklyTrxSummary() throws ProcessingException, RepositoryException{

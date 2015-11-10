@@ -16,7 +16,7 @@ public class Transaction {
 	private String accountNumber;
 	private BigDecimal trxAmount;
 	private BigDecimal roundupAmount;
-	private Date trxDate;
+	private String trxDate;
 	private String city;
 	private String state;
 	/**
@@ -82,13 +82,13 @@ public class Transaction {
 	/**
 	 * @return the trxDate
 	 */
-	public Date getTrxDate() {
+	public String getTrxDate() {
 		return trxDate;
 	}
 	/**
 	 * @param trxDate the trxDate to set
 	 */
-	public void setTrxDate(Date trxDate) {
+	public void setTrxDate(String trxDate) {
 		this.trxDate = trxDate;
 	}
 	/**

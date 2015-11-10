@@ -4,8 +4,12 @@ package com.nibbledebt.nibble.fragments;
  * Created by ralam on 7/14/15.
  */
 
+import android.animation.TypeEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
@@ -17,10 +21,25 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import android.widget.TextView;
 import at.grabner.circleprogress.CircleProgressView;
 import at.grabner.circleprogress.TextMode;
+import com.nibbledebt.nibble.MainActivity;
 import com.nibbledebt.nibble.R;
 import com.nibbledebt.nibble.common.AbstractFragment;
+import com.nibbledebt.nibble.common.RestTemplateCreator;
+import com.nibbledebt.nibble.integration.model.CustomerData;
+import com.nibbledebt.nibble.integration.model.MemberDetails;
+import com.nibbledebt.nibble.integration.model.TransactionSummary;
+import com.nibbledebt.nibble.security.RegisterObject;
+import com.nibbledebt.nibble.security.SecurityContext;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -29,22 +48,12 @@ import java.util.Locale;
  * A placeholder fragment containing a simple view.
  */
 public class HomeFragment extends AbstractFragment implements CircleProgressView.OnProgressChangedListener{
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
-    public static final String SECTION_NUMBER = "0";
-    public static final String IMAGE_RESOURCE_NAME = "ic_action_home";
-    public static final String IMAGE_RESOURCE_NAME_CHECKED = "ic_action_home_white";
 
     private View rootView;
-    private Dialog addMoneyDialog;
     private SwipeRefreshLayout swipeContainer;
     private CircleProgressView mCircleView;
-    Boolean mShowUnit = true;
-
-    public HomeFragment() {
-    }
+    private SummaryLoadTask summaryLoadTask;
+    private float currentValue;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,7 +67,6 @@ public class HomeFragment extends AbstractFragment implements CircleProgressView
 
         progressBar = (ProgressBar)rootView.findViewById(R.id.main_wallet_progress);
         progressContainer = rootView.findViewById(R.id.main_wallet_progress_container);
-//        mainContainer = rootView.findViewById(R.id.main_wallet_content_container);
 
 //        showProgress();
 
@@ -77,10 +85,26 @@ public class HomeFragment extends AbstractFragment implements CircleProgressView
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
+
         setupVisualization();
+
+        summaryLoadTask = new SummaryLoadTask();
+        summaryLoadTask.execute();
 
 
         return rootView;
+    }
+
+    private void startCountAnimation(final TextView textView, float value) {
+        ValueAnimator animator = new ValueAnimator();
+        animator.setFloatValues(0.00f, value);
+        animator.setDuration(1500);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                textView.setText("$ "+ String.format("%.2f", animation.getAnimatedValue()));
+            }
+        });
+        animator.start();
     }
 
 
@@ -95,56 +119,78 @@ public class HomeFragment extends AbstractFragment implements CircleProgressView
 
         //show unit
         mCircleView.setUnit("%");
-        mCircleView.setShowUnit(mShowUnit);
+        mCircleView.setShowUnit(true);
 
         //text sizes
         mCircleView.setTextSize(50); // text size set, auto text size off
         mCircleView.setUnitSize(40); // if i set the text size i also have to set the unit size
         mCircleView.setAutoTextSize(true); // enable auto text size, previous values are overwritten
-        //if you want the calculated text sizes to be bigger/smaller you can do so via
         mCircleView.setUnitScale(0.9f);
         mCircleView.setTextScale(0.9f);
-
-//        //custom typeface
-//        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/ANDROID_ROBOT.ttf");
-//        mCircleView.setTextTypeface(font);
-//        mCircleView.setUnitTextTypeface(font);
-
-
-        //color
-        //you can use a gradient
         mCircleView.setBarColor(getResources().getColor(R.color.nibble_main_green), getResources().getColor(R.color.nibble_main_green2));
 
-        //colors of text and unit can be set via
-//        mCircleView.setTextColor(Color.WHITE);
-        //or to use the same color as in the gradient
-//        mCircleView.setAutoTextColor(true); //previous set values are ignored
-
-        //text mode
-//        mCircleView.setText("Target"); //shows the given text in the circle view
-//        mCircleView.setTextMode(TextMode.TEXT); // Set text mode to text to show text
-
-        //in the following text modes, the text is ignored
-//        mCircleView.setTextMode(TextMode.VALUE); // Shows the current value
-//        mCircleView.setTextMode(TextMode.PERCENT); // Shows current percent of the current value from the max value
-
-        //spinning
-//        mCircleView.spin(); // start spinning
-//        mCircleView.stopSpinning(); // stops spinning. Spinner gets shorter until it disappears.
-//        mCircleView.setValueAnimated(24); // stops spinning. Spinner spins until on top. Then fills to set value.
-//        mCircleView.setShowTextWhileSpinning(true); // Show/hide text in spinning mode
-        //animation callbacks
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        mCircleView.setValueAnimated(currentValue);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mCircleView.setValueAnimated(currentValue);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
         mCircleView.setValue(0);
-        mCircleView.setValueAnimated(42);
     }
 
     @Override
     public void onProgressChanged(float value) {
+    }
+
+    private class SummaryLoadTask extends AsyncTask<String, Void, TransactionSummary> {
+        @Override
+        protected TransactionSummary doInBackground(String... data) {
+            try {
+                return doLoadSummary();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(TransactionSummary summary) {
+            if(summary != null){
+                startCountAnimation((TextView)rootView.findViewById(R.id.fragment_accumulated_amount), summary.getCurrentWeekAmount().floatValue());
+                startCountAnimation((TextView)rootView.findViewById(R.id.fragment_target_amount), summary.getWeeklyTarget().floatValue());
+                startCountAnimation((TextView)rootView.findViewById(R.id.fragment_saved_amount), 0.00f);
+                startCountAnimation((TextView)rootView.findViewById(R.id.fragment_contributed_amount), 0.00f);
+                currentValue = summary.getCurrentTargetPercent();
+                mCircleView.setValueAnimated(currentValue);
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            summaryLoadTask = null;
+            hideProgress();
+        }
+
+        private TransactionSummary doLoadSummary() throws Exception {
+            RestTemplate restTemplate = RestTemplateCreator.getTemplateCreator().getNewTemplate();
+
+            return restTemplate.getForObject(
+                    getString(R.string.summaryurl),
+                    TransactionSummary.class);
+
+        }
     }
 
 }

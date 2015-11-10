@@ -39,6 +39,7 @@ public class AccountsProcessor extends AbstractProcessor {
 			wacct.setAvailable(acct.getBalances()!=null ? acct.getBalances().get(0).getAvailable().toString() : BigDecimal.ZERO.toString());
 			wacct.setBalance(acct.getBalances()!=null ? acct.getBalances().get(0).getCurrent().toString() : BigDecimal.ZERO.toString());
 			wacct.setInstitutionName(acct.getInstitution().getName());
+			wacct.setAccountExternalId(acct.getExternalId());
 			webAccts.add(wacct);
 		}
 		
