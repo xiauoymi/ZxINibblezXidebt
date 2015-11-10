@@ -10,7 +10,9 @@
     <color name="nibble_main_error">#ef2e64</color>
     <color name="nibble_main_purp">#ad6ea5</color>
     <color name="nibble_main_darker">#2b6294</color>
-    <color name="nibble_main_lighter">#c1e6f9</color>
+    <color name="nibble_main_yellow">#fdffb5</color>
+    <color name="nibble_main_green">#2bb32a</color>
+    <color name="nibble_main_green2">#16dc66</color>
 
 
 

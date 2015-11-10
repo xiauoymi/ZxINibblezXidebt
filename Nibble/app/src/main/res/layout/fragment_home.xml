@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:cpv="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -16,7 +17,23 @@
 
 
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical" android:gravity="center_horizontal">
+        <at.grabner.circleprogress.CircleProgressView
+                android:id="@+id/circleView"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:paddingBottom="10dp"
+                cpv:cpv_barColor="#00796B"
+                cpv:cpv_barWidth="33dp"
+                cpv:cpv_contourSize="0dp"
+                cpv:cpv_autoTextSize="true"
+                cpv:cpv_maxValue="100"
+                cpv:cpv_rimColor="@color/nibble_main_yellow"
+                cpv:cpv_rimWidth="33dp"
+                cpv:cpv_seekMode="true"
+                cpv:cpv_textColor="@color/nibble_main_green"
+                cpv:cpv_unit="%"
+                cpv:cpv_unitColor="@color/nibble_main_green"/>
 
         <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
                 android:orientation="horizontal">
