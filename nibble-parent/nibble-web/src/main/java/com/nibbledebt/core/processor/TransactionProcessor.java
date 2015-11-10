@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dozer.Mapper;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,7 @@ public class TransactionProcessor extends AbstractProcessor{
 	
 	@Autowired
 	private ITransactionCategoryDao trxCatDao;
+	
 	
 	@Transactional(readOnly=true)
 	public TransactionSummary getWeeklyTrxSummary() throws ProcessingException, RepositoryException{
@@ -207,15 +209,12 @@ public class TransactionProcessor extends AbstractProcessor{
 	
 	@Loggable(logLevel=LogLevel.INFO)
 	@Transactional(propagation=Propagation.REQUIRES_NEW, isolation=Isolation.READ_COMMITTED)
-	public void saveTrxs(List<Transaction> trxs, String customerId, String accountId) throws ProcessingException, ServiceException, RepositoryException{
+	public void saveTrxs(List<Transaction> trxs) throws ProcessingException, RepositoryException{
 		try {
-			NibblerAccount acct = nibblerAcctDao.findByExternalId(accountId);	
-
-			Long toDate = System.currentTimeMillis();
-			Long fromDate = toDate-5184000000l; //60 days
-			if(acct.getUseForRounding()){
-				List<Transaction> extTrxs = integrationSao.retrieveTransactions(acct.getNibbler().getExtAccessToken(), acct.getExternalId(), acct.getLastTransactionPull()==null ? new Date(fromDate) : acct.getLastTransactionPull(), new Date(toDate), "desc");
-				for(Transaction trx : extTrxs){
+			for(Transaction trx : trxs){
+				NibblerAccount acct = nibblerAcctDao.findByExternalId(trx.getAccountId());	
+				if(acct!=null && acct.getUseForRounding()){
+					
 					AccountTransaction atrx = new AccountTransaction();
 					atrx.setAccount(acct);
 					atrx.setAmount(trx.getTrxAmount());
@@ -243,11 +242,12 @@ public class TransactionProcessor extends AbstractProcessor{
 					
 					atrx.setLocation(location);
 					acct.getTransactions().add(atrx);
-				}
-				acct.setLastTransactionPull(new Date((toDate/1000)*1000));
+					
 
-				setUpdated(acct, SYS_USER);
-				nibblerAcctDao.update(acct);
+					acct.setLastTransactionPull(new Date(System.currentTimeMillis()));
+					setUpdated(acct, SYS_USER);
+					nibblerAcctDao.update(acct);
+				}
 			}
 		} catch (Exception e) {
 			throw new ProcessingException("Error while processing transactions.", e);

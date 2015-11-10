@@ -27,7 +27,8 @@ public class Transaction {
 	private BigDecimal interestAmount;
 	private BigDecimal feeAmount;
 	private BigDecimal escrowAmount;
-	
+	private String customerId;
+	private String accountId;
 	
 	/**
 	 * @return the aggregatorTrxId
@@ -220,6 +221,18 @@ public class Transaction {
 	 */
 	public void setCategory(String category) {
 		this.category = category;
+	}
+	public String getCustomerId() {
+		return customerId;
+	}
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+	public String getAccountId() {
+		return accountId;
+	}
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
 	}
 	
 }
