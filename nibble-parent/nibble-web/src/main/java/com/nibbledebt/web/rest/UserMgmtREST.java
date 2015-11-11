@@ -33,7 +33,7 @@ import com.nibbledebt.integration.finicity.SecurityContext;
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 @Component
-public class UserMgmtREST {
+public class UserMgmtREST  extends AbstractREST {
 	
 	@Autowired
 	private UsersProcessor usersProcessor;

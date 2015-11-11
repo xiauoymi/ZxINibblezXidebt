@@ -15,10 +15,6 @@ import com.nibbledebt.core.data.model.AbstractModel;
  *
  */
 public class AbstractProcessor {
-	protected String getCurrentUser(){
-		return ((MemberDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-	}
-
 	
 	protected void setCreated(AbstractModel model, String username){
 		model.setCreatedTs(new Date());

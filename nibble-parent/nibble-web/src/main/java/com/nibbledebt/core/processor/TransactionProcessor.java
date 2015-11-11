@@ -68,9 +68,9 @@ public class TransactionProcessor extends AbstractProcessor{
 //	}
 	
 	@Transactional(readOnly=true)
-	public TransactionSummary getWeeklyTrxSummary() throws ProcessingException, RepositoryException{
+	public TransactionSummary getWeeklyTrxSummary(String username) throws ProcessingException, RepositoryException{
 		TransactionSummary summary = new TransactionSummary();
-		Nibbler nibbler = nibblerDao.find(getCurrentUser());
+		Nibbler nibbler = nibblerDao.find(username);
 		BigDecimal target = nibbler.getNibblerPreferences().getWeeklyTargetAmount();
 		
 		BigDecimal weeklyTotal = BigDecimal.ZERO;

@@ -39,7 +39,7 @@ import com.nibbledebt.domain.model.NibblerData;
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 @Component
-public class RegistrationREST {
+public class RegistrationREST extends AbstractREST {
 	@Autowired
 	private RegistrationProcessor regService;
 	

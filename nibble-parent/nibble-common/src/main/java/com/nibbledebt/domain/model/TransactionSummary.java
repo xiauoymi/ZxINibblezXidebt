@@ -4,6 +4,7 @@
 package com.nibbledebt.domain.model;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -22,6 +23,9 @@ public class TransactionSummary {
 	private BigDecimal weeklyTarget = BigDecimal.ZERO;
 	private BigDecimal currentWeekAmount;
 	private Integer currentTargetPercent;
+	private BigDecimal totalAmountPaid = BigDecimal.ZERO;
+	private BigDecimal totalAmountSaved = BigDecimal.ZERO;
+	
 	/**
 	 * @return the trxs
 	 */
@@ -153,6 +157,30 @@ public class TransactionSummary {
 	 */
 	public void setDay6total(BigDecimal day6total) {
 		this.day6total = day6total;
+	}
+	/**
+	 * @return the totalAmountPaid
+	 */
+	public BigDecimal getTotalAmountPaid() {
+		return totalAmountPaid;
+	}
+	/**
+	 * @param totalAmountPaid the totalAmountPaid to set
+	 */
+	public void setTotalAmountPaid(BigDecimal totalAmountPaid) {
+		this.totalAmountPaid = totalAmountPaid;
+	}
+	/**
+	 * @return the totalAmountSaved
+	 */
+	public BigDecimal getTotalAmountSaved() {
+		return totalAmountSaved;
+	}
+	/**
+	 * @param totalAmountSaved the totalAmountSaved to set
+	 */
+	public void setTotalAmountSaved(BigDecimal totalAmountSaved) {
+		this.totalAmountSaved = totalAmountSaved;
 	}
 	
 }

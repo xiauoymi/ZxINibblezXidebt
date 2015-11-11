@@ -12,7 +12,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -31,7 +30,12 @@ import javax.persistence.Table;
  */
 @NamedQueries({
 	@NamedQuery(name="findNibblerByUsername", query="from Nibbler n where n.nibblerDir.username = :username"),
-	@NamedQuery(name="findNibblerByInvitationCode", query="from NibblerReceiver n where n.invitationCode = :invitation_code")
+	@NamedQuery(name="findNibblerByInvitationCode", query="from NibblerReceiver n where n.invitationCode = :invitation_code"),
+
+	@NamedQuery(name="findContributorsByReceiver", query="from NibblerContributor n where n.receiver.id = :receiver_id"),
+	@NamedQuery(name="findReceiverByUsername", query="from NibblerReceiver n where n.nibblerDir.username = :username")
+	
+	
 	
 })
 @Entity()

@@ -91,15 +91,22 @@ public class RegistrationProcessor extends AbstractProcessor {
                 nibblerDir.setStatus(NibblerDirectoryStatus.ACTIVE.name());
                 nibblerDir.setActivationCode("");
 
-                NibblerRole nibblerRole = nibblerRoleDao.find(NibblerRoleType.nibbler_level_1.name());
-                if (nibblerRole == null) {
-                    nibblerRole = new NibblerRole();
-                    setCreated(nibblerRole, username);
-                    nibblerRole.setName(NibblerRoleType.nibbler_level_1.name());
-                }
 
                 Set<NibblerRole> nibblerRoles = new HashSet<>();
-                nibblerRoles.add(nibblerRole);
+                
+            	NibblerRole nibblerRole = getRole(NibblerRoleType.nibbler_level_1);
+            	nibblerRoles.add(nibblerRole);
+                
+                if(StringUtils.equalsIgnoreCase(nibblerDir.getNibbler().getType().name(), "contributor")){
+                	NibblerRole contributorRole = getRole(NibblerRoleType.contributor);
+                	nibblerRoles.add(contributorRole);
+                }
+                
+                if(StringUtils.equalsIgnoreCase(nibblerDir.getNibbler().getType().name(), "receiver")){
+                	NibblerRole receiverRole = getRole(NibblerRoleType.receiver);
+                	nibblerRoles.add(receiverRole);
+                }
+
                 nibblerDir.setRoles(nibblerRoles);
                 setUpdated(nibblerDir, username);
                 nibblerDirDao.update(nibblerDir);
@@ -110,6 +117,16 @@ public class RegistrationProcessor extends AbstractProcessor {
         } else {
             throw new ProcessingException("Already active!");
         }
+    }
+    
+    private NibblerRole getRole(NibblerRoleType roleType) throws RepositoryException{
+    	NibblerRole role = nibblerRoleDao.find(roleType.name());
+    	if (role == null) {
+    		role = new NibblerRole();
+            setCreated(role, "sysuser");
+            role.setName(roleType.name());
+        }
+    	return role;
     }
 
     /**

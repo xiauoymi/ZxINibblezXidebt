@@ -13,7 +13,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.nibbledebt.domain.model.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,8 +25,11 @@ import com.nibbledebt.common.security.MemberDetails;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.processor.AccountsProcessor;
 import com.nibbledebt.core.processor.TransactionProcessor;
-import com.nibbledebt.domain.model.account.Account;
+import com.nibbledebt.core.processor.UsersProcessor;
+import com.nibbledebt.domain.model.Contributor;
+import com.nibbledebt.domain.model.Transaction;
 import com.nibbledebt.domain.model.TransactionSummary;
+import com.nibbledebt.domain.model.account.Account;
 
 /**
  * @author ralam
@@ -36,12 +38,27 @@ import com.nibbledebt.domain.model.TransactionSummary;
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 @Component
-public class AccountMgmtREST {
+public class AccountMgmtREST extends AbstractREST {
 	@Autowired
 	private AccountsProcessor accountsProcessor;
 	
 	@Autowired
+	private UsersProcessor usersProcessor;
+	
+	@Autowired
 	private TransactionProcessor trxsProcessor;
+	
+	@GET
+	@Path("/contributors")
+	@Loggable(logLevel=LogLevel.INFO)
+	@PreAuthorize("hasRole('receiver')")
+	public List<Contributor> getContributors() throws ProcessingException, RepositoryException{
+		List<Contributor> contributors = usersProcessor.retrieveContributors(getCurrentUser());
+		for(Contributor contr : contributors){
+			contr.setSummary(trxsProcessor.getWeeklyTrxSummary(contr.getUsername()));
+		}
+		return contributors;
+	}
 	
 	@GET
 	@Path("/isfirstlogin")
@@ -56,7 +73,7 @@ public class AccountMgmtREST {
 	@Loggable(logLevel=LogLevel.INFO)
 	@PreAuthorize("hasRole('nibbler_level_1')")
 	public List<Account> getUserAccounts() throws ProcessingException, RepositoryException{
-		return accountsProcessor.getAccounts();
+		return accountsProcessor.getAccounts(getCurrentUser());
 	}
 	
 	@GET
@@ -72,7 +89,7 @@ public class AccountMgmtREST {
 	@Loggable(logLevel=LogLevel.INFO)
 	@PreAuthorize("hasRole('nibbler_level_1')")
 	public TransactionSummary getWeeklySummary() throws ProcessingException, RepositoryException{
-		return trxsProcessor.getWeeklyTrxSummary();
+		return trxsProcessor.getWeeklyTrxSummary(getCurrentUser());
 	}
 	
 	@POST
@@ -81,6 +98,6 @@ public class AccountMgmtREST {
 	@Loggable(logLevel=LogLevel.INFO)
 	@PreAuthorize("hasRole('nibbler_level_1')")
 	public void updateRoundingAccts(List<Long> acctountIds) throws ProcessingException, RepositoryException{
-		accountsProcessor.updateRoundingAccounts(acctountIds);
+		accountsProcessor.updateRoundingAccounts(getCurrentUser(), acctountIds);
 	}
 }

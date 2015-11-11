@@ -26,10 +26,10 @@ import com.nibbledebt.domain.model.account.Account;
 public class AccountsProcessor extends AbstractProcessor {
 	@Autowired
 	private INibblerAccountDao nibblerAcctDao;
-	
+		
 	@Transactional(readOnly=true, isolation=Isolation.REPEATABLE_READ)
-	public List<Account> getAccounts() throws RepositoryException{
-		List<NibblerAccount> accts = nibblerAcctDao.find(getCurrentUser());
+	public List<Account> getAccounts(String username) throws RepositoryException{
+		List<NibblerAccount> accts = nibblerAcctDao.find(username);
 		List<Account> webAccts = new ArrayList<>();
 		for(NibblerAccount acct : accts){
 			Account wacct = new Account();
@@ -47,15 +47,15 @@ public class AccountsProcessor extends AbstractProcessor {
 	}
 	
 	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.DEFAULT)
-	public void updateRoundingAccounts(List<Long> accountIds) throws RepositoryException{
-		List<NibblerAccount> accts = nibblerAcctDao.find(getCurrentUser());
+	public void updateRoundingAccounts(String username, List<Long> accountIds) throws RepositoryException{
+		List<NibblerAccount> accts = nibblerAcctDao.find(username);
 		for(NibblerAccount acct : accts){
 			if(accountIds.contains(acct.getId())){
 				acct.setUseForRounding(true);
 			}else{
 				acct.setUseForRounding(false);
 			}
-			setUpdated(acct, getCurrentUser());
+			setUpdated(acct, username);
 			nibblerAcctDao.update(acct);
 		}
 	}

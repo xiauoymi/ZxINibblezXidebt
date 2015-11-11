@@ -9,5 +9,7 @@ package com.nibbledebt.core.data.model;
  */
 public enum NibblerRoleType {
 	nibbler_level_1,
+	contributor,
+	receiver,
 	admin;
 }
