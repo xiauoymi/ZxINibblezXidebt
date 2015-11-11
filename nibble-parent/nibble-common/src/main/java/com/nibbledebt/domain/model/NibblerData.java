@@ -40,7 +40,9 @@ public class NibblerData {
 	
 	private List<String> roles = new ArrayList<>();	 
 	
-
+	private boolean contributor;
+	
+	private Integer invitationCode;
 
 	/**
 	 * @return the isFirstLogin
@@ -343,6 +345,38 @@ public class NibblerData {
 	 */
 	public void setAccounts(List<Account> accounts) {
 		this.accounts = accounts;
+	}
+
+
+	/**
+	 * @return the contributor
+	 */
+	public boolean isContributor() {
+		return contributor;
+	}
+
+
+	/**
+	 * @param contributor the contributor to set
+	 */
+	public void setContributor(boolean contributor) {
+		this.contributor = contributor;
+	}
+
+
+	/**
+	 * @return the invitationCode
+	 */
+	public Integer getInvitationCode() {
+		return invitationCode;
+	}
+
+
+	/**
+	 * @param invitationCode the invitationCode to set
+	 */
+	public void setInvitationCode(Integer invitationCode) {
+		this.invitationCode = invitationCode;
 	}
 
 

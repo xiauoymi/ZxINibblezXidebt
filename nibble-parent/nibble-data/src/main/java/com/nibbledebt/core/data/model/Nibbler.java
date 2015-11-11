@@ -10,8 +10,15 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -23,7 +30,9 @@ import javax.persistence.Table;
  *
  */
 @NamedQueries({
-	@NamedQuery(name="findNibblerByUsername", query="from Nibbler n where n.nibblerDir.username = :username")
+	@NamedQuery(name="findNibblerByUsername", query="from Nibbler n where n.nibblerDir.username = :username"),
+	@NamedQuery(name="findNibblerByInvitationCode", query="from NibblerReceiver n where n.invitationCode = :invitation_code")
+	
 })
 @Entity()
 @Table(	name="nibbler"
@@ -34,6 +43,8 @@ import javax.persistence.Table;
 @AttributeOverrides({
 	@AttributeOverride(name="id", column=@Column(name="nibbler_id"))
 })
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="type", discriminatorType=DiscriminatorType.STRING)
 public class Nibbler extends AbstractModel {	
 	
 	@Column(name="first_name", nullable=false, length=50)
@@ -47,6 +58,10 @@ public class Nibbler extends AbstractModel {
 	
 	@Column(name="phone", nullable=true, length=11)
 	private String phone;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name="type", nullable=false, length=50, insertable=false, updatable=false)
+	private NibblerType type;
 	
 	@Column(name="address_line_1", nullable=true, length=100)
 	private String addressLine1;
@@ -74,6 +89,7 @@ public class Nibbler extends AbstractModel {
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="nibbler", orphanRemoval=true)
 	private List<NibblerAccount> accounts;
+	
 	
 	public Nibbler(){
 		super();
@@ -262,5 +278,17 @@ public class Nibbler extends AbstractModel {
 		this.accounts = accounts;
 	}
 
-		
+	/**
+	 * @return the type
+	 */
+	public NibblerType getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(NibblerType type) {
+		this.type = type;
+	}
 }

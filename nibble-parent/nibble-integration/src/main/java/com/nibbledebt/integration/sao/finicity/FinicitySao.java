@@ -106,6 +106,14 @@ public class FinicitySao implements IIntegrationSao{
             throw new ServiceException("Error while creating customer for Finicity", e);
         }
     }
+    
+    public void deleteCustomer(String customerId) throws ServiceException {
+        try {
+            finicityClient.deleteCustomer(customerId);
+        } catch (Exception e) {
+            throw new ServiceException("Error while deleting customer for Finicity", e);
+        }
+    }
 
 	@Override
 	public List<Transaction> retrieveTransactions(String customerId, String accountId, Date fromDate, Date toDate, String sort) throws ServiceException{

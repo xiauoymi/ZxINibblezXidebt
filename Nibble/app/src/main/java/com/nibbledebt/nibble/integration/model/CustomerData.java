@@ -40,6 +40,9 @@ public class CustomerData {
 
 	private List<String> roles = new ArrayList<>();
 
+	private Boolean contributor;
+
+	private String invitationCode;
 
 
 	/**
@@ -345,6 +348,21 @@ public class CustomerData {
 		this.accounts = accounts;
 	}
 
+	public Boolean getContributor() {
+		return contributor;
+	}
+
+	public void setContributor(Boolean contributor) {
+		this.contributor = contributor;
+	}
+
+	public String getInvitationCode() {
+		return invitationCode;
+	}
+
+	public void setInvitationCode(String invitationCode) {
+		this.invitationCode = invitationCode;
+	}
 
 	@Override
 	public String toString(){

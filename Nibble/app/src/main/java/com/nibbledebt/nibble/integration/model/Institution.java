@@ -4,6 +4,7 @@
 package com.nibbledebt.nibble.integration.model;
 
 import android.graphics.Bitmap;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -27,6 +28,7 @@ public class Institution
     
     private String password;
 
+	@JsonIgnore
 	private Bitmap logo;
     
     private LoginForm form;

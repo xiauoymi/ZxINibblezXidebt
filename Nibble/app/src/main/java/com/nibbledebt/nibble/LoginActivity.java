@@ -50,7 +50,7 @@ public class LoginActivity extends BaseLoaderActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        new TokenTask().execute(this.getBaseContext());
+//        new TokenTask().execute(this.getBaseContext());
         if(SecurityContext.getCurrentContext().isLoggedIn()){
             startActivity(new Intent(getBaseContext(), MainActivity.class));
             finish();
@@ -238,24 +238,24 @@ public class LoginActivity extends BaseLoaderActivity {
     }
 
 
-    private class TokenTask extends AsyncTask<Context, Void, Void> {
-        @Override
-        protected Void doInBackground(Context... data) {
-            try {
-//                InstanceID instanceID = InstanceID.getInstance(data[0]);
-//                String token = instanceID.getToken(getString(R.string.gcm_default_sender_id),
-//                        GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-                GoogleCloudMessaging gcm = null;
-                if (gcm == null) {
-                    gcm = GoogleCloudMessaging.getInstance(data[0]);
-                }
-                String regid = gcm.register(getString(R.string.gcm_default_sender_id));
-                SecurityContext.getCurrentContext().getSessionMap().put("token", new TokenObject(regid));
-                Log.i("GCM",regid);
-            }catch(Exception e){
-                Log.e("", "", e);
-            }
-            return null;
-        }
-    }
+//    private class TokenTask extends AsyncTask<Context, Void, Void> {
+//        @Override
+//        protected Void doInBackground(Context... data) {
+//            try {
+////                InstanceID instanceID = InstanceID.getInstance(data[0]);
+////                String token = instanceID.getToken(getString(R.string.gcm_default_sender_id),
+////                        GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+//                GoogleCloudMessaging gcm = null;
+//                if (gcm == null) {
+//                    gcm = GoogleCloudMessaging.getInstance(data[0]);
+//                }
+//                String regid = gcm.register(getString(R.string.gcm_default_sender_id));
+//                SecurityContext.getCurrentContext().getSessionMap().put("token", new TokenObject(regid));
+//                Log.i("GCM",regid);
+//            }catch(Exception e){
+//                Log.e("", "", e);
+//            }
+//            return null;
+//        }
+//    }
 }

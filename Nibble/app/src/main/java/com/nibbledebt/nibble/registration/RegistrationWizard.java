@@ -50,6 +50,10 @@ public class RegistrationWizard extends RegistrationWizardLayout{
     private String zip = "34444";
     @ContextVariable
     private String phone;
+    @ContextVariable
+    private String invitationCode;
+    @ContextVariable
+    private boolean contributor;
 
     // step 3
     @ContextVariable
@@ -98,6 +102,8 @@ public class RegistrationWizard extends RegistrationWizardLayout{
         customerData.setState(state);
         customerData.setZip(Integer.valueOf(zip));
         customerData.setBank(bank);
+        customerData.setContributor(contributor);
+        customerData.setInvitationCode(invitationCode);
 
         raTask = new RegistrationTask();
         raTask.execute(new CustomerData[]{customerData});

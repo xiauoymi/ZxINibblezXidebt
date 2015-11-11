@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.nibbledebt.core.data.model.*;
+
+import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -122,7 +124,12 @@ public class RegistrationProcessor extends AbstractProcessor {
     @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_CREATED)
     public AddAccountsResponse registerNibbler(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException {
         String customerId = integrationSao.addCustomer(nibblerData.getEmail(), nibblerData.getFirstName(), nibblerData.getLastName());
-        if (StringUtils.isNotBlank(customerId)) saveCustomerData(nibblerData, customerId);
+        try {
+			if (StringUtils.isNotBlank(customerId)) saveCustomerData(nibblerData, customerId);
+		} catch (RepositoryException e) {
+			integrationSao.deleteCustomer(customerId);
+			throw e;
+		}
         if (nibblerData.getBank() != null && nibblerData.getBank().getInstitution() != null) {
             if (externalAuthReqsValid(nibblerData.getBank())) {
                 AddAccountsResponse response = integrationSao.addAccounts(customerId, nibblerData.getBank().getInstitution().getId(),
@@ -268,44 +275,92 @@ public class RegistrationProcessor extends AbstractProcessor {
     @Transactional(propagation = Propagation.REQUIRED)
     private void saveCustomerData(NibblerData nibblerData,
                                   String customerId) throws ProcessingException, RepositoryException {
-        Nibbler nibbler = new Nibbler();
-        NibblerDirectory nibblerDir = new NibblerDirectory();
+    	
+    	String actCode = UUID.randomUUID().toString();
+    	Integer inviteCode = RandomUtils.nextInt();
+        
+    	if(nibblerData.isContributor()){
+        	NibblerReceiver receiver = (NibblerReceiver)nibblerDao.findByInvitationCode(nibblerData.getInvitationCode());
+        	NibblerContributor contributor = new NibblerContributor();
+        	contributor.setExtAccessToken(customerId);
 
+        	contributor.setFirstName(nibblerData.getFirstName());
+        	contributor.setLastName(nibblerData.getLastName());
+        	contributor.setAddressLine1(nibblerData.getAddress1());
+        	contributor.setAddressLine2(nibblerData.getAddress2());
+        	contributor.setCity(nibblerData.getCity());
+        	contributor.setState(nibblerData.getState());
+        	contributor.setZip(nibblerData.getZip());
+        	contributor.setType(nibblerData.isContributor() ? NibblerType.contributor : NibblerType.receiver);
+        	contributor.setEmail(nibblerData.getEmail());
+        	contributor.setReceiver(receiver);
 
-        setCreated(nibbler, nibblerData.getEmail());
-        setCreated(nibblerDir, nibblerData.getEmail());
+        	NibblerDirectory nibblerDir = new NibblerDirectory();
+        	nibblerDir.setUsername(nibblerData.getEmail());
+            nibblerDir.setPassword(
+                    encoder.encodePassword(
+                            String.valueOf(nibblerData.getPassword()),
+                            salt));
+            nibblerDir.setStatus(NibblerDirectoryStatus.CREATED.name());
+            nibblerDir.setActivationCode(actCode);
+            
+            NibblerPreference prefs = new NibblerPreference();
+            prefs.setNibbler(contributor);
+            prefs.setWeeklyTargetAmount(new BigDecimal("9.99"));
+            setCreated(prefs, nibblerData.getEmail());
+            contributor.setNibblerPreferences(prefs);
+            
+        	
+            contributor.setNibblerDir(nibblerDir);
+            nibblerDir.setNibbler(contributor);
+            setCreated(contributor, nibblerData.getEmail());
+            setCreated(nibblerDir, nibblerData.getEmail());
+            nibblerDao.create(contributor);
+        }else{
+        	NibblerReceiver receiver = new NibblerReceiver();
+        	receiver.setExtAccessToken(customerId);
 
-        nibbler.setExtAccessToken(customerId);
+        	receiver.setFirstName(nibblerData.getFirstName());
+        	receiver.setLastName(nibblerData.getLastName());
+        	receiver.setAddressLine1(nibblerData.getAddress1());
+        	receiver.setAddressLine2(nibblerData.getAddress2());
+        	receiver.setCity(nibblerData.getCity());
+        	receiver.setState(nibblerData.getState());
+        	receiver.setZip(nibblerData.getZip());
+        	receiver.setEmail(nibblerData.getEmail());
+        	receiver.setType(nibblerData.isContributor() ? NibblerType.contributor : NibblerType.receiver);
+        	receiver.setInvitationCode(inviteCode);
 
-        nibbler.setFirstName(nibblerData.getFirstName());
-        nibbler.setLastName(nibblerData.getLastName());
-        nibbler.setAddressLine1(nibblerData.getAddress1());
-        nibbler.setAddressLine2(nibblerData.getAddress2());
-        nibbler.setCity(nibblerData.getCity());
-        nibbler.setState(nibblerData.getState());
-        nibbler.setZip(nibblerData.getZip());
-        nibblerDir.setUsername(nibblerData.getEmail());
-        nibblerDir.setPassword(
-                encoder.encodePassword(
-                        String.valueOf(nibblerData.getPassword()),
-                        salt));
-        nibblerDir.setStatus(NibblerDirectoryStatus.CREATED.name());
+        	NibblerDirectory nibblerDir = new NibblerDirectory();
+        	nibblerDir.setUsername(nibblerData.getEmail());
+            nibblerDir.setPassword(
+                    encoder.encodePassword(
+                            String.valueOf(nibblerData.getPassword()),
+                            salt));
+            nibblerDir.setStatus(NibblerDirectoryStatus.CREATED.name());
+            nibblerDir.setActivationCode(actCode);
+            
+            NibblerPreference prefs = new NibblerPreference();
+            prefs.setNibbler(receiver);
+            prefs.setWeeklyTargetAmount(new BigDecimal("9.99"));
+            setCreated(prefs, nibblerData.getEmail());
+            receiver.setNibblerPreferences(prefs);
+            
+        	
+            receiver.setNibblerDir(nibblerDir);
+            nibblerDir.setNibbler(receiver);
+            setCreated(receiver, nibblerData.getEmail());
+            setCreated(nibblerDir, nibblerData.getEmail());
+            nibblerDao.create(receiver);
+        }
+    	
+    	
+    	nibblerData.setActivationCode(actCode);
+    	nibblerData.setInvitationCode(inviteCode);
+    	
+        
 
-        String actCode = UUID.randomUUID().toString();
-        nibblerDir.setActivationCode(actCode);
-        nibblerData.setActivationCode(actCode);
-        nibbler.setPhone(nibblerData.getPhone());
-        nibbler.setEmail(nibblerData.getEmail());
-
-        nibbler.setNibblerDir(nibblerDir);
-        nibblerDir.setNibbler(nibbler);
-
-        NibblerPreference prefs = new NibblerPreference();
-        prefs.setNibbler(nibbler);
-        prefs.setWeeklyTargetAmount(new BigDecimal("9.99"));
-        setCreated(prefs, nibblerData.getEmail());
-        nibbler.setNibblerPreferences(prefs);
-        nibblerDao.create(nibbler);
+        
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

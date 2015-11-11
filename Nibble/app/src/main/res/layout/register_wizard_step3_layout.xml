@@ -30,14 +30,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal">
+            android:orientation="vertical"
+            android:gravity="top|center_horizontal">
 
-            <LinearLayout android:layout_width="match_parent" android:layout_height="340dp"
+            <LinearLayout android:layout_width="match_parent" android:layout_height="300dp"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="110dp"
+                    android:layout_height="100dp"
                     android:orientation="horizontal"
                     android:gravity="center_horizontal|center_vertical"
                     android:paddingBottom="15dp">
@@ -58,7 +59,7 @@
                 <LinearLayout
                     android:id="@+id/register_form_3_layout_2"
                     android:layout_width="match_parent"
-                    android:layout_height="110dp"
+                    android:layout_height="100dp"
                     android:orientation="horizontal"
                     android:gravity="center_horizontal|center_vertical"
                     android:paddingBottom="15dp">
@@ -79,7 +80,7 @@
                 <LinearLayout
                     android:id="@+id/register_form_3_layout_3"
                     android:layout_width="match_parent"
-                    android:layout_height="110dp"
+                    android:layout_height="100dp"
                     android:orientation="horizontal"
                     android:gravity="center_horizontal|center_vertical"
                     android:paddingBottom="15dp">
@@ -107,6 +108,28 @@
                     <ImageView
                         android:id="@+id/rform41"  android:layout_width="wrap_content" android:layout_height="100dp" />
                 </LinearLayout>
+            </LinearLayout>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="70dp" android:orientation="vertical">
+                <CheckedTextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                                 android:paddingLeft="10dp" android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+                                 android:id="@+id/contributor" android:maxLines="2" android:paddingRight="10dp"
+                                 android:textColor="@color/nibble_main" android:paddingBottom="5dp"
+                                 android:text="@string/contributor_message" android:clickable="true"
+                                />
+                <EditText android:id="@+id/register_invitation_code" android:layout_width="match_parent"
+                          android:layout_height="wrap_content" android:hint="@string/prompt_invitation_code"
+                          android:inputType="text" android:drawablePadding="15dp"
+                          android:maxLines="1" android:singleLine="true"
+                          android:textColorHint="#B3FFFFFF"
+                          android:paddingTop="2dp"
+                          android:paddingBottom="2dp"
+                          android:background="@drawable/nibble_main_textbox"
+                          android:drawableLeft="@drawable/ic_person_white_24dp"
+                          android:paddingLeft="15dp"
+                          android:textColor="#FFFFFF"
+                          android:focusableInTouchMode="true"
+                          android:visibility="invisible" />
+
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

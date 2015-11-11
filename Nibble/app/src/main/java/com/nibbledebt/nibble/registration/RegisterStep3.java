@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -12,10 +13,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.util.TypedValue;
 import android.view.*;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
 import com.nibbledebt.nibble.R;
@@ -78,12 +82,19 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
     private String zip;
     @ContextVariable
     private String phone;
+    @ContextVariable
+    private String invitationCode;
+    @ContextVariable
+    private boolean contributor;
 
     // step 3
     @ContextVariable
     private Bank bank;
     @ContextVariable
     private HashMap<String, String> bankCreds = new HashMap<>();
+
+    private CheckedTextView ctv;
+    private EditText icet;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -97,6 +108,47 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
         // start the current step animation
         setCurrentStepAnimation(v.getContext(), R.anim.dot_pulse, v.findViewById(R.id.animated_dot_3), new View[]{v.findViewById(R.id.subtext_step_1), v.findViewById(R.id.subtext_step_2)});
 
+        ctv = (CheckedTextView) v.findViewById(R.id.contributor);
+        icet = (EditText)v.findViewById(R.id.register_invitation_code);
+        icet.setRawInputType(Configuration.KEYBOARD_QWERTY);
+        ctv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ctv.isChecked()) {
+                    ctv.setChecked(false);
+                    contributor = false;
+                    icet.setText("");
+                    icet.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    ctv.setChecked(true);
+                    contributor = true;
+                    icet.setVisibility(View.VISIBLE);
+                    icet.requestFocus();
+                }
+            }
+        });
+        icet.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {}
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (StringUtils.isNotBlank(s.toString())) {
+                    invitationCode = s.toString();
+                    if (bank != null || !bankCreds.isEmpty()) {
+                        notifyCompleted();
+                    } else {
+                        notifyIncomplete();
+                    }
+                } else {
+                    setErrorBackground(icet, "Invitation Code is required.");
+                    notifyIncomplete();
+                }
+            }
+        });
+
         // load supported accounts
         if(saTask == null) {
             saTask = new SupportedBanksTask();
@@ -109,21 +161,35 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
 
     @Override
     public void onDialogPositiveClick(android.support.v4.app.DialogFragment dialog, Map<String, String> formData, Bank selectedBank) {
-        dialog.dismiss();
+        if (dialog.getActivity() != null && dialog.getView() != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(dialog.getView().getWindowToken(), 0);
+        }
         for(String formFieldKey : formData.keySet()){
             bankCreds.put(formFieldKey, formData.get(formFieldKey));
         }
         bank = selectedBank;
-        notifyCompleted();
+        if(ctv.isChecked() && StringUtils.isNotBlank(icet.getText().toString())){
+            notifyCompleted();
+        }else if(!ctv.isChecked()){
+            notifyCompleted();
+        }else{
+            notifyIncomplete();
+        }
+        dialog.dismiss();
     }
 
     @Override
     public void onDialogNegativeClick(android.support.v4.app.DialogFragment dialog) {
+        if (dialog.getActivity() != null && dialog.getView() != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(dialog.getView().getWindowToken(), 0);
+        }
         bankCreds.clear();
         deselectAll();
-        dialog.dismiss();
         notifyIncomplete();
 
+        dialog.dismiss();
     }
 
     private class SupportedBanksTask extends AsyncTask<String, Void, Boolean> {
@@ -158,7 +224,7 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
                                     case MotionEvent.ACTION_DOWN:
                                         v.getBackground().setAlpha(255);
                                         deselectOthers(v.getId());
-                                        v.setLayoutParams(new LinearLayout.LayoutParams((int)(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics())*1.2d),
+                                        v.setLayoutParams(new LinearLayout.LayoutParams((int)(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics())*1.1d),
                                                 (int)(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics())*1.2d)));
                                         v.invalidate();
                                         bank = banks.get(idx);

@@ -9,6 +9,8 @@ import android.support.v4.app.DialogFragment;
 import android.text.method.PasswordTransformationMethod;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import com.nibbledebt.nibble.R;
 import com.nibbledebt.nibble.integration.model.Bank;
@@ -82,7 +84,9 @@ public class RegisterStep3Dialog extends DialogFragment {
             EditText loginFieldEditText = new EditText(getActivity().getBaseContext());
             loginFieldEditText.setHint(field.getDescription());
             loginFieldEditText.setHintTextColor(getResources().getColor(R.color.hint_text));
-
+            loginFieldEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            loginFieldEditText.setFocusableInTouchMode(true);
+            
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
@@ -111,5 +115,11 @@ public class RegisterStep3Dialog extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        super.onViewCreated(view, savedInstanceState);
     }
 }
