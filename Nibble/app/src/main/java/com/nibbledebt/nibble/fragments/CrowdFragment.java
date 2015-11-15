@@ -16,7 +16,6 @@ import com.nibbledebt.nibble.R;
 import com.nibbledebt.nibble.common.AbstractFragment;
 import com.nibbledebt.nibble.common.RestTemplateCreator;
 import com.nibbledebt.nibble.integration.model.Contributor;
-import com.nibbledebt.nibble.integration.model.TransactionSummary;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -80,14 +79,14 @@ public class CrowdFragment extends AbstractFragment {
     }
 
 
-    private class CrowdLoadTask extends AsyncTask<String, Void, List<Contributor>> {
+    private class CrowdLoadTask extends AsyncTask<String, Void, Contributor[]> {
         private LinearLayout crowdLayout;
 
         @Override
-        protected List<Contributor> doInBackground(String... data) {
+        protected Contributor[] doInBackground(String... data) {
             try {
-//                return doLoadContributors();
-                return null;
+                return doLoadContributors();
+//                return null;
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -101,17 +100,21 @@ public class CrowdFragment extends AbstractFragment {
 
         // onPostExecute displays the results of the AsyncTask.
         @Override
-        protected void onPostExecute(List<Contributor> contributors) {
+        protected void onPostExecute(Contributor[] contributors) {
 
             LayoutInflater li =  (LayoutInflater)rootView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             crowdLayout.removeAllViews();
 
-            if(contributors ==null || contributors.isEmpty()){
+            if(contributors ==null || contributors.length == 0){
+                TextView subHeader = (TextView)rootView.findViewById(R.id.crowd_subheader);
+                subHeader.setText("");
                 TextView tv = new TextView(rootView.getContext());
                 tv.setText("You do not have any contributors signed up!");
                 tv.setGravity(Gravity.CENTER_HORIZONTAL);
                 crowdLayout.addView(tv);
             }else{
+                TextView subHeader = (TextView)rootView.findViewById(R.id.crowd_subheader);
+                subHeader.setText("Contributors list");
                 for(Contributor contr : contributors) {
                     View itemview = li.inflate(R.layout.crowd_item, null);
                     TextView name = (TextView) itemview.findViewById(R.id.contributor_name);
@@ -138,12 +141,12 @@ public class CrowdFragment extends AbstractFragment {
             hideProgress();
         }
 
-        private List<Contributor> doLoadContributors() throws Exception {
+        private Contributor[] doLoadContributors() throws Exception {
             RestTemplate restTemplate = RestTemplateCreator.getTemplateCreator().getNewTemplate();
 
             return restTemplate.getForObject(
                     getString(R.string.contributorsurl),
-                    List.class);
+                    Contributor[].class);
 
         }
     }

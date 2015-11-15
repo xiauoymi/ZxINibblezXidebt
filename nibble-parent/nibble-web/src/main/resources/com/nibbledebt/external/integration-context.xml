@@ -24,6 +24,7 @@
 			<value>Citibank Credit Card</value>
 			<value>American Express Credit Card</value>
 			<value>BBVA Compass</value>
+			<value>FinBank</value>
 		</util:list>
 		<util:list id="testInstitutionTypes" value-type="java.lang.String">
 			<value>FinBank</value>
@@ -42,6 +43,7 @@
 			<value>Citibank Credit Card</value>
 			<value>American Express Credit Card</value>
 			<value>BBVA Compass</value>
+			<value>FinBank</value>
 		</util:list>
 		<util:list id="testInstitutionTypes" value-type="java.lang.String">
 			<value>FinBank</value>
@@ -60,6 +62,7 @@
 			<value>Citibank Credit Card</value>
 			<value>American Express Credit Card</value>
 			<value>BBVA Compass</value>
+			<value>FinBank</value>
 		</util:list>
 		<util:list id="testInstitutionTypes" value-type="java.lang.String">
 			<value>FinBank</value>

@@ -293,7 +293,7 @@ public class RegistrationProcessor extends AbstractProcessor {
     private void saveCustomerData(NibblerData nibblerData,
                                   String customerId) throws ProcessingException, RepositoryException {
     	
-    	String actCode = UUID.randomUUID().toString();
+    	String actCode = String.valueOf(RandomUtils.nextLong());
     	Integer inviteCode = RandomUtils.nextInt();
         
     	if(nibblerData.isContributor()){
