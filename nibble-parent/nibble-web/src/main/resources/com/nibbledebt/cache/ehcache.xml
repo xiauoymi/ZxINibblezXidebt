@@ -25,11 +25,12 @@
           timeToIdleSeconds="300"
           overflowToDisk="false"        
           memoryStoreEvictionPolicy="LRU" />   
-    <cache name="instPlaidCache"
+      <cache name="nibblerContributorCache"
           maxBytesLocalHeap="10M"
           eternal="true"
           timeToIdleSeconds="300"
           overflowToDisk="false"        
-          memoryStoreEvictionPolicy="LRU" />
-               
+          memoryStoreEvictionPolicy="LRU" />         
+                         
+          
 </ehcache>

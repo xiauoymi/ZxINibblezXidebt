@@ -3,6 +3,7 @@
  */
 package com.nibbledebt.core.data.dao;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +40,17 @@ public class AccountTransactionDao extends AbstractHibernateDao<AccountTransacti
 			throw new RepositoryException(e);
 		}
 	}
+	
+	@Override
+	public BigDecimal sumOfRoundups(Long accountId)  throws RepositoryException {
+		try {
+			return (BigDecimal)this.getCurrentSession().getNamedQuery("sumAcctRoundups").setLong("accountId", accountId).uniqueResult();
+		} catch (Exception e) {
+			throw new RepositoryException(e);
+		}
+	}
+	
+	
 	
 	@Override
 	public List<AccountTransaction> retrieveTrxs(Long accountId, Date from, Date to)  throws RepositoryException {

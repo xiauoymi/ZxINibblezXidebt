@@ -72,6 +72,7 @@
     <string name="profileurl">http://192.168.1.14:9000/services/rest/profile</string>
     <string name="loginurl">http://192.168.1.14:9000/sslogin</string>
     <string name="summaryurl">http://192.168.1.14:9000/services/rest/weeksummary</string>
+    <string name="contributorsurl">http://192.168.1.14:9000/services/rest/contributors</string>
 
     <!--<string name="banksurl">http://192.168.56.1:9000/services/rest/banks</string>-->
     <!--<string name="banklogourl">http://192.168.56.1:9000/services/rest/logo/</string>-->
@@ -80,6 +81,7 @@
     <!--<string name="profileurl">http://192.168.56.1:9000/services/rest/profile</string>-->
     <!--<string name="loginurl">http://192.168.56.1:9000/sslogin</string>-->
     <!--<string name="summaryurl">http://192.168.56.1:9000/services/rest/weeksummary</string>-->
+    <!--<string name="contributorsurl">http://192.168.1.14:9000/services/rest/contributors</string>-->
 
 
     <string-array name="us_states_list">

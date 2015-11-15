@@ -1,15 +1,25 @@
 package com.nibbledebt.nibble.fragments;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import android.widget.TextView;
 import com.nibbledebt.nibble.R;
 import com.nibbledebt.nibble.common.AbstractFragment;
+import com.nibbledebt.nibble.common.RestTemplateCreator;
+import com.nibbledebt.nibble.integration.model.Contributor;
+import com.nibbledebt.nibble.integration.model.TransactionSummary;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -26,6 +36,8 @@ public class CrowdFragment extends AbstractFragment {
 
     private View rootView;
     private SwipeRefreshLayout swipeContainer;
+
+    private CrowdLoadTask crowdLoadTask;
 
     public CrowdFragment() {
     }
@@ -48,24 +60,92 @@ public class CrowdFragment extends AbstractFragment {
 //        showProgress();
         swipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.trxs_swipe_container);
         // Setup refresh listener which triggers new data loading
-//        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                trxTask = new TrxTask();
-//                trxTask.execute();
-//            }
-//        });
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                crowdLoadTask = new CrowdLoadTask();
+                crowdLoadTask.execute();
+            }
+        });
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-//        trxTask = new TrxTask();
-//        trxTask.execute();
+        crowdLoadTask = new CrowdLoadTask();
+        crowdLoadTask.execute();
 
         return rootView;
     }
 
+
+    private class CrowdLoadTask extends AsyncTask<String, Void, List<Contributor>> {
+        private LinearLayout crowdLayout;
+
+        @Override
+        protected List<Contributor> doInBackground(String... data) {
+            try {
+//                return doLoadContributors();
+                return null;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+
+        }
+        @Override
+        protected void onPreExecute() {
+            crowdLayout = ((LinearLayout)rootView.findViewById(R.id.crowd_contributors));
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(List<Contributor> contributors) {
+
+            LayoutInflater li =  (LayoutInflater)rootView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            crowdLayout.removeAllViews();
+
+            if(contributors ==null || contributors.isEmpty()){
+                TextView tv = new TextView(rootView.getContext());
+                tv.setText("You do not have any contributors signed up!");
+                tv.setGravity(Gravity.CENTER_HORIZONTAL);
+                crowdLayout.addView(tv);
+            }else{
+                for(Contributor contr : contributors) {
+                    View itemview = li.inflate(R.layout.crowd_item, null);
+                    TextView name = (TextView) itemview.findViewById(R.id.contributor_name);
+                    TextView address = (TextView) itemview.findViewById(R.id.contributor_address);
+                    TextView weekContribution = (TextView) itemview.findViewById(R.id.amount_contributed_week);
+                    TextView totalContribution = (TextView) itemview.findViewById(R.id.amount_contributed_total);
+
+                    name.setText(contr.getFirstName()+" "+contr.getLastName());
+                    address.setText(contr.getCity()+", "+ contr.getState());
+                    weekContribution.setText("$ "+ String.format("%.2f", contr.getSummary().getCurrentWeekAmount()));
+                    totalContribution.setText("$ "+ String.format("%.2f", contr.getSummary().getTotalAmountPaid()));
+
+                    crowdLayout.addView(itemview);
+
+                }
+            }
+            crowdLoadTask = null;
+            hideProgress();
+        }
+
+        @Override
+        protected void onCancelled() {
+            crowdLoadTask = null;
+            hideProgress();
+        }
+
+        private List<Contributor> doLoadContributors() throws Exception {
+            RestTemplate restTemplate = RestTemplateCreator.getTemplateCreator().getNewTemplate();
+
+            return restTemplate.getForObject(
+                    getString(R.string.contributorsurl),
+                    List.class);
+
+        }
+    }
 
 }

@@ -50,7 +50,7 @@
                                         />
 
                                     <LinearLayout
-                                        android:id="@+id/wallet_trxs_full"
+                                        android:id="@+id/crowd_contributors"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:orientation="vertical"

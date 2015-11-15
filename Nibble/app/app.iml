@@ -96,8 +96,8 @@
     <orderEntry type="library" exported="" name="appcompat-v7-22.2.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-appindexing-7.5.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-location-7.5.0" level="project" />
-    <orderEntry type="library" exported="" name="spring-android-rest-template-2.0.0.M1" level="project" />
     <orderEntry type="library" exported="" name="commons-lang3-3.0" level="project" />
+    <orderEntry type="library" exported="" name="spring-android-rest-template-2.0.0.M1" level="project" />
     <orderEntry type="library" exported="" name="play-services-ads-7.5.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-safetynet-7.5.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-base-7.5.0" level="project" />

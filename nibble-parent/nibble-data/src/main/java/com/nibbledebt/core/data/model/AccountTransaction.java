@@ -32,8 +32,8 @@ import javax.persistence.TemporalType;
 @NamedQueries({
 	@NamedQuery(name="listUnroundedTrxs", query="from AccountTransaction atrx where atrx.rounded is false"),
 	@NamedQuery(name="listTrxsByAccount", query="from AccountTransaction atrx where atrx.account.id = :accountId"),
-	@NamedQuery(name="listTrxsByRoundedBetween", query="from AccountTransaction atrx where atrx.account.id = :accountId and atrx.date >= :from and atrx.date <= :to and atrx.rounded is true")
-	
+	@NamedQuery(name="listTrxsByRoundedBetween", query="from AccountTransaction atrx where atrx.account.id = :accountId and atrx.date >= :from and atrx.date <= :to and atrx.rounded is true"),
+	@NamedQuery(name="sumAcctRoundups", query="select sum(trx.roundupAmount) from AccountTransaction trx where trx.account.id = :accountId")
 	
 })
 @Entity()
