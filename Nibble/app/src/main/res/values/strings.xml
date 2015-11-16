@@ -37,6 +37,8 @@
     <string name="username_taken">Username already in use</string>
     <string name="action_add_money">Add Money</string>
     <string name="action_add_acct">Add Account</string>
+
+    <string name="action_invite">Invite</string>
     <string name="na_dialog_header">Add an Account</string>
     <string name="prompt_acct_name">Account Name</string>
     <string name="na_acct_name">Account Name</string>

@@ -3,6 +3,7 @@
  */
 package com.nibbledebt.core.data.model;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -73,6 +74,9 @@ public class NibblerAccount extends AbstractModel{
 	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	@JoinColumn(name="nibbler_id", updatable=true, nullable=false)
 	private Nibbler nibbler;
+	
+	@Column(name="cumulative_roundups_amount", nullable=true, scale=2, precision=10)
+	private BigDecimal cumulativeRoundupsAmount;
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="account")
 	@OrderBy("created_ts DESC")
@@ -257,5 +261,20 @@ public class NibblerAccount extends AbstractModel{
 	 */
 	public void setTransactions(List<AccountTransaction> transactions) {
 		this.transactions = transactions;
+	}
+
+	/**
+	 * @return the cumulativeRoundupsAmount
+	 */
+	public BigDecimal getCumulativeRoundupsAmount() {
+		return cumulativeRoundupsAmount;
+	}
+
+	/**
+	 * @param cumulativeRoundupsAmount the cumulativeRoundupsAmount to set
+	 */
+	public void setCumulativeRoundupsAmount(BigDecimal cumulativeRoundupsAmount) {
+		this.cumulativeRoundupsAmount = cumulativeRoundupsAmount;
 	}	
+	
 }

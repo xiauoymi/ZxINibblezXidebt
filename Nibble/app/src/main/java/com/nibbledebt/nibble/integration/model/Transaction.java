@@ -12,13 +12,108 @@ import java.util.Date;
  */
 public class Transaction {
 	private String trxId;
+	private String aggregatorTrxId;
 	private String institutionName;
 	private String accountNumber;
 	private BigDecimal trxAmount;
 	private BigDecimal roundupAmount;
+	private String description;
 	private String trxDate;
+	private String trxPostDate;
 	private String city;
 	private String state;
+	private String category;
+	private BigDecimal principalAmount;
+	private BigDecimal interestAmount;
+	private BigDecimal feeAmount;
+	private BigDecimal escrowAmount;
+	private String customerId;
+	private String accountId;
+	
+	/**
+	 * @return the aggregatorTrxId
+	 */
+	public String getAggregatorTrxId() {
+		return aggregatorTrxId;
+	}
+	/**
+	 * @param aggregatorTrxId the aggregatorTrxId to set
+	 */
+	public void setAggregatorTrxId(String aggregatorTrxId) {
+		this.aggregatorTrxId = aggregatorTrxId;
+	}
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	/**
+	 * @return the trxPostDate
+	 */
+	public String getTrxPostDate() {
+		return trxPostDate;
+	}
+	/**
+	 * @param trxPostDate the trxPostDate to set
+	 */
+	public void setTrxPostDate(String trxPostDate) {
+		this.trxPostDate = trxPostDate;
+	}
+	/**
+	 * @return the principalAmount
+	 */
+	public BigDecimal getPrincipalAmount() {
+		return principalAmount;
+	}
+	/**
+	 * @param principalAmount the principalAmount to set
+	 */
+	public void setPrincipalAmount(BigDecimal principalAmount) {
+		this.principalAmount = principalAmount;
+	}
+	/**
+	 * @return the interestAmount
+	 */
+	public BigDecimal getInterestAmount() {
+		return interestAmount;
+	}
+	/**
+	 * @param interestAmount the interestAmount to set
+	 */
+	public void setInterestAmount(BigDecimal interestAmount) {
+		this.interestAmount = interestAmount;
+	}
+	/**
+	 * @return the feeAmount
+	 */
+	public BigDecimal getFeeAmount() {
+		return feeAmount;
+	}
+	/**
+	 * @param feeAmount the feeAmount to set
+	 */
+	public void setFeeAmount(BigDecimal feeAmount) {
+		this.feeAmount = feeAmount;
+	}
+	/**
+	 * @return the escrowAmount
+	 */
+	public BigDecimal getEscrowAmount() {
+		return escrowAmount;
+	}
+	/**
+	 * @param escrowAmount the escrowAmount to set
+	 */
+	public void setEscrowAmount(BigDecimal escrowAmount) {
+		this.escrowAmount = escrowAmount;
+	}
 	/**
 	 * @return the trxId
 	 */
@@ -114,6 +209,30 @@ public class Transaction {
 	 */
 	public void setState(String state) {
 		this.state = state;
+	}
+	/**
+	 * @return the category
+	 */
+	public String getCategory() {
+		return category;
+	}
+	/**
+	 * @param category the category to set
+	 */
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	public String getCustomerId() {
+		return customerId;
+	}
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+	public String getAccountId() {
+		return accountId;
+	}
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
 	}
 	
 }

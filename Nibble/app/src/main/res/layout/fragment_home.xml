@@ -8,7 +8,7 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="92dp"
+        android:layout_height="60dp"
         android:text="Weekly Snapshot"
         android:textSize="30dp"
         android:gravity="center_horizontal|center_vertical"
@@ -101,6 +101,7 @@
 
         <View android:layout_width="match_parent" android:layout_height="2dp"
               android:background="@color/transparent" />
+
         <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
                       android:orientation="horizontal">
 
@@ -110,7 +111,7 @@
                            android:id="@+id/fragment_saved_amount_label"
                            android:layout_width="match_parent"
                            android:layout_height="20dp"
-                           android:text="Saved"
+                           android:text="Saved to-date"
                            android:textColor="@color/nibble_main_light"
                            android:textSize="15dp"
                            android:textStyle="bold"
@@ -142,7 +143,7 @@
                            android:id="@+id/fragment_contributed_amount_label"
                            android:layout_width="match_parent"
                            android:layout_height="20dp"
-                           android:text="Contributed"
+                           android:text="Paid down to-date"
                            android:textColor="@color/nibble_main_light"
                            android:textSize="15dp"
                            android:textStyle="bold"
@@ -163,15 +164,12 @@
                            android:gravity="center_vertical|center_horizontal"/>
 
             </LinearLayout>
-
         </LinearLayout>
+        <View android:layout_width="match_parent" android:layout_height="2dp"
+              android:background="@color/transparent" />
     </LinearLayout>
 
 
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="10dp"/>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:layout_width="fill_parent"
@@ -201,17 +199,18 @@
                                   android:gravity="top">
 
                         <TextView
+                                android:id="@+id/home_subheader"
                                 android:layout_width="match_parent"
                                 android:layout_height="40dp"
-                                android:text="Recent Roundups and Contributions"
                                 android:textSize="20dp"
                                 android:textStyle="bold"
-                                android:textColor="@color/nibble_main_dark"
+                                android:textColor="@color/white"
+                                android:background="@color/nibble_main_purp"
                                 android:gravity="center_horizontal|center_vertical"
-                                />
+                        />
 
                         <LinearLayout
-                                android:id="@+id/wallet_trxs"
+                                android:id="@+id/trxs_layout"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical"

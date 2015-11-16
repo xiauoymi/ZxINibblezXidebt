@@ -4,7 +4,7 @@
 package com.nibbledebt.domain.model;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,6 +12,9 @@ import java.util.List;
  *
  */
 public class TransactionSummary {
+	private String personLastName;
+	private String personFirstName;
+	private Long personId;
 	private List<Transaction> trxs;
 	private BigDecimal day0total = BigDecimal.ZERO;
 	private BigDecimal day1total = BigDecimal.ZERO;
@@ -26,6 +29,44 @@ public class TransactionSummary {
 	private BigDecimal totalAmountPaid = BigDecimal.ZERO;
 	private BigDecimal totalAmountSaved = BigDecimal.ZERO;
 	
+	private List<TransactionSummary> contributorSummaries;
+	
+	/**
+	 * @return the personLastName
+	 */
+	public String getPersonLastName() {
+		return personLastName;
+	}
+	/**
+	 * @param personLastName the personLastName to set
+	 */
+	public void setPersonLastName(String personLastName) {
+		this.personLastName = personLastName;
+	}
+	/**
+	 * @return the personFirstName
+	 */
+	public String getPersonFirstName() {
+		return personFirstName;
+	}
+	/**
+	 * @param personFirstName the personFirstName to set
+	 */
+	public void setPersonFirstName(String personFirstName) {
+		this.personFirstName = personFirstName;
+	}
+	/**
+	 * @return the personId
+	 */
+	public Long getPersonId() {
+		return personId;
+	}
+	/**
+	 * @param personId the personId to set
+	 */
+	public void setPersonId(Long personId) {
+		this.personId = personId;
+	}
 	/**
 	 * @return the trxs
 	 */
@@ -181,6 +222,19 @@ public class TransactionSummary {
 	 */
 	public void setTotalAmountSaved(BigDecimal totalAmountSaved) {
 		this.totalAmountSaved = totalAmountSaved;
+	}
+	/**
+	 * @return the contributorSummaries
+	 */
+	public List<TransactionSummary> getContributorSummaries() {
+		if(contributorSummaries == null) contributorSummaries = new ArrayList<>();
+		return contributorSummaries; 
+	}
+	/**
+	 * @param contributorSummaries the contributorSummaries to set
+	 */
+	public void setContributorSummaries(List<TransactionSummary> contributorSummaries) {
+		this.contributorSummaries = contributorSummaries;
 	}
 	
 }

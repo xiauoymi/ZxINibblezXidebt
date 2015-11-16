@@ -21,20 +21,20 @@
             <TextView  xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/trx_name"
                 android:layout_width="250dp"
-                android:layout_height="40dp"
+                android:layout_height="30dp"
                 android:text="Fragment Header"
                 android:textSize="17dp"
-                android:textStyle="bold"
+                android:textStyle="bold" android:textColor="@color/nibble_main_purp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:background="@android:color/transparent" android:gravity="left|center_vertical"/>
 
             <TextView  xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/trx_amount"
+                android:id="@+id/roundup_amount"
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
                 android:text="Amount"
                 android:textSize="20dp"
-                android:textStyle="bold"
+                android:textStyle="bold" android:textColor="@color/nibble_main_purp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:background="@android:color/transparent" android:gravity="right|center_vertical"/>
 
@@ -59,54 +59,59 @@
                     android:orientation="horizontal">
 
                     <TextView  xmlns:android="http://schemas.android.com/apk/res/android"
-                        android:id="@+id/trx_sender_label"
+                        android:id="@+id/trx_amount_label"
                         android:layout_width="100dp"
                         android:layout_height="20dp"
-                        android:text="Sent by :"
-                        android:textColor="@android:color/black"
+                        android:text="Transaction Amount"
+                        android:textColor="@color/white"
                         android:textSize="10dp"
                         android:textStyle="normal"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:background="@android:color/transparent" android:gravity="left|center_vertical"/>
+                        android:background="@color/nibble_main_purp" android:gravity="left|center_vertical"/>
+                    <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/transparent" />
 
 
                     <TextView  xmlns:android="http://schemas.android.com/apk/res/android"
-                        android:id="@+id/trx_sender"
+                        android:id="@+id/trx_amount"
                         android:layout_width="fill_parent"
                         android:layout_height="20dp"
                         android:text="Sender"
-                        android:textSize="13dp"
-                        android:textStyle="normal"
+                        android:textSize="10dp"
+                               android:paddingLeft="5dp"
+                        android:textStyle="normal" android:textColor="@color/white"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:background="@android:color/transparent" android:gravity="left|center_vertical"/>
+                        android:background="@color/nibble_main_purp" android:gravity="left|center_vertical"/>
 
                 </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/transparent" />
+
                 <LinearLayout
                     android:layout_width="250dp"
                     android:layout_height="20dp"
                     android:orientation="horizontal">
 
                     <TextView  xmlns:android="http://schemas.android.com/apk/res/android"
-                        android:id="@+id/trx_receiver_label"
+                        android:id="@+id/trx_id_label"
                         android:layout_width="100dp"
                         android:layout_height="20dp"
-                        android:text="Received by :"
-                        android:textColor="@android:color/black"
+                        android:text="Transaction ID"
+                        android:textColor="@android:color/white"
                         android:textSize="10dp"
                         android:textStyle="normal"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:background="@android:color/transparent" android:gravity="left|center_vertical"/>
-
+                        android:background="@color/nibble_main_purp" android:gravity="left|center_vertical"/>
+                    <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/transparent" />
 
                     <TextView  xmlns:android="http://schemas.android.com/apk/res/android"
-                        android:id="@+id/trx_receiver"
+                        android:id="@+id/trx_id"
                         android:layout_width="fill_parent"
                         android:layout_height="20dp"
                         android:text="Receiver"
-                        android:textSize="13dp"
-                        android:textStyle="normal"
+                        android:textSize="10dp"
+                               android:paddingLeft="5dp"
+                        android:textStyle="normal" android:textColor="@color/white"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:background="@android:color/transparent" android:gravity="left|center_vertical"/>
+                        android:background="@color/nibble_main_purp" android:gravity="left|center_vertical"/>
 
                 </LinearLayout>
             </LinearLayout>
@@ -119,7 +124,7 @@
                 android:layout_height="40dp"
                 android:text="Date"
                 android:textSize="14dp"
-                android:textStyle="normal"
+                android:textStyle="normal" android:textColor="@color/nibble_main_purp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:background="@android:color/transparent" android:gravity="right|center_vertical"/>
 

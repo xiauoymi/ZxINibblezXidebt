@@ -7,6 +7,7 @@ package com.nibbledebt.nibble.fragments;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -14,11 +15,13 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import android.widget.TextView;
@@ -30,6 +33,7 @@ import com.nibbledebt.nibble.common.AbstractFragment;
 import com.nibbledebt.nibble.common.RestTemplateCreator;
 import com.nibbledebt.nibble.integration.model.CustomerData;
 import com.nibbledebt.nibble.integration.model.MemberDetails;
+import com.nibbledebt.nibble.integration.model.Transaction;
 import com.nibbledebt.nibble.integration.model.TransactionSummary;
 import com.nibbledebt.nibble.security.RegisterObject;
 import com.nibbledebt.nibble.security.SecurityContext;
@@ -41,6 +45,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -154,6 +160,8 @@ public class HomeFragment extends AbstractFragment implements CircleProgressView
     }
 
     private class SummaryLoadTask extends AsyncTask<String, Void, TransactionSummary> {
+        private LinearLayout trxLayout;
+
         @Override
         protected TransactionSummary doInBackground(String... data) {
             try {
@@ -164,17 +172,43 @@ public class HomeFragment extends AbstractFragment implements CircleProgressView
             }
 
         }
+        @Override
+        protected void onPreExecute() {
+            trxLayout = ((LinearLayout)rootView.findViewById(R.id.trxs_layout));
+        }
+
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(TransactionSummary summary) {
+            LayoutInflater li =  (LayoutInflater)rootView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             if(summary != null){
                 startCountAnimation((TextView)rootView.findViewById(R.id.fragment_accumulated_amount), summary.getCurrentWeekAmount().floatValue());
                 startCountAnimation((TextView)rootView.findViewById(R.id.fragment_target_amount), summary.getWeeklyTarget().floatValue());
+                BigDecimal totalContr = summary.getTotalAmountPaid();
+                if(summary.getContributorSummaries()!=null && !summary.getContributorSummaries().isEmpty()){
+                    for(TransactionSummary contrSummary : summary.getContributorSummaries()){
+                        totalContr = totalContr.add(contrSummary.getTotalAmountPaid());
+                    }
+                }
+                if(summary.getTrxs()!=null && !summary.getTrxs().isEmpty()){
+                    ((TextView)rootView.findViewById(R.id.home_subheader)).setText("Transactions & Roundups");
+                    for(Transaction trx : summary.getTrxs()){
+                        View trxView = li.inflate(R.layout.trx_item, null);
+                        ((TextView)trxView.findViewById(R.id.trx_amount)).setText("$ "+new DecimalFormat("0.00").format(trx.getTrxAmount()));
+                        ((TextView)trxView.findViewById(R.id.trx_name)).setText(trx.getDescription());
+                        ((TextView)trxView.findViewById(R.id.trx_date)).setText(trx.getTrxDate());
+                        ((TextView)trxView.findViewById(R.id.roundup_amount)).setText("$ "+new DecimalFormat("0.00").format(trx.getRoundupAmount()));
+                        ((TextView)trxView.findViewById(R.id.trx_id)).setText(trx.getTrxId());
+                        trxLayout.addView(trxView);
+                    }
+                }
                 startCountAnimation((TextView)rootView.findViewById(R.id.fragment_saved_amount), 0.00f);
-                startCountAnimation((TextView)rootView.findViewById(R.id.fragment_contributed_amount), 0.00f);
+                startCountAnimation((TextView)rootView.findViewById(R.id.fragment_contributed_amount), totalContr.floatValue());
                 currentValue = summary.getCurrentTargetPercent();
                 mCircleView.setValueAnimated(currentValue);
             }
+            summaryLoadTask = null;
+            hideProgress();
         }
 
         @Override
