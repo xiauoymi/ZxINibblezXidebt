@@ -10,10 +10,8 @@ import android.widget.ProgressBar;
 public abstract class AbstractFragment extends Fragment {
     protected ProgressBar progressBar;
     protected View progressContainer;
-//    protected View mainContainer;
 
     public void showProgress(){
-//        mainContainer.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         progressContainer.setVisibility(View.VISIBLE);
     }
@@ -21,6 +19,5 @@ public abstract class AbstractFragment extends Fragment {
     public void hideProgress(){
         progressBar.setVisibility(View.GONE);
         progressContainer.setVisibility(View.GONE);
-//        mainContainer.setVisibility(View.VISIBLE);
     }
 }

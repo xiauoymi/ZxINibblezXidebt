@@ -4,6 +4,8 @@
     <color name="progress_bar_bg">#B3000000</color>
     <color name="transparent">#00000000</color>
 
+    <color name="transparent60">#99000000</color>
+
     <color name="nibble_main">#A1C6EA</color>
     <color name="nibble_main_dark">#507DBC</color>
     <color name="nibble_main_light">#BBD1EA</color>
@@ -13,6 +15,8 @@
     <color name="nibble_main_yellow">#fdffb5</color>
     <color name="nibble_main_green">#2bb32a</color>
     <color name="nibble_main_green2">#16dc66</color>
+    <color name="nibble_main_purp45">#73ad6ea5</color>
+    <color name="nibble_main_light45">#73BBD1EA</color>
 
 
 

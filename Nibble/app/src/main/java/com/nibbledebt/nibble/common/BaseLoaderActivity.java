@@ -15,6 +15,7 @@ public class BaseLoaderActivity  extends Activity  {
     public void showProgress(){
         progressBar.setVisibility(View.VISIBLE);
         progressContainer.setVisibility(View.VISIBLE);
+
     }
 
     public void hideProgress(){

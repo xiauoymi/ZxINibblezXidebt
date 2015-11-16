@@ -182,7 +182,7 @@
                         android:layout_height="wrap_content">
             <android.support.v4.widget.SwipeRefreshLayout
                     xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:id="@+id/wallet_swipe_container"
+                    android:id="@+id/trxs_swipe_container"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent">
                 <ScrollView
@@ -198,16 +198,16 @@
                                   android:orientation="vertical"
                                   android:gravity="top">
 
-                        <TextView
-                                android:id="@+id/home_subheader"
-                                android:layout_width="match_parent"
-                                android:layout_height="40dp"
-                                android:textSize="20dp"
-                                android:textStyle="bold"
-                                android:textColor="@color/white"
-                                android:background="@color/nibble_main_purp"
-                                android:gravity="center_horizontal|center_vertical"
-                        />
+                        <!--<TextView-->
+                                <!--android:id="@+id/home_subheader"-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="40dp"-->
+                                <!--android:textSize="20dp"-->
+                                <!--android:textStyle="bold"-->
+                                <!--android:textColor="@color/white"-->
+                                <!--android:background="@color/nibble_main_purp"-->
+                                <!--android:gravity="center_horizontal|center_vertical"-->
+                        <!--/>-->
 
                         <LinearLayout
                                 android:id="@+id/trxs_layout"
@@ -226,13 +226,15 @@
 
         </RelativeLayout>
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                        android:id="@+id/main_wallet_progress_container"
+                        android:id="@+id/home_progress_container"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/progress_bar_bg"
-                        android:gravity="center_vertical|center_horizontal"
+                        android:background="#99000000"
                         android:visibility="gone">
-            <include layout="@layout/progress_bar" android:id="@+id/main_wallet_progress" />
+
+            <include layout="@layout/progress_bar" android:id="@+id/home_progress" />
+
+
         </RelativeLayout>
     </RelativeLayout>
 

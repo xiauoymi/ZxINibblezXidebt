@@ -105,6 +105,11 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
         setStepComplete((ImageView) v.findViewById(R.id.animated_dot_1));
         setStepComplete((ImageView) v.findViewById(R.id.animated_dot_2));
 
+        progressBar = (ProgressBar)v.findViewById(R.id.register3_progress);
+        progressContainer = v.findViewById(R.id.register3_progress_container);
+
+        showProgress();
+
         // start the current step animation
         setCurrentStepAnimation(v.getContext(), R.anim.dot_pulse, v.findViewById(R.id.animated_dot_3), new View[]{v.findViewById(R.id.subtext_step_1), v.findViewById(R.id.subtext_step_2)});
 
@@ -243,13 +248,15 @@ public class RegisterStep3 extends AbstractWizardStep implements RegisterStep3Di
                 }
             }
 
+            saTask = null;
+            hideProgress();
 
         }
 
         @Override
         protected void onCancelled() {
             saTask = null;
-//            hideProgress();
+            hideProgress();
         }
 
         private void doLoad() throws Exception {

@@ -64,9 +64,9 @@ public class TransactionProcessor extends AbstractProcessor{
 	
 	@Autowired
 	private ITransactionCategoryDao trxCatDao;
-//	public static void main(String[] args){
-//		System.out.println(System.currentTimeMillis()/1000);
-//	}
+	public static void main(String[] args){
+		System.out.println(System.currentTimeMillis()/1000);
+	}
 	
 	@Transactional(readOnly=true)
 	public TransactionSummary getWeeklyTrxSummary(String username) throws ProcessingException, RepositoryException{
@@ -137,7 +137,8 @@ public class TransactionProcessor extends AbstractProcessor{
 
 					summary.setTotalAmountPaid(summary.getTotalAmountPaid().add((nacct.getCumulativeRoundupsAmount()==null ? BigDecimal.ZERO : nacct.getCumulativeRoundupsAmount())));
 				}else{
-					contributorSummary.setTotalAmountPaid(contributorSummary.getTotalAmountPaid().add((nacct.getCumulativeRoundupsAmount()==null ? BigDecimal.ZERO : nacct.getCumulativeRoundupsAmount())));
+					if(contributorSummary != null)
+						contributorSummary.setTotalAmountPaid(contributorSummary.getTotalAmountPaid().add((nacct.getCumulativeRoundupsAmount()==null ? BigDecimal.ZERO : nacct.getCumulativeRoundupsAmount())));
 					
 				}
 				
@@ -149,14 +150,16 @@ public class TransactionProcessor extends AbstractProcessor{
 			summary.setWeeklyTarget(target);
 			summary.setTrxs(wtrxs);
 		}else{
-			contributorSummary.setCurrentWeekAmount(weeklyTotal);
-			contributorSummary.setCurrentTargetPercent(weeklyTotal.divide(target, 2, RoundingMode.UP).multiply(new BigDecimal("100")).intValue());
-			contributorSummary.setWeeklyTarget(target);
-			contributorSummary.setTrxs(wtrxs);
-			contributorSummary.setPersonFirstName(nibbler.getFirstName());
-			contributorSummary.setPersonLastName(nibbler.getLastName());
-			contributorSummary.setPersonId(nibbler.getId());
-			summary.getContributorSummaries().add(contributorSummary);
+			if(contributorSummary != null){
+				contributorSummary.setCurrentWeekAmount(weeklyTotal);
+				contributorSummary.setCurrentTargetPercent(weeklyTotal.divide(target, 2, RoundingMode.UP).multiply(new BigDecimal("100")).intValue());
+				contributorSummary.setWeeklyTarget(target);
+				contributorSummary.setTrxs(wtrxs);
+				contributorSummary.setPersonFirstName(nibbler.getFirstName());
+				contributorSummary.setPersonLastName(nibbler.getLastName());
+				contributorSummary.setPersonId(nibbler.getId());
+				summary.getContributorSummaries().add(contributorSummary);
+			}
 		}
 		return summary;
 	}

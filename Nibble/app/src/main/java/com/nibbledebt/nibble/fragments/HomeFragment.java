@@ -65,31 +65,27 @@ public class HomeFragment extends AbstractFragment implements CircleProgressView
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_home, container, false);
-        String title = getResources().getString(R.string.home_section);
-
-        int imageId = getResources().getIdentifier(title.toLowerCase(Locale.getDefault()),
-                "drawable", getActivity().getPackageName());
         getActivity().setTitle("");
 
-        progressBar = (ProgressBar)rootView.findViewById(R.id.main_wallet_progress);
-        progressContainer = rootView.findViewById(R.id.main_wallet_progress_container);
+        progressBar = (ProgressBar)rootView.findViewById(R.id.home_progress);
+        progressContainer = rootView.findViewById(R.id.home_progress_container);
 
-//        showProgress();
+        showProgress();
 
-        swipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.wallet_swipe_container);
-        // Setup refresh listener which triggers new data loading
-//        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                trxTask = new TrxTask();
-//                trxTask.execute();
-//            }
-//        });
+        swipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.trxs_swipe_container);
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                summaryLoadTask = new SummaryLoadTask();
+                summaryLoadTask.execute();
+            }
+        });
 
 
         setupVisualization();
@@ -191,14 +187,13 @@ public class HomeFragment extends AbstractFragment implements CircleProgressView
                     }
                 }
                 if(summary.getTrxs()!=null && !summary.getTrxs().isEmpty()){
-                    ((TextView)rootView.findViewById(R.id.home_subheader)).setText("Transactions & Roundups");
+//                    ((TextView)rootView.findViewById(R.id.home_subheader)).setText("Transactions & Roundups");
                     for(Transaction trx : summary.getTrxs()){
                         View trxView = li.inflate(R.layout.trx_item, null);
                         ((TextView)trxView.findViewById(R.id.trx_amount)).setText("$ "+new DecimalFormat("0.00").format(trx.getTrxAmount()));
                         ((TextView)trxView.findViewById(R.id.trx_name)).setText(trx.getDescription());
                         ((TextView)trxView.findViewById(R.id.trx_date)).setText(trx.getTrxDate());
                         ((TextView)trxView.findViewById(R.id.roundup_amount)).setText("$ "+new DecimalFormat("0.00").format(trx.getRoundupAmount()));
-                        ((TextView)trxView.findViewById(R.id.trx_id)).setText(trx.getTrxId());
                         trxLayout.addView(trxView);
                     }
                 }
@@ -208,12 +203,14 @@ public class HomeFragment extends AbstractFragment implements CircleProgressView
                 mCircleView.setValueAnimated(currentValue);
             }
             summaryLoadTask = null;
+            swipeContainer.setRefreshing(false);
             hideProgress();
         }
 
         @Override
         protected void onCancelled() {
             summaryLoadTask = null;
+            swipeContainer.setRefreshing(false);
             hideProgress();
         }
 

@@ -151,7 +151,7 @@
         android:id="@+id/login_progress_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/transparent"
+        android:background="#99000000"
         android:visibility="gone">
 
         <include layout="@layout/progress_bar" android:id="@+id/login_progress" />

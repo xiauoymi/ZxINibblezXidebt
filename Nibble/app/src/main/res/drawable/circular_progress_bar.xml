@@ -16,7 +16,7 @@
             android:width="48dip" />
 
         <gradient
-            android:centerColor="@android:color/transparent"
+            android:centerColor="@color/nibble_main_darker"
             android:centerY="0.50"
             android:type="sweep"
             android:useLevel="false" />

@@ -25,39 +25,28 @@ import java.util.Locale;
  * Created by ralam on 7/14/15.
  */
 public class CrowdFragment extends AbstractFragment {
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
-    public static final String SECTION_NUMBER = "2";
-    public static final String IMAGE_RESOURCE_NAME = "ic_action_list_2";
-    public static final String IMAGE_RESOURCE_NAME_CHECKED = "ic_action_list_2_white";
 
     private View rootView;
     private SwipeRefreshLayout swipeContainer;
 
     private CrowdLoadTask crowdLoadTask;
 
-    public CrowdFragment() {
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_crowd, container, false);
-        String title = getResources().getString(R.string.crowd_section);
-
-        int imageId = getResources().getIdentifier(title.toLowerCase(Locale.getDefault()),
-                "drawable", getActivity().getPackageName());
         getActivity().setTitle("");
 
+        progressBar = (ProgressBar)rootView.findViewById(R.id.crowd_progress);
+        progressContainer = rootView.findViewById(R.id.crowd_progress_container);
 
-        progressBar = (ProgressBar)rootView.findViewById(R.id.main_trxs_progress);
-        progressContainer = rootView.findViewById(R.id.main_trxs_progress_container);
-
-//        mainContainer = rootView.findViewById(R.id.main_wallet_content_container);
-//        showProgress();
+        showProgress();
         swipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.trxs_swipe_container);
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -66,11 +55,6 @@ public class CrowdFragment extends AbstractFragment {
                 crowdLoadTask.execute();
             }
         });
-        // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
 
         crowdLoadTask = new CrowdLoadTask();
         crowdLoadTask.execute();
@@ -132,12 +116,14 @@ public class CrowdFragment extends AbstractFragment {
                 }
             }
             crowdLoadTask = null;
+            swipeContainer.setRefreshing(false);
             hideProgress();
         }
 
         @Override
         protected void onCancelled() {
             crowdLoadTask = null;
+            swipeContainer.setRefreshing(false);
             hideProgress();
         }
 

@@ -133,12 +133,16 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/signup_progress_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/progress_bar_bg"
-        android:visibility="gone">
-        <include layout="@layout/progress_bar" android:id="@+id/signup_progress" />
+                    android:id="@+id/register3_progress_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#99000000"
+                    android:visibility="gone">
+
+        <include layout="@layout/progress_bar" android:id="@+id/register3_progress" />
+
+
     </RelativeLayout>
 </RelativeLayout>

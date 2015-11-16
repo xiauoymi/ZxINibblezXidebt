@@ -9,6 +9,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.nibbledebt.nibble.R;
 
@@ -46,5 +47,18 @@ public abstract class AbstractWizardStep extends WizardStep {
     }
 
     protected abstract Boolean hasAllRequiredFields();
+
+    protected ProgressBar progressBar;
+    protected View progressContainer;
+
+    public void showProgress(){
+        progressBar.setVisibility(View.VISIBLE);
+        progressContainer.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgress(){
+        progressBar.setVisibility(View.GONE);
+        progressContainer.setVisibility(View.GONE);
+    }
 
 }

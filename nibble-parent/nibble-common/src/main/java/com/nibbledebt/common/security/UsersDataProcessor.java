@@ -55,7 +55,6 @@ public class UsersDataProcessor extends AbstractProcessor {
 			return mData;
 		}else{
 			return null;
-		}
-		
+		}		
 	}
 }
