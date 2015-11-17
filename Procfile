@@ -1,1 +1,1 @@
-web:    java $JAVA_OPTS -Dspring.profiles.active=heroku-dev -DPORT=8080 -cp target/classes:target/dependency/* com.nibbledebt.app.TomcatMain
+web:    java $JAVA_OPTS -Dspring.profiles.active=heroku-dev -DPORT=8080 -cp nibble-notification/target/classes:nibble-integration/target/classes:nibble-finicity-client/target/classes:nibble-data/target/classes:nibble-common/target/classes:nibble-web/target/classes:target/classes:target/dependency/* com.nibbledebt.app.TomcatMain
