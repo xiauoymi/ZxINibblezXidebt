@@ -34,5 +34,7 @@ public class TomcatMain {
 
 	      tomcat.start();
 	      tomcat.getServer().await();
+	      
+	      System.out.println("Started Tomcat Server on port: "+ webPort+".");
 	  }
 }
