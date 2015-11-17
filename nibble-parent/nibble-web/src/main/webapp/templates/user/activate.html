@@ -1,4 +1,4 @@
-<div id="activation_panel" ng-controller="ActivateCtrl">
+<div ng-controller="ActivateCtrl">
     <form name="activation.form" class="form-primary" novalidate
           xt-form strategy="focusedAndDirtyOrSubmitted"
           ng-switch="activation.condition"
@@ -14,9 +14,9 @@
 
             <div class="form-group">
                 <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xF007;    Username" name="username"
-                        required ng-minlength="8" ng-model="user.username"
+                        type="email" class="form-control empty"
+                        placeholder="&#xf0e0;    Email" name="username"
+                        required ng-model="user.email"
                         autofocus xt-validation-tooltip>
             </div>
             <div class="form-group">

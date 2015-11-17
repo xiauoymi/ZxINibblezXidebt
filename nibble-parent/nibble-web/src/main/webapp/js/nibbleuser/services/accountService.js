@@ -32,5 +32,33 @@ app.factory('accountFactory', function($http){
         return $http.post(urlBase + '/activate', nibbler);
     };
 
+    accountFactory.forgotPassword = function(email) {
+        if (NibbleUtils.isDebug()) {
+            console.log("factory method: forgotPassword() ->", email);
+        }
+        //Todo:asa  implement later
+    };
+
+    accountFactory.weeklyStatus = function() {
+        return $http.get(urlBase + '/weeksummary');
+    };
+
+    accountFactory.login = function(login, pwd, remember) {
+        var requestForm = $.param({
+            nibbler_username: login,
+            nibbler_password: pwd
+        });
+        var config = {
+            headers : {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+            }
+        };
+        return $http.post(NibbleUtils.getServicesUrl() + "/sslogin", requestForm, config);
+    };
+
+    accountFactory.profile = function() {
+        return $http.get(urlBase + '/profile');
+    };
+
     return accountFactory;
 });

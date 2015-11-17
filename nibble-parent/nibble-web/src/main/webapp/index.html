@@ -1,52 +1,55 @@
 <!DOCYPE html>
-<html ng-app="nibble">
+<html ng-app="nibbleuser">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <title>Nibble Portal</title>
-    <link rel="shortcut icon" type="image/x-icon" href="/nibble-web.ico"/>
-    <link rel="stylesheet" href="../css/nibble.css" />
-    <link rel="stylesheet" href="../css/custom.css" />
-
+    <link rel="shortcut icon" type="image/x-icon" href="nibble-web.ico"/>
+    <link rel="stylesheet" href="css/angular-snap.css" />
+    <link rel="stylesheet" href="css/angular-chart.css">
+    <link rel="stylesheet" href="css/nibble.css" />
+    <link rel="stylesheet" href="css/custom.css" />
+    <link rel="stylesheet" href="css/ng-table.css" />
     <!--JS-->
-    <script src="js/v2/core/jquery-2.1.1.min.js"></script>
-    <script src="js/v2/core/angular.js"></script>
-    <script src="js/v2/core/ui-bootstrap.min.js"></script>
-    <script src="js/v2/core/ui-bootstrap-tpls.min.js"></script>
-    <script src="js/v2/core/pwstrength-bootstrap-1.2.2.js"></script>
-    <script src="js/v2/core/bootstrap.min.js"></script>
-    <script src="js/v2/core/angular-ui-router.min.js"></script>
-    <script src="js/v2/core/angular-cookies.min.js"></script>
-
+    <script src="js/core/jquery-2.1.1.min.js"></script>
+    <script src="js/core/angular.js"></script>
+    <script src="js/core/ui-bootstrap.min.js"></script>
+    <script src="js/core/ui-bootstrap-tpls.min.js"></script>
+    <script src="js/core/pwstrength-bootstrap-1.2.2.js"></script>
+    <script src="js/core/bootstrap.min.js"></script>
+    <script src="js/core/angular-ui-router.min.js"></script>
+    <script src="js/core/angular-cookies.js"></script>
+    <script src="js/core/angular-snap.js"></script>
+    <script src="js/core/snap.js"></script>
+    <!--charts-->
+    <script src="js/core/Chart.js"></script>
+    <script src="js/core/angular-chart.js"></script>
+    <script src="js/core/roundProgress.js"></script>
+    <script src="js/core/ng-table.js"></script>
     <!--validation-->
-    <script src="js/v2/core/xtForm.js"></script>
-
-
+    <script src="js/core/xtForm.js"></script>
     <!--End JS-->
 </head>
 <body class="black-pattern">
 <div ui-view></div>
-
-<script src="js/v2/app.js"></script>
-
+<!--app-->
+<script src="js/nibbleuser/app.js"></script>
 <!--controllers-->
-<script src="js/v2/controllers/LoginCtrl.js"></script>
-<script src="js/v2/controllers/RegisterCtrl.js"></script>
-<script src="js/v2/controllers/RegisterModalBankCtrl.js"></script>
-<script src="js/v2/controllers/ActivateCtrl.js"></script>
-
+<script src="js/nibbleuser/controllers/LoginCtrl.js"></script>
+<script src="js/nibbleuser/controllers/RegisterCtrl.js"></script>
+<script src="js/nibbleuser/controllers/RegisterModalBankCtrl.js"></script>
+<script src="js/nibbleuser/controllers/ActivateCtrl.js"></script>
+<script src="js/nibbleuser/controllers/ForgotCtrl.js"></script>
+<script src="js/nibbleuser/controllers/DashboardCtrl.js"></script>
+<script src="js/nibbleuser/controllers/HomeCtrl.js"></script>
 <!--directives-->
-
-<script src="js/v2/directives/uniqueName.js"></script>
-<script src="js/v2/directives/loading.js"></script>
-
+<script src="js/nibbleuser/directives/uniqueName.js"></script>
+<script src="js/nibbleuser/directives/loading.js"></script>
 <!--services-->
-<script src="js/v2/services/pwdstrength.js"></script>
-<script src="js/v2/services/accountService.js"></script>
-
+<script src="js/nibbleuser/services/pwdstrength.js"></script>
+<script src="js/nibbleuser/services/accountService.js"></script>
 <!--filters-->
-<script src="js/v2/filters/urlencoder.js"></script>
-
-
-<script src="js/v2/utils.js"></script>
+<script src="js/nibbleuser/filters/urlencoder.js"></script>
+<!--utils-->
+<script src="js/nibbleuser/utils.js"></script>
 </body>
 </html>

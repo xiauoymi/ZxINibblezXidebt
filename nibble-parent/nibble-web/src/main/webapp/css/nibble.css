@@ -110,6 +110,11 @@ input.empty {
   cursor: pointer;
   transform: scale(1.1);
 }
+html, body {
+    width: auto !important;
+    overflow-x: hidden !important;
+}
+
 html,
 body,
 #sb-site,
@@ -121,7 +126,9 @@ body,
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  overflow-x: hidden;
+  /*overflow-x: hidden;*/
+    width: auto !important;
+    overflow-x: hidden !important;
 }
 .black-pattern {
   background-image: url("../images/dark_embroidery.png");
@@ -180,7 +187,7 @@ body,
   font-family: 'Poiret One', cursive;
   font-size: 2.5em;
   font-weight: 200;
-  margin-top: 15px;
+  margin-top: 5px;
   margin-bottom: 15px;
   text-rendering: optimizeLegibility;
   padding-bottom: 0 0 0 0;
@@ -835,7 +842,7 @@ html.sb-static .sb-slidebar,
   background: #fa8e09;
   color: #ffffff;
   font-family: 'Ubuntu', sans-serif;
-  font-size: 1.5em;
+  font-size: 1em;
 }
 .table tbody tr .odd {
   background: rgba(151, 187, 205, 0.5);
@@ -5415,7 +5422,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   .navbar-right {
     float: right !important;
     float: right;
-    margin-right: -15px;
+    margin-right: 10px;
   }
   .navbar-right ~ .navbar-right {
     margin-right: 0;

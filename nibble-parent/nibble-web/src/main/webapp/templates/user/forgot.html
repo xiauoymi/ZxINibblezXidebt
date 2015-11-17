@@ -1,0 +1,45 @@
+<div ng-controller="ForgotCtrl" ng-init="dataInit()">
+
+    <form name="forgot.form" class="form-primary" novalidate
+          xt-form strategy="focusedAndDirtyOrSubmitted"
+          ng-switch="forgot.condition"
+          focus-error="true" role="form">
+        <div ng-switch-default>
+            <div class="form-group">
+                <h3 class="form-primary-heading">Forgot your password?</h3>
+            </div>
+            <div class="form-group">
+                <input type="email" class="form-control empty"
+                       placeholder="&#xf0e0;    Email" name="email"
+                       required ng-model="forgot.email"
+                       autofocus xt-validation-tooltip>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        ng-click="sendPassword()"
+                        ng-disabled="invalidForgotForm()">
+                    Forgot
+                </button>
+            </div>
+
+        </div>
+
+        <div ng-switch-when="complete">
+            <div class="row">
+                <div class="col-md-offset-2 col-md-10">
+                    <p>Please check your email for further instructions on how to
+                        reset your password.</p>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="row">
+            <div class="col-md-offset-1">
+                <small><a href="" ng-click="goToLogin()"><i
+                        class="fa fa-arrow-left"></i> Back to login</a></small>
+            </div>
+        </div>
+    </form>
+
+
+</div>

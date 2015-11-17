@@ -15,6 +15,7 @@ public class Transaction {
 	private String aggregatorTrxId;
 	private String institutionName;
 	private String accountNumber;
+    private String accountName;
 	private BigDecimal trxAmount;
 	private BigDecimal roundupAmount;
 	private String description;
@@ -234,5 +235,12 @@ public class Transaction {
 	public void setAccountId(String accountId) {
 		this.accountId = accountId;
 	}
-	
+
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
 }

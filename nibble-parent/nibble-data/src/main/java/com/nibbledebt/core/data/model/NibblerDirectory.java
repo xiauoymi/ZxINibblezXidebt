@@ -41,7 +41,7 @@ import javax.persistence.UniqueConstraint;
 	@AttributeOverride(name="id", column=@Column(name="nibbler_directory_id"))
 })
 public class NibblerDirectory  extends AbstractModel{
-	@Column(name="username", nullable=false, length=25)
+	@Column(name="username", nullable=false, length=256)
 	private String username;
 		
 	@Column(name="password", nullable=true, length=256)

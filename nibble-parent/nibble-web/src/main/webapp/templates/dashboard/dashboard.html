@@ -1,0 +1,33 @@
+<div ng-controller="DashboardCtrl" class="light-pattern">
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigations">
+        <div class="navbar-right sb-toggle-right nibble-icon-logo" snap-toggle="right"
+             ng-animate="{enter: 'rotate', leave: 'rotateCounterwise'}"
+             ng-class="{true: 'rotate', false: 'rotateCounterwise'}[isActive]">
+            <i class="fa fa-bars" style="font-size: 1.60em;"></i>
+        </div>
+        <div class="navbar-left">
+            <img ng-src="../images/logo.png" class="image-responsive" width="50px"/>
+        </div>
+    </div>
+    <div snap-drawer="right">
+        <div class="sb-slidebar sb-right sb-style-push" style="display: block !important;">
+            <nav>
+                <ul class="sb-menu">
+                    <li><a id="nibbledash" class="active menu menu-item" href="#">Dashboard </a></li>
+                    <li><a id="nibblecrowd" class="menu menu-item" href="#">Your Crowd </a></li>
+                    <li><a id="nibblepymnts" class="menu menu-item" href="#">Payment Schedules </a></li>
+                    <li><a id="nibbleaccts" class="menu menu-item" href="#">Manage Accounts</a></li>
+                    <li><a id="nibblecontact" class="menu menu-item" href="#">Contact Us</a></li>
+                    <li><a id="nibbleabout" class="menu menu-item" href="#">About </a></li>
+                    <li><a id="signout" href="j_spring_security_logout">Logout </a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <snap-content snap-options="{touchToDrag:false,tapToClose:false}" class="light-pattern">
+
+                <div class="light-pattern"
+                     ui-view></div>
+    </snap-content>
+</div>
