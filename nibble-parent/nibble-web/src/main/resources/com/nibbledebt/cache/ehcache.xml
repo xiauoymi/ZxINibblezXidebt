@@ -4,8 +4,15 @@
     monitoring="autodetect" 
     dynamicConfig="true"
     maxBytesLocalHeap="200M" >  
- 
+ instLoanCache
     <cache name="instCache"
+          maxBytesLocalHeap="5M"
+          eternal="false"
+          timeToLiveSeconds="600"
+          timeToIdleSeconds="300"
+          overflowToDisk="false"        
+          memoryStoreEvictionPolicy="LRU" />     
+   <cache name="instLoanCache"
           maxBytesLocalHeap="5M"
           eternal="false"
           timeToLiveSeconds="600"

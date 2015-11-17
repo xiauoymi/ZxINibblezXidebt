@@ -56,5 +56,14 @@ public class NibblerAccountDao extends AbstractHibernateDao<NibblerAccount> impl
 		}
 	}
 	
-	
+	@Override
+	public NibblerAccount findByUseForPayoff(String username) throws RepositoryException {
+		try {
+			Query query = this.getCurrentSession().getNamedQuery("findAcctByUseForPayoff");
+			query.setString("username", username);
+			return (NibblerAccount)query.uniqueResult();
+		} catch (Exception e) {
+			  throw new RepositoryException(e);
+		}
+	}
 }

@@ -77,6 +77,14 @@ public class AccountMgmtREST extends AbstractREST {
 	}
 	
 	@GET
+	@Path("/loanaccounts")
+	@Loggable(logLevel=LogLevel.INFO)
+	@PreAuthorize("hasRole('nibbler_level_1')")
+	public List<Account> getLoanAccounts() throws ProcessingException, RepositoryException{
+		return accountsProcessor.getLoanAccounts(getCurrentUser());
+	}
+	
+	@GET
 	@Path("/acctrxs/{accountId}")
 	@Loggable(logLevel=LogLevel.INFO)
 	@PreAuthorize("hasRole('nibbler_level_1')")
@@ -99,5 +107,14 @@ public class AccountMgmtREST extends AbstractREST {
 	@PreAuthorize("hasRole('nibbler_level_1')")
 	public void updateRoundingAccts(List<Long> acctountIds) throws ProcessingException, RepositoryException{
 		accountsProcessor.updateRoundingAccounts(getCurrentUser(), acctountIds);
+	}
+	
+	@POST
+	@Path("/updateloanacct")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Loggable(logLevel=LogLevel.INFO)
+	@PreAuthorize("hasRole('nibbler_level_1')")
+	public void updateLoanAcct(Long acctountId) throws ProcessingException, RepositoryException{
+		accountsProcessor.updateLoanAccount(getCurrentUser(), acctountId);
 	}
 }

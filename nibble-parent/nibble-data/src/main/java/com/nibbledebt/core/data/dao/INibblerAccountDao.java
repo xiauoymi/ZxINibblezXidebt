@@ -14,5 +14,6 @@ public interface INibblerAccountDao extends IDao<NibblerAccount>{
 	public abstract List<NibblerAccount> find(String username) throws RepositoryException ;
 	abstract NibblerAccount findByExternalId(String externalId)
 			throws RepositoryException;
+	NibblerAccount findByUseForPayoff(String username) throws RepositoryException;
 
 }

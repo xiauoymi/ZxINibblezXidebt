@@ -3,8 +3,6 @@
  */
 package com.nibbledebt.domain.model.account;
 
-import java.math.BigDecimal;
-
 /**
  * @author ralam
  *
@@ -19,6 +17,8 @@ public class Account {
 	private String balance;
 	private String available;
     private String accountExternalId;
+    
+    private AccountDetail detail;
 
 	private Boolean useForRounding;
 
@@ -129,6 +129,20 @@ public class Account {
 	 */
 	public void setUseForRounding(Boolean useForRounding) {
 		this.useForRounding = useForRounding;
+	}
+
+	/**
+	 * @return the detail
+	 */
+	public AccountDetail getDetail() {
+		return detail;
+	}
+
+	/**
+	 * @param detail the detail to set
+	 */
+	public void setDetail(AccountDetail detail) {
+		this.detail = detail;
 	}
 	
 	

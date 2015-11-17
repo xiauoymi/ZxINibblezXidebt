@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,39 +60,6 @@ public class InstitutionProcessor {
 	
 	@Autowired
 	private ThreadPoolTaskExecutor instSyncExecutor;
-
-
-    //TODO:asa stub method remove when switch to prod
-    private Bank getTestInstitution() {
-        Bank institutionDetail = new Bank();
-        Institution institution = new Institution();
-        LoginForm loginForm = new LoginForm();
-        institution.setName("FinBank");
-        institution.setId("101732");
-        institution.setLogoCode("finbank");
-        institution.setHomeUrl("http://www.finbank.com");
-        List<LoginField> loginFields = new ArrayList<>();
-        LoginField lField = new LoginField();
-        lField.setName("Banking Userid");
-        lField.setDescription("user id");
-        lField.setMask(false);
-        lField.setDisplayOrder(1);
-        lField.setInstructions("no instructions");
-        lField.setId("101732001");
-        loginFields.add(lField);
-        LoginField pField = new LoginField();
-        pField.setName("Banking Password");
-        pField.setDescription("Banking Password");
-        pField.setMask(true);
-        pField.setDisplayOrder(2);
-        pField.setInstructions("no instructions");
-        pField.setId("101732002");
-        loginFields.add(pField);
-        loginForm.setLoginField(loginFields);
-        institutionDetail.setInstitution(institution);
-        institutionDetail.setLoginForm(loginForm);
-        return institutionDetail;
-    }
 	
 	@Cacheable(value="instCache", unless="#result == null")
 	@Transactional(readOnly=true)
@@ -104,31 +70,77 @@ public class InstitutionProcessor {
 			if(primaries !=null && !primaries.isEmpty()){
 				banks = new ArrayList<>();
 				for(com.nibbledebt.core.data.model.Institution inst : primaries){
-					Bank bank = new Bank();
-					Institution institution = new Institution();
-					LoginForm loginForm = new LoginForm();
-					institution.setName(inst.getName());
-					institution.setId(inst.getExternalId());
-					institution.setLogoCode(inst.getLogoCode());
-                    institution.setType(inst.getType());
-					List<LoginField> loginFields = new ArrayList<>();
-					for(Field field : inst.getFields()){
-						LoginField lField = new LoginField();
-						lField.setId(String.valueOf(field.getExternalId()));
-						lField.setName(field.getName());
-						lField.setDescription(field.getDisplayName());
-						lField.setMask(field.getIsMasked());
-						lField.setValue(field.getValue());
-						lField.setDisplayOrder(field.getOrder());
-						lField.setInstructions(field.getInstruction());
-						lField.setValueLengthMax(field.getValidationMaxLength());
-						lField.setValueLengthMin(field.getValidationMinLength());
-						loginFields.add(lField);
-					}
-					loginForm.setLoginField(loginFields);
-					bank.setLoginForm(loginForm);
-					bank.setInstitution(institution);
-					banks.add(bank);
+					if(!StringUtils.equalsIgnoreCase(inst.getType(), "student_loan")){
+						Bank bank = new Bank();
+						Institution institution = new Institution();
+						LoginForm loginForm = new LoginForm();
+						institution.setName(inst.getName());
+						institution.setId(inst.getExternalId());
+						institution.setLogoCode(inst.getLogoCode());
+	                    institution.setType(inst.getType());
+						List<LoginField> loginFields = new ArrayList<>();
+						for(Field field : inst.getFields()){
+							LoginField lField = new LoginField();
+							lField.setId(String.valueOf(field.getExternalId()));
+							lField.setName(field.getName());
+							lField.setDescription(field.getDisplayName());
+							lField.setMask(field.getIsMasked());
+							lField.setValue(field.getValue());
+							lField.setDisplayOrder(field.getOrder());
+							lField.setInstructions(field.getInstruction());
+							lField.setValueLengthMax(field.getValidationMaxLength());
+							lField.setValueLengthMin(field.getValidationMinLength());
+							loginFields.add(lField);
+						}
+						loginForm.setLoginField(loginFields);
+						bank.setLoginForm(loginForm);
+						bank.setInstitution(institution);
+						banks.add(bank);
+					}					
+				}
+			}
+			return banks;
+		} catch (RepositoryException e) {
+			throw new ProcessingException("Error while retrieving supported institutions.", e);
+		}
+	}
+	
+	@Cacheable(value="instLoanCache", unless="#result == null")
+	@Transactional(readOnly=true)
+	public List<Bank> getSupportedLoanInstitutions() throws ProcessingException, ServiceException{
+		try {
+			List<Bank> banks = null;
+			List<com.nibbledebt.core.data.model.Institution> primaries = !StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod") ? institutionDao.listTestPrimaries(): institutionDao.listPrimaries();
+			if(primaries !=null && !primaries.isEmpty()){
+				banks = new ArrayList<>();
+				for(com.nibbledebt.core.data.model.Institution inst : primaries){
+					if(StringUtils.equalsIgnoreCase(inst.getType(), StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod") ? "student_loan" : "test")){
+						Bank bank = new Bank();
+						Institution institution = new Institution();
+						LoginForm loginForm = new LoginForm();
+						institution.setName(inst.getName());
+						institution.setId(inst.getExternalId());
+						institution.setLogoCode(inst.getLogoCode());
+	                    institution.setType(inst.getType());
+						List<LoginField> loginFields = new ArrayList<>();
+						for(Field field : inst.getFields()){
+							LoginField lField = new LoginField();
+							lField.setId(String.valueOf(field.getExternalId()));
+							lField.setName(field.getName());
+							lField.setDescription(field.getDisplayName());
+							lField.setMask(field.getIsMasked());
+							lField.setValue(field.getValue());
+							lField.setDisplayOrder(field.getOrder());
+							lField.setInstructions(field.getInstruction());
+							lField.setValueLengthMax(field.getValidationMaxLength());
+							lField.setValueLengthMin(field.getValidationMinLength());
+							loginFields.add(lField);
+						}
+						loginForm.setLoginField(loginFields);
+						bank.setLoginForm(loginForm);
+						bank.setInstitution(institution);
+						banks.add(bank);
+					}				
 				}
 			}
 			return banks;

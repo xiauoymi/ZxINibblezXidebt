@@ -14,10 +14,16 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nibbledebt.common.error.ValidationException;
 import com.nibbledebt.core.data.dao.INibblerAccountDao;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.NibblerAccount;
+import com.nibbledebt.domain.model.Bank;
+import com.nibbledebt.domain.model.LoginField;
+import com.nibbledebt.domain.model.NibblerData;
 import com.nibbledebt.domain.model.account.Account;
+import com.nibbledebt.domain.model.account.AddAccountsResponse;
+import com.nibbledebt.domain.model.account.MfaType;
 
 /**
  * @author ralam
@@ -83,4 +89,19 @@ public class AccountsProcessor extends AbstractProcessor {
 			nibblerAcctDao.update(acct);
 		}
 	}
+	
+	
+	
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.DEFAULT, rollbackFor=RepositoryException.class)
+	public void updateLoanAccount(String username, Long accountId) throws RepositoryException{
+		NibblerAccount oldPayoffAccount = nibblerAcctDao.findByUseForPayoff(username);
+		if(oldPayoffAccount!=null){
+			oldPayoffAccount.setUseForpayoff(false);
+			nibblerAcctDao.update(oldPayoffAccount);
+		}
+		NibblerAccount account = nibblerAcctDao.findOne(accountId);
+		account.setUseForpayoff(true);
+		nibblerAcctDao.update(account);
+	}
+
 }

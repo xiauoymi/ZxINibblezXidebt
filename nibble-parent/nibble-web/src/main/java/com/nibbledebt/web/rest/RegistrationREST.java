@@ -130,6 +130,14 @@ public class RegistrationREST extends AbstractREST {
 	}
 	
 	@GET
+	@Path("/loans")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Loggable(logLevel=LogLevel.INFO)
+	public List<Bank> getSupportedLoans() throws ProcessingException, ServiceException{
+		return instService.getSupportedLoanInstitutions();
+	}
+	
+	@GET
 	@Path("/pop")
 	@Loggable(logLevel=LogLevel.INFO)
 	public void populate() throws ProcessingException, ServiceException{

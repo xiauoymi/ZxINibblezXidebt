@@ -32,7 +32,8 @@ import javax.persistence.UniqueConstraint;
 @NamedQueries({
 	@NamedQuery(name="findAcctByLastPull", query="from NibblerAccount na where na.lastTransactionPull < :lastTransactionPull"),
 	@NamedQuery(name="findAcctByUser", query="from NibblerAccount na where na.nibbler.nibblerDir.username = :username"),
-	@NamedQuery(name="findAcctByExtId", query="from NibblerAccount na where na.externalId = :externalId")
+	@NamedQuery(name="findAcctByExtId", query="from NibblerAccount na where na.externalId = :externalId"),
+	@NamedQuery(name="findAcctByUseForPayoff", query="from NibblerAccount na where na.useForpayoff = true and na.nibbler.nibblerDir.username = :username")
 	
 })
 @Entity()
@@ -59,6 +60,9 @@ public class NibblerAccount extends AbstractModel{
 	
 	@Column(name="user_for_rounding", nullable=false)
 	private Boolean useForRounding = true;
+	
+	@Column(name="user_for_payoff", nullable=false)
+	private Boolean useForpayoff = false;
 	
 	@Column(name="number_mask", nullable=true, length=50)
 	private String numberMask;
@@ -275,6 +279,20 @@ public class NibblerAccount extends AbstractModel{
 	 */
 	public void setCumulativeRoundupsAmount(BigDecimal cumulativeRoundupsAmount) {
 		this.cumulativeRoundupsAmount = cumulativeRoundupsAmount;
+	}
+
+	/**
+	 * @return the useForpayoff
+	 */
+	public Boolean getUseForpayoff() {
+		return useForpayoff;
+	}
+
+	/**
+	 * @param useForpayoff the useForpayoff to set
+	 */
+	public void setUseForpayoff(Boolean useForpayoff) {
+		this.useForpayoff = useForpayoff;
 	}	
 	
 }
