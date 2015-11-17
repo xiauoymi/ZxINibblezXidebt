@@ -84,7 +84,7 @@ public class UsersProcessor extends AbstractProcessor {
 	}
 	
 	@Transactional(readOnly=true)
-	@Cacheable(value="nibblerContributorCache")
+//	@Cacheable(value="nibblerContributorCache")
 	public List<Contributor> retrieveContributors(String username) throws RepositoryException{
 		NibblerReceiver receiver = nibblerDao.findReceiver(username);
 		List<Contributor> contributors = new ArrayList<>();

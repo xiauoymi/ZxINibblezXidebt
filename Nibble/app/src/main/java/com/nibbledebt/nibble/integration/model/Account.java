@@ -3,8 +3,6 @@
  */
 package com.nibbledebt.nibble.integration.model;
 
-import java.math.BigDecimal;
-
 /**
  * @author ralam
  *
@@ -12,14 +10,44 @@ import java.math.BigDecimal;
 public class Account {
 	private Long accountId;
 	private String accountNumber;
+    private String accountName;
 	private String institutionName;
+    private String institutionExternalId;
 	private String accountType;
-	private BigDecimal balance;
-	private BigDecimal available;
+	private String balance;
+	private String available;
+    private String accountExternalId;
+    
+    private AccountDetail detail;
 
 	private Boolean useForRounding;
-	
-	/**
+	private Boolean useForPayoff;
+
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
+
+    public String getInstitutionExternalId() {
+        return institutionExternalId;
+    }
+
+    public void setInstitutionExternalId(String institutionExternalId) {
+        this.institutionExternalId = institutionExternalId;
+    }
+
+    public String getAccountExternalId() {
+        return accountExternalId;
+    }
+
+    public void setAccountExternalId(String accountExternalId) {
+        this.accountExternalId = accountExternalId;
+    }
+
+    /**
 	 * @return the accountId
 	 */
 	public Long getAccountId() {
@@ -70,25 +98,25 @@ public class Account {
 	/**
 	 * @return the balance
 	 */
-	public BigDecimal getBalance() {
+	public String getBalance() {
 		return balance;
 	}
 	/**
 	 * @param balance the balance to set
 	 */
-	public void setBalance(BigDecimal balance) {
+	public void setBalance(String balance) {
 		this.balance = balance;
 	}
 	/**
 	 * @return the available
 	 */
-	public BigDecimal getAvailable() {
+	public String getAvailable() {
 		return available;
 	}
 	/**
 	 * @param available the available to set
 	 */
-	public void setAvailable(BigDecimal available) {
+	public void setAvailable(String available) {
 		this.available = available;
 	}
 	/**
@@ -102,6 +130,34 @@ public class Account {
 	 */
 	public void setUseForRounding(Boolean useForRounding) {
 		this.useForRounding = useForRounding;
+	}
+
+	/**
+	 * @return the detail
+	 */
+	public AccountDetail getDetail() {
+		return detail;
+	}
+
+	/**
+	 * @param detail the detail to set
+	 */
+	public void setDetail(AccountDetail detail) {
+		this.detail = detail;
+	}
+
+	/**
+	 * @return the useForPayoff
+	 */
+	public Boolean getUseForPayoff() {
+		return useForPayoff;
+	}
+
+	/**
+	 * @param useForPayoff the useForPayoff to set
+	 */
+	public void setUseForPayoff(Boolean useForPayoff) {
+		this.useForPayoff = useForPayoff;
 	}
 	
 	

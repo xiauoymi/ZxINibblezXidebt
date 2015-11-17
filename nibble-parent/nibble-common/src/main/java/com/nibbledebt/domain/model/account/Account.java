@@ -21,6 +21,7 @@ public class Account {
     private AccountDetail detail;
 
 	private Boolean useForRounding;
+	private Boolean useForPayoff;
 
     public String getAccountName() {
         return accountName;
@@ -143,6 +144,20 @@ public class Account {
 	 */
 	public void setDetail(AccountDetail detail) {
 		this.detail = detail;
+	}
+
+	/**
+	 * @return the useForPayoff
+	 */
+	public Boolean getUseForPayoff() {
+		return useForPayoff;
+	}
+
+	/**
+	 * @param useForPayoff the useForPayoff to set
+	 */
+	public void setUseForPayoff(Boolean useForPayoff) {
+		this.useForPayoff = useForPayoff;
 	}
 	
 	

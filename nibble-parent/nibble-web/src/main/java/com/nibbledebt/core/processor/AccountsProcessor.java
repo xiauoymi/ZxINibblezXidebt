@@ -7,8 +7,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -31,6 +34,9 @@ import com.nibbledebt.domain.model.account.MfaType;
  */
 @Component
 public class AccountsProcessor extends AbstractProcessor {
+	@Resource
+	private Environment env;
+	
 	@Autowired
 	private INibblerAccountDao nibblerAcctDao;
 		
@@ -44,10 +50,12 @@ public class AccountsProcessor extends AbstractProcessor {
 				wacct.setAccountId(acct.getId());
 				wacct.setAccountNumber(acct.getNumberMask());
 				wacct.setAccountType(acct.getAccountType().getCode());
-				wacct.setAvailable(acct.getBalances()!=null ? acct.getBalances().get(0).getAvailable().toString() : BigDecimal.ZERO.toString());
-				wacct.setBalance(acct.getBalances()!=null ? acct.getBalances().get(0).getCurrent().toString() : BigDecimal.ZERO.toString());
+				wacct.setAvailable((acct.getBalances()!=null && !acct.getBalances().isEmpty()) ? acct.getBalances().get(0).getAvailable().toString() : BigDecimal.ZERO.toString());
+				wacct.setBalance((acct.getBalances()!=null && !acct.getBalances().isEmpty()) ? acct.getBalances().get(0).getCurrent().toString() : BigDecimal.ZERO.toString());
 				wacct.setInstitutionName(acct.getInstitution().getName());
 				wacct.setAccountExternalId(acct.getExternalId());
+				wacct.setUseForRounding(acct.getUseForRounding());
+				wacct.setAccountName(acct.getName());
 				webAccts.add(wacct);
 			}
 		}
@@ -60,7 +68,7 @@ public class AccountsProcessor extends AbstractProcessor {
 		List<NibblerAccount> accts = nibblerAcctDao.find(username);
 		List<Account> webAccts = new ArrayList<>();
 		for(NibblerAccount acct : accts){
-			if(StringUtils.equalsIgnoreCase(acct.getAccountType().getCode(), "student_loan")){
+			if(!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod") ? (StringUtils.equalsIgnoreCase(acct.getAccountType().getCode(), "student_loan") || StringUtils.equalsIgnoreCase(acct.getAccountType().getCode(), "loan")) : StringUtils.equalsIgnoreCase(acct.getAccountType().getCode(), "student_loan")){
 				Account wacct = new Account();
 				wacct.setAccountId(acct.getId());
 				wacct.setAccountNumber(acct.getNumberMask());
@@ -69,6 +77,8 @@ public class AccountsProcessor extends AbstractProcessor {
 				wacct.setBalance(acct.getBalances()!=null ? acct.getBalances().get(0).getCurrent().toString() : BigDecimal.ZERO.toString());
 				wacct.setInstitutionName(acct.getInstitution().getName());
 				wacct.setAccountExternalId(acct.getExternalId());
+				wacct.setUseForPayoff(acct.getUseForpayoff());
+				wacct.setAccountName(acct.getName());
 				webAccts.add(wacct);
 			}
 		}

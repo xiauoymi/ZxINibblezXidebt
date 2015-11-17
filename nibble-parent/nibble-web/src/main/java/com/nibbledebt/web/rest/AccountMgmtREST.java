@@ -101,7 +101,7 @@ public class AccountMgmtREST extends AbstractREST {
 	}
 	
 	@POST
-	@Path("/updateroundaccts")
+	@Path("/roundupaccounts")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
 	@PreAuthorize("hasRole('nibbler_level_1')")
@@ -110,7 +110,7 @@ public class AccountMgmtREST extends AbstractREST {
 	}
 	
 	@POST
-	@Path("/updateloanacct")
+	@Path("/loanaccounts")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
 	@PreAuthorize("hasRole('nibbler_level_1')")

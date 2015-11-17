@@ -82,6 +82,7 @@ public class RegistrationWizard extends RegistrationWizardLayout{
 
     @Override
     public void onWizardComplete() {
+        showProgress();
         super.onWizardComplete();   //Make sure to first call the super method before anything else
 
         if(bank!=null && bank.getLoginForm() != null){
@@ -145,17 +146,20 @@ public class RegistrationWizard extends RegistrationWizardLayout{
             }
 
             registerSummary.setArguments(bundle);
+            hideProgress();
             registerSummary.show(getActivity().getSupportFragmentManager(), "SummaryDialog");
 //            FragmentTransaction ft = getFragmentManager().beginTransaction();
 //            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 //            ft.attach(registerSummary);
 //            ft.commit();
+
+
         }
 
         @Override
         protected void onCancelled() {
             raTask = null;
-//            hideProgress();
+            hideProgress();
         }
 
         private Integer doRegister(CustomerData data) throws Exception {

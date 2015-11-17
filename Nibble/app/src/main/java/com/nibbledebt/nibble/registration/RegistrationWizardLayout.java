@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import android.widget.ProgressBar;
 import com.nibbledebt.nibble.R;
 
 import org.codepond.wizardroid.WizardFragment;
@@ -21,6 +22,18 @@ public abstract class RegistrationWizardLayout extends WizardFragment implements
     private String nextButtonText;
     private String finishButtonText;
     private String backButtonText;
+    protected ProgressBar progressBar;
+    protected View progressContainer;
+
+    public void showProgress(){
+        progressBar.setVisibility(View.VISIBLE);
+        progressContainer.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgress(){
+        progressBar.setVisibility(View.GONE);
+        progressContainer.setVisibility(View.GONE);
+    }
 
     public RegistrationWizardLayout() {
     }
@@ -37,6 +50,8 @@ public abstract class RegistrationWizardLayout extends WizardFragment implements
         this.previousButton = (Button) wizardLayout.findViewById(R.id.wizard_previous_button);
         this.previousButton.setOnClickListener(this);
         this.previousButton.setText(this.getBackButtonLabel());
+        progressBar = (ProgressBar)wizardLayout.findViewById(R.id.register_progress);
+        progressContainer = wizardLayout.findViewById(R.id.register_progress_container);
         return wizardLayout;
     }
 

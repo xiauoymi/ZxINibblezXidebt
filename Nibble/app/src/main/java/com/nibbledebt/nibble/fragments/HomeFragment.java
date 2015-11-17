@@ -177,6 +177,7 @@ public class HomeFragment extends AbstractFragment implements CircleProgressView
         @Override
         protected void onPostExecute(TransactionSummary summary) {
             LayoutInflater li =  (LayoutInflater)rootView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            trxLayout.removeAllViews();
             if(summary != null){
                 startCountAnimation((TextView)rootView.findViewById(R.id.fragment_accumulated_amount), summary.getCurrentWeekAmount().floatValue());
                 startCountAnimation((TextView)rootView.findViewById(R.id.fragment_target_amount), summary.getWeeklyTarget().floatValue());
