@@ -69,11 +69,11 @@ public class AccountMgmtREST extends AbstractREST {
 	}
 	
 	@GET
-	@Path("/useraccounts")
+	@Path("/roundupaccounts")
 	@Loggable(logLevel=LogLevel.INFO)
 	@PreAuthorize("hasRole('nibbler_level_1')")
-	public List<Account> getUserAccounts() throws ProcessingException, RepositoryException{
-		return accountsProcessor.getAccounts(getCurrentUser());
+	public List<Account> getRoundupAccounts() throws ProcessingException, RepositoryException{
+		return accountsProcessor.getRoundupAccounts(getCurrentUser());
 	}
 	
 	@GET

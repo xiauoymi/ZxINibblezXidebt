@@ -17,9 +17,10 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import com.nibbledebt.nibble.common.AbstractFragment;
 import com.nibbledebt.nibble.common.BaseLoaderCompatActivity;
-import com.nibbledebt.nibble.fragments.AccountsFragment;
+import com.nibbledebt.nibble.fragments.RoundupAccountsFragment;
 import com.nibbledebt.nibble.fragments.CrowdFragment;
 import com.nibbledebt.nibble.fragments.HomeFragment;
+import com.nibbledebt.nibble.fragments.LoanAccountsFragment;
 import com.nibbledebt.nibble.security.RegisterObject;
 import com.nibbledebt.nibble.security.SecurityContext;
 
@@ -120,9 +121,12 @@ public class MainActivity extends BaseLoaderCompatActivity {
                         fragmentClass = HomeFragment.class;
                         break;
                   case R.id.nav_second_fragment:
-                        fragmentClass = AccountsFragment.class;
+                        fragmentClass = RoundupAccountsFragment.class;
                         break;
                   case R.id.nav_third_fragment:
+                        fragmentClass = LoanAccountsFragment.class;
+                        break;
+                  case R.id.nav_fourth_fragment:
                         fragmentClass = CrowdFragment.class;
                         break;
                   case R.id.nav_help_fragment:

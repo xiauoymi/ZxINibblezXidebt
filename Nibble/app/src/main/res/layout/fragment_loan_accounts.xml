@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:text="Your Accounts"
+        android:text="Loan Accounts"
         android:textSize="30dp"
         android:gravity="center_horizontal|center_vertical"
         android:layout_gravity="center_horizontal|center_vertical"
@@ -88,13 +88,15 @@
             </android.support.v4.widget.SwipeRefreshLayout>
         </RelativeLayout>
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/main_accts_progress_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/progress_bar_bg"
-            android:gravity="center_vertical|center_horizontal"
-            android:visibility="gone">
-            <include layout="@layout/progress_bar" android:id="@+id/main_accts_progress" />
+                        android:id="@+id/loan_accts_progress_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#99000000"
+                        android:visibility="gone">
+
+            <include layout="@layout/progress_bar" android:id="@+id/loan_accts_progress" />
+
+
         </RelativeLayout>
     </RelativeLayout>
 </LinearLayout>

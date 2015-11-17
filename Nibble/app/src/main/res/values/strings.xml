@@ -2,7 +2,8 @@
     <string name="app_name">Nibble</string>
     <string name="home_section">Home</string>
     <string name="crowd_section">Crowd</string>
-    <string name="accts_section">Accounts</string>
+    <string name="roundup_accts_section">Roundup Accounts</string>
+    <string name="loan_accts_section">Loan Accounts</string>
     <string name="help_section">Help</string>
 
     <string name="action_settings">Log Off</string>

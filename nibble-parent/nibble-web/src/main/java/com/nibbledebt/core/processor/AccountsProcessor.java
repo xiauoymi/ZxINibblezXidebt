@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -28,19 +29,42 @@ public class AccountsProcessor extends AbstractProcessor {
 	private INibblerAccountDao nibblerAcctDao;
 		
 	@Transactional(readOnly=true, isolation=Isolation.REPEATABLE_READ)
-	public List<Account> getAccounts(String username) throws RepositoryException{
+	public List<Account> getRoundupAccounts(String username) throws RepositoryException{
 		List<NibblerAccount> accts = nibblerAcctDao.find(username);
 		List<Account> webAccts = new ArrayList<>();
 		for(NibblerAccount acct : accts){
-			Account wacct = new Account();
-			wacct.setAccountId(acct.getId());
-			wacct.setAccountNumber(acct.getNumberMask());
-			wacct.setAccountType(acct.getAccountType().getCode());
-			wacct.setAvailable(acct.getBalances()!=null ? acct.getBalances().get(0).getAvailable().toString() : BigDecimal.ZERO.toString());
-			wacct.setBalance(acct.getBalances()!=null ? acct.getBalances().get(0).getCurrent().toString() : BigDecimal.ZERO.toString());
-			wacct.setInstitutionName(acct.getInstitution().getName());
-			wacct.setAccountExternalId(acct.getExternalId());
-			webAccts.add(wacct);
+			if(!StringUtils.equalsIgnoreCase(acct.getAccountType().getCode(), "student_loan")){
+				Account wacct = new Account();
+				wacct.setAccountId(acct.getId());
+				wacct.setAccountNumber(acct.getNumberMask());
+				wacct.setAccountType(acct.getAccountType().getCode());
+				wacct.setAvailable(acct.getBalances()!=null ? acct.getBalances().get(0).getAvailable().toString() : BigDecimal.ZERO.toString());
+				wacct.setBalance(acct.getBalances()!=null ? acct.getBalances().get(0).getCurrent().toString() : BigDecimal.ZERO.toString());
+				wacct.setInstitutionName(acct.getInstitution().getName());
+				wacct.setAccountExternalId(acct.getExternalId());
+				webAccts.add(wacct);
+			}
+		}
+		
+		return webAccts;
+	}
+	
+	@Transactional(readOnly=true, isolation=Isolation.REPEATABLE_READ)
+	public List<Account> getLoanAccounts(String username) throws RepositoryException{
+		List<NibblerAccount> accts = nibblerAcctDao.find(username);
+		List<Account> webAccts = new ArrayList<>();
+		for(NibblerAccount acct : accts){
+			if(StringUtils.equalsIgnoreCase(acct.getAccountType().getCode(), "student_loan")){
+				Account wacct = new Account();
+				wacct.setAccountId(acct.getId());
+				wacct.setAccountNumber(acct.getNumberMask());
+				wacct.setAccountType(acct.getAccountType().getCode());
+				wacct.setAvailable(acct.getBalances()!=null ? acct.getBalances().get(0).getAvailable().toString() : BigDecimal.ZERO.toString());
+				wacct.setBalance(acct.getBalances()!=null ? acct.getBalances().get(0).getCurrent().toString() : BigDecimal.ZERO.toString());
+				wacct.setInstitutionName(acct.getInstitution().getName());
+				wacct.setAccountExternalId(acct.getExternalId());
+				webAccts.add(wacct);
+			}
 		}
 		
 		return webAccts;
