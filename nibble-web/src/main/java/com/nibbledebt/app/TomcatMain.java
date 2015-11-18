@@ -17,12 +17,14 @@ import org.apache.catalina.startup.Tomcat;
  */
 public class TomcatMain {
 	public static void main(String[] args) throws Exception {
-		  String webappDirLocation = "nibble-web/src/main/webapp/";
 	      Tomcat tomcat = new Tomcat();
 
 	      //The port that we should run on can be set into an environment variable
 	      //Look for that variable and default to 8080 if it isn't there.
-	      String webPort = System.getenv("PORT");
+	      String webPort = System.getProperty("PORT");
+	      String webappDirLocation = System.getProperty("WEBAPP_DIR");
+	      System.out.println("detected env variables: PORT[" + webPort +"] , WEBAPP_DIR["+webappDirLocation + "].");
+
 	      if(webPort == null || webPort.isEmpty()) {
 	          webPort = "9000";
 	      }
