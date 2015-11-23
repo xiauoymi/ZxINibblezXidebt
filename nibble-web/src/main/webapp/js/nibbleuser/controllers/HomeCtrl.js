@@ -5,7 +5,7 @@ app.controller('HomeCtrl', function HomeCtrl($scope, $state, NgTableParams, acco
 
     $scope.homePageInit = function() {
         $scope.trxData = {
-            trxSet : []
+            trxs : []
         };
         $scope.initWeekChart();
         $scope.initMainWidget();
@@ -20,20 +20,15 @@ app.controller('HomeCtrl', function HomeCtrl($scope, $state, NgTableParams, acco
                         $scope.trxData.day3total,
                         $scope.trxData.day4total,
                         $scope.trxData.day5total,
-                        $scope.trxData.day6total],
-                    [
-                        $scope.trxData.prevDay0total,
-                        $scope.trxData.prevDay1total,
-                        $scope.trxData.prevDay2total,
-                        $scope.trxData.prevDay3total,
-                        $scope.trxData.prevDay4total,
-                        $scope.trxData.prevDay5total,
-                        $scope.trxData.prevDay6total]
+                        $scope.trxData.day6total]
+
                 ];
                 $scope.current =        $scope.trxData.currentWeekAmount * 100;
                 $scope.max =            $scope.trxData.weeklyTarget * 100;
                 $scope.showMax =        $scope.trxData.weeklyTarget;
                 $scope.showCurrent =    $scope.trxData.currentWeekAmount;
+
+                $scope.initTrxTable()
 
             })
             .error(function (error) {
@@ -44,12 +39,11 @@ app.controller('HomeCtrl', function HomeCtrl($scope, $state, NgTableParams, acco
 
     $scope.initWeekChart = function() {
         $scope.labels = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        $scope.series = ['Current week', 'Previous week'];
+        $scope.series = ['Current week'];
         $scope.data = [
-            [ 0, 0, 0, 0, 0, 0, 0],
             [ 0, 0, 0, 0, 0, 0, 0]
         ];
-        $scope.colours = ['#008000', '#FDB45C'];
+        $scope.colours = ['#008000'];
     };
 
     $scope.initMainWidget = function() {
@@ -97,10 +91,10 @@ app.controller('HomeCtrl', function HomeCtrl($scope, $state, NgTableParams, acco
             {
                 count : 5},
             {
-                counts:[],
+                counts : [],
                 paginationMaxBlocks: 5,
                 paginationMinBlocks: 2,
-                dataset : $scope.trxData.trxSet
+                dataset : $scope.trxData.trxs
 
             }
         )

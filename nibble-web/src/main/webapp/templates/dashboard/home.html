@@ -42,24 +42,13 @@
         <br/>
 
         <div class="row">
-            <div class="col-xs-12" ng-init="initTrxTable()">
-                <!--<table id="trxtable" class="table table-striped table-responsive" style="width:100%;">-->
-                    <!--<thead>-->
-                    <!--<tr>-->
-                        <!--<th>From</th>-->
-                        <!--<th>Amount</th>-->
-                        <!--<th>Rounded to</th>-->
-                        <!--<th>Spent at</th>-->
-                    <!--</tr>-->
-                    <!--</thead>-->
-                    <!--<tbody></tbody>-->
-                <!--</table>-->
+            <div class="col-xs-12">
                 <table ng-table="tableSettings" show-filter="false" class="table table-bordered table-striped">
-                    <tr ng-repeat="row in $data track by row.from">
-                        <td title="'From'">{{row.from}}</td>
-                        <td title="'Amount'">{{row.amount}}</td>
-                        <td title="'Rounded to'">{{row.rounded}}</td>
-                        <td title="'Spent at'">{{row.spent}}</td>
+                    <tr ng-repeat="row in $data track by $index">
+                        <td title="'From'">{{row.description}}</td>
+                        <td title="'Amount'">{{row.trxAmount}}</td>
+                        <td title="'Rounded to'">{{row.roundupAmount}}</td>
+                        <td title="'Date'">{{row.trxDate}}</td>
                     </tr>
                 </table>
             </div>

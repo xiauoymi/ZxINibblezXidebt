@@ -2,6 +2,8 @@
 app.controller('LoginCtrl',
     function LoginCtrl($scope, $state, accountFactory, $cookieStore) {
 
+        $state;
+
         $scope.initData = function() {
             NibbleUtils.initAlerts($scope);
             $scope.user = {};
