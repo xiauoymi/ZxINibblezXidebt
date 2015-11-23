@@ -35,6 +35,9 @@ public class LoginField {
 
 	@XmlElement
 	private Boolean mask;
+	
+	@XmlElement
+	private Boolean displayFlag;
 
 	@XmlElement
 	private Integer valueLengthMin;
@@ -166,6 +169,20 @@ public class LoginField {
 	 */
 	public void setValueLengthMax(Integer valueLengthMax) {
 		this.valueLengthMax = valueLengthMax;
+	}
+
+	/**
+	 * @return the displayFlag
+	 */
+	public Boolean getDisplayFlag() {
+		return displayFlag;
+	}
+
+	/**
+	 * @param displayFlag the displayFlag to set
+	 */
+	public void setDisplayFlag(Boolean displayFlag) {
+		this.displayFlag = displayFlag;
 	}
 	
 }

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+    <mapping>
+        <class-a>com.nibbledebt.integration.intuit.cad.data.Institution</class-a>
+        <class-b>com.nibbledebt.domain.model.Institution</class-b>
+        <field>
+            <a>homeUrl</a>
+            <b>homeUrl</b>
+        </field>
+        <field>
+            <a>institutionName</a>
+            <b>name</b>
+        </field>
+        <field>
+            <a>phoneNumber</a>
+            <b>phone</b>
+        </field>
+    </mapping>
+    
+    <mapping>
+        <class-a>com.nibbledebt.integration.intuit.cad.data.InstitutionDetail</class-a>
+        <class-b>com.nibbledebt.domain.model.Institution</class-b>
+    </mapping>
+    
+    <mapping>
+        <class-a>com.nibbledebt.intuit.cad.data.InstitutionDetail.Keys.Key</class-a>
+        <class-b>com.nibbledebt.domain.model.LoginField</class-b>
+        
+        <field>
+            <a>name</a>
+            <b>id</b>
+        </field>
+        <field>
+            <a>val</a>
+            <b>value</b>
+        </field>
+    </mapping>
+
+<!--     <mapping> -->
+<!--         <class-a>com.nibbledebt.integration.finicity.model.trxs.Transaction</class-a> -->
+<!--         <class-b>com.nibbledebt.domain.model.Transaction</class-b> -->
+<!--         <field> -->
+<!--             <a>institutionTransactionId</a> -->
+<!--             <b>trxId</b> -->
+<!--         </field> -->
+<!--         <field> -->
+<!--             <a>id</a> -->
+<!--             <b>aggregatorTrxId</b> -->
+<!--         </field> -->
+<!--         <field> -->
+<!--             <a>type</a> -->
+<!--             <b>category</b> -->
+<!--         </field> -->
+<!--         <field> -->
+<!--             <a>amount</a> -->
+<!--             <b>trxAmount</b> -->
+<!--         </field> -->
+<!--         <field custom-converter="com.nibbledebt.integration.finicity.model.DateToUtilDate"> -->
+<!--             <a>transactionDate</a> -->
+<!--             <b>trxDate</b> -->
+<!--         </field> -->
+<!--         <field custom-converter="com.nibbledebt.integration.finicity.model.DateToUtilDate"> -->
+<!--             <a>postedDate</a> -->
+<!--             <b>trxPostDate</b> -->
+<!--         </field> -->
+<!--     </mapping> -->
+<!--     <mapping> -->
+<!--         <class-a>com.nibbledebt.integration.finicity.model.accounts.Account</class-a> -->
+<!--         <class-b>com.nibbledebt.domain.model.account.Account</class-b> -->
+<!--         <field> -->
+<!--             <a>id</a> -->
+<!--             <b>accountExternalId</b> -->
+<!--         </field> -->
+<!--         <field> -->
+<!--             <a>number</a> -->
+<!--             <b>accountNumber</b> -->
+<!--         </field> -->
+<!--         <field> -->
+<!--             <a>type</a> -->
+<!--             <b>accountType</b> -->
+<!--         </field> -->
+<!--         <field> -->
+<!--             <a>institutionId</a> -->
+<!--             <b>institutionExternalId</b> -->
+<!--         </field> -->
+<!--         <field> -->
+<!--             <a>balance</a> -->
+<!--             <b>available</b> -->
+<!--         </field> -->
+<!--         <field> -->
+<!--             <a>balance</a> -->
+<!--             <b>balance</b> -->
+<!--         </field> -->
+<!--     </mapping> -->
+<!--     Account response mapping -->
+<!--     <mapping> -->
+<!--         <class-a>com.nibbledebt.integration.finicity.model.accounts.AddAccountsResponse</class-a> -->
+<!--         <class-b>com.nibbledebt.domain.model.account.AddAccountsResponse</class-b> -->
+<!--         <field> -->
+<!--             <a>mfaChallenges</a> -->
+<!--             <b>mfaChallenges</b> -->
+<!--             <a-hint> -->
+<!--                 com.nibbledebt.integration.finicity.model.accounts.TextMfaChallenges, -->
+<!--                 com.nibbledebt.integration.finicity.model.accounts.ImageMfaChallenges, -->
+<!--                 com.nibbledebt.integration.finicity.model.accounts.ImageChoiceMfaChallenges, -->
+<!--                 com.nibbledebt.integration.finicity.model.accounts.TextChoiceMfaChallenges -->
+<!--             </a-hint> -->
+<!--             <b-hint> -->
+<!--                 com.nibbledebt.domain.model.account.TextMfaChallenges, -->
+<!--                 com.nibbledebt.domain.model.account.ImageMfaChallenges, -->
+<!--                 com.nibbledebt.domain.model.account.ImageChoiceMfaChallenges, -->
+<!--                 com.nibbledebt.domain.model.account.TextChoiceMfaChallenges -->
+<!--             </b-hint> -->
+<!--         </field> -->
+<!--     </mapping> -->
+<!--     <mapping> -->
+<!--         <class-a>com.nibbledebt.integration.finicity.model.accounts.ImageMfaChallenges</class-a> -->
+<!--         <class-b>com.nibbledebt.domain.model.account.ImageMfaChallenges</class-b> -->
+<!--         <field> -->
+<!--             <a>question</a> -->
+<!--             <b>question</b> -->
+<!--             <a-hint>com.nibbledebt.integration.finicity.model.accounts.ImageQuestion</a-hint> -->
+<!--             <b-hint>com.nibbledebt.domain.model.account.ImageQuestion</b-hint> -->
+<!--         </field> -->
+<!--     </mapping> -->
+<!--     <mapping> -->
+<!--         <class-a>com.nibbledebt.integration.finicity.model.accounts.TextMfaChallenges</class-a> -->
+<!--         <class-b>com.nibbledebt.domain.model.account.TextMfaChallenges</class-b> -->
+<!--         <field> -->
+<!--             <a>question</a> -->
+<!--             <b>question</b> -->
+<!--             <a-hint>com.nibbledebt.integration.finicity.model.accounts.TextQuestion</a-hint> -->
+<!--             <b-hint>com.nibbledebt.domain.model.account.TextQuestion</b-hint> -->
+<!--         </field> -->
+<!--     </mapping> -->
+<!--     <mapping> -->
+<!--         <class-a>com.nibbledebt.integration.finicity.model.accounts.ImageChoiceMfaChallenges</class-a> -->
+<!--         <class-b>com.nibbledebt.domain.model.account.ImageChoiceMfaChallenges</class-b> -->
+<!--         <field> -->
+<!--             <a>question</a> -->
+<!--             <b>question</b> -->
+<!--             <a-hint>com.nibbledebt.integration.finicity.model.accounts.ImageChoiceQuestion</a-hint> -->
+<!--             <b-hint>com.nibbledebt.domain.model.account.ImageChoiceQuestion</b-hint> -->
+<!--         </field> -->
+<!--     </mapping> -->
+<!--     <mapping> -->
+<!--         <class-a>com.nibbledebt.integration.finicity.model.accounts.TextChoiceMfaChallenges</class-a> -->
+<!--         <class-b>com.nibbledebt.domain.model.account.TextChoiceMfaChallenges</class-b> -->
+<!--         <field> -->
+<!--             <a>question</a> -->
+<!--             <b>question</b> -->
+<!--             <a-hint>com.nibbledebt.integration.finicity.model.accounts.TextChoiceQuestion</a-hint> -->
+<!--             <b-hint>com.nibbledebt.domain.model.account.TextChoiceQuestion</b-hint> -->
+<!--         </field> -->
+<!--     </mapping> -->
+
+</mappings> 

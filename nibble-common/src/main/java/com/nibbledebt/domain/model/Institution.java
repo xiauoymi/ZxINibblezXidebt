@@ -17,6 +17,8 @@ public class Institution
     private String id;
 
     private String name;
+    
+    private Address address;
 
     private String description;
     
@@ -28,7 +30,11 @@ public class Institution
     
     private String homeUrl;
     
+    private String phone;
+    
     private String type;
+    
+    private LoginForm loginForm;
     
     /**
 	 * @return the id
@@ -62,6 +68,24 @@ public class Institution
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+
+
+	/**
+	 * @return the address
+	 */
+	public Address getAddress() {
+		return address;
+	}
+
+
+
+	/**
+	 * @param address the address to set
+	 */
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 
 
@@ -169,6 +193,42 @@ public class Institution
 	 */
 	public void setType(String type) {
 		this.type = type;
+	}
+
+
+
+	/**
+	 * @return the phone
+	 */
+	public String getPhone() {
+		return phone;
+	}
+
+
+
+	/**
+	 * @param phone the phone to set
+	 */
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+
+
+	/**
+	 * @return the loginForm
+	 */
+	public LoginForm getLoginForm() {
+		return loginForm;
+	}
+
+
+
+	/**
+	 * @param loginForm the loginForm to set
+	 */
+	public void setLoginForm(LoginForm loginForm) {
+		this.loginForm = loginForm;
 	}
 
 
