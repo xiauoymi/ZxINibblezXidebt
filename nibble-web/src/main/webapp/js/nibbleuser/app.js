@@ -68,19 +68,39 @@ app.config(['$stateProvider', '$urlRouterProvider', '$httpProvider',
                 }
             })
     }]);
-app.run(function ($rootScope, $location, $cookieStore) {
+app.run(function ($rootScope, $location, $cookieStore, $cookies, accountFactory) {
     $rootScope.$on('$locationChangeStart', function (event, next, current) {
-        var restrictedPage = $.inArray($location.path(), ['/login', '/register']) === -1;
-        var loggedIn = $cookieStore.get("nibbler_");
-        if (restrictedPage && !loggedIn) {
-            $location.path('/login');
-        } else if (loggedIn && $location.path() == "") {
-            $location.path('/home');
+        var restrictedPage = $.inArray($location.path(), ['/login', '/register', '/activate']) === -1;
+        if (restrictedPage) {
+            accountFactory.profile()
+                .success(function (data) {
+                    console.log(data);
+                    if ($.inArray($location.path(), ['/', '']) != -1) {
+                        $location.path('/home');
+                    }
+                })
+                .error(function (data) {
+                    console.log(data);
+                    $location.path('/login');
+                });
         }
     });
-
-
 });
+
+app.config(['$httpProvider',
+    function ($httpProvider) {
+        $httpProvider.interceptors.push(['$q',
+            function ($q) {
+                return {
+                    request: function (config) {
+                        config.withCredentials = true;
+                        return config;
+                    }
+                };
+            }
+        ]);
+    }
+]);
 
 
 
