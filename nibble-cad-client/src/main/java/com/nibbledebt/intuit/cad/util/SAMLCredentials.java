@@ -5,49 +5,61 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
+import java.security.KeyStore.PasswordProtection;
+import java.security.KeyStore.PrivateKeyEntry;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-
 import org.opensaml.xml.security.x509.BasicX509Credential;
+import org.slf4j.LoggerFactory;
 
 import com.nibbledebt.intuit.cad.exception.AggCatException;
 
 public class SAMLCredentials
 {
-  private static final org.slf4j.Logger LOG = Logger.getLogger();
+  private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(SAMLCredentials.class);
   private BasicX509Credential credential;
-
+  
   public SAMLCredentials(String keystoreFile, String keyStorePassword, String alias, String keyPassword)
     throws AggCatException
   {
     InputStream is = null;
-    try {
-      if ((keystoreFile.indexOf('/') != -1) || (keystoreFile.indexOf('\\') != -1))
+    try
+    {
+      if ((keystoreFile.indexOf('/') != -1) || (keystoreFile.indexOf('\\') != -1)) {
         is = new FileInputStream(new File(keystoreFile));
-      else {
+      } else {
         is = Thread.currentThread().getContextClassLoader().getResourceAsStream(keystoreFile);
       }
       if (is == null) {
         throw new AggCatException("Could not get resource: " + keystoreFile);
       }
-      this.credential = loadCredential(is, keyStorePassword, alias, keyPassword);
-    } catch (Exception e) {
+      this.credential = loadCredential(is, keyStorePassword, alias, keyPassword); return;
+    }
+    catch (Exception e)
+    {
       throw new AggCatException("Exception while reading the certificate file : " + keystoreFile, e);
-    } finally {
-      if (is != null)
-        try {
+    }
+    finally
+    {
+      if (is != null) {
+        try
+        {
           is.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
           LOG.error("Unable to close InputStream.", e);
         }
+      }
     }
   }
-
+  
   private BasicX509Credential loadCredential(InputStream inputstream, String keystorePassword, String certAlias, String keyPassword)
     throws AggCatException
   {
     BasicX509Credential basicx509credential = null;
-    try {
+    try
+    {
       LOG.debug("start loading cred.");
       KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
       keystore.load(inputstream, keystorePassword.toCharArray());
@@ -57,7 +69,8 @@ public class SAMLCredentials
       LOG.debug("loading cred 1.");
       KeyStore.PrivateKeyEntry privatekeyentry = (KeyStore.PrivateKeyEntry)keystore.getEntry(certAlias, passwordprotection);
       LOG.debug("loading cred 2.");
-      if (privatekeyentry != null) {
+      if (privatekeyentry != null)
+      {
         PrivateKey privateKey = privatekeyentry.getPrivateKey();
         LOG.debug("loading cred 3.");
         X509Certificate x509certificate = (X509Certificate)privatekeyentry.getCertificate();
@@ -69,16 +82,20 @@ public class SAMLCredentials
         LOG.debug("Priv key Alg=" + privateKey.getAlgorithm());
         LOG.debug("Priv key Fmt=" + privateKey.getFormat());
         LOG.debug("Priv key Str=" + privateKey.toString());
-      } else {
+      }
+      else
+      {
         LOG.debug("No key found for: " + certAlias);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e)
+    {
       LOG.error("Exception when loading the cert.", e);
       throw new AggCatException("Exception when loading the cert.", e);
     }
     return basicx509credential;
   }
-
+  
   public BasicX509Credential getX509Credential()
   {
     return this.credential;

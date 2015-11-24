@@ -7,17 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum InvSecurityType
 {
-  MFINFO, 
-  STOCKINFO, 
-  OPTINFO, 
-  DEBTINFO, 
-  OTHERINFO;
-
-  public String value() {
+  MFINFO,  STOCKINFO,  OPTINFO,  DEBTINFO,  OTHERINFO;
+  
+  private InvSecurityType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static InvSecurityType fromValue(String v) {
+  
+  public static InvSecurityType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

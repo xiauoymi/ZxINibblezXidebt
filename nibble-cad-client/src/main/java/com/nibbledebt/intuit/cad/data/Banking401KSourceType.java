@@ -7,19 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum Banking401KSourceType
 {
-  PRETAX, 
-  AFTERTAX, 
-  MATCH, 
-  PROFITSHARING, 
-  ROLLOVER, 
-  OTHERVEST, 
-  OTHERNONVEST;
-
-  public String value() {
+  PRETAX,  AFTERTAX,  MATCH,  PROFITSHARING,  ROLLOVER,  OTHERVEST,  OTHERNONVEST;
+  
+  private Banking401KSourceType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static Banking401KSourceType fromValue(String v) {
+  
+  public static Banking401KSourceType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

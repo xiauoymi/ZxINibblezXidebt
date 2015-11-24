@@ -7,7 +7,8 @@ public final class RetryHelper
   public static void argumentNotNegativeValue(long argumentValue, String argumentName)
     throws AggCatException
   {
-    if (argumentValue < 0L)
+    if (argumentValue < 0L) {
       throw new AggCatException("The value for argument name [" + argumentName + "] is negative [" + argumentValue + "]. Please check the configuration.");
+    }
   }
 }

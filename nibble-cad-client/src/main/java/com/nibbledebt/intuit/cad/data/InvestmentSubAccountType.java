@@ -7,16 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum InvestmentSubAccountType
 {
-  CASH, 
-  MARGIN, 
-  SHORT, 
-  OTHER;
-
-  public String value() {
+  CASH,  MARGIN,  SHORT,  OTHER;
+  
+  private InvestmentSubAccountType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static InvestmentSubAccountType fromValue(String v) {
+  
+  public static InvestmentSubAccountType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

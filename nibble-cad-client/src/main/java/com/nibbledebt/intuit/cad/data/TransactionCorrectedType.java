@@ -7,14 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum TransactionCorrectedType
 {
-  REPLACE, 
-  DELETE;
-
-  public String value() {
+  REPLACE,  DELETE;
+  
+  private TransactionCorrectedType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static TransactionCorrectedType fromValue(String v) {
+  
+  public static TransactionCorrectedType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

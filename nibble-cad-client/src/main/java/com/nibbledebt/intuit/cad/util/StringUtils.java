@@ -5,17 +5,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.slf4j.LoggerFactory;
+
 import com.nibbledebt.intuit.cad.exception.AggCatException;
 
 public final class StringUtils
 {
-  private static final org.slf4j.Logger LOG = Logger.getLogger();
-
+  private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(StringUtils.class);
+  
   public static StringUtils getInstance()
   {
     return new StringUtils();
   }
-
+  
   public static boolean hasText(String text)
   {
     if ((text != null) && (!"".equals(text.trim()))) {
@@ -23,7 +25,7 @@ public final class StringUtils
     }
     return false;
   }
-
+  
   public static String getContent(InputStream in)
     throws AggCatException
   {
@@ -32,14 +34,15 @@ public final class StringUtils
     try
     {
       String line;
-      while ((line = br.readLine()) != null)
+      while ((line = br.readLine()) != null) {
         sb.append(line);
+      }
     }
-    catch (IOException ioe) {
+    catch (IOException ioe)
+    {
       LOG.error("IOException while read the content from input stream.", ioe);
       throw new AggCatException(ioe);
     }
-
     return sb.toString();
   }
 }

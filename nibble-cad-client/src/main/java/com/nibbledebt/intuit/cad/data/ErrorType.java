@@ -7,16 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum ErrorType
 {
-  SYSTEM_ERROR, 
-  APP_ERROR, 
-  USER_ERROR, 
-  WARNING;
-
-  public String value() {
+  SYSTEM_ERROR,  APP_ERROR,  USER_ERROR,  WARNING;
+  
+  private ErrorType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static ErrorType fromValue(String v) {
+  
+  public static ErrorType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

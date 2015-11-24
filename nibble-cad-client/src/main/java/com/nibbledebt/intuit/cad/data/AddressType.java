@@ -7,15 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum AddressType
 {
-  HOME, 
-  BUSINESS, 
-  MAILING;
-
-  public String value() {
+  HOME,  BUSINESS,  MAILING;
+  
+  private AddressType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static AddressType fromValue(String v) {
+  
+  public static AddressType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

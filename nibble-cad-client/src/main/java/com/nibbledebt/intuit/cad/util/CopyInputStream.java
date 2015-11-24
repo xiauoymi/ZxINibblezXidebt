@@ -9,29 +9,28 @@ public class CopyInputStream
 {
   private InputStream _is;
   private ByteArrayOutputStream _copy = new ByteArrayOutputStream();
-
+  
   public CopyInputStream(InputStream is)
     throws IOException
   {
     this._is = is;
     copy();
   }
-
+  
   private int copy()
     throws IOException
   {
     int read = 0;
     int chunk = 0;
-    byte[] data = new byte[256];
-
-    while (-1 != (chunk = this._is.read(data))) {
+    byte[] data = new byte['Ā'];
+    while (-1 != (chunk = this._is.read(data)))
+    {
       read += data.length;
       this._copy.write(data, 0, chunk);
     }
-
     return read;
   }
-
+  
   public InputStream getCopy()
   {
     return new ByteArrayInputStream(this._copy.toByteArray());

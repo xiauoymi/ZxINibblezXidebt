@@ -26,10 +26,9 @@ public class AccountList
   implements Serializable, Equals, HashCode
 {
   private static final long serialVersionUID = 1L;
-
   @XmlElements({@javax.xml.bind.annotation.XmlElement(name="BankingAccount", namespace="http://schema.intuit.com/platform/fdatafeed/bankingaccount/v1", type=BankingAccount.class), @javax.xml.bind.annotation.XmlElement(name="CreditAccount", namespace="http://schema.intuit.com/platform/fdatafeed/creditaccount/v1", type=CreditAccount.class), @javax.xml.bind.annotation.XmlElement(name="LoanAccount", namespace="http://schema.intuit.com/platform/fdatafeed/loanaccount/v1", type=LoanAccount.class), @javax.xml.bind.annotation.XmlElement(name="InvestmentAccount", namespace="http://schema.intuit.com/platform/fdatafeed/investmentaccount/v1", type=InvestmentAccount.class), @javax.xml.bind.annotation.XmlElement(name="RewardsAccount", namespace="http://schema.intuit.com/platform/fdatafeed/rewardsaccount/v1", type=RewardsAccount.class), @javax.xml.bind.annotation.XmlElement(name="OtherAccount", namespace="http://schema.intuit.com/platform/fdatafeed/otheraccount/v1", type=OtherAccount.class)})
   protected List<Account> bankingAccountsAndCreditAccountsAndLoanAccounts;
-
+  
   public List<Account> getBankingAccountsAndCreditAccountsAndLoanAccounts()
   {
     if (this.bankingAccountsAndCreditAccountsAndLoanAccounts == null) {
@@ -37,13 +36,14 @@ public class AccountList
     }
     return this.bankingAccountsAndCreditAccountsAndLoanAccounts;
   }
-
+  
   public void setBankingAccountsAndCreditAccountsAndLoanAccounts(List<Account> bankingAccountsAndCreditAccountsAndLoanAccounts)
   {
     this.bankingAccountsAndCreditAccountsAndLoanAccounts = bankingAccountsAndCreditAccountsAndLoanAccounts;
   }
-
-  public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy) {
+  
+  public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy)
+  {
     if (!(object instanceof AccountList)) {
       return false;
     }
@@ -51,32 +51,34 @@ public class AccountList
       return true;
     }
     AccountList that = (AccountList)object;
-
-    List lhsBankingAccountsAndCreditAccountsAndLoanAccounts = (this.bankingAccountsAndCreditAccountsAndLoanAccounts != null) && (!this.bankingAccountsAndCreditAccountsAndLoanAccounts.isEmpty()) ? getBankingAccountsAndCreditAccountsAndLoanAccounts() : null;
-
-    List rhsBankingAccountsAndCreditAccountsAndLoanAccounts = (that.bankingAccountsAndCreditAccountsAndLoanAccounts != null) && (!that.bankingAccountsAndCreditAccountsAndLoanAccounts.isEmpty()) ? that.getBankingAccountsAndCreditAccountsAndLoanAccounts() : null;
+    
+    List<Account> lhsBankingAccountsAndCreditAccountsAndLoanAccounts = (this.bankingAccountsAndCreditAccountsAndLoanAccounts != null) && (!this.bankingAccountsAndCreditAccountsAndLoanAccounts.isEmpty()) ? getBankingAccountsAndCreditAccountsAndLoanAccounts() : null;
+    
+    List<Account> rhsBankingAccountsAndCreditAccountsAndLoanAccounts = (that.bankingAccountsAndCreditAccountsAndLoanAccounts != null) && (!that.bankingAccountsAndCreditAccountsAndLoanAccounts.isEmpty()) ? that.getBankingAccountsAndCreditAccountsAndLoanAccounts() : null;
     if (!strategy.equals(LocatorUtils.property(thisLocator, "bankingAccountsAndCreditAccountsAndLoanAccounts", lhsBankingAccountsAndCreditAccountsAndLoanAccounts), LocatorUtils.property(thatLocator, "bankingAccountsAndCreditAccountsAndLoanAccounts", rhsBankingAccountsAndCreditAccountsAndLoanAccounts), lhsBankingAccountsAndCreditAccountsAndLoanAccounts, rhsBankingAccountsAndCreditAccountsAndLoanAccounts)) {
       return false;
     }
-
     return true;
   }
-
-  public boolean equals(Object object) {
+  
+  public boolean equals(Object object)
+  {
     EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
     return equals(null, null, object, strategy);
   }
-
-  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy) {
+  
+  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy)
+  {
     int currentHashCode = 1;
-
-    List theBankingAccountsAndCreditAccountsAndLoanAccounts = (this.bankingAccountsAndCreditAccountsAndLoanAccounts != null) && (!this.bankingAccountsAndCreditAccountsAndLoanAccounts.isEmpty()) ? getBankingAccountsAndCreditAccountsAndLoanAccounts() : null;
+    
+    List<Account> theBankingAccountsAndCreditAccountsAndLoanAccounts = (this.bankingAccountsAndCreditAccountsAndLoanAccounts != null) && (!this.bankingAccountsAndCreditAccountsAndLoanAccounts.isEmpty()) ? getBankingAccountsAndCreditAccountsAndLoanAccounts() : null;
     currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "bankingAccountsAndCreditAccountsAndLoanAccounts", theBankingAccountsAndCreditAccountsAndLoanAccounts), currentHashCode, theBankingAccountsAndCreditAccountsAndLoanAccounts);
-
+    
     return currentHashCode;
   }
-
-  public int hashCode() {
+  
+  public int hashCode()
+  {
     HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
     return hashCode(null, strategy);
   }

@@ -7,15 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum OptionsActionType
 {
-  EXERCISE, 
-  ASSIGN, 
-  EXPIRE;
-
-  public String value() {
+  EXERCISE,  ASSIGN,  EXPIRE;
+  
+  private OptionsActionType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static OptionsActionType fromValue(String v) {
+  
+  public static OptionsActionType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

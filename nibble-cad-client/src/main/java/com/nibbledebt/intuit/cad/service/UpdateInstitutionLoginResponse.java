@@ -11,32 +11,32 @@ public class UpdateInstitutionLoginResponse
   private boolean isUpdated = false;
   private Challenges challenges;
   private ChallengeSession challengeSession;
-
+  
   public Challenges getChallenges()
   {
     return this.challenges;
   }
-
+  
   public void setChallenges(Challenges challenges)
   {
     this.challenges = challenges;
   }
-
+  
   public ChallengeSession getChallengeSession()
   {
     return this.challengeSession;
   }
-
+  
   public void setChallengeSession(ChallengeSession challengeSession)
   {
     this.challengeSession = challengeSession;
   }
-
+  
   public boolean isUpdated()
   {
     return this.isUpdated;
   }
-
+  
   public void setUpdated(boolean isUpdated)
   {
     this.isUpdated = isUpdated;

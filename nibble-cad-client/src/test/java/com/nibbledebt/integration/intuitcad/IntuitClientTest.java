@@ -3,21 +3,32 @@
  */
 package com.nibbledebt.integration.intuitcad;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.StringReader;
+import java.util.List;
+
 import javax.annotation.Resource;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 
 import org.dozer.Mapper;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.nibbledebt.intuit.cad.data.Institution;
+import com.nibbledebt.intuit.cad.data.InstitutionDetail;
+import com.nibbledebt.intuit.cad.data.Institutions;
 import com.nibbledebt.intuit.cad.exception.AggCatException;
+import com.nibbledebt.intuit.cad.exception.SerializationException;
 import com.nibbledebt.intuit.cad.service.AggCatServiceFactory;
+
+import junit.framework.Assert;
 
 /**
  * @author alam_home
@@ -52,15 +63,53 @@ public class IntuitClientTest {
 //		Assert.assertNotNull(finicitySecurityContext.getAppToken());
 //	}
 	
-	@Test
+//	@Test
 	public void getInstitutions() throws AggCatException  {
-		AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "sysuser").getInstitutions().getInstitutions();
+		List<Institution> insts = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "sysuser").getInstitutions().getInstitutions();
+		Assert.assertNotNull(insts);
+		Assert.assertNotNull(insts.get(0).getInstitutionId());
+		Assert.assertNotNull(insts.get(0).getHomeUrl());
+		Assert.assertNotNull(insts.get(0).getInstitutionName());
+	}
+	
+	@Test
+	public void testDeserialize(){
+		Object unmarshalledObject;
+	    try
+	    {
+			StringReader srd = null;
+			
+			BufferedReader rd = new BufferedReader(new FileReader("K:\\git\\nibble\\nibble-cad-client\\src\\test\\resources\\com\\nibbledebt\\integration\\intuitcad\\institutions.xml"));
+			
+			String inputLine = null;
+			StringBuilder builder = new StringBuilder();
+			
+			//Store the contents of the file to the StringBuilder.
+			while((inputLine = rd.readLine()) != null)
+				builder.append(inputLine);
+			
+			//Create a new tokenizer based on the StringReader class instance.
+			srd = new StringReader(builder.toString());
+			
+	      Unmarshaller unmarshaller = JAXBContext.newInstance("com.nibbledebt.intuit.cad.data").createUnmarshaller();
+	      unmarshalledObject = unmarshaller.unmarshal(srd);
+	      Assert.assertNotNull(unmarshalledObject);
+	      Assert.assertEquals(11, ((Institutions)unmarshalledObject).getInstitutions().size());
+			Assert.assertNotNull(((Institutions)unmarshalledObject).getInstitutions().get(0).getInstitutionId());
+			Assert.assertNotNull(((Institutions)unmarshalledObject).getInstitutions().get(0).getHomeUrl());
+			Assert.assertNotNull(((Institutions)unmarshalledObject).getInstitutions().get(0).getInstitutionName());
+	    }
+	    catch (Exception e)
+	    {
+	      e.printStackTrace();
+	    }
 	}
 	
 //	@Test
-//	public void getInstitution()  {
-//		AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "sysuser").getInstitutionDetails(Long.valueOf(institutionIdentifier))
-//	}
+	public void getInstitution() throws NumberFormatException, AggCatException  {
+		InstitutionDetail detail = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "sysuser").getInstitutionDetails(Long.valueOf("13278"));
+		Assert.assertNotNull(detail);
+	}
 //	
 //	@Test
 //	public void addTestCustomer() throws FinicityAccessException {

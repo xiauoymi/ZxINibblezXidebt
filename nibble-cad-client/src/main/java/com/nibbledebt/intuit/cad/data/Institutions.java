@@ -20,16 +20,14 @@ import org.jvnet.jaxb2_commons.locator.ObjectLocator;
 import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name="", propOrder={"institutions"})
 @XmlRootElement(name="Institutions", namespace="http://schema.intuit.com/platform/fdatafeed/institution/v1")
 public class Institutions
   implements Serializable, Equals, HashCode
 {
   private static final long serialVersionUID = 1L;
-
-  @XmlElement(name="institution", namespace="http://schema.intuit.com/platform/fdatafeed/institution/v1")
+  @XmlElement(name="institution")
   protected List<Institution> institutions;
-
+  
   public List<Institution> getInstitutions()
   {
     if (this.institutions == null) {
@@ -37,13 +35,14 @@ public class Institutions
     }
     return this.institutions;
   }
-
+  
   public void setInstitutions(List<Institution> institutions)
   {
     this.institutions = institutions;
   }
-
-  public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy) {
+  
+  public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy)
+  {
     if (!(object instanceof Institutions)) {
       return false;
     }
@@ -51,32 +50,34 @@ public class Institutions
       return true;
     }
     Institutions that = (Institutions)object;
-
-    List lhsInstitutions = (this.institutions != null) && (!this.institutions.isEmpty()) ? getInstitutions() : null;
-
-    List rhsInstitutions = (that.institutions != null) && (!that.institutions.isEmpty()) ? that.getInstitutions() : null;
+    
+    List<Institution> lhsInstitutions = (this.institutions != null) && (!this.institutions.isEmpty()) ? getInstitutions() : null;
+    
+    List<Institution> rhsInstitutions = (that.institutions != null) && (!that.institutions.isEmpty()) ? that.getInstitutions() : null;
     if (!strategy.equals(LocatorUtils.property(thisLocator, "institutions", lhsInstitutions), LocatorUtils.property(thatLocator, "institutions", rhsInstitutions), lhsInstitutions, rhsInstitutions)) {
       return false;
     }
-
     return true;
   }
-
-  public boolean equals(Object object) {
+  
+  public boolean equals(Object object)
+  {
     EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
     return equals(null, null, object, strategy);
   }
-
-  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy) {
+  
+  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy)
+  {
     int currentHashCode = 1;
-
-    List theInstitutions = (this.institutions != null) && (!this.institutions.isEmpty()) ? getInstitutions() : null;
+    
+    List<Institution> theInstitutions = (this.institutions != null) && (!this.institutions.isEmpty()) ? getInstitutions() : null;
     currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "institutions", theInstitutions), currentHashCode, theInstitutions);
-
+    
     return currentHashCode;
   }
-
-  public int hashCode() {
+  
+  public int hashCode()
+  {
     HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
     return hashCode(null, strategy);
   }

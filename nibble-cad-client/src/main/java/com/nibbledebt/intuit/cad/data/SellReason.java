@@ -7,15 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum SellReason
 {
-  CALL, 
-  SELL, 
-  MATURITY;
-
-  public String value() {
+  CALL,  SELL,  MATURITY;
+  
+  private SellReason() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static SellReason fromValue(String v) {
+  
+  public static SellReason fromValue(String v)
+  {
     return valueOf(v);
   }
 }

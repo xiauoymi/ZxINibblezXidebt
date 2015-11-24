@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<intuit-aggcat-config>
+	<saml>
+		<keystoreFile>nibblestore.jks</keystoreFile>
+		<keystorePassword>nibblepassword</keystorePassword>
+		<keyPassword>nibblepassword</keyPassword>
+		<certAlias>nibblekey</certAlias>
+	</saml>
+</intuit-aggcat-config>

@@ -33,17 +33,7 @@ public final class ResourceTypeLocator
   public static final String GET_FILE_DATA = "GetFileData";
   public static final String GET_INVESTMENT_POSITIONS = "GetInvestmentPositions";
   public static final String STATUS = "Status";
-
-  public static ResourceTypeLocator getInstance()
-  {
-    return new ResourceTypeLocator();
-  }
-
-  public static Class<?> getResourceType(String key)
-  {
-    return (Class)resourceTypeMap.get(key);
-  }
-
+  
   static
   {
     resourceTypeMap.put("GetInstitutions", Institutions.class);
@@ -58,5 +48,15 @@ public final class ResourceTypeLocator
     resourceTypeMap.put("ListFiles", Files.class);
     resourceTypeMap.put("GetInvestmentPositions", InvestmentPositions.class);
     resourceTypeMap.put("Status", Status.class);
+  }
+  
+  public static ResourceTypeLocator getInstance()
+  {
+    return new ResourceTypeLocator();
+  }
+  
+  public static Class<?> getResourceType(String key)
+  {
+    return (Class)resourceTypeMap.get(key);
   }
 }

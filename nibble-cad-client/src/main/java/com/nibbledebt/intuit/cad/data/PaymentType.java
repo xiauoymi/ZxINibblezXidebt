@@ -7,15 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum PaymentType
 {
-  INT_ONLY, 
-  PRN_AND_INT, 
-  PRN_PLUS_INT;
-
-  public String value() {
+  INT_ONLY,  PRN_AND_INT,  PRN_PLUS_INT;
+  
+  private PaymentType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static PaymentType fromValue(String v) {
+  
+  public static PaymentType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

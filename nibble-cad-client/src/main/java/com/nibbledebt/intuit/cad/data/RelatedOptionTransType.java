@@ -7,16 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum RelatedOptionTransType
 {
-  SPREAD, 
-  STRADDLE, 
-  NONE, 
-  OTHER;
-
-  public String value() {
+  SPREAD,  STRADDLE,  NONE,  OTHER;
+  
+  private RelatedOptionTransType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static RelatedOptionTransType fromValue(String v) {
+  
+  public static RelatedOptionTransType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

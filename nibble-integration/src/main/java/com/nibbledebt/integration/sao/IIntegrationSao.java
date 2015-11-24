@@ -29,4 +29,7 @@ public interface IIntegrationSao {
     public String addCustomer(String userName, String firstName, String lastName) throws ServiceException;
     public void deleteCustomer(String customerId) throws ServiceException;
     public List<Transaction> retrieveTransactions(String customerId, String accountId, Date fromDate, Date toDate, String sort) throws ServiceException;
+	List<String> getSuppLoanTypes();
+	List<String> getTestInstitutionTypes();
+	List<String> getSuppInstitutionTypes();
 }

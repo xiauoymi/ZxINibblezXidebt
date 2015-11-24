@@ -7,14 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum PositionType
 {
-  LONG, 
-  SHORT;
-
-  public String value() {
+  LONG,  SHORT;
+  
+  private PositionType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static PositionType fromValue(String v) {
+  
+  public static PositionType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

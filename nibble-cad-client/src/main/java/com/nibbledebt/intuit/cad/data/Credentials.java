@@ -24,10 +24,9 @@ public class Credentials
   implements Serializable, Equals, HashCode
 {
   private static final long serialVersionUID = 1L;
-
   @XmlElement(name="credential")
   protected List<Credential> credentials;
-
+  
   public List<Credential> getCredentials()
   {
     if (this.credentials == null) {
@@ -35,13 +34,14 @@ public class Credentials
     }
     return this.credentials;
   }
-
+  
   public void setCredentials(List<Credential> credentials)
   {
     this.credentials = credentials;
   }
-
-  public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy) {
+  
+  public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy)
+  {
     if (!(object instanceof Credentials)) {
       return false;
     }
@@ -49,32 +49,34 @@ public class Credentials
       return true;
     }
     Credentials that = (Credentials)object;
-
-    List lhsCredentials = (this.credentials != null) && (!this.credentials.isEmpty()) ? getCredentials() : null;
-
-    List rhsCredentials = (that.credentials != null) && (!that.credentials.isEmpty()) ? that.getCredentials() : null;
+    
+    List<Credential> lhsCredentials = (this.credentials != null) && (!this.credentials.isEmpty()) ? getCredentials() : null;
+    
+    List<Credential> rhsCredentials = (that.credentials != null) && (!that.credentials.isEmpty()) ? that.getCredentials() : null;
     if (!strategy.equals(LocatorUtils.property(thisLocator, "credentials", lhsCredentials), LocatorUtils.property(thatLocator, "credentials", rhsCredentials), lhsCredentials, rhsCredentials)) {
       return false;
     }
-
     return true;
   }
-
-  public boolean equals(Object object) {
+  
+  public boolean equals(Object object)
+  {
     EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
     return equals(null, null, object, strategy);
   }
-
-  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy) {
+  
+  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy)
+  {
     int currentHashCode = 1;
-
-    List theCredentials = (this.credentials != null) && (!this.credentials.isEmpty()) ? getCredentials() : null;
+    
+    List<Credential> theCredentials = (this.credentials != null) && (!this.credentials.isEmpty()) ? getCredentials() : null;
     currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "credentials", theCredentials), currentHashCode, theCredentials);
-
+    
     return currentHashCode;
   }
-
-  public int hashCode() {
+  
+  public int hashCode()
+  {
     HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
     return hashCode(null, strategy);
   }

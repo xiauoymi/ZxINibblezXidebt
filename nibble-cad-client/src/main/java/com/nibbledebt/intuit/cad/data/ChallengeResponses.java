@@ -24,10 +24,9 @@ public class ChallengeResponses
   implements Serializable, Equals, HashCode
 {
   private static final long serialVersionUID = 1L;
-
   @XmlElement(name="response", required=true)
   protected List<String> responses;
-
+  
   public List<String> getResponses()
   {
     if (this.responses == null) {
@@ -35,13 +34,14 @@ public class ChallengeResponses
     }
     return this.responses;
   }
-
+  
   public void setResponses(List<String> responses)
   {
     this.responses = responses;
   }
-
-  public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy) {
+  
+  public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy)
+  {
     if (!(object instanceof ChallengeResponses)) {
       return false;
     }
@@ -49,32 +49,34 @@ public class ChallengeResponses
       return true;
     }
     ChallengeResponses that = (ChallengeResponses)object;
-
-    List lhsResponses = (this.responses != null) && (!this.responses.isEmpty()) ? getResponses() : null;
-
-    List rhsResponses = (that.responses != null) && (!that.responses.isEmpty()) ? that.getResponses() : null;
+    
+    List<String> lhsResponses = (this.responses != null) && (!this.responses.isEmpty()) ? getResponses() : null;
+    
+    List<String> rhsResponses = (that.responses != null) && (!that.responses.isEmpty()) ? that.getResponses() : null;
     if (!strategy.equals(LocatorUtils.property(thisLocator, "responses", lhsResponses), LocatorUtils.property(thatLocator, "responses", rhsResponses), lhsResponses, rhsResponses)) {
       return false;
     }
-
     return true;
   }
-
-  public boolean equals(Object object) {
+  
+  public boolean equals(Object object)
+  {
     EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
     return equals(null, null, object, strategy);
   }
-
-  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy) {
+  
+  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy)
+  {
     int currentHashCode = 1;
-
-    List theResponses = (this.responses != null) && (!this.responses.isEmpty()) ? getResponses() : null;
+    
+    List<String> theResponses = (this.responses != null) && (!this.responses.isEmpty()) ? getResponses() : null;
     currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "responses", theResponses), currentHashCode, theResponses);
-
+    
     return currentHashCode;
   }
-
-  public int hashCode() {
+  
+  public int hashCode()
+  {
     HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
     return hashCode(null, strategy);
   }

@@ -26,10 +26,9 @@ public class Files
   implements Serializable, Equals, HashCode
 {
   private static final long serialVersionUID = 1L;
-
   @XmlElement(name="file", namespace="http://schema.intuit.com/platform/fdatafeed/files/v1")
   protected List<File> files;
-
+  
   public List<File> getFiles()
   {
     if (this.files == null) {
@@ -37,13 +36,14 @@ public class Files
     }
     return this.files;
   }
-
+  
   public void setFiles(List<File> files)
   {
     this.files = files;
   }
-
-  public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy) {
+  
+  public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy)
+  {
     if (!(object instanceof Files)) {
       return false;
     }
@@ -51,32 +51,34 @@ public class Files
       return true;
     }
     Files that = (Files)object;
-
-    List lhsFiles = (this.files != null) && (!this.files.isEmpty()) ? getFiles() : null;
-
-    List rhsFiles = (that.files != null) && (!that.files.isEmpty()) ? that.getFiles() : null;
+    
+    List<File> lhsFiles = (this.files != null) && (!this.files.isEmpty()) ? getFiles() : null;
+    
+    List<File> rhsFiles = (that.files != null) && (!that.files.isEmpty()) ? that.getFiles() : null;
     if (!strategy.equals(LocatorUtils.property(thisLocator, "files", lhsFiles), LocatorUtils.property(thatLocator, "files", rhsFiles), lhsFiles, rhsFiles)) {
       return false;
     }
-
     return true;
   }
-
-  public boolean equals(Object object) {
+  
+  public boolean equals(Object object)
+  {
     EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
     return equals(null, null, object, strategy);
   }
-
-  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy) {
+  
+  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy)
+  {
     int currentHashCode = 1;
-
-    List theFiles = (this.files != null) && (!this.files.isEmpty()) ? getFiles() : null;
+    
+    List<File> theFiles = (this.files != null) && (!this.files.isEmpty()) ? getFiles() : null;
     currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "files", theFiles), currentHashCode, theFiles);
-
+    
     return currentHashCode;
   }
-
-  public int hashCode() {
+  
+  public int hashCode()
+  {
     HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
     return hashCode(null, strategy);
   }

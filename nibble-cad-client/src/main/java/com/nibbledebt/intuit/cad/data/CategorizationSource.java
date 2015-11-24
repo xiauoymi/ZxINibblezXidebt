@@ -7,15 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum CategorizationSource
 {
-  AGGR, 
-  OFX, 
-  CAT;
-
-  public String value() {
+  AGGR,  OFX,  CAT;
+  
+  private CategorizationSource() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static CategorizationSource fromValue(String v) {
+  
+  public static CategorizationSource fromValue(String v)
+  {
     return valueOf(v);
   }
 }

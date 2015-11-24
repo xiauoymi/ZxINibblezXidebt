@@ -1,0 +1,79 @@
+<Institutions xmlns="http://schema.intuit.com/platform/fdatafeed/institution/v1" xmlns:ns2="http://schema.intuit.com/platform/fdatafeed/common/v1">
+  <institution>
+    <institutionId>8860</institutionId>
+    <institutionName>Carolina Foothills FCU Credit Card</institutionName>
+    <homeUrl>http://www.cffcu.org/index.html</homeUrl>
+    <phoneNumber>1-864-585-6838</phoneNumber>
+    <virtual>false</virtual>
+  </institution>
+  <institution>
+    <institutionId>8844</institutionId>
+    <institutionName>Christian Financial Credit Union - Credit Card</institutionName>
+    <homeUrl>https://www.christianfinancialcu.com/</homeUrl>
+    <phoneNumber>586-772-6330</phoneNumber>
+    <virtual>false</virtual>
+  </institution>
+  <institution>
+    <institutionId>8851</institutionId>
+    <institutionName>Appalachian Community FCU Credit Card</institutionName>
+    <homeUrl>http://www.myacfcu.com/ASP/home.asp</homeUrl>
+    <phoneNumber>1-800-378-3778</phoneNumber>
+    <virtual>false</virtual>
+  </institution>
+  <institution>
+    <institutionId>8819</institutionId>
+    <institutionName>Southside Bank (TX) Credit Card</institutionName>
+    <homeUrl>http://www.southside.com/index.htm</homeUrl>
+    <phoneNumber>1-903-531-7111</phoneNumber>
+    <virtual>false</virtual>
+  </institution>
+  <institution>
+    <institutionId>8886</institutionId>
+    <institutionName>Glendale Area Schools FCU Credit Card</institutionName>
+    <homeUrl>http://www.gasfcu.org/</homeUrl>
+    <phoneNumber>1-800-844-5363</phoneNumber>
+    <virtual>false</virtual>
+  </institution>
+  <institution>
+    <institutionId>8890</institutionId>
+    <institutionName>Southern First Bank (SC) - Business Banking</institutionName>
+    <homeUrl>https://www.southernfirst.com/</homeUrl>
+    <phoneNumber>864-679-9000</phoneNumber>
+    <virtual>false</virtual>
+  </institution>
+  <institution>
+    <institutionId>8891</institutionId>
+    <institutionName>Houston TX Firefighters FCU Credit Card</institutionName>
+    <homeUrl>http://www.htfffcu.org/</homeUrl>
+    <phoneNumber>1-713-864-0959</phoneNumber>
+    <virtual>false</virtual>
+  </institution>
+  <institution>
+    <institutionId>8900</institutionId>
+    <institutionName>SummitOne Credit Union</institutionName>
+    <homeUrl>https://www.mckaydeecu.com/index.asp</homeUrl>
+    <phoneNumber>1-801-476-8000</phoneNumber>
+    <virtual>false</virtual>
+  </institution>
+  <institution>
+    <institutionId>8905</institutionId>
+    <institutionName>Prime Financial CU Credit Card</institutionName>
+    <homeUrl>http://www.primefinancialcu.org/default.aspx</homeUrl>
+    <phoneNumber>1-800-835-9680</phoneNumber>
+    <virtual>false</virtual>
+  </institution>
+  <institution>
+    <institutionId>8960</institutionId>
+    <institutionName>Andrews Federal Credit Union - Credit Card</institutionName>
+    <homeUrl>http://www.andrewsfcu.org/</homeUrl>
+    <phoneNumber>301-702-5500</phoneNumber>
+    <virtual>false</virtual>
+  </institution>
+  <institution>
+    <institutionId>8965</institutionId>
+    <institutionName>Associated Bank Credit Card</institutionName>
+    <homeUrl>http://www.associatedbank.com</homeUrl>
+    <phoneNumber>1-800-682-4989</phoneNumber>
+    <virtual>false</virtual>
+  </institution>
+</Institutions>

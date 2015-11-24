@@ -34,7 +34,7 @@ public class SAMLAssertionData
   private String confirmationMethod;
   private String authenticationContext;
   private String samlId;
-
+  
   public SAMLAssertionData(String subject, String issuer, String restrictionInfo)
     throws SamlAssertionException
   {
@@ -49,13 +49,16 @@ public class SAMLAssertionData
     this.subject = subject;
     this.issuer = issuer;
     this.audienceRestriction = restrictionInfo;
-    try {
+    try
+    {
       this.samlId = getGenerator().generateIdentifier();
-    } catch (NoSuchAlgorithmException nosuchalgorithmexception) {
+    }
+    catch (NoSuchAlgorithmException nosuchalgorithmexception)
+    {
       throw new SamlAssertionException("Failed to generate samlId", nosuchalgorithmexception);
     }
   }
-
+  
   protected SecureRandomIdentifierGenerator getGenerator()
     throws NoSuchAlgorithmException
   {
@@ -64,132 +67,132 @@ public class SAMLAssertionData
     }
     return generator;
   }
-
+  
   public void setSubject(String subject)
   {
     this.subject = subject;
   }
-
+  
   public String getSubject()
   {
     return this.subject;
   }
-
+  
   public void setIssuer(String issuer)
   {
     this.issuer = issuer;
   }
-
+  
   public String getIssuer()
   {
     return this.issuer;
   }
-
+  
   public void setAudienceRestriction(String audienceRestriction)
   {
     this.audienceRestriction = audienceRestriction;
   }
-
+  
   public String getAudienceRestriction()
   {
     return this.audienceRestriction;
   }
-
+  
   public void setRecipient(String recipient)
   {
     this.recipient = recipient;
   }
-
+  
   public String getRecipient()
   {
     return this.recipient;
   }
-
+  
   public void setVersion(String version)
   {
     this.version = version;
   }
-
+  
   public String getVersion()
   {
     return this.version;
   }
-
+  
   public void setAuthTime(DateTime authTime)
   {
     this.authTime = authTime;
   }
-
+  
   public DateTime getAuthTime()
   {
     return this.authTime;
   }
-
+  
   public void setAssertionTime(DateTime assertionTime)
   {
     this.assertionTime = assertionTime;
   }
-
+  
   public DateTime getAssertionTime()
   {
     return this.assertionTime;
   }
-
+  
   public void setToleranceMS(int toleranceMS)
   {
     this.toleranceMS = toleranceMS;
   }
-
+  
   public int getToleranceMS()
   {
     return this.toleranceMS;
   }
-
+  
   public void setTokenLifetimeMS(int tokenLifetimeMS)
   {
     this.tokenLifetimeMS = tokenLifetimeMS;
   }
-
+  
   public int getTokenLifetimeMS()
   {
     return this.tokenLifetimeMS;
   }
-
+  
   public void setAttributes(Map<String, String> attributes)
   {
     this.attributes = attributes;
   }
-
+  
   public Map<String, String> getAttributes()
   {
     return this.attributes;
   }
-
+  
   public void setConfirmationMethod(String confirmationMethod)
   {
     this.confirmationMethod = confirmationMethod;
   }
-
+  
   public String getConfirmationMethod()
   {
     return this.confirmationMethod;
   }
-
+  
   public void setAuthenticationContext(String authenticationContext)
   {
     this.authenticationContext = authenticationContext;
   }
-
+  
   public String getAuthenticationContext()
   {
     return this.authenticationContext;
   }
-
+  
   public void setSamlId(String samlId)
   {
     this.samlId = samlId;
   }
-
+  
   public String getSamlId()
   {
     return this.samlId;

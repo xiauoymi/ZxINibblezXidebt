@@ -48,4 +48,46 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true"/>
 	</bean>
 	
+	
+	<beans profile="postgres-local, embedded-local, heroku-dev, prod">
+		<util:list id="intuitSuppLoanTypes" value-type="java.lang.String">
+			<value>MOHELA - Loan</value>
+			<value>Department of Education Student Loan Servicer</value>
+			<value>Discover Student Loans</value>
+			<value>NelNet Student Loan</value>
+			<value>Great Lakes Educational Loan Services Inc.</value>
+			<value>Utah Higher Education Assistance Authority</value>
+			<value>National Student Loan Data System(Formerly Direct Loans)</value>
+			<value>EdManage (US Department of Education) (Now Mohela Loan)</value>
+			<value>CornerStone Education Loan Services (by UHEAA)</value>
+			<value>ISM Education Loans</value>
+			<value>American Education Services</value>
+			<value>Navient(Formerly Sallie Mae Loan)</value>
+		</util:list>
+		<util:list id="intuitSuppInstitutionTypes" value-type="java.lang.String">
+			<value>JP Morgan Chase Bank</value>
+			<value>Capital One 360</value>
+			<value>Bank of America</value>
+			<value>PNC Bank</value>
+			<value>Discover Bank</value>
+			<value>U.S. Bank TrustNow</value>
+			<value>USAA Bank</value>
+			<value>Citibank Credit Card</value>
+			<value>American Express Credit Card</value>
+			<value>BBVA Compass</value>
+		</util:list>
+		<util:list id="intuitTestInstitutionTypes" value-type="java.lang.String">
+			<value>JP Morgan Chase Bank</value>
+			<value>Capital One 360</value>
+			<value>Bank of America</value>
+			<value>PNC Bank</value>
+			<value>Discover Bank</value>
+			<value>U.S. Bank TrustNow</value>
+			<value>USAA Bank</value>
+			<value>Citibank Credit Card</value>
+			<value>American Express Credit Card</value>
+			<value>BBVA Compass</value>
+		</util:list>
+	</beans>
+	
 </beans>

@@ -7,22 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum LoanType
 {
-  LOAN, 
-  AUTO, 
-  COMMERCIAL, 
-  CONSTR, 
-  CONSUMER, 
-  HOMEEQUITY, 
-  MILITARY, 
-  MORTGAGE, 
-  SMB, 
-  STUDENT;
-
-  public String value() {
+  LOAN,  AUTO,  COMMERCIAL,  CONSTR,  CONSUMER,  HOMEEQUITY,  MILITARY,  MORTGAGE,  SMB,  STUDENT;
+  
+  private LoanType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static LoanType fromValue(String v) {
+  
+  public static LoanType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

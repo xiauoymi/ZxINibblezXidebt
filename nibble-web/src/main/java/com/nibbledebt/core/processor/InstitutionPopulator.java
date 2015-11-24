@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import com.nibbledebt.core.data.model.Field;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.core.data.dao.IInstitutionDao;
 import com.nibbledebt.core.data.error.RepositoryException;
+import com.nibbledebt.core.data.model.Field;
 import com.nibbledebt.domain.model.Institution;
 import com.nibbledebt.domain.model.LoginField;
 import com.nibbledebt.domain.model.LoginForm;
@@ -35,29 +33,29 @@ import com.nibbledebt.integration.sao.IIntegrationSao;
 @Component("instPopulate")
 @Scope("prototype")
 public class InstitutionPopulator implements RunnableAsync<Institution>{
-	@Resource
-	private List<String> suppInstitutionTypes;
-	
-	@Resource
-	private List<String> testInstitutionTypes;
-
-	@Resource
-	private List<String> suppLoanTypes;
-	
-	private static final String AGGREGATOR_FINICITY = "finicity";
+		
+	public static final String AGGREGATOR_FINICITY = "finicity";
+	public static final String AGGREGATOR_INTUITCAD = "intuitcad";
 	
 	@Autowired
 	private IInstitutionDao institutionDao;
 	  
 	@Autowired
 	@Qualifier("finicitySao")
-	private IIntegrationSao integrationSao;
+	private IIntegrationSao finicitySao;
+	
+	@Autowired
+	@Qualifier("intuitCadSao")
+	private IIntegrationSao intuitCadSao;
 	
 	private Institution instFromLoop;
+	private String aggregator;
 
 	@Transactional(isolation=Isolation.READ_COMMITTED, propagation=Propagation.REQUIRES_NEW, noRollbackFor=Exception.class)
 	public void insertInstitution(Institution instFromLoop) {
 		try {
+			IIntegrationSao integrationSao = StringUtils.equalsIgnoreCase(aggregator, AGGREGATOR_INTUITCAD) ? intuitCadSao : finicitySao;
+			
 			com.nibbledebt.core.data.model.Institution inst = null;
 			try {
 				inst = institutionDao.findByName(instFromLoop.getName());
@@ -65,11 +63,13 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 				LoggerFactory.getLogger(InstitutionProcessor.class).warn("Error while retrieving Intuit institution from database. ", e);
 			}
 			
-			if(inst == null && suppInstitutionTypes.contains(instFromLoop.getName())){
+			if(inst == null && integrationSao.getSuppInstitutionTypes().contains(instFromLoop.getName())){
 				Institution instDetail = integrationSao.getInstitution(String.valueOf(instFromLoop.getId()));				
 				String instType = determineType(instDetail.getType());
 				if(!StringUtils.equalsIgnoreCase(instType, "unknown")){
-					LoginForm loginForm = integrationSao.getInstitutionLoginForm(String.valueOf(instFromLoop.getId()));
+					LoginForm loginForm = instDetail.getLoginForm();
+					if(loginForm == null)
+						loginForm = integrationSao.getInstitutionLoginForm(String.valueOf(instFromLoop.getId()));
 					inst = new com.nibbledebt.core.data.model.Institution();
 					inst.setName(instDetail.getName());
 					inst.setExternalId(String.valueOf(instDetail.getId()));
@@ -78,18 +78,20 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 					inst.setCreatedTs(new Date());
 					inst.setCreatedUser("system");
 					inst.setLogoCode(StringUtils.lowerCase(StringUtils.deleteWhitespace(instDetail.getName())));
-					inst.setIsPrimary(suppInstitutionTypes.contains(instDetail.getName()) ? true : false);
-					inst.setIsTest(testInstitutionTypes.contains(instDetail.getName()) ? true : false);
+					inst.setIsPrimary(integrationSao.getSuppInstitutionTypes().contains(instDetail.getName()) ? true : false);
+					inst.setIsTest(integrationSao.getTestInstitutionTypes().contains(instDetail.getName()) ? true : false);
 					inst.setLastSyncedTs(new Date());
 					inst.setPriority(1);
 					inst.setType(instType);
 					convertToFields(loginForm.getLoginField(), inst);
 				}
-			}else if(inst == null && suppLoanTypes.contains(instFromLoop.getName())){
+			}else if(inst == null && integrationSao.getSuppLoanTypes().contains(instFromLoop.getName())){
 				Institution instDetail = integrationSao.getInstitution(String.valueOf(instFromLoop.getId()));				
 				String instType = "student_loan";
 				if(!StringUtils.equalsIgnoreCase(instType, "unknown")){
-					LoginForm loginForm = integrationSao.getInstitutionLoginForm(String.valueOf(instFromLoop.getId()));
+					LoginForm loginForm = instDetail.getLoginForm();
+					if(loginForm == null)
+						loginForm = integrationSao.getInstitutionLoginForm(String.valueOf(instFromLoop.getId()));
 					inst = new com.nibbledebt.core.data.model.Institution();
 					inst.setName(instDetail.getName());
 					inst.setExternalId(String.valueOf(instDetail.getId()));
@@ -98,8 +100,8 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 					inst.setCreatedTs(new Date());
 					inst.setCreatedUser("system");
 					inst.setLogoCode(StringUtils.lowerCase(StringUtils.deleteWhitespace(instDetail.getName())));
-					inst.setIsPrimary(suppLoanTypes.contains(instDetail.getName()) ? true : false);
-					inst.setIsTest(testInstitutionTypes.contains(instDetail.getName()) ? true : false);
+					inst.setIsPrimary(integrationSao.getSuppLoanTypes().contains(instDetail.getName()) ? true : false);
+					inst.setIsTest(integrationSao.getTestInstitutionTypes().contains(instDetail.getName()) ? true : false);
 					inst.setLastSyncedTs(new Date());
 					inst.setPriority(1);
 					inst.setType(instType);
@@ -108,11 +110,13 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 			}else if(inst!=null && ( (inst.getUpdatedTs()==null && inst.getCreatedTs().getTime()<System.currentTimeMillis()-86400000) 
 							||  (inst.getUpdatedTs()!=null && inst.getUpdatedTs().getTime()<System.currentTimeMillis()-86400000)) ){
 				Institution instDetail = integrationSao.getInstitution(String.valueOf(instFromLoop.getId()));
-				LoginForm loginForm = integrationSao.getInstitutionLoginForm(String.valueOf(instFromLoop.getId()));
+				LoginForm loginForm = instDetail.getLoginForm();
+				if(loginForm == null)
+					loginForm = integrationSao.getInstitutionLoginForm(String.valueOf(instFromLoop.getId()));
 				inst.setExternalId(String.valueOf(instDetail.getId()));
 				inst.setHomeUrl(instDetail.getHomeUrl());
 				inst.setUpdatedTs(new Date());
-				if(suppLoanTypes.contains(instDetail.getName()) || suppInstitutionTypes.contains(instDetail.getName())) inst.setIsPrimary(true);
+				if(integrationSao.getSuppLoanTypes().contains(instDetail.getName()) || integrationSao.getSuppInstitutionTypes().contains(instDetail.getName())) inst.setIsPrimary(true);
 				else inst.setIsPrimary(false);
 				inst.setUpdatedUser("system");
 				inst.setLastSyncedTs(new Date());
@@ -178,6 +182,12 @@ public class InstitutionPopulator implements RunnableAsync<Institution>{
 	@Override
 	public void setEntity(Institution instFromLoop) {
 		this.instFromLoop = instFromLoop;
+		
+	}
+
+	@Override
+	public void setAggregator(String aggregator) {
+		this.aggregator = aggregator;
 		
 	}	
 }

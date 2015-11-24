@@ -7,16 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum LoanTermType
 {
-  COMBO, 
-  FIXED, 
-  REVOLVE, 
-  OPEN;
-
-  public String value() {
+  COMBO,  FIXED,  REVOLVE,  OPEN;
+  
+  private LoanTermType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static LoanTermType fromValue(String v) {
+  
+  public static LoanTermType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

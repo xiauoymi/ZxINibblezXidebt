@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
@@ -56,7 +57,11 @@ public class InstitutionProcessor {
 	
 	@Autowired
 	@Qualifier("finicitySao")
-	private IIntegrationSao integrationSao;
+	private IIntegrationSao finicitySao;
+	
+	@Autowired
+	@Qualifier("intuitCadSao")
+	private IIntegrationSao intuitCadSao;
 	
 	@Autowired
 	private ThreadPoolTaskExecutor instSyncExecutor;
@@ -160,6 +165,12 @@ public class InstitutionProcessor {
         }
     }
 	
+    /**
+     * Logic to use Intuit as the primary aggregator. 
+     * If Intuit aggregation fails, then use Finicity as fallback.
+     * 
+     * @throws ProcessingException
+     */
 //	@Scheduled(cron="0 0 * * * *")
 //	@Scheduled(fixedRate=86400000)
 	@Loggable(logLevel=LogLevel.INFO)
@@ -178,14 +189,29 @@ public class InstitutionProcessor {
 	                }
 	            }
 	        });
-			List<Institution> institutions = integrationSao.getInstitutions();
+			
+			List<Institution> institutions = intuitCadSao.getInstitutions();
 			for(Institution institution : institutions){
 				RunnableAsync<Institution> pop = context.getBean("instPopulate", RunnableAsync.class);
 				pop.setEntity(institution);
+				pop.setAggregator(InstitutionPopulator.AGGREGATOR_INTUITCAD);
 				instSyncExecutor.execute(pop);
 			}
+			LoggerFactory.getLogger(this.getClass()).info("Spawned all threads for Intuit : "+ institutions.size());
+
+			institutions = finicitySao.getInstitutions();
+			for(Institution institution : institutions){
+				RunnableAsync<Institution> pop = context.getBean("instPopulate", RunnableAsync.class);
+				pop.setEntity(institution);
+				pop.setAggregator(InstitutionPopulator.AGGREGATOR_FINICITY);
+				instSyncExecutor.execute(pop);
+			}
+			
+			LoggerFactory.getLogger(this.getClass()).info("Spawned all threads for Finicity : "+ institutions.size());
+
+			
 		}  catch (ServiceException e) {
-			throw new ProcessingException("Error while retrieving supported institutions list with Intuit.", e);
+			throw new ProcessingException("Error while retrieving supported institutions list with Intuit/Finicity.", e);
 		}
 	}	
 }

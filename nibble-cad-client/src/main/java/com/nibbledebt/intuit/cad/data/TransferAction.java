@@ -7,14 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum TransferAction
 {
-  IN, 
-  OUT;
-
-  public String value() {
+  IN,  OUT;
+  
+  private TransferAction() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static TransferAction fromValue(String v) {
+  
+  public static TransferAction fromValue(String v)
+  {
     return valueOf(v);
   }
 }

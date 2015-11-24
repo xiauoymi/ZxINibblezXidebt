@@ -27,10 +27,9 @@ public class Challenges
   implements Serializable, Equals, HashCode
 {
   private static final long serialVersionUID = 1L;
-
   @XmlElement(name="challenge", namespace="http://schema.intuit.com/platform/fdatafeed/challenge/v1", required=true)
   protected List<Challenge> challenges;
-
+  
   public List<Challenge> getChallenges()
   {
     if (this.challenges == null) {
@@ -38,13 +37,14 @@ public class Challenges
     }
     return this.challenges;
   }
-
+  
   public void setChallenges(List<Challenge> challenges)
   {
     this.challenges = challenges;
   }
-
-  public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy) {
+  
+  public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy)
+  {
     if (!(object instanceof Challenges)) {
       return false;
     }
@@ -52,46 +52,47 @@ public class Challenges
       return true;
     }
     Challenges that = (Challenges)object;
-
-    List lhsChallenges = (this.challenges != null) && (!this.challenges.isEmpty()) ? getChallenges() : null;
-
-    List rhsChallenges = (that.challenges != null) && (!that.challenges.isEmpty()) ? that.getChallenges() : null;
+    
+    List<Challenge> lhsChallenges = (this.challenges != null) && (!this.challenges.isEmpty()) ? getChallenges() : null;
+    
+    List<Challenge> rhsChallenges = (that.challenges != null) && (!that.challenges.isEmpty()) ? that.getChallenges() : null;
     if (!strategy.equals(LocatorUtils.property(thisLocator, "challenges", lhsChallenges), LocatorUtils.property(thatLocator, "challenges", rhsChallenges), lhsChallenges, rhsChallenges)) {
       return false;
     }
-
     return true;
   }
-
-  public boolean equals(Object object) {
+  
+  public boolean equals(Object object)
+  {
     EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
     return equals(null, null, object, strategy);
   }
-
-  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy) {
+  
+  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy)
+  {
     int currentHashCode = 1;
-
-    List theChallenges = (this.challenges != null) && (!this.challenges.isEmpty()) ? getChallenges() : null;
+    
+    List<Challenge> theChallenges = (this.challenges != null) && (!this.challenges.isEmpty()) ? getChallenges() : null;
     currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "challenges", theChallenges), currentHashCode, theChallenges);
-
+    
     return currentHashCode;
   }
-
-  public int hashCode() {
+  
+  public int hashCode()
+  {
     HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
     return hashCode(null, strategy);
   }
-
+  
   @XmlAccessorType(XmlAccessType.FIELD)
   @XmlType(name="", propOrder={"textsAndImagesAndChoices"})
   public static class Challenge
     implements Serializable, Equals, HashCode
   {
     private static final long serialVersionUID = 1L;
-
     @XmlElements({@XmlElement(name="text", namespace="http://schema.intuit.com/platform/fdatafeed/challenge/v1", type=String.class), @XmlElement(name="image", namespace="http://schema.intuit.com/platform/fdatafeed/challenge/v1", type=byte[].class), @XmlElement(name="choice", namespace="http://schema.intuit.com/platform/fdatafeed/challenge/v1", type=Choice.class)})
     protected List<Object> textsAndImagesAndChoices;
-
+    
     public List<Object> getTextsAndImagesAndChoices()
     {
       if (this.textsAndImagesAndChoices == null) {
@@ -99,13 +100,14 @@ public class Challenges
       }
       return this.textsAndImagesAndChoices;
     }
-
+    
     public void setTextsAndImagesAndChoices(List<Object> textsAndImagesAndChoices)
     {
       this.textsAndImagesAndChoices = textsAndImagesAndChoices;
     }
-
-    public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy) {
+    
+    public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy)
+    {
       if (!(object instanceof Challenge)) {
         return false;
       }
@@ -113,70 +115,71 @@ public class Challenges
         return true;
       }
       Challenge that = (Challenge)object;
-
-      List lhsTextsAndImagesAndChoices = (this.textsAndImagesAndChoices != null) && (!this.textsAndImagesAndChoices.isEmpty()) ? getTextsAndImagesAndChoices() : null;
-
-      List rhsTextsAndImagesAndChoices = (that.textsAndImagesAndChoices != null) && (!that.textsAndImagesAndChoices.isEmpty()) ? that.getTextsAndImagesAndChoices() : null;
+      
+      List<Object> lhsTextsAndImagesAndChoices = (this.textsAndImagesAndChoices != null) && (!this.textsAndImagesAndChoices.isEmpty()) ? getTextsAndImagesAndChoices() : null;
+      
+      List<Object> rhsTextsAndImagesAndChoices = (that.textsAndImagesAndChoices != null) && (!that.textsAndImagesAndChoices.isEmpty()) ? that.getTextsAndImagesAndChoices() : null;
       if (!strategy.equals(LocatorUtils.property(thisLocator, "textsAndImagesAndChoices", lhsTextsAndImagesAndChoices), LocatorUtils.property(thatLocator, "textsAndImagesAndChoices", rhsTextsAndImagesAndChoices), lhsTextsAndImagesAndChoices, rhsTextsAndImagesAndChoices)) {
         return false;
       }
-
       return true;
     }
-
-    public boolean equals(Object object) {
+    
+    public boolean equals(Object object)
+    {
       EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
       return equals(null, null, object, strategy);
     }
-
-    public int hashCode(ObjectLocator locator, HashCodeStrategy strategy) {
+    
+    public int hashCode(ObjectLocator locator, HashCodeStrategy strategy)
+    {
       int currentHashCode = 1;
-
-      List theTextsAndImagesAndChoices = (this.textsAndImagesAndChoices != null) && (!this.textsAndImagesAndChoices.isEmpty()) ? getTextsAndImagesAndChoices() : null;
+      
+      List<Object> theTextsAndImagesAndChoices = (this.textsAndImagesAndChoices != null) && (!this.textsAndImagesAndChoices.isEmpty()) ? getTextsAndImagesAndChoices() : null;
       currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "textsAndImagesAndChoices", theTextsAndImagesAndChoices), currentHashCode, theTextsAndImagesAndChoices);
-
+      
       return currentHashCode;
     }
-
-    public int hashCode() {
+    
+    public int hashCode()
+    {
       HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
       return hashCode(null, strategy);
     }
-
+    
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name="", propOrder={"text", "val"})
     public static class Choice
       implements Serializable, Equals, HashCode
     {
       private static final long serialVersionUID = 1L;
-
       @XmlElement(namespace="http://schema.intuit.com/platform/fdatafeed/challenge/v1", required=true)
       protected String text;
-
       @XmlElement(namespace="http://schema.intuit.com/platform/fdatafeed/challenge/v1", required=true)
       protected String val;
-
+      
       public String getText()
       {
         return this.text;
       }
-
+      
       public void setText(String value)
       {
         this.text = value;
       }
-
+      
       public String getVal()
       {
         return this.val;
       }
-
+      
       public void setVal(String value)
       {
         this.val = value;
       }
-
-      public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy) {
+      
+      public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy)
+      {
         if (!(object instanceof Choice)) {
           return false;
         }
@@ -184,42 +187,43 @@ public class Challenges
           return true;
         }
         Choice that = (Choice)object;
-
+        
         String lhsText = getText();
-
+        
         String rhsText = that.getText();
         if (!strategy.equals(LocatorUtils.property(thisLocator, "text", lhsText), LocatorUtils.property(thatLocator, "text", rhsText), lhsText, rhsText)) {
           return false;
         }
-
         String lhsVal = getVal();
-
+        
         String rhsVal = that.getVal();
         if (!strategy.equals(LocatorUtils.property(thisLocator, "val", lhsVal), LocatorUtils.property(thatLocator, "val", rhsVal), lhsVal, rhsVal)) {
           return false;
         }
-
         return true;
       }
-
-      public boolean equals(Object object) {
+      
+      public boolean equals(Object object)
+      {
         EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
         return equals(null, null, object, strategy);
       }
-
-      public int hashCode(ObjectLocator locator, HashCodeStrategy strategy) {
+      
+      public int hashCode(ObjectLocator locator, HashCodeStrategy strategy)
+      {
         int currentHashCode = 1;
-
+        
         String theText = getText();
         currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "text", theText), currentHashCode, theText);
-
+        
         String theVal = getVal();
         currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "val", theVal), currentHashCode, theVal);
-
+        
         return currentHashCode;
       }
-
-      public int hashCode() {
+      
+      public int hashCode()
+      {
         HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
         return hashCode(null, strategy);
       }

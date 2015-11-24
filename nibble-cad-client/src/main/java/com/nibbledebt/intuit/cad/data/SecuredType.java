@@ -7,14 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum SecuredType
 {
-  NAKED, 
-  COVERED;
-
-  public String value() {
+  NAKED,  COVERED;
+  
+  private SecuredType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static SecuredType fromValue(String v) {
+  
+  public static SecuredType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

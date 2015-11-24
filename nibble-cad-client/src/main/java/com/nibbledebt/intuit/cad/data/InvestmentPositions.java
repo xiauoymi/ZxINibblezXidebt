@@ -26,10 +26,9 @@ public class InvestmentPositions
   implements Serializable, Equals, HashCode
 {
   private static final long serialVersionUID = 1L;
-
   @XmlElement(name="position", namespace="http://schema.intuit.com/platform/fdatafeed/invposition/v1")
   protected List<InvestmentPosition> positions;
-
+  
   public List<InvestmentPosition> getPositions()
   {
     if (this.positions == null) {
@@ -37,13 +36,14 @@ public class InvestmentPositions
     }
     return this.positions;
   }
-
+  
   public void setPositions(List<InvestmentPosition> positions)
   {
     this.positions = positions;
   }
-
-  public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy) {
+  
+  public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy)
+  {
     if (!(object instanceof InvestmentPositions)) {
       return false;
     }
@@ -51,32 +51,34 @@ public class InvestmentPositions
       return true;
     }
     InvestmentPositions that = (InvestmentPositions)object;
-
-    List lhsPositions = (this.positions != null) && (!this.positions.isEmpty()) ? getPositions() : null;
-
-    List rhsPositions = (that.positions != null) && (!that.positions.isEmpty()) ? that.getPositions() : null;
+    
+    List<InvestmentPosition> lhsPositions = (this.positions != null) && (!this.positions.isEmpty()) ? getPositions() : null;
+    
+    List<InvestmentPosition> rhsPositions = (that.positions != null) && (!that.positions.isEmpty()) ? that.getPositions() : null;
     if (!strategy.equals(LocatorUtils.property(thisLocator, "positions", lhsPositions), LocatorUtils.property(thatLocator, "positions", rhsPositions), lhsPositions, rhsPositions)) {
       return false;
     }
-
     return true;
   }
-
-  public boolean equals(Object object) {
+  
+  public boolean equals(Object object)
+  {
     EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
     return equals(null, null, object, strategy);
   }
-
-  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy) {
+  
+  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy)
+  {
     int currentHashCode = 1;
-
-    List thePositions = (this.positions != null) && (!this.positions.isEmpty()) ? getPositions() : null;
+    
+    List<InvestmentPosition> thePositions = (this.positions != null) && (!this.positions.isEmpty()) ? getPositions() : null;
     currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "positions", thePositions), currentHashCode, thePositions);
-
+    
     return currentHashCode;
   }
-
-  public int hashCode() {
+  
+  public int hashCode()
+  {
     HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
     return hashCode(null, strategy);
   }

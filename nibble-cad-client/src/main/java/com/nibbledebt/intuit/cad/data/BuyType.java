@@ -7,14 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum BuyType
 {
-  BUY, 
-  BUYTOCOVER;
-
-  public String value() {
+  BUY,  BUYTOCOVER;
+  
+  private BuyType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static BuyType fromValue(String v) {
+  
+  public static BuyType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

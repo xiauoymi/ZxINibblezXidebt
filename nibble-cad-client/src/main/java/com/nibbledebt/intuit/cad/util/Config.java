@@ -3,11 +3,11 @@ package com.nibbledebt.intuit.cad.util;
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
+import org.slf4j.LoggerFactory;
 
 public final class Config
 {
-  private static final org.slf4j.Logger LOG = Logger.getLogger();
-
+  private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(Config.class);
   private CompositeConfiguration cc = null;
   public static final String BASE_URL_AGGCAT = "baseURL.aggcat";
   public static final String BASE_URL_AGGCATBATCH = "baseURL.aggcatBatch";
@@ -30,44 +30,50 @@ public final class Config
   public static final String RETRY_EXPONENTIAL_MIN_BACKOFF = "retry.exponential.minBackoff";
   public static final String RETRY_EXPONENTIAL_MAX_BACKOFF = "retry.exponential.maxBackoff";
   public static final String RETRY_EXPONENTIAL_DELTA_BACKOFF = "retry.exponential.deltaBackoff";
-  private static ThreadLocal<Config> local = new ThreadLocal() {
-    public Config initialValue() {
+  private static ThreadLocal<Config> local = new ThreadLocal()
+  {
+    public Config initialValue()
+    {
       return new Config();
     }
-
-    public Config get() {
+    
+    public Config get()
+    {
       return (Config)super.get();
     }
   };
-
+  
   private Config()
   {
     try
     {
       XMLConfiguration config = null;
       XMLConfiguration devConfig = null;
-
+      
       this.cc = new CompositeConfiguration();
-      try {
+      try
+      {
         devConfig = new XMLConfiguration("intuit-aggcat-config.xml");
         this.cc.addConfiguration(devConfig);
-      } catch (ConfigurationException e) {
+      }
+      catch (ConfigurationException e)
+      {
         LOG.warn("issue reading intuit-aggcat-config.xml");
       }
-
       config = new XMLConfiguration("intuit-aggcat-default-config.xml");
       this.cc.addConfiguration(config);
     }
-    catch (ConfigurationException e) {
+    catch (ConfigurationException e)
+    {
       LOG.error("ConfigurationException while loading configuration xml file.", e);
     }
   }
-
+  
   public static String getProperty(String key)
   {
     return ((Config)local.get()).cc.getString(key);
   }
-
+  
   public static void setProperty(String key, String value)
   {
     ((Config)local.get()).cc.setProperty(key, value);

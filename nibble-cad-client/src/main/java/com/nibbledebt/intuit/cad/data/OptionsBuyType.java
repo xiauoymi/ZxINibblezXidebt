@@ -7,14 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum OptionsBuyType
 {
-  BUYTOOPEN, 
-  BUYTOCLOSE;
-
-  public String value() {
+  BUYTOOPEN,  BUYTOCLOSE;
+  
+  private OptionsBuyType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static OptionsBuyType fromValue(String v) {
+  
+  public static OptionsBuyType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

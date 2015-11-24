@@ -8,12 +8,12 @@ import java.util.Calendar;
 public final class DateUtils
 {
   public static final String DATE_YYYYMMDD = "yyyy-MM-dd";
-
+  
   public static DateUtils getInstance()
   {
     return new DateUtils();
   }
-
+  
   public static Calendar getCalendarFromDate(String date, String format)
     throws ParseException
   {
@@ -22,7 +22,7 @@ public final class DateUtils
     cal.setTime(formatter.parse(date));
     return cal;
   }
-
+  
   public static String getCurrentDate()
     throws ParseException
   {
@@ -30,7 +30,7 @@ public final class DateUtils
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     return formatter.format(currentDate.getTime());
   }
-
+  
   public static String getDateWithNextDays(int noOfDays)
     throws ParseException
   {
@@ -39,7 +39,7 @@ public final class DateUtils
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     return formatter.format(currentDate.getTime());
   }
-
+  
   public static String getDateWithPrevDays(int noOfDays)
     throws ParseException
   {

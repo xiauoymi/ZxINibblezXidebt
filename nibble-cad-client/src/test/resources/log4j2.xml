@@ -1,0 +1,47 @@
+<configuration name="defaultConfiguration" status="debug" strict="true" monitorInterval="5">
+    <properties>
+        <property name="patternlayout">%d{ISO8601} [%t] %-5level %logger{36} - %msg%n%throwable{full}</property>
+        <property name="filename">${env:MY_ROOT}/logs/nbweb.log</property>
+        <property name="filenamePattern">${env:MY_ROOT}/logs/mylog-%d{yyyy-dd-MM}-%i.log.gz</property>
+    </properties>
+    <appenders>
+        <appender name="Console" type="Console" target="SYSTEM_OUT">
+            <layout type="PatternLayout" pattern="${patternlayout}" />
+        </appender>
+        <appender name="File" type="RollingFile" fileName="${filename}" filePattern="${filenamePattern}" bufferedIO="true" immediateFlush="true"
+        append="true">
+            <layout type="PatternLayout" pattern="${patternlayout}" />
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="50 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="30" />
+        </appender>
+        <appender name="AsynchFile" type="asynch" blocking="true" bufferSize="128">
+            <appender-ref ref="File" />
+        </appender>
+    </appenders>
+    <loggers>
+        <root level="info">
+            <appender-ref ref="Console" />
+            <appender-ref ref="AsynchFile" />
+        </root>
+        <logger name="org.springframework" additivity="false">
+            <appender-ref ref="Console" />
+            <appender-ref ref="AsynchFile" />
+        </logger>
+        
+        <logger name="org.springframework.web.client" additivity="false">
+            <appender-ref ref="Console" />
+            <appender-ref ref="AsynchFile" />
+        </logger>
+        <logger name="org.apache.cxf.interceptor" additivity="false">
+            <appender-ref ref="Console" />
+            <appender-ref ref="AsynchFile" />
+        </logger>
+        <logger name="com.nibbledebt.web.rest"  additivity="false">
+            <appender-ref ref="Console" />
+            <appender-ref ref="AsynchFile" />
+        </logger>
+    </loggers>
+</configuration>

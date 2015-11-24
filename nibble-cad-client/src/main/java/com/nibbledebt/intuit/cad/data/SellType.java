@@ -7,14 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum SellType
 {
-  SELL, 
-  SELLSHORT;
-
-  public String value() {
+  SELL,  SELLSHORT;
+  
+  private SellType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static SellType fromValue(String v) {
+  
+  public static SellType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

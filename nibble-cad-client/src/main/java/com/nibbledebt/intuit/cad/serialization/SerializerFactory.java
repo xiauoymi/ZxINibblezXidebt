@@ -6,12 +6,12 @@ import com.nibbledebt.intuit.cad.util.StringUtils;
 public final class SerializerFactory
 {
   public static final String XML_SERIALIZE_FORMAT = "xml";
-
+  
   public static SerializerFactory getInstance()
   {
     return new SerializerFactory();
   }
-
+  
   public static ISerializer getSerializer(String serializeFormat)
     throws SerializationException
   {
@@ -21,12 +21,13 @@ public final class SerializerFactory
     }
     return serializer;
   }
-
+  
   public static boolean isValidSerializeFormat(String serializeFormat)
     throws SerializationException
   {
-    if (!StringUtils.hasText(serializeFormat))
+    if (!StringUtils.hasText(serializeFormat)) {
       throw new SerializationException("serialization format is either null or empty!");
+    }
     if (serializeFormat.equalsIgnoreCase("xml")) {
       return true;
     }

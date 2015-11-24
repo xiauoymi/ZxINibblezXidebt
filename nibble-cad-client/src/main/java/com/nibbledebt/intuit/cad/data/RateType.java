@@ -7,15 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum RateType
 {
-  FIXED, 
-  FLOATING, 
-  ARM;
-
-  public String value() {
+  FIXED,  FLOATING,  ARM;
+  
+  private RateType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static RateType fromValue(String v) {
+  
+  public static RateType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

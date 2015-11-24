@@ -7,17 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum IncomeType
 {
-  CGLONG, 
-  CGSHORT, 
-  DIV, 
-  INTEREST, 
-  MISC;
-
-  public String value() {
+  CGLONG,  CGSHORT,  DIV,  INTEREST,  MISC;
+  
+  private IncomeType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static IncomeType fromValue(String v) {
+  
+  public static IncomeType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

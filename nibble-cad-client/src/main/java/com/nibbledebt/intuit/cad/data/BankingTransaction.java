@@ -18,11 +18,12 @@ import org.jvnet.jaxb2_commons.locator.ObjectLocator;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name="BankingTransaction", namespace="http://schema.intuit.com/platform/fdatafeed/bnktransaction/v1")
 @XmlRootElement(name="BankingTransaction", namespace="http://schema.intuit.com/platform/fdatafeed/bnktransaction/v1")
-public class BankingTransaction extends Transaction
+public class BankingTransaction
+  extends Transaction
   implements Serializable, Equals, HashCode
 {
   private static final long serialVersionUID = 1L;
-
+  
   public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy)
   {
     if (!(object instanceof BankingTransaction)) {
@@ -36,18 +37,21 @@ public class BankingTransaction extends Transaction
     }
     return true;
   }
-
-  public boolean equals(Object object) {
+  
+  public boolean equals(Object object)
+  {
     EqualsStrategy strategy = JAXBEqualsStrategy.INSTANCE;
     return equals(null, null, object, strategy);
   }
-
-  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy) {
+  
+  public int hashCode(ObjectLocator locator, HashCodeStrategy strategy)
+  {
     int currentHashCode = super.hashCode(locator, strategy);
     return currentHashCode;
   }
-
-  public int hashCode() {
+  
+  public int hashCode()
+  {
     HashCodeStrategy strategy = JAXBHashCodeStrategy.INSTANCE;
     return hashCode(null, strategy);
   }

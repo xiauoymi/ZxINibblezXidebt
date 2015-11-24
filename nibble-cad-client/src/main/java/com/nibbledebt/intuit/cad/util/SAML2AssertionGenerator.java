@@ -42,25 +42,29 @@ import com.nibbledebt.intuit.cad.exception.SamlAssertionException;
 public class SAML2AssertionGenerator
 {
   private static XMLObjectBuilderFactory builderFactory;
-
+  
   public String generateAssertion(SAMLAssertionData samlAssertionData)
     throws SamlAssertionException
   {
     Assertion assertion = buildAssertion(samlAssertionData);
-    try {
+    try
+    {
       AssertionMarshaller assertionmarshaller = new AssertionMarshaller();
       Element element = assertionmarshaller.marshall(assertion);
       return XMLHelper.nodeToString(element);
-    } catch (Exception e) {
+    }
+    catch (Exception e)
+    {
       throw new SamlAssertionException(e);
     }
   }
-
+  
   public String generateSignedAssertion(SAMLAssertionData samlAssertionData, SAMLCredentials samlCredentials)
     throws SamlAssertionException
   {
     Element element = null;
-    try {
+    try
+    {
       Assertion assertion = buildAssertion(samlAssertionData);
       SignatureBuilder signaturebuilder = (SignatureBuilder)getSAMLBuilder().getBuilder(Signature.DEFAULT_ELEMENT_NAME);
       SignatureImpl signatureimpl = signaturebuilder.buildObject();
@@ -69,16 +73,18 @@ public class SAML2AssertionGenerator
       signatureimpl.setSignatureAlgorithm("http://www.w3.org/2000/09/xmldsig#rsa-sha1");
       signatureimpl.setCanonicalizationAlgorithm("http://www.w3.org/2001/10/xml-exc-c14n#");
       assertion.setSignature(signatureimpl);
-      ArrayList arraylist = new ArrayList();
+      ArrayList<SignatureImpl> arraylist = new ArrayList();
       arraylist.add(signatureimpl);
       element = Configuration.getMarshallerFactory().getMarshaller(assertion).marshall(assertion);
       Signer.signObject(signatureimpl);
-    } catch (Exception e) {
+    }
+    catch (Exception e)
+    {
       throw new SamlAssertionException(e);
     }
     return XMLHelper.nodeToString(element);
   }
-
+  
   protected Assertion buildAssertion(SAMLAssertionData samlAssertionData)
     throws SamlAssertionException
   {
@@ -87,16 +93,16 @@ public class SAML2AssertionGenerator
       DateTime datetime = samlAssertionData.getAssertionTime();
       String samlId = samlAssertionData.getSamlId();
       Subject subject = createSubject(datetime, samlAssertionData.getSubject(), samlAssertionData.getConfirmationMethod(), samlAssertionData.getTokenLifetimeMS(), samlAssertionData.getRecipient());
-
+      
       AuthnStatement authnstatement = createAuthnStatement(samlAssertionData.getAuthTime(), samlAssertionData.getAuthenticationContext(), samlId);
-
-      Map map = samlAssertionData.getAttributes();
+      
+      Map<String, String> map = samlAssertionData.getAttributes();
       AttributeStatement attributestatement = null;
       if ((map != null) && (map.size() > 0)) {
         attributestatement = createAttributes(map);
       }
       Conditions conditions = createConditions(datetime, samlAssertionData.getAudienceRestriction(), samlAssertionData.getToleranceMS(), samlAssertionData.getTokenLifetimeMS());
-
+      
       SAMLObjectBuilder samlobjectbuilder = (SAMLObjectBuilder)getSAMLBuilder().getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
       Issuer issuer = (Issuer)samlobjectbuilder.buildObject();
       issuer.setValue(samlAssertionData.getIssuer());
@@ -113,31 +119,37 @@ public class SAML2AssertionGenerator
         assertion.getAttributeStatements().add(attributestatement);
       }
       return assertion;
-    } catch (Exception e) {
+    }
+    catch (Exception e)
+    {
       throw new SamlAssertionException(e);
     }
   }
-
+  
   protected XMLObjectBuilderFactory getSAMLBuilder()
     throws SamlAssertionException
   {
     try
     {
-      if (builderFactory == null) {
+      if (builderFactory == null)
+      {
         DefaultBootstrap.bootstrap();
         builderFactory = Configuration.getBuilderFactory();
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e)
+    {
       throw new SamlAssertionException(e);
     }
     return builderFactory;
   }
-
+  
   protected Subject createSubject(DateTime dateTime, String samlSubject, String confirmationMethod, int tokenLifeTime, String samlRecipient)
     throws SamlAssertionException
   {
     Subject subject = null;
-    try {
+    try
+    {
       SAMLObjectBuilder samlobjectbuilder = (SAMLObjectBuilder)getSAMLBuilder().getBuilder(NameID.DEFAULT_ELEMENT_NAME);
       NameID nameid = (NameID)samlobjectbuilder.buildObject();
       nameid.setValue(samlSubject);
@@ -145,13 +157,15 @@ public class SAML2AssertionGenerator
       SAMLObjectBuilder samlobjectbuilder1 = (SAMLObjectBuilder)getSAMLBuilder().getBuilder(Subject.DEFAULT_ELEMENT_NAME);
       subject = (Subject)samlobjectbuilder1.buildObject();
       subject.setNameID(nameid);
-      if (confirmationMethod != null) {
+      if (confirmationMethod != null)
+      {
         SAMLObjectBuilder samlobjectbuilder2 = (SAMLObjectBuilder)getSAMLBuilder().getBuilder(SubjectConfirmation.DEFAULT_ELEMENT_NAME);
         SubjectConfirmation subjectconfirmation = (SubjectConfirmation)samlobjectbuilder2.buildObject();
         subjectconfirmation.setMethod(confirmationMethod);
-        if (samlRecipient != null) {
+        if (samlRecipient != null)
+        {
           SAMLObjectBuilder samlobjectbuilder3 = (SAMLObjectBuilder)getSAMLBuilder().getBuilder(SubjectConfirmationData.DEFAULT_ELEMENT_NAME);
-
+          
           SubjectConfirmationData subjectconfirmationdata = (SubjectConfirmationData)samlobjectbuilder3.buildObject();
           subjectconfirmationdata.setNotBefore(dateTime);
           subjectconfirmationdata.setNotOnOrAfter(dateTime.plusMillis(tokenLifeTime));
@@ -160,12 +174,14 @@ public class SAML2AssertionGenerator
         }
         subject.getSubjectConfirmations().add(subjectconfirmation);
       }
-    } catch (Exception ex) {
+    }
+    catch (Exception ex)
+    {
       throw new SamlAssertionException(ex.getMessage(), ex);
     }
     return subject;
   }
-
+  
   protected Conditions createConditions(DateTime dateTime, String restrictionInfo, int tolerance, int lifeTime)
     throws SamlAssertionException
   {
@@ -182,7 +198,7 @@ public class SAML2AssertionGenerator
     conditions.getConditions().add(audiencerestriction);
     return conditions;
   }
-
+  
   protected AuthnStatement createAuthnStatement(DateTime dateTime, String authenticationContext, String samlId)
     throws SamlAssertionException
   {
@@ -199,7 +215,7 @@ public class SAML2AssertionGenerator
     authnstatement.setAuthnContext(authncontext);
     return authnstatement;
   }
-
+  
   protected AttributeStatement createAttributes(Map<String, String> map)
     throws SamlAssertionException
   {
@@ -207,9 +223,10 @@ public class SAML2AssertionGenerator
     AttributeStatement attributestatement = (AttributeStatement)samlobjectbuilder.buildObject();
     SAMLObjectBuilder samlobjectbuilder1 = (SAMLObjectBuilder)getSAMLBuilder().getBuilder(Attribute.DEFAULT_ELEMENT_NAME);
     XMLObjectBuilder xmlobjectbuilder = getSAMLBuilder().getBuilder(XSString.TYPE_NAME);
-    Set set = map.keySet();
+    Set<String> set = map.keySet();
     Attribute attribute;
-    for (Iterator iterator = set.iterator(); iterator.hasNext(); attributestatement.getAttributes().add(attribute)) {
+    for (Iterator<String> iterator = set.iterator(); iterator.hasNext(); attributestatement.getAttributes().add(attribute))
+    {
       String s = (String)iterator.next();
       String s1 = (String)map.get(s);
       attribute = (Attribute)samlobjectbuilder1.buildObject();
@@ -218,7 +235,6 @@ public class SAML2AssertionGenerator
       attribute.setName(s);
       attribute.getAttributeValues().add(xsstring);
     }
-
     return attributestatement;
   }
 }

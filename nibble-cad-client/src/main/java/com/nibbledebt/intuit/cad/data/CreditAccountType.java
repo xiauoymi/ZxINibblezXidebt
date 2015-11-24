@@ -7,15 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum CreditAccountType
 {
-  CREDITCARD, 
-  LINEOFCREDIT, 
-  OTHER;
-
-  public String value() {
+  CREDITCARD,  LINEOFCREDIT,  OTHER;
+  
+  private CreditAccountType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static CreditAccountType fromValue(String v) {
+  
+  public static CreditAccountType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

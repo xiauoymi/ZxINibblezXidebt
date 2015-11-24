@@ -7,18 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum RewardsAccountType
 {
-  AFFINITY, 
-  AIRLINE, 
-  AUTO, 
-  HOTEL, 
-  SHOPPING, 
-  OTHER;
-
-  public String value() {
+  AFFINITY,  AIRLINE,  AUTO,  HOTEL,  SHOPPING,  OTHER;
+  
+  private RewardsAccountType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static RewardsAccountType fromValue(String v) {
+  
+  public static RewardsAccountType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

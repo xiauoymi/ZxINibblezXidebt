@@ -7,19 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum BankingAccountType
 {
-  CHECKING, 
-  SAVINGS, 
-  MONEYMRKT, 
-  RECURRINGDEPOSIT, 
-  CD, 
-  CASHMANAGEMENT, 
-  OVERDRAFT;
-
-  public String value() {
+  CHECKING,  SAVINGS,  MONEYMRKT,  RECURRINGDEPOSIT,  CD,  CASHMANAGEMENT,  OVERDRAFT;
+  
+  private BankingAccountType() {}
+  
+  public String value()
+  {
     return name();
   }
-
-  public static BankingAccountType fromValue(String v) {
+  
+  public static BankingAccountType fromValue(String v)
+  {
     return valueOf(v);
   }
 }

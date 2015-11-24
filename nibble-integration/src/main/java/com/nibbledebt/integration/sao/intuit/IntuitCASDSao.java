@@ -13,6 +13,7 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.domain.model.Institution;
@@ -29,8 +30,17 @@ import com.nibbledebt.intuit.cad.service.AggCatServiceFactory;
  * @author alam_home
  *
  */
+@Component("intuitCadSao")
 public class IntuitCASDSao implements IIntegrationSao {
+	@Resource
+	private List<String> intuitSuppInstitutionTypes;
 	
+	@Resource
+	private List<String> intuitTestInstitutionTypes;
+
+	@Resource
+	private List<String> intuitSuppLoanTypes;
+		
 	@Resource
 	private Environment env;
 	
@@ -95,8 +105,7 @@ public class IntuitCASDSao implements IIntegrationSao {
 	 * @see com.nibbledebt.integration.sao.IIntegrationSao#addAccounts(java.lang.String, java.lang.String, com.nibbledebt.domain.model.LoginField[])
 	 */
 	@Override
-	public AddAccountsResponse addAccounts(String customerId, String institutionId, LoginField[] fields)
-			throws ServiceException {
+	public AddAccountsResponse addAccounts(String customerId, String institutionId, LoginField[] fields) throws ServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -105,8 +114,7 @@ public class IntuitCASDSao implements IIntegrationSao {
 	 * @see com.nibbledebt.integration.sao.IIntegrationSao#addAccountsMfaAnswer(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public AddAccountsResponse addAccountsMfaAnswer(String customerId, String institutionId, String question,
-			String answer) throws ServiceException {
+	public AddAccountsResponse addAccountsMfaAnswer(String customerId, String institutionId, String question, String answer) throws ServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -133,10 +141,34 @@ public class IntuitCASDSao implements IIntegrationSao {
 	 * @see com.nibbledebt.integration.sao.IIntegrationSao#retrieveTransactions(java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
 	 */
 	@Override
-	public List<Transaction> retrieveTransactions(String customerId, String accountId, Date fromDate, Date toDate,
-			String sort) throws ServiceException {
+	public List<Transaction> retrieveTransactions(String customerId, String accountId, Date fromDate, Date toDate, String sort) throws ServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+
+
+	/**
+	 * @return the suppInstitutionTypes
+	 */
+	@Override
+	public List<String> getSuppInstitutionTypes() {
+		return intuitSuppInstitutionTypes;
+	}
+
+	/**
+	 * @return the testInstitutionTypes
+	 */
+	@Override
+	public List<String> getTestInstitutionTypes() {
+		return intuitTestInstitutionTypes;
+	}
+
+	/**
+	 * @return the suppLoanTypes
+	 */
+	@Override
+	public List<String> getSuppLoanTypes() {
+		return intuitSuppLoanTypes;
+	}
 }

@@ -10,8 +10,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import com.nibbledebt.domain.model.account.MfaType;
-import com.nibbledebt.integration.finicity.SecurityContext;
 import org.apache.commons.lang.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +32,15 @@ import com.nibbledebt.integration.sao.IIntegrationSao;
  */
 @Component("finicitySao")
 public class FinicitySao implements IIntegrationSao{
+	@Resource
+	private List<String> finicitySuppInstitutionTypes;
+	
+	@Resource
+	private List<String> finicityTestInstitutionTypes;
+
+	@Resource
+	private List<String> finicitySuppLoanTypes;
+	
 	@Autowired
 	private Mapper integrationMapper;
 	
@@ -129,4 +136,30 @@ public class FinicitySao implements IIntegrationSao{
             throw new ServiceException("Error while retrieving transactions for customer with customerId["+customerId+"] and accountId["+accountId+"].", e);
         }
 	}
+
+	/**
+	 * @return the suppInstitutionTypes
+	 */
+	@Override
+	public List<String> getSuppInstitutionTypes() {
+		return finicitySuppInstitutionTypes;
+	}
+
+	/**
+	 * @return the testInstitutionTypes
+	 */
+	@Override
+	public List<String> getTestInstitutionTypes() {
+		return finicityTestInstitutionTypes;
+	}
+
+	/**
+	 * @return the suppLoanTypes
+	 */
+	@Override
+	public List<String> getSuppLoanTypes() {
+		return finicitySuppLoanTypes;
+	}
+	
+	
 }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<intuit-aggcat-config>
+	<baseURL>
+		<aggcat>https://financialdatafeed.platform.intuit.com/v1</aggcat>
+		<aggcatBatch>https://financialdatafeed.platform.intuit.com/v1/export</aggcatBatch>
+	</baseURL>
+	<saml>
+		<keystoreFile></keystoreFile>
+		<keystorePassword></keystorePassword>
+		<keyPassword></keyPassword>
+		<certAlias></certAlias>
+		<oAuthUrl>https://oauth.intuit.com/oauth/v1/get_access_token_by_saml</oAuthUrl>
+	</saml>
+	<retry>
+		<mode>fixed</mode>
+		<fixed>
+			<count>3</count>
+			<interval>30</interval>
+		</fixed>
+		<incremental>
+			<count>3</count>
+			<interval>30</interval>
+			<increment>5</increment>
+		</incremental>
+		<exponential>
+			<count>3</count>
+			<minBackoff>5</minBackoff>
+			<maxBackoff>100</maxBackoff>
+			<deltaBackoff>10</deltaBackoff>
+		</exponential>
+	</retry>
+</intuit-aggcat-config>
