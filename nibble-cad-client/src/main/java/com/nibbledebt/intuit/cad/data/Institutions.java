@@ -19,26 +19,28 @@ import org.jvnet.jaxb2_commons.lang.JAXBHashCodeStrategy;
 import org.jvnet.jaxb2_commons.locator.ObjectLocator;
 import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="Institutions", namespace="http://schema.intuit.com/platform/fdatafeed/institution/v1")
+@JsonRootName("Institutions")
 public class Institutions
   implements Serializable, Equals, HashCode
 {
   private static final long serialVersionUID = 1L;
-  @XmlElement(name="institution")
-  protected List<Institution> institutions;
+  protected List<Institution> institution;
   
-  public List<Institution> getInstitutions()
+  public List<Institution> getInstitution()
   {
-    if (this.institutions == null) {
-      this.institutions = new ArrayList();
+    if (this.institution == null) {
+      this.institution = new ArrayList<>();
     }
-    return this.institutions;
+    return this.institution;
   }
   
-  public void setInstitutions(List<Institution> institutions)
+  public void setInstitution(List<Institution> institution)
   {
-    this.institutions = institutions;
+    this.institution = institution;
   }
   
   public boolean equals(ObjectLocator thisLocator, ObjectLocator thatLocator, Object object, EqualsStrategy strategy)
@@ -51,9 +53,9 @@ public class Institutions
     }
     Institutions that = (Institutions)object;
     
-    List<Institution> lhsInstitutions = (this.institutions != null) && (!this.institutions.isEmpty()) ? getInstitutions() : null;
+    List<Institution> lhsInstitutions = (this.institution != null) && (!this.institution.isEmpty()) ? getInstitution() : null;
     
-    List<Institution> rhsInstitutions = (that.institutions != null) && (!that.institutions.isEmpty()) ? that.getInstitutions() : null;
+    List<Institution> rhsInstitutions = (that.institution != null) && (!that.institution.isEmpty()) ? that.getInstitution() : null;
     if (!strategy.equals(LocatorUtils.property(thisLocator, "institutions", lhsInstitutions), LocatorUtils.property(thatLocator, "institutions", rhsInstitutions), lhsInstitutions, rhsInstitutions)) {
       return false;
     }
@@ -70,7 +72,7 @@ public class Institutions
   {
     int currentHashCode = 1;
     
-    List<Institution> theInstitutions = (this.institutions != null) && (!this.institutions.isEmpty()) ? getInstitutions() : null;
+    List<Institution> theInstitutions = (this.institution != null) && (!this.institution.isEmpty()) ? getInstitution() : null;
     currentHashCode = strategy.hashCode(LocatorUtils.property(locator, "institutions", theInstitutions), currentHashCode, theInstitutions);
     
     return currentHashCode;

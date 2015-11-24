@@ -17,21 +17,39 @@ import org.jvnet.jaxb2_commons.lang.JAXBHashCodeStrategy;
 import org.jvnet.jaxb2_commons.locator.ObjectLocator;
 import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name="Institution", namespace="http://schema.intuit.com/platform/fdatafeed/institution/v1", propOrder={"institutionId", "institutionName", "homeUrl", "phoneNumber", "virtual"})
 @XmlSeeAlso({InstitutionDetail.class})
+@JsonRootName("institution")
 public class Institution
   implements Serializable, Equals, HashCode
 {
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 15234544L;
+  @XmlElement()
   protected long institutionId;
   @XmlElement(required=true)
   protected String institutionName;
+  @XmlElement()
   protected String homeUrl;
+  @XmlElement()
   protected String phoneNumber;
+  @XmlElement()
   protected Boolean virtual;
   
-  public long getInstitutionId()
+  public Institution(){}
+  
+  public Institution(long institutionId, String institutionName, String homeUrl, String phoneNumber, Boolean virtual) {
+	super();
+	this.institutionId = institutionId;
+	this.institutionName = institutionName;
+	this.homeUrl = homeUrl;
+	this.phoneNumber = phoneNumber;
+	this.virtual = virtual;
+}
+
+public long getInstitutionId()
   {
     return this.institutionId;
   }

@@ -9,6 +9,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.nibbledebt.intuit.cad.exception.SerializationException;
 
 public class XMLSerializer
@@ -44,8 +45,10 @@ public class XMLSerializer
     Object unmarshalledObject;
     try
     {
-      Unmarshaller unmarshaller = JAXBContext.newInstance(cl.getPackage().getName()).createUnmarshaller();
-      unmarshalledObject = unmarshaller.unmarshal(new StringReader(new String(str.getBytes(), "UTF-8")));
+    	XmlMapper mapper = new XmlMapper();
+    	unmarshalledObject = mapper.readValue(str, cl);
+//      Unmarshaller unmarshaller = JAXBContext.newInstance(cl.getPackage().getName()).createUnmarshaller();
+//      unmarshalledObject = unmarshaller.unmarshal(new StringReader(new String(str.getBytes(), "UTF-8")));
     }
     catch (Exception e)
     {
