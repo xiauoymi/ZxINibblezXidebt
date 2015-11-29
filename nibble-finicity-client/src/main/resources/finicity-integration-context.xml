@@ -37,13 +37,13 @@
 	      <value>finicity-mapper-configuration.xml</value>
 	    </list>
 	  </property>
-<!-- 	  <property name="customConvertersWithId">  -->
-<!-- 	      <map>  -->
-<!-- 	        <entry key="loginFieldConverter" > -->
-<!-- 	        	<bean class="com.nibbledebt.integration.mapper.LoginFieldConverter" /> -->
-<!-- 	        </entry> -->
-<!-- 	      </map>  -->
-<!--     </property>    -->
+	  <property name="customConvertersWithId"> 
+	      <map> 
+	        <entry key="loginFieldConverter" >
+	        	<bean class="com.nibbledebt.integration.mapper.LoginFieldConverter" />
+	        </entry>
+	      </map> 
+    </property>   
 	</bean>
 
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">

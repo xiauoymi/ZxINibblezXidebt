@@ -29,6 +29,7 @@ import com.nibbledebt.intuit.cad.data.InstitutionDetail;
 import com.nibbledebt.intuit.cad.data.Institutions;
 import com.nibbledebt.intuit.cad.exception.AggCatException;
 import com.nibbledebt.intuit.cad.service.AggCatServiceFactory;
+import com.nibbledebt.intuit.cad.service.DiscoverAndAddAccountsResponse;
 
 import junit.framework.Assert;
 
@@ -65,14 +66,14 @@ public class IntuitClientTest {
 //		Assert.assertNotNull(finicitySecurityContext.getAppToken());
 //	}
 	
-	@Test
-	public void getInstitutions() throws AggCatException  {
-		List<Institution> insts = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "sysuser").getInstitutions().getInstitution();
-		Assert.assertNotNull(insts);
-		Assert.assertNotNull(insts.get(0).getInstitutionId());
-		Assert.assertNotNull(insts.get(0).getHomeUrl());
-		Assert.assertNotNull(insts.get(0).getInstitutionName());
-	}
+//	@Test
+//	public void getInstitutions() throws AggCatException  {
+//		List<Institution> insts = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "sysuser").getInstitutions().getInstitution();
+//		Assert.assertNotNull(insts);
+//		Assert.assertNotNull(insts.get(0).getInstitutionId());
+//		Assert.assertNotNull(insts.get(0).getHomeUrl());
+//		Assert.assertNotNull(insts.get(0).getInstitutionName());
+//	}
 	
 //	@Test
 //	public void testDeserialize(){
@@ -114,29 +115,23 @@ public class IntuitClientTest {
 	
 	@Test
 	public void getInstitution() throws NumberFormatException, AggCatException  {
-		InstitutionDetail detail = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "sysuser").getInstitutionDetails(Long.valueOf("13278"));
+		InstitutionDetail detail = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "testuser").getInstitutionDetails(Long.valueOf("13278"));
 		Assert.assertNotNull(detail);
 	}
-//	
+
+	
 //	@Test
-//	public void addTestCustomer() throws FinicityAccessException {
-//		Assert.assertNotNull(finicityClient.addTestCustomer("testcustomer1", "testfname", "testlname"));
-//	}
-//	
-//	@Test
-//    public void discoverCustomerAccount() throws FinicityAccessException {
+//    public void discoverCustomerAccount()  {
 //        LoginField fieldName = new LoginField();
-//        fieldName.setId("101732001");
 //        fieldName.setName("Banking Userid");
 //        fieldName.setValue("tfa_text");
 //
 //        LoginField passField = new LoginField();
-//        passField.setId("101732002");
 //        passField.setName("Banking Password");
 //        passField.setValue("go");
 //        LoginField[] fields = new LoginField[]{fieldName, passField};
-//        Accounts accounts = accountClient.discoverCustomerAccounts(
-//                "4969749", "101732", fields);
+//        DiscoverAndAddAccountsResponse accounts = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "testuser").discoverAndAddAccounts(institutionId, institutionLogin)CustomerAccounts(
+//                "4969749", "10000", fields);
 //        Assert.assertNotNull(accounts);
 //    }
 //

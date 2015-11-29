@@ -3,6 +3,7 @@
  */
 package com.nibbledebt.integration.sao.intuit;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,11 +23,15 @@ import com.nibbledebt.domain.model.LoginForm;
 import com.nibbledebt.domain.model.Transaction;
 import com.nibbledebt.domain.model.account.AddAccountsResponse;
 import com.nibbledebt.integration.sao.IIntegrationSao;
+import com.nibbledebt.intuit.cad.data.BankingTransaction;
 import com.nibbledebt.intuit.cad.data.Credential;
 import com.nibbledebt.intuit.cad.data.Credentials;
+import com.nibbledebt.intuit.cad.data.CreditCardTransaction;
 import com.nibbledebt.intuit.cad.data.InstitutionDetail;
 import com.nibbledebt.intuit.cad.data.InstitutionDetail.Keys.Key;
 import com.nibbledebt.intuit.cad.data.InstitutionLogin;
+import com.nibbledebt.intuit.cad.data.LoanTransaction;
+import com.nibbledebt.intuit.cad.data.TransactionList;
 import com.nibbledebt.intuit.cad.exception.AggCatException;
 import com.nibbledebt.intuit.cad.service.AggCatServiceFactory;
 import com.nibbledebt.intuit.cad.service.DiscoverAndAddAccountsResponse;
@@ -36,7 +41,7 @@ import com.nibbledebt.intuit.cad.service.DiscoverAndAddAccountsResponse;
  *
  */
 @Component("intuitCadSao")
-public class IntuitCASDSao implements IIntegrationSao {
+public class IntuitCADSao implements IIntegrationSao {
 		
 	@Resource
 	private Environment env;
@@ -105,22 +110,22 @@ public class IntuitCASDSao implements IIntegrationSao {
 	 */
 	@Override
 	public AddAccountsResponse addAccounts(String customerId, String institutionId, LoginField[] fields) throws ServiceException {
-//		InstitutionLogin institutionLogin = new InstitutionLogin();
-//		Credentials credentials = new Credentials();
-//		for(LoginField field : fields){
-//			Credential credential = new Credential();
-//			credential.setName(field.getName());
-//			credential.setValue(field.getValue());
-//			credentials.getCredentials().add(credential);
-//		}
-//		institutionLogin.setCredentials(credentials);
-//		
-//		try {
-//			DiscoverAndAddAccountsResponse response = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, customerId).discoverAndAddAccounts(Long.valueOf(institutionId), institutionLogin);
-//			
-//		} catch (NumberFormatException | AggCatException e) {
-//			throw new ServiceException("Error while register customer with Intuit with id:"+institutionId, e);
-//		}
+		InstitutionLogin institutionLogin = new InstitutionLogin();
+		Credentials credentials = new Credentials();
+		for(LoginField field : fields){
+			Credential credential = new Credential();
+			credential.setName(field.getName());
+			credential.setValue(field.getValue());
+			credentials.getCredentials().add(credential);
+		}
+		institutionLogin.setCredentials(credentials);
+		
+		try {
+			DiscoverAndAddAccountsResponse response = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, customerId).discoverAndAddAccounts(Long.valueOf(institutionId), institutionLogin);
+			
+		} catch (NumberFormatException | AggCatException e) {
+			throw new ServiceException("Error while register customer with Intuit with id:"+institutionId, e);
+		}
 		return null;
 	}
 
@@ -146,7 +151,11 @@ public class IntuitCASDSao implements IIntegrationSao {
 	 */
 	@Override
 	public void deleteCustomer(String customerId) throws ServiceException {
-		// TODO Auto-generated method stub
+		try {
+			AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, customerId).deleteCustomer();
+		} catch (AggCatException e) {
+			throw new ServiceException("Error while trying to delete the customer with id : "+ customerId, e);
+		}
 
 	}
 
@@ -155,7 +164,22 @@ public class IntuitCASDSao implements IIntegrationSao {
 	 */
 	@Override
 	public List<Transaction> retrieveTransactions(String customerId, String accountId, Date fromDate, Date toDate, String sort) throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			 TransactionList trxList = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, customerId).getAccountTransactions(Long.parseLong(accountId), new SimpleDateFormat("YYYY-mm-dd").format(fromDate), new SimpleDateFormat("YYYY-mm-dd").format(toDate));
+			 List<Transaction> trxs = new ArrayList<>();
+			 if(trxList != null){
+				 for(BankingTransaction ftrx: trxList.getBankingTransactions())
+					 trxs.add(cadMapper.map(ftrx, Transaction.class));
+				 
+				 for(CreditCardTransaction ftrx: trxList.getCreditCardTransactions())
+					 trxs.add(cadMapper.map(ftrx, Transaction.class));
+				 
+				 for(LoanTransaction ftrx: trxList.getLoanTransactions())
+					 trxs.add(cadMapper.map(ftrx, Transaction.class));
+			 }
+			 return trxs;
+		 } catch (Exception e) {
+           throw new ServiceException("Error while retrieving transactions for customer with customerId["+customerId+"] and accountId["+accountId+"].", e);
+       }
 	}
 }

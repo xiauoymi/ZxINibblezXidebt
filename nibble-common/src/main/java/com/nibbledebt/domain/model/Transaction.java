@@ -27,9 +27,15 @@ public class Transaction {
 	private BigDecimal principalAmount;
 	private BigDecimal interestAmount;
 	private BigDecimal feeAmount;
-	private BigDecimal escrowAmount;
 	private String customerId;
 	private String accountId;
+	private BigDecimal escrowTotalAmount;
+	private BigDecimal escrowTaxAmount;
+	private BigDecimal escrowInsuranceAmount;
+	private BigDecimal escrowPmiAmount;
+	private BigDecimal escrowFeesAmount;
+	private BigDecimal escrowOtherAmount;
+	private String confirmationNumber;
 	
 	/**
 	 * @return the aggregatorTrxId
@@ -102,18 +108,6 @@ public class Transaction {
 	 */
 	public void setFeeAmount(BigDecimal feeAmount) {
 		this.feeAmount = feeAmount;
-	}
-	/**
-	 * @return the escrowAmount
-	 */
-	public BigDecimal getEscrowAmount() {
-		return escrowAmount;
-	}
-	/**
-	 * @param escrowAmount the escrowAmount to set
-	 */
-	public void setEscrowAmount(BigDecimal escrowAmount) {
-		this.escrowAmount = escrowAmount;
 	}
 	/**
 	 * @return the trxId
@@ -243,4 +237,89 @@ public class Transaction {
     public void setAccountName(String accountName) {
         this.accountName = accountName;
     }
+	/**
+	 * @return the escrowTotalAmount
+	 */
+	public BigDecimal getEscrowTotalAmount() {
+		return escrowTotalAmount;
+	}
+	/**
+	 * @param escrowTotalAmount the escrowTotalAmount to set
+	 */
+	public void setEscrowTotalAmount(BigDecimal escrowTotalAmount) {
+		this.escrowTotalAmount = escrowTotalAmount;
+	}
+	/**
+	 * @return the escrowTaxAmount
+	 */
+	public BigDecimal getEscrowTaxAmount() {
+		return escrowTaxAmount;
+	}
+	/**
+	 * @param escrowTaxAmount the escrowTaxAmount to set
+	 */
+	public void setEscrowTaxAmount(BigDecimal escrowTaxAmount) {
+		this.escrowTaxAmount = escrowTaxAmount;
+	}
+	/**
+	 * @return the escrowInsuranceAmount
+	 */
+	public BigDecimal getEscrowInsuranceAmount() {
+		return escrowInsuranceAmount;
+	}
+	/**
+	 * @param escrowInsuranceAmount the escrowInsuranceAmount to set
+	 */
+	public void setEscrowInsuranceAmount(BigDecimal escrowInsuranceAmount) {
+		this.escrowInsuranceAmount = escrowInsuranceAmount;
+	}
+	/**
+	 * @return the escrowPmiAmount
+	 */
+	public BigDecimal getEscrowPmiAmount() {
+		return escrowPmiAmount;
+	}
+	/**
+	 * @param escrowPmiAmount the escrowPmiAmount to set
+	 */
+	public void setEscrowPmiAmount(BigDecimal escrowPmiAmount) {
+		this.escrowPmiAmount = escrowPmiAmount;
+	}
+	/**
+	 * @return the escrowFeesAmount
+	 */
+	public BigDecimal getEscrowFeesAmount() {
+		return escrowFeesAmount;
+	}
+	/**
+	 * @param escrowFeesAmount the escrowFeesAmount to set
+	 */
+	public void setEscrowFeesAmount(BigDecimal escrowFeesAmount) {
+		this.escrowFeesAmount = escrowFeesAmount;
+	}
+	/**
+	 * @return the escrowOtherAmount
+	 */
+	public BigDecimal getEscrowOtherAmount() {
+		return escrowOtherAmount;
+	}
+	/**
+	 * @param escrowOtherAmount the escrowOtherAmount to set
+	 */
+	public void setEscrowOtherAmount(BigDecimal escrowOtherAmount) {
+		this.escrowOtherAmount = escrowOtherAmount;
+	}
+	/**
+	 * @return the confirmationNumber
+	 */
+	public String getConfirmationNumber() {
+		return confirmationNumber;
+	}
+	/**
+	 * @param confirmationNumber the confirmationNumber to set
+	 */
+	public void setConfirmationNumber(String confirmationNumber) {
+		this.confirmationNumber = confirmationNumber;
+	}
+    
 }

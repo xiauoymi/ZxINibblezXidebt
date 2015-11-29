@@ -17,14 +17,14 @@
         </field>
     </mapping>
     
-<!--     <mapping> -->
-<!--         <class-a>com.nibbledebt.integration.finicity.model.LoginField</class-a> -->
-<!--         <class-b>com.nibbledebt.domain.model.LoginField</class-b> -->
-<!--         <field custom-converter-id="loginFieldConverter"> -->
-<!--             <a>displayOrder</a> -->
-<!--             <b>displayFlag</b> -->
-<!--         </field> -->
-<!--     </mapping> -->
+    <mapping>
+        <class-a>com.nibbledebt.integration.finicity.model.LoginField</class-a>
+        <class-b>com.nibbledebt.domain.model.LoginField</class-b>
+        <field custom-converter-id="loginFieldConverter">
+            <a>displayOrder</a>
+            <b>displayFlag</b>
+        </field>
+    </mapping>
 
     <mapping>
         <class-a>com.nibbledebt.integration.finicity.model.trxs.Transaction</class-a>

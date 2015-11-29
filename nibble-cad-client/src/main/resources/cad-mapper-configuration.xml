@@ -43,35 +43,78 @@
             <b>value</b>
         </field>
     </mapping>
+    
+    <mapping>
+        <class-a>com.nibbledebt.intuit.cad.data.LoanTransaction</class-a>
+        <class-b>com.nibbledebt.domain.model.Transaction</class-b>
+        <field>
+            <a>principalAmount</a>
+            <b>principalAmount</b>
+        </field>
+        <field>
+            <a>interestAmount</a>
+            <b>interestAmount</b>
+        </field>
+        <field>
+            <a>escrowTotalAmount</a>
+            <b>escrowTotalAmount</b>
+        </field>
+        <field>
+            <a>escrowTaxAmount</a>
+            <b>escrowTaxAmount</b>
+        </field>
+        <field>
+            <a>escrowInsuranceAmount</a>
+            <b>escrowInsuranceAmount</b>
+        </field>
+        <field>
+            <a>escrowPmiAmount</a>
+            <b>escrowPmiAmount</b>
+        </field>
+        <field>
+            <a>escrowFeesAmount</a>
+            <b>escrowFeesAmount</b>
+        </field>
+        <field>
+            <a>escrowOtherAmount</a>
+            <b>escrowOtherAmount</b>
+        </field>
+        
+    </mapping>
 
-<!--     <mapping> -->
-<!--         <class-a>com.nibbledebt.integration.finicity.model.trxs.Transaction</class-a> -->
-<!--         <class-b>com.nibbledebt.domain.model.Transaction</class-b> -->
-<!--         <field> -->
-<!--             <a>institutionTransactionId</a> -->
-<!--             <b>trxId</b> -->
-<!--         </field> -->
-<!--         <field> -->
-<!--             <a>id</a> -->
-<!--             <b>aggregatorTrxId</b> -->
-<!--         </field> -->
-<!--         <field> -->
-<!--             <a>type</a> -->
-<!--             <b>category</b> -->
-<!--         </field> -->
-<!--         <field> -->
-<!--             <a>amount</a> -->
-<!--             <b>trxAmount</b> -->
-<!--         </field> -->
-<!--         <field custom-converter="com.nibbledebt.integration.finicity.model.DateToUtilDate"> -->
-<!--             <a>transactionDate</a> -->
-<!--             <b>trxDate</b> -->
-<!--         </field> -->
-<!--         <field custom-converter="com.nibbledebt.integration.finicity.model.DateToUtilDate"> -->
-<!--             <a>postedDate</a> -->
-<!--             <b>trxPostDate</b> -->
-<!--         </field> -->
-<!--     </mapping> -->
+    <mapping>
+        <class-a>com.nibbledebt.intuit.cad.data.Transaction</class-a>
+        <class-b>com.nibbledebt.domain.model.Transaction</class-b>
+        <field>
+            <a>institutionTransactionId</a>
+            <b>trxId</b>
+        </field>
+        <field>
+            <a>id</a>
+            <b>aggregatorTrxId</b>
+        </field>
+        <field>
+            <a>type</a>
+            <b>category</b>
+        </field>
+        <field>
+            <a>amount</a>
+            <b>trxAmount</b>
+        </field>
+        <field>
+            <a>runningBalanceAmount</a>
+            <b>trxAmount</b>
+        </field>
+        <field custom-converter="com.nibbledebt.integration.finicity.model.DateToUtilDate">
+            <a>userDate</a>
+            <b>trxDate</b>
+        </field>
+        <field custom-converter="com.nibbledebt.integration.finicity.model.DateToUtilDate">
+            <a>postedDate</a>
+            <b>trxPostDate</b>
+        </field>
+        
+    </mapping>
 <!--     <mapping> -->
 <!--         <class-a>com.nibbledebt.integration.finicity.model.accounts.Account</class-a> -->
 <!--         <class-b>com.nibbledebt.domain.model.account.Account</class-b> -->
