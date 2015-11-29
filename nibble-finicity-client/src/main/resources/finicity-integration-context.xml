@@ -34,7 +34,7 @@
 	<bean id="integrationMapper" class="org.dozer.DozerBeanMapper">
 	  <property name="mappingFiles">
 	    <list>
-	      <value>finicity-institution-configuration.xml</value>
+	      <value>finicity-mapper-configuration.xml</value>
 	    </list>
 	  </property>
 <!-- 	  <property name="customConvertersWithId">  -->
