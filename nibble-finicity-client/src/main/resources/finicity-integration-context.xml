@@ -34,9 +34,16 @@
 	<bean id="integrationMapper" class="org.dozer.DozerBeanMapper">
 	  <property name="mappingFiles">
 	    <list>
-	      <value>institution-configuration.xml</value>
+	      <value>finicity-institution-configuration.xml</value>
 	    </list>
 	  </property>
+<!-- 	  <property name="customConvertersWithId">  -->
+<!-- 	      <map>  -->
+<!-- 	        <entry key="loginFieldConverter" > -->
+<!-- 	        	<bean class="com.nibbledebt.integration.mapper.LoginFieldConverter" /> -->
+<!-- 	        </entry> -->
+<!-- 	      </map>  -->
+<!--     </property>    -->
 	</bean>
 
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">

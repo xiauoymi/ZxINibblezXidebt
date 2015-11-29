@@ -12,9 +12,11 @@ import java.util.Set;
 
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -59,7 +61,7 @@ import com.nibbledebt.integration.sao.IIntegrationSao;
  * @author ralam1
  */
 @Component
-public class RegistrationProcessor extends AbstractProcessor {
+public class RegistrationProcessor extends AbstractProcessor implements ApplicationContextAware {
     @Autowired
     private INibblerDao nibblerDao;
 
@@ -74,10 +76,8 @@ public class RegistrationProcessor extends AbstractProcessor {
 
     @Autowired
     private IInstitutionDao institutionDao;
-
-    @Autowired
-    @Qualifier("finicitySao")
-    private IIntegrationSao integrationSao;
+    
+    private ApplicationContext appContext;
 
     @Autowired
     private MessageDigestPasswordEncoder encoder;
@@ -143,11 +143,14 @@ public class RegistrationProcessor extends AbstractProcessor {
     
     @Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.DEFAULT, rollbackFor=RepositoryException.class)
 	public AddAccountsResponse addLoanAccount(NibblerData nibblerData, String username) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
+        Institution persistedInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getBank().getInstitution().getId()));
+        IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(persistedInstitution.getSupportedInstitution().getAggregatorQualifier());
+        
 		if (nibblerData.getBank() != null && nibblerData.getBank().getInstitution() != null) {
             if (externalAuthReqsValid(nibblerData.getBank())) {
             	Nibbler nibbler = nibblerDao.find(username);
             	if(nibbler != null){
-            		AddAccountsResponse response = integrationSao.addAccounts(nibbler.getExtAccessToken(), nibblerData.getBank().getInstitution().getId(),
+            		AddAccountsResponse response = integrationSao.addAccounts(nibbler.getExtAccessToken(), persistedInstitution.getSupportedInstitution().getExternalId(),
                             nibblerData.getBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
             		if (response != null && response.getMfaType() == MfaType.NON_MFA) {
                         saveCustomerAccounts(nibblerData, response.getAccounts());
@@ -176,6 +179,8 @@ public class RegistrationProcessor extends AbstractProcessor {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_CREATED)
     public AddAccountsResponse registerNibbler(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException {
+        Institution persistedInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getBank().getInstitution().getId()));
+        IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(persistedInstitution.getSupportedInstitution().getAggregatorQualifier());
         String customerId = integrationSao.addCustomer(nibblerData.getEmail(), nibblerData.getFirstName(), nibblerData.getLastName());
         try {
 			if (StringUtils.isNotBlank(customerId)) saveCustomerData(nibblerData, customerId);
@@ -185,7 +190,7 @@ public class RegistrationProcessor extends AbstractProcessor {
 		}
         if (nibblerData.getBank() != null && nibblerData.getBank().getInstitution() != null) {
             if (externalAuthReqsValid(nibblerData.getBank())) {
-                AddAccountsResponse response = integrationSao.addAccounts(customerId, nibblerData.getBank().getInstitution().getId(),
+                AddAccountsResponse response = integrationSao.addAccounts(customerId, persistedInstitution.getSupportedInstitution().getExternalId(),
                         nibblerData.getBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
                 if (response != null && response.getMfaType() == MfaType.NON_MFA) {
                     try {
@@ -208,9 +213,12 @@ public class RegistrationProcessor extends AbstractProcessor {
     public AddAccountsResponse submitMfaAnswer(NibblerData nibblerData)
             throws ServiceException, RepositoryException, ValidationException, ProcessingException {
         Nibbler nibbler = nibblerDao.find(nibblerData.getEmail());
+        Institution persistedInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getBank().getInstitution().getId()));
+        IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(persistedInstitution.getSupportedInstitution().getAggregatorQualifier());
+        
         if (externalAuthReqsValid(nibblerData.getBank())) {
             AddAccountsResponse response = integrationSao.addAccountsMfaAnswer(nibbler.getExtAccessToken(),
-                    nibblerData.getBank().getInstitution().getId(),
+            		persistedInstitution.getSupportedInstitution().getExternalId(),
                     nibblerData.getMfaQuestion(), nibblerData.getMfaAnswer());
             if (response != null && response.getMfaType() == MfaType.NON_MFA) {
                 saveCustomerAccounts(nibblerData, response.getAccounts());
@@ -519,4 +527,10 @@ public class RegistrationProcessor extends AbstractProcessor {
 			throw new ProcessingException("Error while parsing date from account.", e);
 		}
     }
+
+	@Override
+	public void setApplicationContext(ApplicationContext appContext) throws BeansException {
+		this.appContext = appContext;
+		
+	}
 }

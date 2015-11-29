@@ -35,6 +35,10 @@
             <b>id</b>
         </field>
         <field>
+            <a>name</a>
+            <b>name</b>
+        </field>
+        <field>
             <a>val</a>
             <b>value</b>
         </field>
@@ -98,7 +102,7 @@
 <!--     </mapping> -->
 <!--     Account response mapping -->
 <!--     <mapping> -->
-<!--         <class-a>com.nibbledebt.integration.finicity.model.accounts.AddAccountsResponse</class-a> -->
+<!--         <class-a>com.nibbledebt.intuit.cad.data.DiscoverAndAddAccountsResponse</class-a> -->
 <!--         <class-b>com.nibbledebt.domain.model.account.AddAccountsResponse</class-b> -->
 <!--         <field> -->
 <!--             <a>mfaChallenges</a> -->

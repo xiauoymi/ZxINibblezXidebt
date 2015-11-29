@@ -107,7 +107,7 @@ public class TransactionProcessor extends AbstractProcessor{
 						dtrx.setTrxDate(trx.getDate());
 						dtrx.setTrxId(trx.getTransactionId());
 						dtrx.setAccountNumber(trx.getAccount().getNumberMask());
-						dtrx.setInstitutionName(trx.getAccount().getInstitution().getName());
+						dtrx.setInstitutionName(trx.getAccount().getInstitution().getSupportedInstitution().getDisplayName());
 						dtrx.setDescription(trx.getLocation().getName());
 						dailyTotal = dailyTotal.add(dtrx.getRoundupAmount());
 						weeklyTotal = weeklyTotal.add(dtrx.getRoundupAmount());

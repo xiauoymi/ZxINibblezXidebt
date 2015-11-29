@@ -17,16 +17,10 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.nibbledebt.common.error.ValidationException;
 import com.nibbledebt.core.data.dao.INibblerAccountDao;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.NibblerAccount;
-import com.nibbledebt.domain.model.Bank;
-import com.nibbledebt.domain.model.LoginField;
-import com.nibbledebt.domain.model.NibblerData;
 import com.nibbledebt.domain.model.account.Account;
-import com.nibbledebt.domain.model.account.AddAccountsResponse;
-import com.nibbledebt.domain.model.account.MfaType;
 
 /**
  * @author ralam
@@ -52,7 +46,7 @@ public class AccountsProcessor extends AbstractProcessor {
 				wacct.setAccountType(acct.getAccountType().getCode());
 				wacct.setAvailable((acct.getBalances()!=null && !acct.getBalances().isEmpty()) ? acct.getBalances().get(0).getAvailable().toString() : BigDecimal.ZERO.toString());
 				wacct.setBalance((acct.getBalances()!=null && !acct.getBalances().isEmpty()) ? acct.getBalances().get(0).getCurrent().toString() : BigDecimal.ZERO.toString());
-				wacct.setInstitutionName(acct.getInstitution().getName());
+				wacct.setInstitutionName(acct.getInstitution().getSupportedInstitution().getDisplayName());
 				wacct.setAccountExternalId(acct.getExternalId());
 				wacct.setUseForRounding(acct.getUseForRounding());
 				wacct.setAccountName(acct.getName());
@@ -75,7 +69,7 @@ public class AccountsProcessor extends AbstractProcessor {
 				wacct.setAccountType(acct.getAccountType().getCode());
 				wacct.setAvailable(acct.getBalances()!=null ? acct.getBalances().get(0).getAvailable().toString() : BigDecimal.ZERO.toString());
 				wacct.setBalance(acct.getBalances()!=null ? acct.getBalances().get(0).getCurrent().toString() : BigDecimal.ZERO.toString());
-				wacct.setInstitutionName(acct.getInstitution().getName());
+				wacct.setInstitutionName(acct.getInstitution().getSupportedInstitution().getDisplayName());
 				wacct.setAccountExternalId(acct.getExternalId());
 				wacct.setUseForPayoff(acct.getUseForpayoff());
 				wacct.setAccountName(acct.getName());

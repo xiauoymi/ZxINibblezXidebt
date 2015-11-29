@@ -13,128 +13,50 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 
 /**
  * @author ralam
  *
  */
 @NamedQueries({
-	@NamedQuery(name="findInstitutionByName", query="from Institution i where i.name = :name"),
-	@NamedQuery(name="findInstitutionByNameAndId", query="from Institution i where i.name = :name and i.externalId = :external_id"),
-	@NamedQuery(name="findInstitutionByType", query="from Institution i where i.type = :type"),
-	@NamedQuery(name="listPrimaryInstitutions", query="from Institution i where i.isPrimary = true"),
-	@NamedQuery(name="listTestPrimaryInstitutions", query="from Institution i where i.isPrimary = true and i.isTest = true")
+	@NamedQuery(name="findInstitutionByName", query="from Institution i where i.supportedInstitution.displayName = :name"),
+	@NamedQuery(name="findInstitutionBySupportedInstitution", query="from Institution i where i.supportedInstitution = :supportedInstitutionId"),
+	@NamedQuery(name="findInstitutionByType", query="from Institution i where i.supportedInstitution.type = :type"),
+	@NamedQuery(name="findInstitutionByTypeAndTestModeSupport", query="from Institution i where i.supportedInstitution.supportsTestMode = true and i.supportedInstitution.type= :type")
 })
 @Entity()
-@Table(	name="institution",
-		uniqueConstraints = {
-			@UniqueConstraint(columnNames = {"external_id"})
-		},
-		indexes= {
-			@Index(columnList="name", unique=false),
-			@Index(columnList="external_id", unique=false)
-			
-		}
-	)
+@Table(	name="institution")
 @AttributeOverrides({
 	@AttributeOverride(name="id", column=@Column(name="institution_id"))
 })
-public class Institution extends AbstractModel {
-	@Column(name="external_id", nullable=false, length=50)
-	private String externalId;
-	
-	@Column(name="logoCode", nullable=true, length=256)
-	private String logoCode;
-	
-	@Column(name="name", nullable=false, length=256)
-	private String name;
-	
+public class Institution extends AbstractModel {	
 	@Column(name="phone", nullable=true, length=256)
 	private String phone;
 	
 	@Column(name="home_url", nullable=true, length=256)
 	private String homeUrl;
 	
-	@Column(name="type", nullable=true, length=256)
-	private String type;
-	
-	@Column(name="isPrimary", nullable=false)
-	private Boolean isPrimary;
-	
-	@Column(name="isTest", nullable=true)
-	private Boolean isTest;
-	
-	@Column(name="routing_number", nullable=true, length=50)
-	private String routingNumber;
-	
-	@Column(name="wire_routing_number", nullable=true, length=50)
-	private String wireRoutingNumber;
-	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "last_synced_ts", nullable = true)
 	private Date lastSyncedTs;
-		
-	@Column(name="aggregator_name", nullable=false, length=50)
-	private String aggregatorName;
-	
-	@Column(name="priority", nullable=true)
-	private Integer priority;
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="nibbler", orphanRemoval=false)
 	private List<NibblerAccount> accounts;
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="institution", orphanRemoval=true)
 	private List<Field> fields;
-
-	/**
-	 * @return the externalId
-	 */
-	public String getExternalId() {
-		return externalId;
-	}
-
-	/**
-	 * @param externalId the externalId to set
-	 */
-	public void setExternalId(String externalId) {
-		this.externalId = externalId;
-	}
-
-	/**
-	 * @return the logoCode
-	 */
-	public String getLogoCode() {
-		return logoCode;
-	}
-
-	/**
-	 * @param logoCode the logoCode to set
-	 */
-	public void setLogoCode(String logoCode) {
-		this.logoCode = logoCode;
-	}
-
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+	
+	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@JoinColumn(name="supported_institution_id", updatable=true, nullable=false)
+	private SupportedInstitution supportedInstitution;
 
 	/**
 	 * @return the phone
@@ -164,75 +86,6 @@ public class Institution extends AbstractModel {
 		this.homeUrl = homeUrl;
 	}
 
-	/**
-	 * @return the type
-	 */
-	public String getType() {
-		return type;
-	}
-
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	/**
-	 * @return the isPrimary
-	 */
-	public Boolean getIsPrimary() {
-		return isPrimary;
-	}
-
-	/**
-	 * @return the isTest
-	 */
-	public Boolean getIsTest() {
-		return isTest;
-	}
-
-	/**
-	 * @param isTest the isTest to set
-	 */
-	public void setIsTest(Boolean isTest) {
-		this.isTest = isTest;
-	}
-
-	/**
-	 * @return the routingNumber
-	 */
-	public String getRoutingNumber() {
-		return routingNumber;
-	}
-
-	/**
-	 * @param routingNumber the routingNumber to set
-	 */
-	public void setRoutingNumber(String routingNumber) {
-		this.routingNumber = routingNumber;
-	}
-
-	/**
-	 * @return the wireRoutingNumber
-	 */
-	public String getWireRoutingNumber() {
-		return wireRoutingNumber;
-	}
-
-	/**
-	 * @param wireRoutingNumber the wireRoutingNumber to set
-	 */
-	public void setWireRoutingNumber(String wireRoutingNumber) {
-		this.wireRoutingNumber = wireRoutingNumber;
-	}
-
-	/**
-	 * @param isPrimary the isPrimary to set
-	 */
-	public void setIsPrimary(Boolean isPrimary) {
-		this.isPrimary = isPrimary;
-	}
 
 	/**
 	 * @return the lastSyncedTs
@@ -248,34 +101,7 @@ public class Institution extends AbstractModel {
 		this.lastSyncedTs = lastSyncedTs;
 	}
 
-	/**
-	 * @return the aggregatorName
-	 */
-	public String getAggregatorName() {
-		return aggregatorName;
-	}
-
-	/**
-	 * @param aggregatorName the aggregatorName to set
-	 */
-	public void setAggregatorName(String aggregatorName) {
-		this.aggregatorName = aggregatorName;
-	}
-
-	/**
-	 * @return the priority
-	 */
-	public Integer getPriority() {
-		return priority;
-	}
-
-	/**
-	 * @param priority the priority to set
-	 */
-	public void setPriority(Integer priority) {
-		this.priority = priority;
-	}
-
+	
 	/**
 	 * @return the accounts
 	 */
@@ -303,6 +129,20 @@ public class Institution extends AbstractModel {
 	 */
 	public void setFields(List<Field> fields) {
 		this.fields = fields;
+	}
+
+	/**
+	 * @return the supportedInstitution
+	 */
+	public SupportedInstitution getSupportedInstitution() {
+		return supportedInstitution;
+	}
+
+	/**
+	 * @param supportedInstitution the supportedInstitution to set
+	 */
+	public void setSupportedInstitution(SupportedInstitution supportedInstitution) {
+		this.supportedInstitution = supportedInstitution;
 	}	
 	
 }

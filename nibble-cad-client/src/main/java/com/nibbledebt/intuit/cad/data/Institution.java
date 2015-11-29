@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name="Institution", namespace="http://schema.intuit.com/platform/fdatafeed/institution/v1", propOrder={"institutionId", "institutionName", "homeUrl", "phoneNumber", "virtual"})
+@XmlRootElement(name="institution", namespace="http://schema.intuit.com/platform/fdatafeed/institution/v1")
 @XmlSeeAlso({InstitutionDetail.class})
 @JsonRootName("institution")
 public class Institution

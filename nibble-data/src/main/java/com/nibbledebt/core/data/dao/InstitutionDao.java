@@ -52,33 +52,38 @@ public class InstitutionDao extends AbstractHibernateDao<Institution> implements
 	}
 	
 	@Override
-	public Institution findByType(String type)  throws RepositoryException{
+	public List<Institution> findByType(String type)  throws RepositoryException{
 		try {
 			Query query = this.getCurrentSession().getNamedQuery("findInstitutionByType");
 			query.setString("type", type);
-			return (Institution)query.uniqueResult();
-		} catch (Exception e) {
-			  throw new RepositoryException(e);
-		}
-	}
-
-	@Override
-	public List<Institution> listPrimaries() throws RepositoryException {
-		try {
-			Query query = this.getCurrentSession().getNamedQuery("listPrimaryInstitutions");
-			return query.list();
+			return (List<Institution>)query.list();
 		} catch (Exception e) {
 			  throw new RepositoryException(e);
 		}
 	}
 	
 	@Override
-	public List<Institution> listTestPrimaries() throws RepositoryException {
+	public Institution findBySupportedInstitution(Long supportedInstitutionId)  throws RepositoryException{
 		try {
-			Query query = this.getCurrentSession().getNamedQuery("listTestPrimaryInstitutions");
-			return query.list();
+			Query query = this.getCurrentSession().getNamedQuery("findInstitutionBySupportedInstitution");
+			query.setLong("supportedInstitutionId", supportedInstitutionId);
+			return (Institution)query.uniqueResult();
 		} catch (Exception e) {
 			  throw new RepositoryException(e);
 		}
 	}
+	
+	@Override
+	public List<Institution> findByTestModeSupport(String type)  throws RepositoryException{
+		try {
+			Query query = this.getCurrentSession().getNamedQuery("findInstitutionByTypeAndTestModeSupport");
+			query.setString("type", type);
+			return (List<Institution>)query.list();
+		} catch (Exception e) {
+			  throw new RepositoryException(e);
+		}
+	}
+	
+	
+	
 }

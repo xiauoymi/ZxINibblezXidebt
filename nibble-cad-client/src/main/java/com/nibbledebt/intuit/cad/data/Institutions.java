@@ -6,9 +6,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.jvnet.jaxb2_commons.lang.Equals;
 import org.jvnet.jaxb2_commons.lang.EqualsStrategy;
@@ -19,15 +17,16 @@ import org.jvnet.jaxb2_commons.lang.JAXBHashCodeStrategy;
 import org.jvnet.jaxb2_commons.locator.ObjectLocator;
 import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 
-import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="Institutions", namespace="http://schema.intuit.com/platform/fdatafeed/institution/v1")
-@JsonRootName("Institutions")
 public class Institutions
   implements Serializable, Equals, HashCode
 {
   private static final long serialVersionUID = 1L;
+  
+  @JacksonXmlElementWrapper(useWrapping=false)
   protected List<Institution> institution;
   
   public List<Institution> getInstitution()

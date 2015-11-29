@@ -29,8 +29,10 @@ import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.core.data.dao.IInstitutionDao;
+import com.nibbledebt.core.data.dao.ISupportedInstitutionDao;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.Field;
+import com.nibbledebt.core.data.model.SupportedInstitution;
 import com.nibbledebt.domain.model.Bank;
 import com.nibbledebt.domain.model.Institution;
 import com.nibbledebt.domain.model.LoginField;
@@ -56,6 +58,9 @@ public class InstitutionProcessor {
 	private IInstitutionDao institutionDao;
 	
 	@Autowired
+	private ISupportedInstitutionDao supportedInstitutionDao;
+	
+	@Autowired
 	@Qualifier("finicitySao")
 	private IIntegrationSao finicitySao;
 	
@@ -71,18 +76,25 @@ public class InstitutionProcessor {
 	public List<Bank> getSupportedInstitutions() throws ProcessingException, ServiceException{
 		try {
 			List<Bank> banks = null;
-			List<com.nibbledebt.core.data.model.Institution> primaries = !StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod") ? institutionDao.listTestPrimaries(): institutionDao.listPrimaries();
+			List<com.nibbledebt.core.data.model.Institution> primaries = null;
+			if(!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod")){
+				primaries =  institutionDao.findByTestModeSupport("banking");
+				primaries.addAll(institutionDao.findByTestModeSupport("credit_card"));
+				primaries.addAll(institutionDao.findByTestModeSupport("test"));
+			}else{
+				primaries =  institutionDao.findByType("banking");
+				primaries.addAll(institutionDao.findByTestModeSupport("credit_card"));
+			}
 			if(primaries !=null && !primaries.isEmpty()){
 				banks = new ArrayList<>();
 				for(com.nibbledebt.core.data.model.Institution inst : primaries){
-					if(!StringUtils.equalsIgnoreCase(inst.getType(), "student_loan")){
+					if(inst.getSupportedInstitution().getPriority()==2){
 						Bank bank = new Bank();
 						Institution institution = new Institution();
 						LoginForm loginForm = new LoginForm();
-						institution.setName(inst.getName());
-						institution.setId(inst.getExternalId());
-						institution.setLogoCode(inst.getLogoCode());
-	                    institution.setType(inst.getType());
+						institution.setName(inst.getSupportedInstitution().getDisplayName());
+						institution.setId(String.valueOf(inst.getId()));
+						institution.setLogoCode(inst.getSupportedInstitution().getLogoCode());
 						List<LoginField> loginFields = new ArrayList<>();
 						for(Field field : inst.getFields()){
 							LoginField lField = new LoginField();
@@ -92,6 +104,7 @@ public class InstitutionProcessor {
 							lField.setMask(field.getIsMasked());
 							lField.setValue(field.getValue());
 							lField.setDisplayOrder(field.getOrder());
+							lField.setDisplayFlag(field.getIsDisplay());
 							lField.setInstructions(field.getInstruction());
 							lField.setValueLengthMax(field.getValidationMaxLength());
 							lField.setValueLengthMin(field.getValidationMinLength());
@@ -100,8 +113,8 @@ public class InstitutionProcessor {
 						loginForm.setLoginField(loginFields);
 						bank.setLoginForm(loginForm);
 						bank.setInstitution(institution);
-						banks.add(bank);
-					}					
+						banks.add(bank);	
+					}
 				}
 			}
 			return banks;
@@ -115,18 +128,23 @@ public class InstitutionProcessor {
 	public List<Bank> getSupportedLoanInstitutions() throws ProcessingException, ServiceException{
 		try {
 			List<Bank> banks = null;
-			List<com.nibbledebt.core.data.model.Institution> primaries = !StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod") ? institutionDao.listTestPrimaries(): institutionDao.listPrimaries();
+			List<com.nibbledebt.core.data.model.Institution> primaries = null;
+			if(!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod")){
+				primaries =  institutionDao.findByTestModeSupport("student_loan");
+				primaries.addAll(institutionDao.findByTestModeSupport("test"));
+			}else{
+				primaries =  institutionDao.findByType("student_loan");
+			}
 			if(primaries !=null && !primaries.isEmpty()){
 				banks = new ArrayList<>();
 				for(com.nibbledebt.core.data.model.Institution inst : primaries){
-					if(StringUtils.equalsIgnoreCase(inst.getType(), StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod") ? "student_loan" : "test")){
+					if(inst.getSupportedInstitution().getPriority()==2){
 						Bank bank = new Bank();
 						Institution institution = new Institution();
 						LoginForm loginForm = new LoginForm();
-						institution.setName(inst.getName());
-						institution.setId(inst.getExternalId());
-						institution.setLogoCode(inst.getLogoCode());
-	                    institution.setType(inst.getType());
+						institution.setName(inst.getSupportedInstitution().getDisplayName());
+						institution.setId(String.valueOf(inst.getId()));
+						institution.setLogoCode(inst.getSupportedInstitution().getLogoCode());
 						List<LoginField> loginFields = new ArrayList<>();
 						for(Field field : inst.getFields()){
 							LoginField lField = new LoginField();
@@ -135,6 +153,7 @@ public class InstitutionProcessor {
 							lField.setDescription(field.getDisplayName());
 							lField.setMask(field.getIsMasked());
 							lField.setValue(field.getValue());
+							lField.setDisplayFlag(field.getIsDisplay());
 							lField.setDisplayOrder(field.getOrder());
 							lField.setInstructions(field.getInstruction());
 							lField.setValueLengthMax(field.getValidationMaxLength());
@@ -144,8 +163,8 @@ public class InstitutionProcessor {
 						loginForm.setLoginField(loginFields);
 						bank.setLoginForm(loginForm);
 						bank.setInstitution(institution);
-						banks.add(bank);
-					}				
+						banks.add(bank);		
+					}
 				}
 			}
 			return banks;
@@ -174,6 +193,7 @@ public class InstitutionProcessor {
 //	@Scheduled(cron="0 0 * * * *")
 //	@Scheduled(fixedRate=86400000)
 	@Loggable(logLevel=LogLevel.INFO)
+    @Transactional(readOnly = true)
 	public void populateInstitutions() throws ProcessingException{
 		try {
 			int processors = Runtime.getRuntime().availableProcessors();
@@ -190,28 +210,16 @@ public class InstitutionProcessor {
 	            }
 	        });
 			
-			List<Institution> institutions = intuitCadSao.getInstitutions();
-			for(Institution institution : institutions){
-				RunnableAsync<Institution> pop = context.getBean("instPopulate", RunnableAsync.class);
+			List<SupportedInstitution> supportedInstitutions = supportedInstitutionDao.findAll();
+			for(SupportedInstitution institution : supportedInstitutions){
+				RunnableAsync<SupportedInstitution> pop = context.getBean("instPopulate", RunnableAsync.class);
 				pop.setEntity(institution);
-				pop.setAggregator(InstitutionPopulator.AGGREGATOR_INTUITCAD);
 				instSyncExecutor.execute(pop);
 			}
-			LoggerFactory.getLogger(this.getClass()).info("Spawned all threads for Intuit : "+ institutions.size());
-
-			institutions = finicitySao.getInstitutions();
-			for(Institution institution : institutions){
-				RunnableAsync<Institution> pop = context.getBean("instPopulate", RunnableAsync.class);
-				pop.setEntity(institution);
-				pop.setAggregator(InstitutionPopulator.AGGREGATOR_FINICITY);
-				instSyncExecutor.execute(pop);
-			}
+			LoggerFactory.getLogger(this.getClass()).info("Spawned all threads for supported institutions : "+ supportedInstitutions.size());
 			
-			LoggerFactory.getLogger(this.getClass()).info("Spawned all threads for Finicity : "+ institutions.size());
-
-			
-		}  catch (ServiceException e) {
-			throw new ProcessingException("Error while retrieving supported institutions list with Intuit/Finicity.", e);
+		}  catch (RepositoryException e) {
+			throw new ProcessingException("Error while retrieving supported institutions list.", e);
 		}
 	}	
 }

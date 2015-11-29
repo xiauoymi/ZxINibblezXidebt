@@ -10,5 +10,4 @@ package com.nibbledebt.core.processor;
  */
 public interface RunnableAsync<T> extends Runnable {
 	public abstract void setEntity(T entity);
-	public abstract void setAggregator(String aggregator);
 }

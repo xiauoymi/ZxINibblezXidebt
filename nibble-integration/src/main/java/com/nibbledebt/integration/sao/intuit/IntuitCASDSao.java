@@ -22,9 +22,14 @@ import com.nibbledebt.domain.model.LoginForm;
 import com.nibbledebt.domain.model.Transaction;
 import com.nibbledebt.domain.model.account.AddAccountsResponse;
 import com.nibbledebt.integration.sao.IIntegrationSao;
+import com.nibbledebt.intuit.cad.data.Credential;
+import com.nibbledebt.intuit.cad.data.Credentials;
 import com.nibbledebt.intuit.cad.data.InstitutionDetail;
 import com.nibbledebt.intuit.cad.data.InstitutionDetail.Keys.Key;
+import com.nibbledebt.intuit.cad.data.InstitutionLogin;
+import com.nibbledebt.intuit.cad.exception.AggCatException;
 import com.nibbledebt.intuit.cad.service.AggCatServiceFactory;
+import com.nibbledebt.intuit.cad.service.DiscoverAndAddAccountsResponse;
 
 /**
  * @author alam_home
@@ -32,14 +37,6 @@ import com.nibbledebt.intuit.cad.service.AggCatServiceFactory;
  */
 @Component("intuitCadSao")
 public class IntuitCASDSao implements IIntegrationSao {
-	@Resource
-	private List<String> intuitSuppInstitutionTypes;
-	
-	@Resource
-	private List<String> intuitTestInstitutionTypes;
-
-	@Resource
-	private List<String> intuitSuppLoanTypes;
 		
 	@Resource
 	private Environment env;
@@ -63,7 +60,7 @@ public class IntuitCASDSao implements IIntegrationSao {
 	public List<Institution> getInstitutions() throws ServiceException {
 		List<Institution> institutions = new ArrayList<>();
 		try {
-			for(com.nibbledebt.intuit.cad.data.Institution finst : AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "sysuser").getInstitutions().getInstitutions()){
+			for(com.nibbledebt.intuit.cad.data.Institution finst : AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "sysuser").getInstitutions().getInstitution()){
 				institutions.add(cadMapper.map(finst, Institution.class));
 			}
 			return institutions;
@@ -83,13 +80,15 @@ public class IntuitCASDSao implements IIntegrationSao {
 			LoginForm loginForm = new LoginForm();
 			List<LoginField> fields = new ArrayList<>();
 			for(Key key : instDetail.getKeys().getKeies()){
-				fields.add(cadMapper.map(key, LoginField.class));
+				LoginField field = cadMapper.map(key, LoginField.class);
+				field.setDisplayFlag(key.getDisplayOrder() > 0 ? true : false);
+				fields.add(field);
 			}
 			loginForm.setLoginField(fields);
 			detail.setLoginForm(loginForm);
 			return detail;
 		} catch (Exception e) {
-			throw new ServiceException("Error while retrieving the supported institution from Finicity with id:"+institutionIdentifier, e);
+			throw new ServiceException("Error while retrieving the supported institution from Intuit with id:"+institutionIdentifier, e);
 		}
 	}
 
@@ -106,7 +105,22 @@ public class IntuitCASDSao implements IIntegrationSao {
 	 */
 	@Override
 	public AddAccountsResponse addAccounts(String customerId, String institutionId, LoginField[] fields) throws ServiceException {
-		// TODO Auto-generated method stub
+//		InstitutionLogin institutionLogin = new InstitutionLogin();
+//		Credentials credentials = new Credentials();
+//		for(LoginField field : fields){
+//			Credential credential = new Credential();
+//			credential.setName(field.getName());
+//			credential.setValue(field.getValue());
+//			credentials.getCredentials().add(credential);
+//		}
+//		institutionLogin.setCredentials(credentials);
+//		
+//		try {
+//			DiscoverAndAddAccountsResponse response = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, customerId).discoverAndAddAccounts(Long.valueOf(institutionId), institutionLogin);
+//			
+//		} catch (NumberFormatException | AggCatException e) {
+//			throw new ServiceException("Error while register customer with Intuit with id:"+institutionId, e);
+//		}
 		return null;
 	}
 
@@ -124,8 +138,7 @@ public class IntuitCASDSao implements IIntegrationSao {
 	 */
 	@Override
 	public String addCustomer(String userName, String firstName, String lastName) throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		return userName;
 	}
 
 	/* (non-Javadoc)
@@ -144,31 +157,5 @@ public class IntuitCASDSao implements IIntegrationSao {
 	public List<Transaction> retrieveTransactions(String customerId, String accountId, Date fromDate, Date toDate, String sort) throws ServiceException {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-
-
-	/**
-	 * @return the suppInstitutionTypes
-	 */
-	@Override
-	public List<String> getSuppInstitutionTypes() {
-		return intuitSuppInstitutionTypes;
-	}
-
-	/**
-	 * @return the testInstitutionTypes
-	 */
-	@Override
-	public List<String> getTestInstitutionTypes() {
-		return intuitTestInstitutionTypes;
-	}
-
-	/**
-	 * @return the suppLoanTypes
-	 */
-	@Override
-	public List<String> getSuppLoanTypes() {
-		return intuitSuppLoanTypes;
 	}
 }

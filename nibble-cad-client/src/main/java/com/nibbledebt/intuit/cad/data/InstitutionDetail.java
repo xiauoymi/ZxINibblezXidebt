@@ -19,6 +19,8 @@ import org.jvnet.jaxb2_commons.lang.JAXBHashCodeStrategy;
 import org.jvnet.jaxb2_commons.locator.ObjectLocator;
 import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name="", propOrder={"status", "address", "emailAddress", "specialText", "currencyCode", "keys"})
 @XmlRootElement(name="InstitutionDetail", namespace="http://schema.intuit.com/platform/fdatafeed/institution/v1")
@@ -38,6 +40,7 @@ public class InstitutionDetail
   @XmlElement(namespace="http://schema.intuit.com/platform/fdatafeed/institution/v1")
   protected CurrencyCode currencyCode;
   @XmlElement(namespace="http://schema.intuit.com/platform/fdatafeed/institution/v1", required=true)
+  @JacksonXmlElementWrapper(useWrapping=false)
   protected Keys keys;
   
   public String getStatus()

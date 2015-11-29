@@ -9,6 +9,8 @@ import java.io.StringReader;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 
 import org.dozer.Mapper;
 import org.junit.Test;
@@ -63,7 +65,7 @@ public class IntuitClientTest {
 //		Assert.assertNotNull(finicitySecurityContext.getAppToken());
 //	}
 	
-//	@Test
+	@Test
 	public void getInstitutions() throws AggCatException  {
 		List<Institution> insts = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "sysuser").getInstitutions().getInstitution();
 		Assert.assertNotNull(insts);
@@ -72,45 +74,45 @@ public class IntuitClientTest {
 		Assert.assertNotNull(insts.get(0).getInstitutionName());
 	}
 	
-	@Test
-	public void testDeserialize(){
-	    try
-	    {
-			StringReader srd = null;
-			
-			BufferedReader rd = new BufferedReader(new FileReader("K:\\git\\nibble\\nibble-cad-client\\src\\test\\resources\\com\\nibbledebt\\integration\\intuitcad\\institutions.xml"));
-			
-			String inputLine = null;
-			StringBuilder builder = new StringBuilder();
-			
-			//Store the contents of the file to the StringBuilder.
-			while((inputLine = rd.readLine()) != null)
-				builder.append(inputLine);
-			
-			//Create a new tokenizer based on the StringReader class instance.
-			srd = new StringReader(builder.toString());
-			
-//	      Unmarshaller unmarshaller = JAXBContext.newInstance("com.nibbledebt.intuit.cad.data").createUnmarshaller();
-//	      unmarshalledObject = unmarshaller.unmarshal(srd);
-			XmlMapper mapper = new XmlMapper();
-			mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-			JaxbAnnotationModule module = new JaxbAnnotationModule();
-			mapper.registerModule(module);
-			Institutions unmarshalledObject = mapper.readValue(builder.toString(), Institutions.class);
-			
-			Assert.assertNotNull(unmarshalledObject);
-	      Assert.assertEquals(11, ((Institutions)unmarshalledObject).getInstitution().size());
-			Assert.assertNotNull(((Institutions)unmarshalledObject).getInstitution().get(0).getInstitutionId());
-			Assert.assertNotNull(((Institutions)unmarshalledObject).getInstitution().get(0).getHomeUrl());
-			Assert.assertNotNull(((Institutions)unmarshalledObject).getInstitution().get(0).getInstitutionName());
-	    }
-	    catch (Exception e)
-	    {
-	      e.printStackTrace();
-	    }
-	}
-	
 //	@Test
+//	public void testDeserialize(){
+//	    try
+//	    {
+//			StringReader srd = null;
+//			
+//			BufferedReader rd = new BufferedReader(new FileReader("K:\\git\\nibble\\nibble-cad-client\\src\\test\\resources\\com\\nibbledebt\\integration\\intuitcad\\institutions.xml"));
+//			
+//			String inputLine = null;
+//			StringBuilder builder = new StringBuilder();
+//			
+//			//Store the contents of the file to the StringBuilder.
+//			while((inputLine = rd.readLine()) != null)
+//				builder.append(inputLine);
+//			
+//			//Create a new tokenizer based on the StringReader class instance.
+//			srd = new StringReader(builder.toString());
+//			
+////	      Unmarshaller unmarshaller = JAXBContext.newInstance("com.nibbledebt.intuit.cad.data").createUnmarshaller();
+////	      Institutions unmarshalledObject = (Institutions) unmarshaller.unmarshal(srd);
+//			XmlMapper mapper = new XmlMapper();
+////			mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+//			JaxbAnnotationModule module = new JaxbAnnotationModule();
+//			mapper.registerModule(module);
+//			Institutions unmarshalledObject = mapper.readValue(builder.toString(), Institutions.class);
+//			
+//			Assert.assertNotNull(unmarshalledObject);
+//	      Assert.assertEquals(2, ((Institutions)unmarshalledObject).getInstitution().size());
+//			Assert.assertNotNull(((Institutions)unmarshalledObject).getInstitution().get(0).getInstitutionId());
+//			Assert.assertNotNull(((Institutions)unmarshalledObject).getInstitution().get(0).getHomeUrl());
+//			Assert.assertNotNull(((Institutions)unmarshalledObject).getInstitution().get(0).getInstitutionName());
+//	    }
+//	    catch (Exception e)
+//	    {
+//	      e.printStackTrace();
+//	    }
+//	}
+	
+	@Test
 	public void getInstitution() throws NumberFormatException, AggCatException  {
 		InstitutionDetail detail = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "sysuser").getInstitutionDetails(Long.valueOf("13278"));
 		Assert.assertNotNull(detail);

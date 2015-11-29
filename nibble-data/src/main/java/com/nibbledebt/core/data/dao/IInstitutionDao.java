@@ -15,8 +15,8 @@ import com.nibbledebt.core.data.model.Institution;
 public interface IInstitutionDao extends IDao<Institution> {
 
 	Institution findByName(String instName) throws RepositoryException;
-	Institution findByType(String type) throws RepositoryException;
-	List<Institution> listPrimaries() throws RepositoryException;
+	List<Institution> findByType(String type) throws RepositoryException;
 	Institution find(String instName, String externalId)  throws RepositoryException;
-	List<Institution> listTestPrimaries() throws RepositoryException;
+	Institution findBySupportedInstitution(Long supportedInstitutionId) throws RepositoryException;
+	List<Institution> findByTestModeSupport(String type) throws RepositoryException;
 }
