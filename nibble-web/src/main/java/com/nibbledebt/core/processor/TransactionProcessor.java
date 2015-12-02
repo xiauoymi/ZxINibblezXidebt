@@ -5,14 +5,18 @@ package com.nibbledebt.core.processor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Date;
+import java.util.Date;
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -77,7 +81,7 @@ public class TransactionProcessor extends AbstractProcessor{
 		summary.setPersonLastName(nibbler.getLastName());
 		summary.setPersonId(nibbler.getId());
 		
-		LocalDate now = new LocalDate();
+		LocalDate now = LocalDate.now();
 		if(StringUtils.equalsIgnoreCase(nibbler.getType().name(), NibblerType.receiver.name())){
 			calculateSummary(summary, nibbler, now, false);
 			List<NibblerContributor> contributors = nibblerDao.findContributors(nibbler.getId());
@@ -95,9 +99,10 @@ public class TransactionProcessor extends AbstractProcessor{
 		TransactionSummary contributorSummary = null;
 		for(NibblerAccount nacct : nibbler.getAccounts()){
 			if(nacct.getUseForRounding()){
-				for(int i=7; i>0; i--){
+				for(int i=1; i<8; i++){
 					BigDecimal dailyTotal = BigDecimal.ZERO;
-					Date day = new Date(now.withDayOfWeek(DateTimeConstants.SATURDAY).minusDays(i).toDateMidnight().toDate().getTime());
+					TemporalField fieldUS = WeekFields.of(Locale.US).dayOfWeek();
+					Date day = Date.from(Instant.from((now.with(fieldUS, i).atStartOfDay().atZone(ZoneId.systemDefault()))));
 					List<AccountTransaction> trxsForDay = accountTrxDao.retrieveTrxs(nacct.getId(), day, day);
 					for(AccountTransaction trx : trxsForDay){
 						com.nibbledebt.domain.model.Transaction dtrx = new com.nibbledebt.domain.model.Transaction();
@@ -115,22 +120,22 @@ public class TransactionProcessor extends AbstractProcessor{
 						wtrxs.add(dtrx);
 					}
 					if(!asContributor){
-						if(i==6) summary.setDay0total(summary.getDay0total().add(dailyTotal));
-						else if(i==5) summary.setDay1total(summary.getDay1total().add(dailyTotal));
-						else if(i==4) summary.setDay2total(summary.getDay2total().add(dailyTotal));
-						else if(i==3) summary.setDay3total(summary.getDay3total().add(dailyTotal));
-						else if(i==2) summary.setDay4total(summary.getDay4total().add(dailyTotal));
-						else if(i==1) summary.setDay5total(summary.getDay5total().add(dailyTotal));
-						else summary.setDay6total(summary.getDay6total().add(dailyTotal));						
+						if(i==1) summary.setDay0total(summary.getDay0total().add(dailyTotal));
+						else if(i==2) summary.setDay1total(summary.getDay1total().add(dailyTotal));
+						else if(i==3) summary.setDay2total(summary.getDay2total().add(dailyTotal));
+						else if(i==4) summary.setDay3total(summary.getDay3total().add(dailyTotal));
+						else if(i==5) summary.setDay4total(summary.getDay4total().add(dailyTotal));
+						else if(i==6) summary.setDay5total(summary.getDay5total().add(dailyTotal));
+						else if(i==7) summary.setDay6total(summary.getDay6total().add(dailyTotal));					
 					}else{
 						if(contributorSummary == null) contributorSummary = new TransactionSummary();
-						if(i==6) contributorSummary.setDay0total(contributorSummary.getDay0total().add(dailyTotal));
-						else if(i==5) contributorSummary.setDay1total(contributorSummary.getDay1total().add(dailyTotal));
-						else if(i==4) contributorSummary.setDay2total(contributorSummary.getDay2total().add(dailyTotal));
-						else if(i==3) contributorSummary.setDay3total(contributorSummary.getDay3total().add(dailyTotal));
-						else if(i==2) contributorSummary.setDay4total(contributorSummary.getDay4total().add(dailyTotal));
-						else if(i==1) contributorSummary.setDay5total(contributorSummary.getDay5total().add(dailyTotal));
-						else contributorSummary.setDay6total(contributorSummary.getDay6total().add(dailyTotal));
+						if(i==1) contributorSummary.setDay0total(contributorSummary.getDay0total().add(dailyTotal));
+						else if(i==2) contributorSummary.setDay1total(contributorSummary.getDay1total().add(dailyTotal));
+						else if(i==3) contributorSummary.setDay2total(contributorSummary.getDay2total().add(dailyTotal));
+						else if(i==4) contributorSummary.setDay3total(contributorSummary.getDay3total().add(dailyTotal));
+						else if(i==5) contributorSummary.setDay4total(contributorSummary.getDay4total().add(dailyTotal));
+						else if(i==6) contributorSummary.setDay5total(contributorSummary.getDay5total().add(dailyTotal));
+						else if(i==7) contributorSummary.setDay6total(contributorSummary.getDay6total().add(dailyTotal));
 						
 					}
 				}

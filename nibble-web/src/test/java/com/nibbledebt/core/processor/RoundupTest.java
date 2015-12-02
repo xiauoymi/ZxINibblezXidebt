@@ -4,18 +4,20 @@ import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.nibbledebt.core.data.model.AccountTransaction;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
@@ -61,8 +63,8 @@ public class RoundupTest {
 	
 	@Test
 	public void testDayOfWeek(){
-		LocalDate now = new LocalDate();
-		System.out.println(now.withDayOfWeek(DateTimeConstants.SATURDAY)); 
-		System.out.println(now.withDayOfWeek(DateTimeConstants.SATURDAY).minusDays(6)); 
+		TemporalField fieldUS = WeekFields.of(Locale.US).dayOfWeek();
+
+		System.out.println(Date.from(Instant.from((java.time.LocalDate.now().with(fieldUS, 1).atStartOfDay().atZone(ZoneId.systemDefault()))))); 
 	}
 }
