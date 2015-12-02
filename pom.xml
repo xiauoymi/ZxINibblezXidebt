@@ -15,6 +15,7 @@
 		<dozer.version>5.5.1</dozer.version>
 		<logback.version>1.0.13</logback.version>
 		<postgres.driver.version>9.3-1100-jdbc41</postgres.driver.version>
+		<jackson.version>2.4.2</jackson.version>
 	</properties>
 
 	<modules>
