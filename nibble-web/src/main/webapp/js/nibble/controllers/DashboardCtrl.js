@@ -17,4 +17,9 @@ app.controller('DashboardCtrl', function DashboardCtrl($scope, $state, snapRemot
         });
     });
 
+    $scope.goTo = function (state) {
+        snapRemote.close();
+        $state.go(state);
+    }
+
 });

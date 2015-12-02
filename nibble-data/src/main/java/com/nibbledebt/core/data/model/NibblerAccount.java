@@ -33,7 +33,8 @@ import javax.persistence.UniqueConstraint;
 	@NamedQuery(name="findAcctByLastPull", query="from NibblerAccount na where na.lastTransactionPull < :lastTransactionPull"),
 	@NamedQuery(name="findAcctByUser", query="from NibblerAccount na where na.nibbler.nibblerDir.username = :username"),
 	@NamedQuery(name="findAcctByExtId", query="from NibblerAccount na where na.externalId = :externalId"),
-	@NamedQuery(name="findAcctByUseForPayoff", query="from NibblerAccount na where na.useForpayoff = true and na.nibbler.nibblerDir.username = :username")
+	@NamedQuery(name="findAcctByUseForPayoff", query="from NibblerAccount na where na.useForpayoff = true and na.nibbler.nibblerDir.username = :username"),
+    @NamedQuery(name="findAcctByUserAndId", query="from NibblerAccount na where na.id = :id and na.nibbler.nibblerDir.username = :username")
 	
 })
 @Entity()

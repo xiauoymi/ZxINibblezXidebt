@@ -8,10 +8,9 @@ NibbleUtils.getParameterByName = function (name) {
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 };
 
-NibbleUtils.initAlerts = function ($scope) {
-    var message = NibbleUtils.getParameterByName('message');
+NibbleUtils.initAlerts = function ($scope, message) {
     var alerts = [];
-    if (message != null && message != '') {
+    if (message && message != null && message != '') {
         alerts = [{type:'danger', msg:message}]
     }
     $scope.msg_alerts = alerts;
@@ -32,7 +31,10 @@ NibbleUtils.getBaseUrl = function() {
 
 };
 
-NibbleUtils.errorCallback = function($scope, data) {
+NibbleUtils.errorCallback = function($scope, $state, data, status) {
+    if (status == 403 || status == "403") {
+        $state.go('user.login', {message: "Please LogIn."});
+    }
     $scope.msg_alerts = [{type:'danger', msg:data}];
     $scope.closeAlert = function(index) {
         $scope.msg_alerts.splice(index, 1);

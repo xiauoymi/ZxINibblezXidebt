@@ -1,5 +1,5 @@
 'use strict';
-app.controller('ActivateCtrl', function ActivateCtrl($scope, $state, accountFactory) {
+app.controller('ActivateCtrl', function ActivateCtrl($scope, $state, userFactory) {
 
     /**
      * data init
@@ -35,12 +35,12 @@ app.controller('ActivateCtrl', function ActivateCtrl($scope, $state, accountFact
      * Activate nibbler
      */
     $scope.activateAccount = function () {
-        accountFactory.activate($scope.user)
+        userFactory.activate($scope.user)
             .success(function (data) {
                 $scope.activation.condition = "activated";
             })
-            .error(function (error) {
-                NibbleUtils.errorCallback($scope, error)
+            .error(function (data, status) {
+                NibbleUtils.errorCallback($scope, $state, data, status);
             });
     };
 

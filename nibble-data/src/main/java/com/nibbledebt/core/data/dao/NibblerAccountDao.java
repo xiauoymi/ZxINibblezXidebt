@@ -55,8 +55,20 @@ public class NibblerAccountDao extends AbstractHibernateDao<NibblerAccount> impl
 			  throw new RepositoryException(e);
 		}
 	}
-	
-	@Override
+
+    @Override
+    public NibblerAccount findByUserNameAndId(String username, Long accountId) throws RepositoryException {
+        try {
+            Query query = this.getCurrentSession().getNamedQuery("findAcctByUserAndId");
+            query.setString("username", username);
+            query.setLong("id", accountId);
+            return (NibblerAccount)query.uniqueResult();
+        } catch (Exception e) {
+            throw new RepositoryException(e);
+        }
+    }
+
+    @Override
 	public NibblerAccount findByUseForPayoff(String username) throws RepositoryException {
 		try {
 			Query query = this.getCurrentSession().getNamedQuery("findAcctByUseForPayoff");

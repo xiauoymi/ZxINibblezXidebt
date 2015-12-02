@@ -35,12 +35,12 @@
         
         <sec:form-login login-page="/login"
         				login-processing-url="/sslogin"
-        				authentication-failure-url="/?message=Your username/password was incorrect."
+        				authentication-failure-url="/#/login?message=Your username/password was incorrect."
         				default-target-url="/#/home"
         				password-parameter="nibbler_password"
         				username-parameter="nibbler_username"/>
         
-        <sec:session-management  session-fixation-protection="newSession" invalid-session-url="/?message=Your previous session has expired.">
+        <sec:session-management  session-fixation-protection="newSession" invalid-session-url="/#/login?message=Your previous session has expired.">
         	<sec:concurrency-control max-sessions="1" />
         </sec:session-management>
 <!--         <sec:csrf /> -->

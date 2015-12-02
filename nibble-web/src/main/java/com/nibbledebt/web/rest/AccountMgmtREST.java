@@ -108,6 +108,15 @@ public class AccountMgmtREST extends AbstractREST {
 	public void updateRoundingAccts(List<Long> acctountIds) throws ProcessingException, RepositoryException{
 		accountsProcessor.updateRoundingAccounts(getCurrentUser(), acctountIds);
 	}
+
+    @POST
+    @Path("/roundupaccount")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Loggable(logLevel=LogLevel.INFO)
+    @PreAuthorize("hasRole('nibbler_level_1')")
+    public void updateRoundingAcct(Account account) throws ProcessingException, RepositoryException{
+        accountsProcessor.updateRoundingAccount(getCurrentUser(), account.getAccountId(), account.getUseForRounding());
+    }
 	
 	@POST
 	@Path("/loanaccounts")

@@ -8,12 +8,25 @@ app.controller('RegisterModalBankCtrl',
         var filtered = [];
 
         for (var i = 0; i < mas.length; i++) {
-            filtered.push(mas[i])
+            if (mas[i].displayFlag === true) {
+                filtered.push(mas[i])
+            }
         }
 
         var ordered = [];
+        var sortFlag = false;
         for (var j = 0; j < filtered.length; j++) {
-            ordered[(filtered[j].displayOrder - 1)] = filtered[j];
+            if (filtered[j].displayOrder != null) {
+                ordered[(filtered[j].displayOrder - 1)] = filtered[j];
+            } else {
+                sortFlag = true;
+            }
+        }
+        if (sortFlag) {
+            ordered = filtered;
+            for (var k = 0; k < ordered.length; k++) {
+                ordered[k].displayOrder = k;
+            }
         }
 
         $scope.keys = ordered;

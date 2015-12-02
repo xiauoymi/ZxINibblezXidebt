@@ -93,6 +93,17 @@ public class AccountsProcessor extends AbstractProcessor {
 			nibblerAcctDao.update(acct);
 		}
 	}
+
+    @Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.DEFAULT)
+    public void updateRoundingAccount(String username, Long accountId, Boolean useForRoundup) throws RepositoryException {
+        NibblerAccount acct = nibblerAcctDao.findByUserNameAndId(username, accountId);
+        if (acct == null) {
+            throw new RepositoryException("Account not found");
+        }
+        acct.setUseForRounding(useForRoundup);
+        setUpdated(acct, username);
+        nibblerAcctDao.update(acct);
+    }
 	
 	
 	
