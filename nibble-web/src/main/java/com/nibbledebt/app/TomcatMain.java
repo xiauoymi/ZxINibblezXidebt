@@ -21,8 +21,8 @@ public class TomcatMain {
 
 	      //The port that we should run on can be set into an environment variable
 	      //Look for that variable and default to 8080 if it isn't there.
-	      String webPort = System.getProperty("PORT");
-	      String webappDirLocation = System.getProperty("WEBAPP_DIR");
+	      String webPort = System.getProperty("PORT") == null ? System.getenv("PORT") : System.getProperty("PORT");
+	      String webappDirLocation = System.getProperty("WEBAPP_DIR") == null ? System.getenv("WEBAPP_DIR") : System.getProperty("WEBAPP_DIR");
 	      System.out.println("detected env variables: PORT[" + webPort +"] , WEBAPP_DIR["+webappDirLocation + "].");
 
 	      if(webPort == null || webPort.isEmpty()) {
