@@ -67,8 +67,8 @@
 				    <property name="connectionTestQuery" value="select 1" />
 				    <property name="driverClassName" value="org.postgresql.Driver" />
 				    <property name="jdbcUrl" value="jdbc:postgresql://localhost:5432/nweb" />
-				    <property name="username" value="postgres" />
-				    <property name="password" value="mozido" />
+				    <property name="username" value="nweb" />
+				    <property name="password" value="nweb" />
 				</bean>
 			</constructor-arg>
 		</bean>
