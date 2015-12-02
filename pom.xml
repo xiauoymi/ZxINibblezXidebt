@@ -24,6 +24,7 @@
 		<module>nibble-data</module>
 		<module>nibble-common</module>
 		<module>nibble-notification</module>
+		<module>nibble-cad-client</module>
 	</modules>
 	
 	<dependencies>
