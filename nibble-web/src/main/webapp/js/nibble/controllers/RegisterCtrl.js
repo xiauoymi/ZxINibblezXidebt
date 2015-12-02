@@ -1,6 +1,6 @@
 'use strict';
 app.controller('RegisterCtrl',
-        function RegisterCtrl($scope, $state, $modal, pwdstrength, accountFactory) {
+        function RegisterCtrl($scope, $state, $stateParams, $modal, pwdstrength, accountFactory, userFactory) {
 
             /**
              * init data and watchers
@@ -38,7 +38,7 @@ app.controller('RegisterCtrl',
                 });
             };
             /* init alerts */
-            NibbleUtils.initAlerts($scope);
+            NibbleUtils.initAlerts($scope, $stateParams.message);
 
             /* init data */
             $scope.initData();
@@ -147,8 +147,8 @@ app.controller('RegisterCtrl',
                     $scope.banks = items;
                     $scope.registration.condition = "linkAccount";
                 })
-                .error(function (error) {
-                    NibbleUtils.errorCallback($scope, error);
+                .error(function (data, status) {
+                        NibbleUtils.errorCallback($scope, $state, data, status);
                 });
 
             };
@@ -158,14 +158,14 @@ app.controller('RegisterCtrl',
              */
             $scope.finishRegistration = function() {
                 var nibbler = $scope.createNibblerObject();
-                accountFactory.registerNibbler(nibbler).success(function(data){
+                userFactory.registerNibbler(nibbler).success(function(data){
                     if (NibbleUtils.isDebug()) {
                         console.log("Register Nibbler response data : ", data);
                     }
                     $scope.parseRegisterResponse(data);
                 })
-                    .error(function(error) {
-                    NibbleUtils.errorCallback($scope, error)
+                    .error(function(data, status) {
+                        NibbleUtils.errorCallback($scope, $state, data, status);
                 });
             };
 
@@ -228,12 +228,12 @@ app.controller('RegisterCtrl',
                 nibbler.mfaQuestion = $scope.registration.mfa.mfaQuestion;
                 nibbler.mfaAnswer = $scope.registration.mfa.mfaAnswer;
 
-                accountFactory.submitMfa(nibbler).success(function(data){
+                userFactory.submitMfa(nibbler).success(function(data){
                     console.log(data);
                     $scope.parseRegisterResponse(data);
                 })
-                    .error(function(error) {
-                        NibbleUtils.errorCallback($scope, error)
+                    .error(function(data, status) {
+                        NibbleUtils.errorCallback($scope, $state, data, status);
                     });
             };
 

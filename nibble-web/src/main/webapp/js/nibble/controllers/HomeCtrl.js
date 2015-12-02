@@ -1,7 +1,5 @@
 'use strict';
-app.controller('HomeCtrl', function HomeCtrl($scope, $state, NgTableParams, accountFactory) {
-
-
+app.controller('HomeCtrl', function HomeCtrl($rootScope, $scope, $state, NgTableParams, accountFactory) {
 
     $scope.homePageInit = function() {
         $scope.trxData = {
@@ -32,7 +30,7 @@ app.controller('HomeCtrl', function HomeCtrl($scope, $state, NgTableParams, acco
 
             })
             .error(function (error) {
-                NibbleUtils.errorCallback($scope, error)
+                $state.go('user.login');
             });
     };
 

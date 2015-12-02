@@ -1,0 +1,26 @@
+<div ng-controller="AccountsCtrl" ng-init="initCtrl()">
+    <div class="page-subheader">
+        Accounts
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12" style="overflow-x: auto;">
+                <table ng-table="tableSettings" show-filter="false" class="table table-bordered table-striped">
+                    <tr ng-repeat="row in $data track by row.accountId">
+                        <td width="25%" title="'Number'">{{row.accountNumber}}</td>
+                        <td width="22%" title="'Type'">{{row.accountType}}</td>
+                        <td width="21%" title="'Balance'">{{row.balance}}</td>
+                        <td width="22%" title="'Institution'">{{row.institutionName}}</td>
+                        <td width="10%" title="'Roundup'">
+                            <div class="checkbox checkbox-success" style="text-align: center">
+                                <input type="checkbox" ng-model="row.useForRounding" ng-change="roundupAccount(row)">
+                                <label>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

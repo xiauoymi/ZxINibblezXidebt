@@ -22,10 +22,10 @@ public class LoginFieldConverter implements CustomConverter{
 		if(sourceFieldValue instanceof Integer){
 			Integer displayOrder = (Integer) sourceFieldValue;
 			displayFlag = displayOrder > 0 ? true : false;
-		}
-		
+		} else if (sourceFieldValue instanceof Boolean){
+            return null;
+        }
 		return displayFlag;
-		
 	}
 
 }

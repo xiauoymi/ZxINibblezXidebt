@@ -1,11 +1,9 @@
 'use strict';
 app.controller('LoginCtrl',
-    function LoginCtrl($scope, $state, accountFactory, $cookieStore) {
+    function LoginCtrl($scope, $rootScope, $state, $stateParams, userFactory) {
 
-        $state;
-
-        $scope.initData = function() {
-            NibbleUtils.initAlerts($scope);
+        $scope.initData = function () {
+            NibbleUtils.initAlerts($scope, $stateParams.message);
             $scope.user = {};
         };
 
@@ -18,14 +16,13 @@ app.controller('LoginCtrl',
         };
 
         $scope.login = function() {
-            accountFactory.login($scope.user.login, $scope.user.pass, $scope.user.remember)
-                .success(function(data, status, headers, config) {
-                    accountFactory.profile()
+            userFactory.login($scope.user.login, $scope.user.pass, $scope.user.remember)
+                .success(function(data) {
+                    userFactory.profile()
                         .success(function(dataProfile, statusProfile, headersProfile, configProfile){
                             if (NibbleUtils.isDebug()) {
                                 console.log(dataProfile);
                             }
-                            $cookieStore.put("nibbler_", dataProfile);
                             $state.go('dashboard.home');
                         })
                         .error(function(dataProfile) {

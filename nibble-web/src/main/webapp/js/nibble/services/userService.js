@@ -1,49 +1,64 @@
 'use strict';
-app.factory('accountFactory', function($http){
+app.factory('userFactory', function($http){
 
     var urlBase = NibbleUtils.getServicesUrl() +'/rest';
-    var accountFactory = {};
+    var userFactory = {};
 
-    accountFactory.getInstitutions = function() {
-        if (NibbleUtils.isDebug()) {
-            console.log("factory method: getInstitutions() -> ");
-        }
-        return $http.get(urlBase + '/banks');
-    };
-
-    accountFactory.registerNibbler = function(nibbler) {
+    /**
+     * register nibbler
+     * @param nibbler - object
+     * @returns {HttpPromise}
+     */
+    userFactory.registerNibbler = function(nibbler) {
         if (NibbleUtils.isDebug()) {
             console.log("factory method: registerNibbler() -> ", nibbler);
         }
         return $http.post(urlBase + '/register', nibbler);
     };
 
-    accountFactory.submitMfa = function(nibbler) {
+    /**
+     * submit mfa answers
+     * @param nibbler
+     * @returns {HttpPromise}
+     */
+    userFactory.submitMfa = function(nibbler) {
         if (NibbleUtils.isDebug()) {
             console.log("factory method: submitMfa() -> ", nibbler);
         }
         return $http.post(urlBase + '/submitMfa', nibbler);
     };
 
-    accountFactory.activate = function(nibbler) {
+    /**
+     * activate nibbler
+     * @param nibbler
+     * @returns {HttpPromise}
+     */
+    userFactory.activate = function(nibbler) {
         if (NibbleUtils.isDebug()) {
             console.log("factory method: activate() -> ", nibbler);
         }
         return $http.post(urlBase + '/activate', nibbler);
     };
 
-    accountFactory.forgotPassword = function(email) {
+    /**
+     * Forgot Password
+     * @param email
+     */
+    userFactory.forgotPassword = function(email) {
         if (NibbleUtils.isDebug()) {
             console.log("factory method: forgotPassword() ->", email);
         }
         //Todo:asa  implement later
     };
 
-    accountFactory.weeklyStatus = function() {
-        return $http.get(urlBase + '/weeksummary');
-    };
-
-    accountFactory.login = function(login, pwd, remember) {
+    /**
+     * Login Service
+     * @param login - login name
+     * @param pwd - password
+     * @param remember - remember check box
+     * @returns {HttpPromise}
+     */
+    userFactory.login = function(login, pwd, remember) {
         var requestForm = $.param({
             nibbler_username: login,
             nibbler_password: pwd
@@ -56,9 +71,13 @@ app.factory('accountFactory', function($http){
         return $http.post(NibbleUtils.getServicesUrl() + "/sslogin", requestForm, config);
     };
 
-    accountFactory.profile = function() {
+    /**
+     * User Profile
+     * @returns {HttpPromise}
+     */
+    userFactory.profile = function() {
         return $http.get(urlBase + '/profile');
     };
 
-    return accountFactory;
+    return userFactory;
 });

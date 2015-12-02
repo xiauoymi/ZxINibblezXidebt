@@ -1,16 +1,16 @@
 'use strict';
 app.controller('ForgotCtrl',
-    function LoginCtrl($scope, $state, accountFactory) {
+    function LoginCtrl($scope, $state, userFactory) {
 
 
         /**
          * send password
          */
         $scope.sendPassword = function () {
-            accountFactory.forgotPassword($scope.forgot.email).success(function(data) {
+            userFactory.forgotPassword($scope.forgot.email).success(function(data) {
                 $scope.forgot.condition = "complete";
-            }).error(function(error) {
-                NibbleUtils.errorCallback($scope, error);
+            }).error(function(data, status) {
+                NibbleUtils.errorCallback($scope, $state, data, status);
             });
         };
 

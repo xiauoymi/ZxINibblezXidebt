@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/nibble.css" />
     <link rel="stylesheet" href="css/custom.css" />
     <link rel="stylesheet" href="css/ng-table.css" />
+    <link rel="stylesheet" href="css/awesome-bootstap-checkbox.css">
     <!--JS-->
     <script src="js/core/jquery-2.1.1.min.js"></script>
     <script src="js/core/angular.js"></script>
@@ -32,24 +33,29 @@
 <body class="black-pattern">
 <div ui-view></div>
 <!--app-->
-<script src="js/nibbleuser/app.js"></script>
+<!--<script src="js/nibbleuser/app.js"></script>-->
+<script src="js/nibble/app.js"></script>
 <!--controllers-->
-<script src="js/nibbleuser/controllers/LoginCtrl.js"></script>
-<script src="js/nibbleuser/controllers/RegisterCtrl.js"></script>
-<script src="js/nibbleuser/controllers/RegisterModalBankCtrl.js"></script>
-<script src="js/nibbleuser/controllers/ActivateCtrl.js"></script>
-<script src="js/nibbleuser/controllers/ForgotCtrl.js"></script>
-<script src="js/nibbleuser/controllers/DashboardCtrl.js"></script>
-<script src="js/nibbleuser/controllers/HomeCtrl.js"></script>
+
+<script src="js/nibble/controllers/LoginCtrl.js"></script>
+<script src="js/nibble/controllers/RegisterCtrl.js"></script>
+<script src="js/nibble/controllers/RegisterModalBankCtrl.js"></script>
+<script src="js/nibble/controllers/ActivateCtrl.js"></script>
+<script src="js/nibble/controllers/ForgotCtrl.js"></script>
+<script src="js/nibble/controllers/DashboardCtrl.js"></script>
+<script src="js/nibble/controllers/HomeCtrl.js"></script>
+<script src="js/nibble/controllers/AccountsCtrl.js"></script>
 <!--directives-->
-<script src="js/nibbleuser/directives/uniqueName.js"></script>
-<script src="js/nibbleuser/directives/loading.js"></script>
+<script src="js/nibble/directives/uniqueName.js"></script>
+<script src="js/nibble/directives/loading.js"></script>
 <!--services-->
-<script src="js/nibbleuser/services/pwdstrength.js"></script>
-<script src="js/nibbleuser/services/accountService.js"></script>
+<script src="js/nibble/services/pwdstrength.js"></script>
+<script src="js/nibble/services/accountService.js"></script>
+<script src="js/nibble/services/userService.js"></script>
+<!--<script src="js/nibbleuser/services/authService.js"></script>-->
 <!--filters-->
-<script src="js/nibbleuser/filters/urlencoder.js"></script>
+<script src="js/nibble/filters/urlencoder.js"></script>
 <!--utils-->
-<script src="js/nibbleuser/utils.js"></script>
+<script src="js/nibble/utils.js"></script>
 </body>
 </html>

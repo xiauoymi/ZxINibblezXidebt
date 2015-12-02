@@ -9,11 +9,16 @@ import java.util.List;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.NibblerAccount;
 
-public interface INibblerAccountDao extends IDao<NibblerAccount>{
-	public abstract List<NibblerAccount> find(Date lastTrxPull)  throws RepositoryException;
-	public abstract List<NibblerAccount> find(String username) throws RepositoryException ;
-	abstract NibblerAccount findByExternalId(String externalId)
-			throws RepositoryException;
-	NibblerAccount findByUseForPayoff(String username) throws RepositoryException;
+public interface INibblerAccountDao extends IDao<NibblerAccount> {
+    List<NibblerAccount> find(Date lastTrxPull) throws RepositoryException;
+
+    List<NibblerAccount> find(String username) throws RepositoryException;
+
+    NibblerAccount findByExternalId(String externalId)
+            throws RepositoryException;
+
+    NibblerAccount findByUseForPayoff(String username) throws RepositoryException;
+
+    NibblerAccount findByUserNameAndId(String username, Long accountId) throws RepositoryException;
 
 }
