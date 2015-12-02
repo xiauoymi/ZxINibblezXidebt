@@ -65,6 +65,12 @@ public class RoundupTest {
 	public void testDayOfWeek(){
 		TemporalField fieldUS = WeekFields.of(Locale.US).dayOfWeek();
 
-		System.out.println(Date.from(Instant.from((java.time.LocalDate.now().with(fieldUS, 1).atStartOfDay().atZone(ZoneId.systemDefault()))))); 
+		System.out.println(Date.from(Instant.from((java.time.LocalDate.now().with(fieldUS, 1).atStartOfDay().atZone(ZoneId.systemDefault())))));
+		System.out.println(Date.from(Instant.from((java.time.LocalDate.now().with(fieldUS, 2).atStartOfDay().atZone(ZoneId.systemDefault()))))); 
+		System.out.println(Date.from(Instant.from((java.time.LocalDate.now().with(fieldUS, 3).atStartOfDay().atZone(ZoneId.systemDefault()))))); 
+		System.out.println(Date.from(Instant.from((java.time.LocalDate.now().with(fieldUS, 4).atStartOfDay().atZone(ZoneId.systemDefault()))))); 
+		System.out.println(Date.from(Instant.from((java.time.LocalDate.now().with(fieldUS, 5).atStartOfDay().atZone(ZoneId.systemDefault()))))); 
+		System.out.println(Date.from(Instant.from((java.time.LocalDate.now().with(fieldUS, 6).atStartOfDay().atZone(ZoneId.systemDefault()))))); 
+		System.out.println(Date.from(Instant.from((java.time.LocalDate.now().with(fieldUS, 7).atStartOfDay().atZone(ZoneId.systemDefault()))))); 
 	}
 }

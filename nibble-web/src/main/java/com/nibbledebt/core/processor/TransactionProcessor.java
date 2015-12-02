@@ -102,8 +102,9 @@ public class TransactionProcessor extends AbstractProcessor{
 				for(int i=1; i<8; i++){
 					BigDecimal dailyTotal = BigDecimal.ZERO;
 					TemporalField fieldUS = WeekFields.of(Locale.US).dayOfWeek();
-					Date day = Date.from(Instant.from((now.with(fieldUS, i).atStartOfDay().atZone(ZoneId.systemDefault()))));
-					List<AccountTransaction> trxsForDay = accountTrxDao.retrieveTrxs(nacct.getId(), day, day);
+					Date dayStart = Date.from(Instant.from((now.with(fieldUS, i).atStartOfDay().atZone(ZoneId.systemDefault()))));
+					Date dayEnd = Date.from(Instant.from((now.with(fieldUS, i).atStartOfDay().atZone(ZoneId.systemDefault()))).plusMillis(86399999));
+					List<AccountTransaction> trxsForDay = accountTrxDao.retrieveTrxs(nacct.getId(), dayStart, dayEnd);
 					for(AccountTransaction trx : trxsForDay){
 						com.nibbledebt.domain.model.Transaction dtrx = new com.nibbledebt.domain.model.Transaction();
 						dtrx.setCity(trx.getLocation().getCity());
