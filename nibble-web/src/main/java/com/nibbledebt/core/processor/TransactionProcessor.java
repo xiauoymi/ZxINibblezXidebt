@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +97,7 @@ public class TransactionProcessor extends AbstractProcessor{
 			if(nacct.getUseForRounding()){
 				for(int i=7; i>0; i--){
 					BigDecimal dailyTotal = BigDecimal.ZERO;
-					Date day = new Date(now.withDayOfWeek(DateTimeConstants.SATURDAY).minusDays(i).toDate().getTime());
+					Date day = new Date(now.withDayOfWeek(DateTimeConstants.SATURDAY).minusDays(i).toDateMidnight().toDate().getTime());
 					List<AccountTransaction> trxsForDay = accountTrxDao.retrieveTrxs(nacct.getId(), day, day);
 					for(AccountTransaction trx : trxsForDay){
 						com.nibbledebt.domain.model.Transaction dtrx = new com.nibbledebt.domain.model.Transaction();
