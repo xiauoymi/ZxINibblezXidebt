@@ -447,7 +447,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 				NibblerAccount nibblerAccount = new NibblerAccount();
 	            nibblerAccount.setNumber(account.getAccountNumber());
 	            nibblerAccount.setNumberMask(account.getAccountNumber());
-	            Institution institution = institutionDao.findByName(nibblerData.getBank().getInstitution().getName());
+	            Institution institution = institutionDao.findOne(Long.valueOf(nibblerData.getBank().getInstitution().getId()));
 	            nibblerAccount.setInstitution(institution);
 	            nibblerAccount.setNibbler(nibbler);
 	            nibblerAccount.setName(account.getAccountType() + " - " + account.getAccountNumber());

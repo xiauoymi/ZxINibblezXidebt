@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.util.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -32,6 +33,7 @@ import com.nibbledebt.integration.sao.mandrill.MandrillSao;
 public class NotifyAspect {
 	private static final String ACCOUNT_CREATED_EMAIL_SUBJ = "Nibble Account Activation";
 	private static final String PASSWORD_RESET_EMAIL_SUBJ = "Nibble Password Reset";
+	private static final String INVITE_EMAIL_SUBJ = " needs your help.";
 	@Autowired
 	private MandrillSao mandrillSao;
 	
@@ -50,7 +52,8 @@ public class NotifyAspect {
 			
 			if(notify.notifyType() == NotifyType.ACCOUNT_CREATED){
 				VelocityContext acCtx = new VelocityContext();
-				acCtx.put("activate_link", nibblerData.getUrl()+"#/activate?acode="+nibblerData.getActivationCode());
+				acCtx.put("activation_link", nibblerData.getUrl()+"#/activate?acode="+nibblerData.getActivationCode());
+				acCtx.put("activation_code", nibblerData.getActivationCode());
 				Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("account-created.vm");
 				StringWriter acWriter = new StringWriter();
 				acTmpl.merge(acCtx, acWriter);				
@@ -58,10 +61,23 @@ public class NotifyAspect {
 			} else if(notify.notifyType() == NotifyType.PASSWORD_RESET){
 				VelocityContext prCtx = new VelocityContext();
 				prCtx.put("reset_link", nibblerData.getUrl()+"/nibbleuser.html?rcode="+nibblerData.getResetCode());
+				prCtx.put("reset_code", nibblerData.getResetCode());
 				Template prTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("password-reset.vm");
 				StringWriter writer = new StringWriter();
 				prTmpl.merge(prCtx, writer);
 				mandrillSao.sendEmail(PASSWORD_RESET_EMAIL_SUBJ, writer.toString(), toEmails);
+			} else if(notify.notifyType() == NotifyType.INVITE){
+				StringBuffer buffer = new StringBuffer(StringUtils.capitalizeFirstLetter(nibblerData.getFirstName()));
+				buffer.append(" ");
+				buffer.append(StringUtils.capitalizeFirstLetter(nibblerData.getLastName()));
+				VelocityContext prCtx = new VelocityContext();
+				prCtx.put("invitation_link", nibblerData.getUrl()+"/nibbleuser.html?icode="+nibblerData.getInvitationCode());
+				prCtx.put("invite_code", nibblerData.getInvitationCode());
+				prCtx.put("nibbler_name", buffer.toString());
+				Template prTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("invite-sent.vm");
+				StringWriter writer = new StringWriter();
+				prTmpl.merge(prCtx, writer);
+				mandrillSao.sendEmail(buffer.toString() + INVITE_EMAIL_SUBJ, writer.toString(), nibblerData.getInviteEmails());
 			}
 		} catch (Exception e) {
 			throw new NotificationException("Error reading template.", e);

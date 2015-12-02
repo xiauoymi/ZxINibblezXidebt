@@ -3,6 +3,8 @@
  */
 package com.nibbledebt.web.rest;
 
+import java.util.Arrays;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -24,7 +26,6 @@ import com.nibbledebt.common.validator.Validatable;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.processor.UsersProcessor;
 import com.nibbledebt.domain.model.NibblerData;
-import com.nibbledebt.integration.finicity.SecurityContext;
 
 /**
  * @author ralam
@@ -73,5 +74,16 @@ public class UserMgmtREST  extends AbstractREST {
 	@PreAuthorize("hasRole('nibbler_level_1')")
 	public MemberDetails getProfile(){
 		return ((MemberDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+	}
+	
+	@POST
+	@Path("/invite")
+	@Loggable(logLevel=LogLevel.INFO)
+	@PreAuthorize("hasRole('receiver')")
+	public void invite(String[] emails) throws ProcessingException, RepositoryException{
+		NibblerData nibblerData = new NibblerData();
+		nibblerData.setInviteEmails(Arrays.asList(emails));
+		nibblerData.setEmail(getCurrentUser());
+		this.usersProcessor.sendInvite(nibblerData);
 	}
 }

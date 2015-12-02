@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Activate Account</title>
+<title>Nibble Invite</title>
 <style>
 	/* -------------------------------------
 	    GLOBAL
@@ -300,7 +300,7 @@
 				<table class="main" width="100%" cellpadding="0" cellspacing="0" itemprop="action" itemscope itemtype="http://schema.org/ConfirmAction">
 					<tr>
 						<td class="alert alert-good">
-							Welcome to Nibble!
+							${nibbler_name} is asking for your help! 
 						</td>
 					</tr>
 					<tr>
@@ -309,18 +309,19 @@
 							<table width="100%" cellpadding="0" cellspacing="0">
 								<tr>
 									<td class="content-block">
-										Thank you for giving us a try! Get started by activating your account.
+										${nibbler_name} is asking for your help to pay down a student loan. Everyone can make a difference 
+										by just donating their spare change.
 									</td>
 								</tr>
 								<tr>
 									<td class="content-block">
-										You can activate your account either by clicking the link below or using the Android/iOS App and clicking on the Activate link. 
-										You will need the following activation code (we know its long, just copy-paste it): ${activation_code}
+										You can signup for a 30-day free trial account either by clicking the link below or using the Android/iOS App and clicking on the Signup link. 
+										You will need the following invite code (we know its long, just copy-paste it): ${invite_code}
 									</td>
 								</tr>
 								<tr>
 									<td class="content-block" itemprop="handler" itemscope itemtype="http://schema.org/HttpActionHandler">
-										<a href="${activate_link}" class="btn-primary" itemprop="url">Activate Account</a>
+										<a href="${invitation_link}" class="btn-primary" itemprop="url">Signup to help</a>
 									</td>
 								</tr>
 								<tr>

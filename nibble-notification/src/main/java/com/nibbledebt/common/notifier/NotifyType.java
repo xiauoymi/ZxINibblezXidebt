@@ -9,6 +9,7 @@ package com.nibbledebt.common.notifier;
  */
 public enum NotifyType {
 	DEFAULT,
+	INVITE,
 	ACCOUNT_CREATED,
 	ACCOUNT_ACTIVATED,
 	ACCOUNT_LOCKED,

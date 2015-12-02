@@ -171,4 +171,13 @@ public class UsersProcessor extends AbstractProcessor {
 		}		
 	}
 	
+	@Transactional(isolation=Isolation.READ_COMMITTED)
+	@Notify(notifyMethod=NotifyMethod.EMAIL, notifyType=NotifyType.INVITE)
+	public void sendInvite(NibblerData nibblerData) throws ProcessingException, RepositoryException{
+		NibblerReceiver rec = nibblerDao.findReceiver(nibblerData.getEmail());
+		nibblerData.setInvitationCode(rec.getInvitationCode());
+		nibblerData.setFirstName(rec.getFirstName()); 
+		nibblerData.setLastName(rec.getLastName());
+	}
+	
 }

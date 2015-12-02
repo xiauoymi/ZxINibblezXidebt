@@ -43,6 +43,7 @@ public class NibblerData {
 	private boolean contributor;
 	
 	private Integer invitationCode;
+	private List<String> inviteEmails;
 
 	/**
 	 * @return the isFirstLogin
@@ -377,6 +378,22 @@ public class NibblerData {
 	 */
 	public void setInvitationCode(Integer invitationCode) {
 		this.invitationCode = invitationCode;
+	}
+
+
+	/**
+	 * @return the inviteEmails
+	 */
+	public List<String> getInviteEmails() {
+		return inviteEmails;
+	}
+
+
+	/**
+	 * @param inviteEmails the inviteEmails to set
+	 */
+	public void setInviteEmails(List<String> inviteEmails) {
+		this.inviteEmails = inviteEmails;
 	}
 
 
