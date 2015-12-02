@@ -197,7 +197,7 @@ public class InstitutionProcessor {
 	public void populateInstitutions() throws ProcessingException{
 		try {
 			int processors = Runtime.getRuntime().availableProcessors();
-			instSyncExecutor.setMaxPoolSize(processors*2);
+			instSyncExecutor.setMaxPoolSize(!(processors>0) ? 6 : processors*2);
 			instSyncExecutor.setCorePoolSize(processors);
 			instSyncExecutor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
 	            @Override
