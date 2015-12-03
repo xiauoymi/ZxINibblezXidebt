@@ -39,7 +39,9 @@ public class AccountsProcessor extends AbstractProcessor {
 		List<NibblerAccount> accts = nibblerAcctDao.find(username);
 		List<Account> webAccts = new ArrayList<>();
 		for(NibblerAccount acct : accts){
-			if(!StringUtils.equalsIgnoreCase(acct.getAccountType().getCode(), "student_loan")){
+			if(!StringUtils.equalsIgnoreCase(acct.getAccountType().getCode(), "student_loan") &&
+					(StringUtils.equalsIgnoreCase(acct.getAccountType().getCode(), "checking") ||
+							(StringUtils.containsIgnoreCase(acct.getAccountType().getCode(), "credit") && (StringUtils.containsIgnoreCase(acct.getAccountType().getCode(), "card"))))){
 				Account wacct = new Account();
 				wacct.setAccountId(acct.getId());
 				wacct.setAccountNumber(acct.getNumberMask());
