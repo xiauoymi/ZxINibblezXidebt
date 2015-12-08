@@ -4,7 +4,11 @@
 package com.nibbledebt.core.processor;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -17,9 +21,13 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nibbledebt.common.error.ProcessingException;
 import com.nibbledebt.core.data.dao.INibblerAccountDao;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.NibblerAccount;
+import com.nibbledebt.domain.model.AmortizationRecord;
+import com.nibbledebt.domain.model.Loan;
+import com.nibbledebt.domain.model.LoanSummary;
 import com.nibbledebt.domain.model.account.Account;
 
 /**
@@ -33,6 +41,48 @@ public class AccountsProcessor extends AbstractProcessor {
 	
 	@Autowired
 	private INibblerAccountDao nibblerAcctDao;
+	
+	@Transactional(readOnly=true)
+	public LoanSummary getWeeklyLoanSummary(String username) throws ProcessingException, RepositoryException{
+		LoanSummary summary = new LoanSummary();
+		List<Account> accts = getLoanAccounts(username);
+		
+		for(Account acct : accts){
+			Loan loan = new Loan();
+			loan.setInterestRate(new BigDecimal(acct.getDetail().getInterestRate()));
+			loan.setMinimumPayment(new BigDecimal(acct.getDetail().getPaymentMinAmount()));
+			loan.setPrincipalBalance(new BigDecimal(acct.getDetail().getPrincipalBalance()));
+			summary.getLoans().add(loan);
+		}
+		
+		for(Loan loan : summary.getLoans()){
+			int monthIteration = 1;
+			BigDecimal accruedMonthlyInterest = BigDecimal.ZERO;
+			for (LocalDate date = LocalDate.now(ZoneId.systemDefault());  ; date = date.plusDays(1)) {
+				if(loan.getPrincipalBalance().doubleValue() == 0) {
+					break;
+				}else{
+					if(date.getDayOfMonth() == date.lengthOfMonth()){
+						accruedMonthlyInterest = accruedMonthlyInterest.add((loan.getPrincipalBalance().multiply((loan.getInterestRate().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)))).divide(BigDecimal.valueOf(date.lengthOfYear()), 2, RoundingMode.HALF_UP));
+						if(loan.getPrincipalBalance().add(accruedMonthlyInterest).doubleValue() > loan.getMinimumPayment().doubleValue()){
+							loan.setPrincipalBalance(loan.getPrincipalBalance().subtract(loan.getMinimumPayment().subtract(accruedMonthlyInterest)));
+							loan.getOriginalAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), accruedMonthlyInterest, loan.getMinimumPayment().subtract(accruedMonthlyInterest), loan.getPrincipalBalance()));
+						}else{
+							loan.getOriginalAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), accruedMonthlyInterest, loan.getPrincipalBalance(), BigDecimal.ZERO));
+							loan.setPrincipalBalance(BigDecimal.ZERO);
+							
+						}
+						accruedMonthlyInterest = BigDecimal.ZERO;
+						monthIteration++;
+					}else{
+						accruedMonthlyInterest = accruedMonthlyInterest.add((loan.getPrincipalBalance().multiply((loan.getInterestRate().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)))).divide(BigDecimal.valueOf(date.lengthOfYear()), 2, RoundingMode.HALF_UP));
+					}
+				}
+			}
+		}
+		
+		return summary;
+	}
 		
 	@Transactional(readOnly=true, isolation=Isolation.REPEATABLE_READ)
 	public List<Account> getRoundupAccounts(String username) throws RepositoryException{

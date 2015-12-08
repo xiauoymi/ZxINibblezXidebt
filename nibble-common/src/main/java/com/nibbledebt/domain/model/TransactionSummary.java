@@ -1,5 +1,5 @@
 /**
- * Copyright 2015-2016. All rights reserved by Nibbledebt Inc.
+ * Copyright 2015-2017. All rights reserved by Nibbledebt Inc.
  */
 package com.nibbledebt.domain.model;
 
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author ralam
+ * @author Rocky Alam
  *
  */
 public class TransactionSummary {
