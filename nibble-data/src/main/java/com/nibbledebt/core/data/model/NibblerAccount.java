@@ -330,6 +330,6 @@ public class NibblerAccount extends AbstractModel{
 	 */
 	public void setCreditActivity(List<PaymentActivity> creditActivity) {
 		this.creditActivity = creditActivity;
-	}	
+	}
 	
 }
