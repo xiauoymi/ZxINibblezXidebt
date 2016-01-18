@@ -121,6 +121,7 @@ public class Loan {
 	 * @return the currentProjectedAmortization
 	 */
 	public List<AmortizationRecord> getCurrentProjectedAmortization() {
+		if(currentProjectedAmortization == null) currentProjectedAmortization = new ArrayList<>();
 		return currentProjectedAmortization;
 	}
 	/**
