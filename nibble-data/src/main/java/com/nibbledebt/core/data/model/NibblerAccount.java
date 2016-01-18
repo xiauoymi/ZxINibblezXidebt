@@ -93,6 +93,14 @@ public class NibblerAccount extends AbstractModel{
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="account")
 	private List<AccountLimit> limits;
 	
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="fromAccount")
+	@OrderBy("initiatedTs asc")
+	private List<PaymentActivity> debitActivity;
+	
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="toAccount")
+	@OrderBy("initiatedTs asc")
+	private List<PaymentActivity> creditActivity;
+	
 	public NibblerAccount(){
 		super();
 	}
@@ -294,6 +302,34 @@ public class NibblerAccount extends AbstractModel{
 	 */
 	public void setUseForpayoff(Boolean useForpayoff) {
 		this.useForpayoff = useForpayoff;
+	}
+
+	/**
+	 * @return the debitActivity
+	 */
+	public List<PaymentActivity> getDebitActivity() {
+		return debitActivity;
+	}
+
+	/**
+	 * @param debitActivity the debitActivity to set
+	 */
+	public void setDebitActivity(List<PaymentActivity> debitActivity) {
+		this.debitActivity = debitActivity;
+	}
+
+	/**
+	 * @return the creditActivity
+	 */
+	public List<PaymentActivity> getCreditActivity() {
+		return creditActivity;
+	}
+
+	/**
+	 * @param creditActivity the creditActivity to set
+	 */
+	public void setCreditActivity(List<PaymentActivity> creditActivity) {
+		this.creditActivity = creditActivity;
 	}	
 	
 }

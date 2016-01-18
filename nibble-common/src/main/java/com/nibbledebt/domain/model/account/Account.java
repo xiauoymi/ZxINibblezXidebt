@@ -3,6 +3,12 @@
  */
 package com.nibbledebt.domain.model.account;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import com.nibbledebt.domain.model.Payment;
+
 /**
  * @author ralam
  *
@@ -22,6 +28,11 @@ public class Account {
 
 	private Boolean useForRounding;
 	private Boolean useForPayoff;
+	
+	private List<Payment> credits;
+	private List<Payment> debits;
+	
+	private Date createdTs;
 
     public String getAccountName() {
         return accountName;
@@ -159,6 +170,48 @@ public class Account {
 	public void setUseForPayoff(Boolean useForPayoff) {
 		this.useForPayoff = useForPayoff;
 	}
-	
-	
+
+	/**
+	 * @return the credits
+	 */
+	public List<Payment> getCredits() {
+		if(this.credits == null) this.credits = new ArrayList<>();
+		return credits;
+	}
+
+	/**
+	 * @param credits the credits to set
+	 */
+	public void setCredits(List<Payment> credits) {
+		this.credits = credits;
+	}
+
+	/**
+	 * @return the debits
+	 */
+	public List<Payment> getDebits() {
+		if(this.debits == null) this.debits = new ArrayList<>();
+		return debits;
+	}
+
+	/**
+	 * @param debit the debits to set
+	 */
+	public void setDebits(List<Payment> debits) {
+		this.debits = debits;
+	}
+
+	/**
+	 * @return the createdTs
+	 */
+	public Date getCreatedTs() {
+		return createdTs;
+	}
+
+	/**
+	 * @param createdTs the createdTs to set
+	 */
+	public void setCreatedTs(Date createdTs) {
+		this.createdTs = createdTs;
+	}
 }

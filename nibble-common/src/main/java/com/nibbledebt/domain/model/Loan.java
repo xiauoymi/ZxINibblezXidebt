@@ -5,6 +5,7 @@ package com.nibbledebt.domain.model;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -24,6 +25,10 @@ public class Loan {
 	
 	private List<AmortizationRecord> originalAmortization;
 	private List<AmortizationRecord> currentProjectedAmortization;
+	
+	private List<Payment> payments;
+	
+	private Date firstDayAtNibble;
 	
 	/**
 	 * @return the interestRate
@@ -123,6 +128,33 @@ public class Loan {
 	 */
 	public void setCurrentProjectedAmortization(List<AmortizationRecord> currentProjectedAmortization) {
 		this.currentProjectedAmortization = currentProjectedAmortization;
+	}
+	
+	/**
+	 * @return the payments
+	 */
+	public List<Payment> getPayments() {
+		return payments;
+	}
+	/**
+	 * @param payments the payments to set
+	 */
+	public void setPayments(List<Payment> payments) {
+		this.payments = payments;
+	}
+	
+	
+	/**
+	 * @return the firstDayAtNibble
+	 */
+	public Date getFirstDayAtNibble() {
+		return firstDayAtNibble;
+	}
+	/**
+	 * @param firstDayAtNibble the firstDayAtNibble to set
+	 */
+	public void setFirstDayAtNibble(Date firstDayAtNibble) {
+		this.firstDayAtNibble = firstDayAtNibble;
 	}
 	@Override
 	public String toString(){
