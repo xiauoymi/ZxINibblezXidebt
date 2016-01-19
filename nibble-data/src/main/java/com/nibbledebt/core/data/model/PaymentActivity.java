@@ -52,8 +52,8 @@ public class PaymentActivity extends AbstractModel {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date completedTs;
 	
-	@Column(name="authorization")
-	private String authorization;
+	@Column(name="authorization_code")
+	private String authorizationCode;
 
 	/**
 	 * @return the fromAccount
@@ -126,18 +126,17 @@ public class PaymentActivity extends AbstractModel {
 	}
 
 	/**
-	 * @return the authorization
+	 * @return the authorizationCode
 	 */
-	public String getAuthorization() {
-		return authorization;
+	public String getAuthorizationCode() {
+		return authorizationCode;
 	}
 
 	/**
-	 * @param authorization the authorization to set
+	 * @param authorizationCode the authorizationCode to set
 	 */
-	public void setAuthorization(String authorization) {
-		this.authorization = authorization;
+	public void setAuthorizationCode(String authorizationCode) {
+		this.authorizationCode = authorizationCode;
 	}
-	
 	
 }

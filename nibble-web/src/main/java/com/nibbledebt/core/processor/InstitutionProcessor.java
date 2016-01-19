@@ -77,14 +77,14 @@ public class InstitutionProcessor {
 		try {
 			List<Bank> banks = null;
 			List<com.nibbledebt.core.data.model.Institution> primaries = null;
-			if(!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod")){
-				primaries =  institutionDao.findByTestModeSupport("banking");
-				primaries.addAll(institutionDao.findByTestModeSupport("credit_card"));
-				primaries.addAll(institutionDao.findByTestModeSupport("test"));
-			}else{
+//			if(!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod")){
+//				primaries =  institutionDao.findByTestModeSupport("banking");
+//				primaries.addAll(institutionDao.findByTestModeSupport("credit_card"));
+//				primaries.addAll(institutionDao.findByTestModeSupport("test"));
+//			}else{
 				primaries =  institutionDao.findByType("banking");
 				primaries.addAll(institutionDao.findByTestModeSupport("credit_card"));
-			}
+//			}
 			if(primaries !=null && !primaries.isEmpty()){
 				banks = new ArrayList<>();
 				for(com.nibbledebt.core.data.model.Institution inst : primaries){

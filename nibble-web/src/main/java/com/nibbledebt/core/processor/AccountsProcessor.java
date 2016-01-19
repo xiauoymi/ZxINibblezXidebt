@@ -9,7 +9,9 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -61,36 +63,50 @@ public class AccountsProcessor extends AbstractProcessor {
 			loan.setPayments(acct.getCredits());
 			loan.setFirstDayAtNibble(acct.getCreatedTs());
 			summary.getLoans().add(loan);
-		}
-		
-		for(Loan loan : summary.getLoans()){
-			int monthIteration = 1;
-			// create payment map
 			
+
+			Map<String, BigDecimal> paymentMap = new HashMap<>();
+			// convert all payments to a map of month-year and value
+			for(Payment payment : loan.getPayments()){
+				String paymentKey = new StringBuffer(payment.getInitiatedTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonth().getValue())
+										.append(payment.getInitiatedTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()).toString();
+				
+				if(paymentMap.get(paymentKey) == null) paymentMap.put(paymentKey, payment.getAmount());
+				else paymentMap.put(paymentKey, paymentMap.get(paymentKey).add(payment.getAmount()));
+			}
+			
+			
+			int monthIteration = 1;
 			BigDecimal originalAccruedMonthlyInterest = BigDecimal.ZERO;
 			BigDecimal currentAccruedMonthlyInterest = BigDecimal.ZERO;
 			
-			BigDecimal principalBalanceOriginal = loan.getPrincipalBalance();
-			BigDecimal principalBalanceCurrent = loan.getPrincipalBalance();
+			BigDecimal originalPrincipalBalance = loan.getPrincipalBalance();
+			BigDecimal currentPrincipalBalance = loan.getPrincipalBalance();
 			
-			for (LocalDate date = LocalDate.now(ZoneId.systemDefault());  ; date = date.plusDays(1)) {
-				if(loan.getPrincipalBalance().doubleValue() == 0) {
-					break;
-				}else{
+			if(loan.getPrincipalBalance().doubleValue() > loan.getMinimumPayment().doubleValue()) {
+				for (LocalDate date = loan.getFirstDayAtNibble().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();;  date = date.plusDays(1)) {
 					if(date.getDayOfMonth() == date.lengthOfMonth()){
-						originalAccruedMonthlyInterest = originalAccruedMonthlyInterest.add((loan.getPrincipalBalance().multiply((loan.getInterestRate().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)))).divide(BigDecimal.valueOf(date.lengthOfYear()), 2, RoundingMode.HALF_UP));
-						if(loan.getPrincipalBalance().add(originalAccruedMonthlyInterest).doubleValue() > loan.getMinimumPayment().doubleValue()){
-							loan.setPrincipalBalance(loan.getPrincipalBalance().subtract(loan.getMinimumPayment().subtract(originalAccruedMonthlyInterest)));
-							loan.getOriginalAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), originalAccruedMonthlyInterest, loan.getMinimumPayment().subtract(originalAccruedMonthlyInterest), loan.getPrincipalBalance()));
+						originalAccruedMonthlyInterest = originalAccruedMonthlyInterest.add((originalPrincipalBalance.multiply((loan.getInterestRate().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)))).divide(BigDecimal.valueOf(date.lengthOfYear()), 2, RoundingMode.HALF_UP));
+						if(originalPrincipalBalance.add(originalAccruedMonthlyInterest).doubleValue() > loan.getMinimumPayment().doubleValue()){
+							originalPrincipalBalance = originalPrincipalBalance.subtract(loan.getMinimumPayment().subtract(originalAccruedMonthlyInterest));
+							loan.getOriginalAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), originalAccruedMonthlyInterest, loan.getMinimumPayment().subtract(originalAccruedMonthlyInterest), originalPrincipalBalance));
 						}else{
-							loan.getOriginalAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), originalAccruedMonthlyInterest, loan.getPrincipalBalance(), BigDecimal.ZERO));
-							loan.setPrincipalBalance(BigDecimal.ZERO);
-							
+							loan.getOriginalAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), originalAccruedMonthlyInterest, originalPrincipalBalance, BigDecimal.ZERO));
+							break;
 						}
-						originalAccruedMonthlyInterest = BigDecimal.ZERO;
+						
+						if(currentPrincipalBalance.add(currentAccruedMonthlyInterest).doubleValue() > loan.getMinimumPayment().doubleValue()){
+							currentPrincipalBalance = currentPrincipalBalance.subtract(loan.getMinimumPayment().subtract(currentAccruedMonthlyInterest));
+							loan.getCurrentProjectedAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), currentAccruedMonthlyInterest, loan.getMinimumPayment().subtract(currentAccruedMonthlyInterest), currentPrincipalBalance));
+						}else{
+							loan.getCurrentProjectedAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), currentAccruedMonthlyInterest, currentPrincipalBalance, BigDecimal.ZERO));
+						}
+						
+						currentAccruedMonthlyInterest = originalAccruedMonthlyInterest = BigDecimal.ZERO;
 						monthIteration++;
+						
 					}else{
-						originalAccruedMonthlyInterest = originalAccruedMonthlyInterest.add((loan.getPrincipalBalance().multiply((loan.getInterestRate().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)))).divide(BigDecimal.valueOf(date.lengthOfYear()), 2, RoundingMode.HALF_UP));
+						currentAccruedMonthlyInterest = originalAccruedMonthlyInterest = originalAccruedMonthlyInterest.add((originalPrincipalBalance.multiply((loan.getInterestRate().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)))).divide(BigDecimal.valueOf(date.lengthOfYear()), 2, RoundingMode.HALF_UP));
 					}
 				}
 			}
@@ -142,11 +158,11 @@ public class AccountsProcessor extends AbstractProcessor {
 				wacct.setAccountName(acct.getName());
 				wacct.setCreatedTs(acct.getCreatedTs());
 				for(PaymentActivity pa : acct.getCreditActivity()){
-					wacct.getCredits().add(new Payment(pa.getAmount(), pa.getInitiatedTs(), pa.getCompletedTs(), pa.getAuthorization()));
+					wacct.getCredits().add(new Payment(pa.getAmount(), pa.getInitiatedTs(), pa.getCompletedTs(), pa.getAuthorizationCode()));
 				}
 				
 				for(PaymentActivity pa : acct.getDebitActivity()){
-					wacct.getDebits().add(new Payment(pa.getAmount(), pa.getInitiatedTs(), pa.getCompletedTs(), pa.getAuthorization()));
+					wacct.getDebits().add(new Payment(pa.getAmount(), pa.getInitiatedTs(), pa.getCompletedTs(), pa.getAuthorizationCode()));
 				}
 				webAccts.add(wacct);
 			}

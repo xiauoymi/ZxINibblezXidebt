@@ -36,7 +36,7 @@ public class TomcatMain {
 	      }
 
 	      tomcat.setPort(Integer.valueOf(webPort));
-	      tomcat.setConnector(getSSLConnector(tomcat.getConnector(), ksPath, ksPassword, keyAlias, Integer.valueOf(webPort)));
+//	      tomcat.setConnector(getSSLConnector(tomcat.getConnector(), ksPath, ksPassword, keyAlias, Integer.valueOf(webPort)));
 //	      service.addConnector(getSSLConnector(ksPath, ksPassword, keyAlias, Integer.valueOf(webPort)));
 
 	      tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
