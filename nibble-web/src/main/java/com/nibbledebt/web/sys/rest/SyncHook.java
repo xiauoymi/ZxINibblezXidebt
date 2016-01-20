@@ -53,11 +53,13 @@ public class SyncHook {
 	public Response receiveEvent(Event event) throws ProcessingException, RepositoryException{
 		if(event instanceof TransactionEvent){
 			TransactionEvent trxEvent = (TransactionEvent)event;
+			
 			List<com.nibbledebt.domain.model.Transaction> trxs = new ArrayList<>();
 			for(Transaction extTrx : trxEvent.getRecords().getTransaction()){
 				trxs.add(integrationMapper.map(extTrx, com.nibbledebt.domain.model.Transaction.class));
 			}
-			
+
+			trxsProcessor.saveTrxs(trxs);
 		}else if(event instanceof AccountEvent){
 			AccountEvent acctEvent = (AccountEvent)event;
 			
