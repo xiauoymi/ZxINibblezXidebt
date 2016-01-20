@@ -5,14 +5,17 @@ package com.nibbledebt.core.processor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Date;
-import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalField;
+import java.time.temporal.TemporalUnit;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -172,18 +175,33 @@ public class TransactionProcessor extends AbstractProcessor{
 	}
 	
 	@Transactional(propagation=Propagation.REQUIRES_NEW, isolation=Isolation.READ_COMMITTED)
-	public List<com.nibbledebt.domain.model.Transaction> retrieveTransactions(Long accountId) throws ProcessingException, RepositoryException{
-		List<AccountTransaction> transactions = accountTrxDao.retrieveTrxs(accountId);
+	public List<com.nibbledebt.domain.model.Transaction> retrieveTransactions(Long accountId, Long sinceDays) throws ProcessingException, RepositoryException{
+		List<AccountTransaction> transactions;
+		if(sinceDays > 0){
+//			LocalTime midnight = LocalTime.MIDNIGHT;
+//			LocalDate today = LocalDate.now(ZoneId.systemDefault());
+					
+			Date to = Date.from(Instant.now());
+			Date from = Date.from(Instant.now().minus(sinceDays, ChronoUnit.DAYS));
+			transactions = accountTrxDao.retrieveTrxs(accountId, from, to);
+		}else{
+			
+			transactions = accountTrxDao.retrieveTrxs(accountId);
+		}
+		
 		List<com.nibbledebt.domain.model.Transaction> wtrxs = new ArrayList<>();
 		for(AccountTransaction trx : transactions){
-			com.nibbledebt.domain.model.Transaction wtrx = new com.nibbledebt.domain.model.Transaction();
-			wtrx.setCity(trx.getLocation().getCity());
-			wtrx.setRoundupAmount(trx.getRoundupAmount());
-			wtrx.setState(trx.getLocation().getState());
-			wtrx.setTrxAmount(trx.getAmount());
-			wtrx.setTrxDate(trx.getDate());
-			wtrx.setTrxId(trx.getTransactionId());
-			wtrxs.add(wtrx);
+			com.nibbledebt.domain.model.Transaction dtrx = new com.nibbledebt.domain.model.Transaction();
+			dtrx.setCity(trx.getLocation().getCity());
+			dtrx.setRoundupAmount(trx.getRoundupAmount());
+			dtrx.setState(trx.getLocation().getState());
+			dtrx.setTrxAmount(trx.getAmount());
+			dtrx.setTrxDate(trx.getDate());
+			dtrx.setTrxId(trx.getTransactionId());
+			dtrx.setAccountNumber(trx.getAccount().getNumberMask());
+			dtrx.setInstitutionName(trx.getAccount().getInstitution().getSupportedInstitution().getDisplayName());
+			dtrx.setDescription(trx.getLocation().getName());
+			wtrxs.add(dtrx);
 		}
 		return wtrxs;
 	}

@@ -85,11 +85,12 @@ public class AccountMgmtREST extends AbstractREST {
 	}
 	
 	@GET
-	@Path("/acctrxs/{accountId}")
+	@Path("/acctrxs/{accountId}/{sinceDays}")
 	@Loggable(logLevel=LogLevel.INFO)
 	@PreAuthorize("hasRole('nibbler_level_1')")
-	public List<Transaction> getAccountTransactions(@PathParam("accountId") Long accountId) throws ProcessingException, RepositoryException{
-		return trxsProcessor.retrieveTransactions(accountId);
+	public List<Transaction> getAccountTransactions(@PathParam("accountId") Long accountId,
+													@PathParam("sinceDays") Long sinceDays) throws ProcessingException, RepositoryException{
+		return trxsProcessor.retrieveTransactions(accountId, sinceDays);
 	}
 	
 	@GET
