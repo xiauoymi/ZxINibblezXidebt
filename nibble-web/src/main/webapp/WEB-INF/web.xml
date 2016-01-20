@@ -36,6 +36,16 @@
 		<welcome-file>nibblehome.html</welcome-file>
 	</welcome-file-list>
 
+	<security-constraint>
+		<display-name>security-constraint</display-name>
+		<web-resource-collection>
+			<web-resource-name>secured-resources</web-resource-name>
+			<url-pattern></url-pattern>
+		</web-resource-collection>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
 
   <session-config>
   	<session-timeout>60</session-timeout>

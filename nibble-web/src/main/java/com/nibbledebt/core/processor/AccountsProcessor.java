@@ -4,8 +4,14 @@
 package com.nibbledebt.core.processor;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -17,9 +23,16 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nibbledebt.common.error.ProcessingException;
 import com.nibbledebt.core.data.dao.INibblerAccountDao;
+import com.nibbledebt.core.data.dao.IPaymentActivityDao;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.NibblerAccount;
+import com.nibbledebt.core.data.model.PaymentActivity;
+import com.nibbledebt.domain.model.AmortizationRecord;
+import com.nibbledebt.domain.model.Loan;
+import com.nibbledebt.domain.model.LoanSummary;
+import com.nibbledebt.domain.model.Payment;
 import com.nibbledebt.domain.model.account.Account;
 
 /**
@@ -33,6 +46,74 @@ public class AccountsProcessor extends AbstractProcessor {
 	
 	@Autowired
 	private INibblerAccountDao nibblerAcctDao;
+	
+	@Autowired
+	private IPaymentActivityDao paymentActivityDao;
+	
+	@Transactional(readOnly=true)
+	public LoanSummary getWeeklyLoanSummary(String username) throws ProcessingException, RepositoryException{
+		LoanSummary summary = new LoanSummary();
+		List<Account> accts = getLoanAccounts(username);
+		
+		for(Account acct : accts){
+			Loan loan = new Loan();
+			loan.setInterestRate(new BigDecimal(acct.getDetail().getInterestRate()));
+			loan.setMinimumPayment(new BigDecimal(acct.getDetail().getPaymentMinAmount()));
+			loan.setPrincipalBalance(new BigDecimal(acct.getDetail().getPrincipalBalance()));
+			loan.setPayments(acct.getCredits());
+			loan.setFirstDayAtNibble(acct.getCreatedTs());
+			summary.getLoans().add(loan);
+			
+
+			Map<String, BigDecimal> paymentMap = new HashMap<>();
+			// convert all payments to a map of month-year and value
+			for(Payment payment : loan.getPayments()){
+				String paymentKey = new StringBuffer(payment.getInitiatedTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonth().getValue())
+										.append(payment.getInitiatedTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()).toString();
+				
+				if(paymentMap.get(paymentKey) == null) paymentMap.put(paymentKey, payment.getAmount());
+				else paymentMap.put(paymentKey, paymentMap.get(paymentKey).add(payment.getAmount()));
+			}
+			
+			
+			int monthIteration = 1;
+			BigDecimal originalAccruedMonthlyInterest = BigDecimal.ZERO;
+			BigDecimal currentAccruedMonthlyInterest = BigDecimal.ZERO;
+			
+			BigDecimal originalPrincipalBalance = loan.getPrincipalBalance();
+			BigDecimal currentPrincipalBalance = loan.getPrincipalBalance();
+			
+			if(loan.getPrincipalBalance().doubleValue() > loan.getMinimumPayment().doubleValue()) {
+				for (LocalDate date = loan.getFirstDayAtNibble().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();;  date = date.plusDays(1)) {
+					if(date.getDayOfMonth() == date.lengthOfMonth()){
+						originalAccruedMonthlyInterest = originalAccruedMonthlyInterest.add((originalPrincipalBalance.multiply((loan.getInterestRate().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)))).divide(BigDecimal.valueOf(date.lengthOfYear()), 2, RoundingMode.HALF_UP));
+						if(originalPrincipalBalance.add(originalAccruedMonthlyInterest).doubleValue() > loan.getMinimumPayment().doubleValue()){
+							originalPrincipalBalance = originalPrincipalBalance.subtract(loan.getMinimumPayment().subtract(originalAccruedMonthlyInterest));
+							loan.getOriginalAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), originalAccruedMonthlyInterest, loan.getMinimumPayment().subtract(originalAccruedMonthlyInterest), originalPrincipalBalance));
+						}else{
+							loan.getOriginalAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), originalAccruedMonthlyInterest, originalPrincipalBalance, BigDecimal.ZERO));
+							break;
+						}
+						
+						if(currentPrincipalBalance.add(currentAccruedMonthlyInterest).doubleValue() > loan.getMinimumPayment().doubleValue()){
+							currentPrincipalBalance = currentPrincipalBalance.subtract(loan.getMinimumPayment().subtract(currentAccruedMonthlyInterest));
+							loan.getCurrentProjectedAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), currentAccruedMonthlyInterest, loan.getMinimumPayment().subtract(currentAccruedMonthlyInterest), currentPrincipalBalance));
+						}else{
+							loan.getCurrentProjectedAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), currentAccruedMonthlyInterest, currentPrincipalBalance, BigDecimal.ZERO));
+						}
+						
+						currentAccruedMonthlyInterest = originalAccruedMonthlyInterest = BigDecimal.ZERO;
+						monthIteration++;
+						
+					}else{
+						currentAccruedMonthlyInterest = originalAccruedMonthlyInterest = originalAccruedMonthlyInterest.add((originalPrincipalBalance.multiply((loan.getInterestRate().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)))).divide(BigDecimal.valueOf(date.lengthOfYear()), 2, RoundingMode.HALF_UP));
+					}
+				}
+			}
+		}
+		
+		return summary;
+	}
 		
 	@Transactional(readOnly=true, isolation=Isolation.REPEATABLE_READ)
 	public List<Account> getRoundupAccounts(String username) throws RepositoryException{
@@ -75,6 +156,14 @@ public class AccountsProcessor extends AbstractProcessor {
 				wacct.setAccountExternalId(acct.getExternalId());
 				wacct.setUseForPayoff(acct.getUseForpayoff());
 				wacct.setAccountName(acct.getName());
+				wacct.setCreatedTs(acct.getCreatedTs());
+				for(PaymentActivity pa : acct.getCreditActivity()){
+					wacct.getCredits().add(new Payment(pa.getAmount(), pa.getInitiatedTs(), pa.getCompletedTs(), pa.getAuthorizationCode()));
+				}
+				
+				for(PaymentActivity pa : acct.getDebitActivity()){
+					wacct.getDebits().add(new Payment(pa.getAmount(), pa.getInitiatedTs(), pa.getCompletedTs(), pa.getAuthorizationCode()));
+				}
 				webAccts.add(wacct);
 			}
 		}

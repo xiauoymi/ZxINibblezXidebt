@@ -209,6 +209,13 @@ public class TransactionProcessor extends AbstractProcessor{
 		}
 	}
 	
+	@Scheduled(cron="00 00 00 * * *")
+	@Loggable(logLevel=LogLevel.INFO)
+	@Transactional(propagation=Propagation.REQUIRES_NEW, isolation=Isolation.READ_COMMITTED)
+	public void createPaymentEvent() throws ProcessingException, RepositoryException{
+		//TODO create a payment event from source to destination for the week
+	}
+	
 //	@Scheduled(fixedDelay=60000)
 	@Loggable(logLevel=LogLevel.INFO)
 	@Transactional(propagation=Propagation.REQUIRES_NEW, isolation=Isolation.READ_COMMITTED)
@@ -308,4 +315,5 @@ public class TransactionProcessor extends AbstractProcessor{
 			throw new ProcessingException("Error while processing transactions.", e);
 		}
 	}
+	
 }

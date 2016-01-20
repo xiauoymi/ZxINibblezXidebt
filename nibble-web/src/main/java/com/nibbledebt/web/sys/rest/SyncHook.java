@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,9 @@ import com.nibbledebt.common.error.ProcessingException;
 import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.core.data.error.RepositoryException;
+import com.nibbledebt.core.processor.AccountsProcessor;
 import com.nibbledebt.core.processor.TransactionProcessor;
+import com.nibbledebt.integration.finicity.model.hooks.AccountEvent;
 import com.nibbledebt.integration.finicity.model.hooks.Event;
 import com.nibbledebt.integration.finicity.model.hooks.TransactionEvent;
 import com.nibbledebt.integration.finicity.model.trxs.Transaction;
@@ -40,6 +43,8 @@ public class SyncHook {
 	@Autowired
 	private TransactionProcessor trxsProcessor;
 	@Autowired
+	private AccountsProcessor acctsProcessor;
+	@Autowired
 	private Mapper integrationMapper;
 	
 	@POST
@@ -55,6 +60,9 @@ public class SyncHook {
 			}
 
 			trxsProcessor.saveTrxs(trxs);
+		}else if(event instanceof AccountEvent){
+			AccountEvent acctEvent = (AccountEvent)event;
+			
 		}
 		return (new ResponseBuilderImpl()).status(Status.OK).build();
 	}
