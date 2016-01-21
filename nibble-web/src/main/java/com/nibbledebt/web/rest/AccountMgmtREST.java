@@ -27,6 +27,7 @@ import com.nibbledebt.core.processor.AccountsProcessor;
 import com.nibbledebt.core.processor.TransactionProcessor;
 import com.nibbledebt.core.processor.UsersProcessor;
 import com.nibbledebt.domain.model.Contributor;
+import com.nibbledebt.domain.model.LoanSummary;
 import com.nibbledebt.domain.model.Transaction;
 import com.nibbledebt.domain.model.TransactionSummary;
 import com.nibbledebt.domain.model.account.Account;
@@ -99,6 +100,14 @@ public class AccountMgmtREST extends AbstractREST {
 	@PreAuthorize("hasRole('nibbler_level_1')")
 	public TransactionSummary getWeeklySummary() throws ProcessingException, RepositoryException{
 		return trxsProcessor.getWeeklyTrxSummary(getCurrentUser());
+	}
+	
+	@GET
+	@Path("/loansummary")
+	@Loggable(logLevel=LogLevel.INFO)
+	@PreAuthorize("hasRole('nibbler_level_1')")
+	public LoanSummary getLoanSummary() throws ProcessingException, RepositoryException{
+		return accountsProcessor.getLoanSummary(getCurrentUser());
 	}
 	
 	@POST

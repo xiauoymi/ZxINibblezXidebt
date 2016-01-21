@@ -19,9 +19,10 @@ public class Loan {
 	private BigDecimal interestRate;
 	private BigDecimal principalBalance;
 	private BigDecimal minimumPayment;
-	private BigDecimal interestSaved;
-	private Integer daysSaved;
-	private Integer daysSavedAtCurrentRate; 
+	private BigDecimal originalCumulativeInterest;
+	private BigDecimal currentCumulativeInterest;
+	private Integer originalPayoffDuration;
+	private Integer currentPayoffDuration; 
 	
 	private List<AmortizationRecord> originalAmortization;
 	private List<AmortizationRecord> currentProjectedAmortization;
@@ -66,43 +67,55 @@ public class Loan {
 	public void setMinimumPayment(BigDecimal minimumPayment) {
 		this.minimumPayment = minimumPayment;
 	}
-	/**
-	 * @return the interestSaved
-	 */
-	public BigDecimal getInterestSaved() {
-		return interestSaved;
-	}
-	/**
-	 * @param interestSaved the interestSaved to set
-	 */
-	public void setInterestSaved(BigDecimal interestSaved) {
-		this.interestSaved = interestSaved;
-	}
-	/**
-	 * @return the daysSaved
-	 */
-	public Integer getDaysSaved() {
-		return daysSaved;
-	}
-	/**
-	 * @param daysSaved the daysSaved to set
-	 */
-	public void setDaysSaved(Integer daysSaved) {
-		this.daysSaved = daysSaved;
-	}
-	/**
-	 * @return the daysSavedAtCurrentRate
-	 */
-	public Integer getDaysSavedAtCurrentRate() {
-		return daysSavedAtCurrentRate;
-	}
-	/**
-	 * @param daysSavedAtCurrentRate the daysSavedAtCurrentRate to set
-	 */
-	public void setDaysSavedAtCurrentRate(Integer daysSavedAtCurrentRate) {
-		this.daysSavedAtCurrentRate = daysSavedAtCurrentRate;
-	}
 	
+	/**
+	 * @return the originalCumulativeInterest
+	 */
+	public BigDecimal getOriginalCumulativeInterest() {
+		return originalCumulativeInterest;
+	}
+	/**
+	 * @param originalCumulativeInterest the originalCumulativeInterest to set
+	 */
+	public void setOriginalCumulativeInterest(BigDecimal originalCumulativeInterest) {
+		this.originalCumulativeInterest = originalCumulativeInterest;
+	}
+	/**
+	 * @return the currentCumulativeInterest
+	 */
+	public BigDecimal getCurrentCumulativeInterest() {
+		return currentCumulativeInterest;
+	}
+	/**
+	 * @param currentCumulativeInterest the currentCumulativeInterest to set
+	 */
+	public void setCurrentCumulativeInterest(BigDecimal currentCumulativeInterest) {
+		this.currentCumulativeInterest = currentCumulativeInterest;
+	}
+	/**
+	 * @return the originalPayoffDuration
+	 */
+	public Integer getOriginalPayoffDuration() {
+		return originalPayoffDuration;
+	}
+	/**
+	 * @param originalPayoffDuration the originalPayoffDuration to set
+	 */
+	public void setOriginalPayoffDuration(Integer originalPayoffDuration) {
+		this.originalPayoffDuration = originalPayoffDuration;
+	}
+	/**
+	 * @return the currentPayoffDuration
+	 */
+	public Integer getCurrentPayoffDuration() {
+		return currentPayoffDuration;
+	}
+	/**
+	 * @param currentPayoffDuration the currentPayoffDuration to set
+	 */
+	public void setCurrentPayoffDuration(Integer currentPayoffDuration) {
+		this.currentPayoffDuration = currentPayoffDuration;
+	}
 	/**
 	 * @return the originalAmortization
 	 */

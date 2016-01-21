@@ -29,10 +29,10 @@ import javax.persistence.TemporalType;
 })
 public class AccountBalance extends AbstractModel {
 
-	@Column(name="available", nullable=false, scale=2, precision=10)
+	@Column(name="available", nullable=true, scale=2, precision=10)
 	private BigDecimal available;	
 
-	@Column(name="current", nullable=false, scale=2, precision=10)
+	@Column(name="current", nullable=true, scale=2, precision=10)
 	private BigDecimal current;
 	
 	@Column(name="credit_max", nullable=true, scale=2, precision=10)

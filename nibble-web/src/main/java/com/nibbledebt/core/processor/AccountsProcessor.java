@@ -34,6 +34,7 @@ import com.nibbledebt.domain.model.Loan;
 import com.nibbledebt.domain.model.LoanSummary;
 import com.nibbledebt.domain.model.Payment;
 import com.nibbledebt.domain.model.account.Account;
+import com.nibbledebt.domain.model.account.AccountDetail;
 
 /**
  * @author ralam
@@ -51,7 +52,7 @@ public class AccountsProcessor extends AbstractProcessor {
 	private IPaymentActivityDao paymentActivityDao;
 	
 	@Transactional(readOnly=true)
-	public LoanSummary getWeeklyLoanSummary(String username) throws ProcessingException, RepositoryException{
+	public LoanSummary getLoanSummary(String username) throws ProcessingException, RepositoryException{
 		LoanSummary summary = new LoanSummary();
 		List<Account> accts = getLoanAccounts(username);
 		
@@ -62,17 +63,21 @@ public class AccountsProcessor extends AbstractProcessor {
 			loan.setPrincipalBalance(new BigDecimal(acct.getDetail().getPrincipalBalance()));
 			loan.setPayments(acct.getCredits());
 			loan.setFirstDayAtNibble(acct.getCreatedTs());
+			loan.setCurrentCumulativeInterest(new BigDecimal(acct.getDetail().getYtdInterestPaid()));
 			summary.getLoans().add(loan);
 			
 
 			Map<String, BigDecimal> paymentMap = new HashMap<>();
 			// convert all payments to a map of month-year and value
-			for(Payment payment : loan.getPayments()){
-				String paymentKey = new StringBuffer(payment.getInitiatedTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonth().getValue())
-										.append(payment.getInitiatedTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()).toString();
+			if(loan.getPayments()!=null){
+				for(Payment payment : loan.getPayments()){
+					String paymentKey = new StringBuffer(payment.getInitiatedTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonth().getValue())
+											.append(payment.getInitiatedTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()).toString();
+					
+					if(paymentMap.get(paymentKey) == null) paymentMap.put(paymentKey, payment.getAmount());
+					else paymentMap.put(paymentKey, paymentMap.get(paymentKey).add(payment.getAmount()));
+				}
 				
-				if(paymentMap.get(paymentKey) == null) paymentMap.put(paymentKey, payment.getAmount());
-				else paymentMap.put(paymentKey, paymentMap.get(paymentKey).add(payment.getAmount()));
 			}
 			
 			
@@ -92,7 +97,7 @@ public class AccountsProcessor extends AbstractProcessor {
 							loan.getOriginalAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), originalAccruedMonthlyInterest, loan.getMinimumPayment().subtract(originalAccruedMonthlyInterest), originalPrincipalBalance));
 						}else{
 							loan.getOriginalAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), originalAccruedMonthlyInterest, originalPrincipalBalance, BigDecimal.ZERO));
-							break;
+							if(!paymentMap.isEmpty()) break;
 						}
 						
 						if(currentPrincipalBalance.add(currentAccruedMonthlyInterest).doubleValue() > loan.getMinimumPayment().doubleValue()){
@@ -100,6 +105,7 @@ public class AccountsProcessor extends AbstractProcessor {
 							loan.getCurrentProjectedAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), currentAccruedMonthlyInterest, loan.getMinimumPayment().subtract(currentAccruedMonthlyInterest), currentPrincipalBalance));
 						}else{
 							loan.getCurrentProjectedAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), currentAccruedMonthlyInterest, currentPrincipalBalance, BigDecimal.ZERO));
+							if(paymentMap.isEmpty()) break;
 						}
 						
 						currentAccruedMonthlyInterest = originalAccruedMonthlyInterest = BigDecimal.ZERO;
@@ -108,6 +114,7 @@ public class AccountsProcessor extends AbstractProcessor {
 					}else{
 						currentAccruedMonthlyInterest = originalAccruedMonthlyInterest = originalAccruedMonthlyInterest.add((originalPrincipalBalance.multiply((loan.getInterestRate().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)))).divide(BigDecimal.valueOf(date.lengthOfYear()), 2, RoundingMode.HALF_UP));
 					}
+				
 				}
 			}
 		}
@@ -150,13 +157,23 @@ public class AccountsProcessor extends AbstractProcessor {
 				wacct.setAccountId(acct.getId());
 				wacct.setAccountNumber(acct.getNumberMask());
 				wacct.setAccountType(acct.getAccountType().getCode());
-				wacct.setAvailable(acct.getBalances()!=null ? acct.getBalances().get(0).getAvailable().toString() : BigDecimal.ZERO.toString());
-				wacct.setBalance(acct.getBalances()!=null ? acct.getBalances().get(0).getCurrent().toString() : BigDecimal.ZERO.toString());
+				wacct.setAvailable((acct.getBalances()!=null && !acct.getBalances().isEmpty() && acct.getBalances().get(0).getAvailable()!=null) ? acct.getBalances().get(0).getAvailable().toString() : BigDecimal.ZERO.toString());
+				wacct.setBalance((acct.getBalances()!=null && !acct.getBalances().isEmpty() && acct.getBalances().get(0).getCurrent()!=null) ? acct.getBalances().get(0).getCurrent().toString() : BigDecimal.ZERO.toString());
 				wacct.setInstitutionName(acct.getInstitution().getSupportedInstitution().getDisplayName());
 				wacct.setAccountExternalId(acct.getExternalId());
 				wacct.setUseForPayoff(acct.getUseForpayoff());
 				wacct.setAccountName(acct.getName());
 				wacct.setCreatedTs(acct.getCreatedTs());
+				
+				AccountDetail detail = new AccountDetail();
+				detail.setPayoffAmount((acct.getBalances()!=null && !acct.getBalances().isEmpty() && acct.getBalances().get(0).getPayoffAmount()!=null) ? acct.getBalances().get(0).getPayoffAmount().toString() : BigDecimal.ZERO.toString());
+				detail.setInterestRate((acct.getBalances()!=null && !acct.getBalances().isEmpty() && acct.getBalances().get(0).getInterestRate()!=null) ? acct.getBalances().get(0).getInterestRate().toString() : BigDecimal.ZERO.toString());
+				detail.setPrincipalBalance((acct.getBalances()!=null && !acct.getBalances().isEmpty() && acct.getBalances().get(0).getPrincipalBalance()!=null) ? acct.getBalances().get(0).getPrincipalBalance().toString() : BigDecimal.ZERO.toString());
+				detail.setYtdInterestPaid((acct.getBalances()!=null && !acct.getBalances().isEmpty() && acct.getBalances().get(0).getYtdInterestPaid()!=null) ? acct.getBalances().get(0).getYtdInterestPaid().toString() : BigDecimal.ZERO.toString());
+				detail.setYtdPrincipalPaid((acct.getBalances()!=null && !acct.getBalances().isEmpty() && acct.getBalances().get(0).getYtdPrincipalPaid()!=null) ? acct.getBalances().get(0).getYtdPrincipalPaid().toString() : BigDecimal.ZERO.toString());
+				detail.setPaymentMinAmount((acct.getBalances()!=null && !acct.getBalances().isEmpty() && acct.getBalances().get(0).getPaymentMinAmount()!=null) ? acct.getBalances().get(0).getPaymentMinAmount().toString() : BigDecimal.ZERO.toString());
+				wacct.setDetail(detail);
+				
 				for(PaymentActivity pa : acct.getCreditActivity()){
 					wacct.getCredits().add(new Payment(pa.getAmount(), pa.getInitiatedTs(), pa.getCompletedTs(), pa.getAuthorizationCode()));
 				}

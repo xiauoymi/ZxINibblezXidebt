@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -84,6 +87,10 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 
     @Autowired
     private String salt;
+    
+
+	@Resource
+	private Environment env;
 
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -495,29 +502,46 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		    	}else if(StringUtils.equalsIgnoreCase(account.getAccountType(), "loan")){
 		    		nibblerAccount.setUseForRounding(false);
 //TODO		    		if(StringUtils.equalsIgnoreCase(institution.getType(), "student-loan"))
-		    			nibblerAccount.setUseForpayoff(true);
+		    			
 		    		
-		    		if (account.getBalance() != null) {
-	                    AccountBalance balance = new AccountBalance();
-	                    balance.setAvailable(new BigDecimal(account.getAvailable() != null ? account.getAvailable() : "0.00"));
-	                    balance.setCurrent(new BigDecimal(account.getBalance() != null ? account.getBalance() : "0.00"));
+                    if(!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod")){
+                    	nibblerAccount.setUseForpayoff(true);
+                    	AccountBalance balance = new AccountBalance();
+                    	balance.setInterestRate(new BigDecimal("6.00"));
+	                    balance.setPaymentMinAmount(new BigDecimal("193.33"));
+	                    balance.setPayoffAmount(new BigDecimal("10000.00"));
+	                    balance.setPrincipalBalance(new BigDecimal("10000.00"));
+	                    balance.setYtdInterestPaid(new BigDecimal("0.00"));
+	                    balance.setYtdPrincipalPaid(new BigDecimal("0.00"));
 	                    balance.setAccount(nibblerAccount);
-	                    if(account.getDetail() != null){
-	                    	balance.setInterestRate(new BigDecimal(account.getDetail().getInterestRate() != null ? account.getDetail().getInterestRate() : "0.00"));
-		                    balance.setPaymentMinAmount(new BigDecimal(account.getDetail().getNextPayment() != null ? account.getDetail().getNextPayment() : "0.00"));
-		                    balance.setEscrowBalance(new BigDecimal(account.getDetail().getEscrowBalance() != null ? account.getDetail().getEscrowBalance() : "0.00"));
-		                    balance.setPayoffAmount(new BigDecimal(account.getDetail().getPayoffAmount() != null ? account.getDetail().getPayoffAmount() : "0.00"));
-		                    balance.setLastPaymentAmount(new BigDecimal(account.getDetail().getLastPaymentAmount() != null ? account.getDetail().getLastPaymentAmount() : "0.00"));
-		                    balance.setPaymentDueDate(account.getDetail().getNextPaymentDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getNextPaymentDate()) : new Date());
-		                    balance.setLastPaymentDate(account.getDetail().getLastPaymentReceiveDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getLastPaymentReceiveDate()) : new Date());
-		                    balance.setPrincipalBalance(new BigDecimal(account.getDetail().getPrincipalBalance() != null ? account.getDetail().getPrincipalBalance() : "0.00"));
-		                    balance.setYtdInterestPaid(new BigDecimal(account.getDetail().getYtdInterestPaid() != null ? account.getDetail().getYtdInterestPaid() : "0.00"));
-		                    balance.setYtdPrincipalPaid(new BigDecimal(account.getDetail().getYtdPrincipalPaid() != null ? account.getDetail().getYtdPrincipalPaid() : "0.00"));
-	                    }
 	                    
 	                    setCreated(balance, nibblerData.getEmail());
 	                    nibblerAccount.getBalances().add(balance);
-	                }
+	                    
+                    }else{
+                    	if (account.getBalance() != null) {
+    	                    AccountBalance balance = new AccountBalance();
+    	                    balance.setAvailable(new BigDecimal(account.getAvailable() != null ? account.getAvailable() : "0.00"));
+    	                    balance.setCurrent(new BigDecimal(account.getBalance() != null ? account.getBalance() : "0.00"));
+    	                    balance.setAccount(nibblerAccount);
+    	                    if(account.getDetail() != null){
+    	                    	balance.setInterestRate(new BigDecimal(account.getDetail().getInterestRate() != null ? account.getDetail().getInterestRate() : "0.00"));
+    		                    balance.setPaymentMinAmount(new BigDecimal(account.getDetail().getNextPayment() != null ? account.getDetail().getNextPayment() : "0.00"));
+    		                    balance.setEscrowBalance(new BigDecimal(account.getDetail().getEscrowBalance() != null ? account.getDetail().getEscrowBalance() : "0.00"));
+    		                    balance.setPayoffAmount(new BigDecimal(account.getDetail().getPayoffAmount() != null ? account.getDetail().getPayoffAmount() : "0.00"));
+    		                    balance.setLastPaymentAmount(new BigDecimal(account.getDetail().getLastPaymentAmount() != null ? account.getDetail().getLastPaymentAmount() : "0.00"));
+    		                    balance.setPaymentDueDate(account.getDetail().getNextPaymentDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getNextPaymentDate()) : new Date());
+    		                    balance.setLastPaymentDate(account.getDetail().getLastPaymentReceiveDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getLastPaymentReceiveDate()) : new Date());
+    		                    balance.setPrincipalBalance(new BigDecimal(account.getDetail().getPrincipalBalance() != null ? account.getDetail().getPrincipalBalance() : "0.00"));
+    		                    balance.setYtdInterestPaid(new BigDecimal(account.getDetail().getYtdInterestPaid() != null ? account.getDetail().getYtdInterestPaid() : "0.00"));
+    		                    balance.setYtdPrincipalPaid(new BigDecimal(account.getDetail().getYtdPrincipalPaid() != null ? account.getDetail().getYtdPrincipalPaid() : "0.00"));
+    	                    }
+    	                    
+    	                    setCreated(balance, nibblerData.getEmail());
+    	                    nibblerAccount.getBalances().add(balance);
+    	                }
+
+                    }
 		    	}else{
 		    		nibblerAccount.setUseForRounding(false);
 		    	}

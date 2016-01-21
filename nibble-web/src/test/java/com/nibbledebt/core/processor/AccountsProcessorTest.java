@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,10 +33,10 @@ public class AccountsProcessorTest {
 		lsummary = new LoanSummary();
 		Loan loan1 = new Loan();
 		loan1.setInterestRate(BigDecimal.valueOf(6.00));
-		loan1.setMinimumPayment(BigDecimal.valueOf(111.02));
+		loan1.setMinimumPayment(BigDecimal.valueOf(193.33));
 		loan1.setPrincipalBalance(BigDecimal.valueOf(10000));
-		loan1.setPayments(Arrays.asList(new Payment[]{	new Payment(BigDecimal.valueOf(100d), Date.from(date.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(date.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()), ""), 
-														new Payment(BigDecimal.valueOf(100d), Date.from(date.plusDays(30).atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(date.plusDays(30).atStartOfDay(ZoneId.systemDefault()).toInstant()), "")}));
+//		loan1.setPayments(Arrays.asList(new Payment[]{	new Payment(BigDecimal.valueOf(100d), Date.from(date.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(date.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()), ""), 
+//														new Payment(BigDecimal.valueOf(100d), Date.from(date.plusDays(30).atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(date.plusDays(30).atStartOfDay(ZoneId.systemDefault()).toInstant()), "")}));
 		loan1.setFirstDayAtNibble(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		lsummary.getLoans().add(loan1);
 	}
@@ -51,12 +50,16 @@ public class AccountsProcessorTest {
 		for(Loan loan : lsummary.getLoans()){
 			Map<String, BigDecimal> paymentMap = new HashMap<>();
 			// convert all payments to a map of month-year and value
-			for(Payment payment : loan.getPayments()){
-				String paymentKey = new StringBuffer(payment.getInitiatedTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonth().getValue())
-										.append(payment.getInitiatedTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()).toString();
+			if(loan.getPayments()!=null){
+				for(Payment payment : loan.getPayments()){
+					String paymentKey = new StringBuffer(payment.getInitiatedTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonth().getValue())
+												.append(payment.getInitiatedTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getDayOfMonth())
+												.append(payment.getInitiatedTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear()).toString();
+					
+					if(paymentMap.get(paymentKey) == null) paymentMap.put(paymentKey, payment.getAmount());
+					else paymentMap.put(paymentKey, paymentMap.get(paymentKey).add(payment.getAmount()));
+				}
 				
-				if(paymentMap.get(paymentKey) == null) paymentMap.put(paymentKey, payment.getAmount());
-				else paymentMap.put(paymentKey, paymentMap.get(paymentKey).add(payment.getAmount()));
 			}
 			
 			
@@ -66,17 +69,24 @@ public class AccountsProcessorTest {
 			
 			BigDecimal originalPrincipalBalance = loan.getPrincipalBalance();
 			BigDecimal currentPrincipalBalance = loan.getPrincipalBalance();
+			BigDecimal originalInterest = loan.getCurrentCumulativeInterest()!=null ? loan.getCurrentCumulativeInterest() : BigDecimal.ZERO;
+			BigDecimal currentInterest = loan.getCurrentCumulativeInterest()!=null ? loan.getCurrentCumulativeInterest() : BigDecimal.ZERO;
 			
 			if(loan.getPrincipalBalance().doubleValue() > loan.getMinimumPayment().doubleValue()) {
 				for (LocalDate date = loan.getFirstDayAtNibble().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();;  date = date.plusDays(1)) {
+					originalAccruedMonthlyInterest = originalAccruedMonthlyInterest.add((originalPrincipalBalance.multiply((loan.getInterestRate().divide(BigDecimal.valueOf(date.lengthOfYear()), 6, RoundingMode.HALF_UP).divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)))));
+					if(paymentMap.get(new StringBuffer(date.getMonth().getValue()).append(date.getDayOfMonth()).append(date.getYear()).toString()) != null) currentPrincipalBalance = currentPrincipalBalance.subtract(paymentMap.get(new StringBuffer(date.getMonth().getValue()).append(date.getDayOfMonth()).append(date.getYear()).toString()));
+					currentAccruedMonthlyInterest = currentAccruedMonthlyInterest.add((currentPrincipalBalance.multiply((loan.getInterestRate().divide(BigDecimal.valueOf(date.lengthOfYear()), 6, RoundingMode.HALF_UP).divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP))))); 
+				
+					
 					if(date.getDayOfMonth() == date.lengthOfMonth()){
-						originalAccruedMonthlyInterest = originalAccruedMonthlyInterest.add((originalPrincipalBalance.multiply((loan.getInterestRate().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)))).divide(BigDecimal.valueOf(date.lengthOfYear()), 2, RoundingMode.HALF_UP));
+						
 						if(originalPrincipalBalance.add(originalAccruedMonthlyInterest).doubleValue() > loan.getMinimumPayment().doubleValue()){
 							originalPrincipalBalance = originalPrincipalBalance.subtract(loan.getMinimumPayment().subtract(originalAccruedMonthlyInterest));
 							loan.getOriginalAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), originalAccruedMonthlyInterest, loan.getMinimumPayment().subtract(originalAccruedMonthlyInterest), originalPrincipalBalance));
 						}else{
 							loan.getOriginalAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), originalAccruedMonthlyInterest, originalPrincipalBalance, BigDecimal.ZERO));
-							break;
+							if(!paymentMap.isEmpty()) break;
 						}
 						
 						if(currentPrincipalBalance.add(currentAccruedMonthlyInterest).doubleValue() > loan.getMinimumPayment().doubleValue()){
@@ -84,17 +94,21 @@ public class AccountsProcessorTest {
 							loan.getCurrentProjectedAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), currentAccruedMonthlyInterest, loan.getMinimumPayment().subtract(currentAccruedMonthlyInterest), currentPrincipalBalance));
 						}else{
 							loan.getCurrentProjectedAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), currentAccruedMonthlyInterest, currentPrincipalBalance, BigDecimal.ZERO));
+							if(paymentMap.isEmpty()) break;
 						}
 						
+						originalInterest = originalInterest.add(originalAccruedMonthlyInterest);
+						currentInterest = originalInterest.add(currentAccruedMonthlyInterest);
 						currentAccruedMonthlyInterest = originalAccruedMonthlyInterest = BigDecimal.ZERO;
 						monthIteration++;
 						
-					}else{
-						currentAccruedMonthlyInterest = originalAccruedMonthlyInterest = originalAccruedMonthlyInterest.add((originalPrincipalBalance.multiply((loan.getInterestRate().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)))).divide(BigDecimal.valueOf(date.lengthOfYear()), 2, RoundingMode.HALF_UP));
 					}
 				
 				}
 			}
+
+			loan.setOriginalCumulativeInterest(originalInterest);
+			loan.setCurrentCumulativeInterest(currentInterest);
 		}
 		
 		System.out.println(lsummary);
