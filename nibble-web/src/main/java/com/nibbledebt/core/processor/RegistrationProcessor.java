@@ -523,7 +523,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 	            setUpdated(nibbler, nibblerData.getEmail());
 	            nibblerData.setActivationCode(nibbler.getNibblerDir().getActivationCode());
 				
-		    	if(StringUtils.equalsIgnoreCase(account.getAccountType(), "checking")){
+		    	if(forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "checking")){
 		    		nibblerAccount.setUseForRounding(true);
 	                if (account.getBalance() != null) {
 	                    AccountBalance balance = new AccountBalance();
@@ -533,7 +533,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 	                    setCreated(balance, nibblerData.getEmail());
 	                    nibblerAccount.getBalances().add(balance);
 	                }
-		    	}else if(StringUtils.equalsIgnoreCase(account.getAccountType(), "creditCard")){
+		    	}else if(forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "creditCard")){
 		    		nibblerAccount.setUseForRounding(true);
 		    		if (account.getBalance() != null) {
 	                    AccountBalance balance = new AccountBalance();
@@ -555,7 +555,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 	                    setCreated(balance, nibblerData.getEmail());
 	                    nibblerAccount.getBalances().add(balance);
 	                }
-		    	}else if(StringUtils.equalsIgnoreCase(account.getAccountType(), "student-loan")){
+		    	}else if(!forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "student-loan")){
 		    		nibblerAccount.setUseForRounding(false);
 		    		nibblerAccount.setUseForpayoff(true);
 		    		if (account.getBalance() != null) {
@@ -579,7 +579,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 	                    setCreated(balance, nibblerData.getEmail());
 	                    nibblerAccount.getBalances().add(balance);
 	                }
-		    	}else if(StringUtils.equalsIgnoreCase(account.getAccountType(), "loan")){
+		    	}else if(!forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "loan")){
 		    		nibblerAccount.setUseForRounding(false);
 		    		nibblerAccount.setUseForpayoff(true);
 		    		if(!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod")){
