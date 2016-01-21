@@ -59,14 +59,24 @@ public class RegistrationREST extends AbstractREST {
 	}
 
     @POST
-    @Path("/submitMfa")
+    @Path("/submitRoundupMfa")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Loggable(logLevel=LogLevel.INFO)
     @Validatable() //TODO - write custom validator
-    public AddAccountsResponse submitMfa(NibblerData nibblerData) throws  ProcessingException, ServiceException, RepositoryException,
-            ValidationException {
-        return regService.submitMfaAnswer(nibblerData);
+    public AddAccountsResponse submitRoundupMfa(NibblerData nibblerData) throws  ProcessingException, ServiceException, RepositoryException, ValidationException {
+        return regService.submitRoundupAccountMfaAnswer(nibblerData);
+
+    }
+    
+    @POST
+    @Path("/submitLoanMfa")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Loggable(logLevel=LogLevel.INFO)
+    @Validatable() //TODO - write custom validator
+    public AddAccountsResponse submitLoanMfa(NibblerData nibblerData) throws  ProcessingException, ServiceException, RepositoryException, ValidationException {
+        return regService.submitRoundupAccountMfaAnswer(nibblerData);
 
     }
 //	

@@ -24,7 +24,8 @@ public class NibblerData {
 	private String city;	
 	private String state;	
 	private Integer zip;
-	private Bank bank;
+	private Bank roundupAccountBank;
+	private Bank loanAccountBank;
 	private String activationCode;
 	private String url;
 	
@@ -236,22 +237,35 @@ public class NibblerData {
 		this.roles = roles;
 	}
 	
-	
-
-
 	/**
-	 * @return the bank
+	 * @return the roundupAccountBank
 	 */
-	public Bank getBank() {
-		return bank;
+	public Bank getRoundupAccountBank() {
+		return roundupAccountBank;
 	}
 
 
 	/**
-	 * @param bank the bank to set
+	 * @param roundupAccountBank the roundupAccountBank to set
 	 */
-	public void setBank(Bank bank) {
-		this.bank = bank;
+	public void setRoundupAccountBank(Bank roundupAccountBank) {
+		this.roundupAccountBank = roundupAccountBank;
+	}
+
+
+	/**
+	 * @return the loanAccountBank
+	 */
+	public Bank getLoanAccountBank() {
+		return loanAccountBank;
+	}
+
+
+	/**
+	 * @param loanAccountBank the loanAccountBank to set
+	 */
+	public void setLoanAccountBank(Bank loanAccountBank) {
+		this.loanAccountBank = loanAccountBank;
 	}
 
 

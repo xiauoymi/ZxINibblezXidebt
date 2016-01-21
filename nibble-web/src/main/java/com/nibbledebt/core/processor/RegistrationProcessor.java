@@ -150,17 +150,17 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     
     @Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.DEFAULT, rollbackFor=RepositoryException.class)
 	public AddAccountsResponse addLoanAccount(NibblerData nibblerData, String username) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
-        Institution persistedInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getBank().getInstitution().getId()));
+        Institution persistedInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getLoanAccountBank().getInstitution().getId()));
         IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(persistedInstitution.getSupportedInstitution().getAggregatorQualifier());
         
-		if (nibblerData.getBank() != null && nibblerData.getBank().getInstitution() != null) {
-            if (externalAuthReqsValid(nibblerData.getBank())) {
+		if (nibblerData.getLoanAccountBank() != null && nibblerData.getLoanAccountBank().getInstitution() != null) {
+            if (externalAuthReqsValid(nibblerData.getLoanAccountBank())) {
             	Nibbler nibbler = nibblerDao.find(username);
             	if(nibbler != null){
             		AddAccountsResponse response = integrationSao.addAccounts(nibbler.getExtAccessToken(), persistedInstitution.getSupportedInstitution().getExternalId(),
-                            nibblerData.getBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
+                            nibblerData.getLoanAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
             		if (response != null && response.getMfaType() == MfaType.NON_MFA) {
-                        saveCustomerAccounts(nibblerData, response.getAccounts());
+                        saveCustomerAccounts(nibblerData, response.getAccounts(), false);
                     }
                     return response;
             	}else{
@@ -186,49 +186,105 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     @Transactional(isolation = Isolation.READ_COMMITTED)
     @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_CREATED)
     public AddAccountsResponse registerNibbler(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException {
-        Institution persistedInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getBank().getInstitution().getId()));
-        IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(persistedInstitution.getSupportedInstitution().getAggregatorQualifier());
-        String customerId = integrationSao.addCustomer(nibblerData.getEmail(), nibblerData.getFirstName(), nibblerData.getLastName());
-        try {
-			if (StringUtils.isNotBlank(customerId)) saveCustomerData(nibblerData, customerId);
-		} catch (RepositoryException e) {
-			integrationSao.deleteCustomer(customerId);
-			throw e;
-		}
-        if (nibblerData.getBank() != null && nibblerData.getBank().getInstitution() != null) {
-            if (externalAuthReqsValid(nibblerData.getBank())) {
-                AddAccountsResponse response = integrationSao.addAccounts(customerId, persistedInstitution.getSupportedInstitution().getExternalId(),
-                        nibblerData.getBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
-                if (response != null && response.getMfaType() == MfaType.NON_MFA) {
-                    try {
-						saveCustomerAccounts(nibblerData, response.getAccounts());
-					} catch (Exception e) {
-						integrationSao.deleteCustomer(customerId);
-						throw e;
-					}
-                }
-                return response;
-            } else {
-                throw new ValidationException("Financial institution requires fields that have failed validation.");
-            }
-        } else {
-            throw new ValidationException("Financial institution not available.");
-        }
+    	Institution loanAccountInstitution = null;
+    	Institution roundupAccountInstitution = null;
+    	
+    	if(nibblerData.getLoanAccountBank()!=null){
+            loanAccountInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getLoanAccountBank().getInstitution().getId()));
+            
+    	}
+    	if(nibblerData.getRoundupAccountBank()!=null){
+            roundupAccountInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getRoundupAccountBank().getInstitution().getId()));
+    	}
+    	if(loanAccountInstitution!=null || roundupAccountInstitution!=null){
+    		IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(roundupAccountInstitution!=null ? roundupAccountInstitution.getSupportedInstitution().getAggregatorQualifier() : loanAccountInstitution.getSupportedInstitution().getAggregatorQualifier());
+    		
+            String customerId = integrationSao.addCustomer(nibblerData.getEmail(), nibblerData.getFirstName(), nibblerData.getLastName());
+            try {
+    			if (StringUtils.isNotBlank(customerId)) saveCustomerData(nibblerData, customerId);
+    			
+    			if (nibblerData.getRoundupAccountBank() != null && nibblerData.getRoundupAccountBank().getInstitution() != null) {
+    	            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
+    	                AddAccountsResponse response = integrationSao.addAccounts(customerId, roundupAccountInstitution.getSupportedInstitution().getExternalId(),
+    	                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
+    	                if (response != null && response.getMfaType() == MfaType.NON_MFA) {
+    	                    try {
+    							saveCustomerAccounts(nibblerData, response.getAccounts(), true);
+    						} catch (Exception e) {
+    							integrationSao.deleteCustomer(customerId);
+    							throw e;
+    						}
+    	                }
+    	                return response;
+    	            } else {
+    	                throw new ValidationException("Financial institution requires fields that have failed validation.");
+    	            }
+    	        } 
+
+    	        
+    	        if (nibblerData.getLoanAccountBank() != null && nibblerData.getLoanAccountBank().getInstitution() != null) {
+    	            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
+    	                AddAccountsResponse response = integrationSao.addAccounts(customerId, loanAccountInstitution.getSupportedInstitution().getExternalId(),
+    	                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
+    	                if (response != null && response.getMfaType() == MfaType.NON_MFA) {
+    	                    try {
+    							saveCustomerAccounts(nibblerData, response.getAccounts(), true);
+    						} catch (Exception e) {
+    							integrationSao.deleteCustomer(customerId);
+    							throw e;
+    						}
+    	                }
+    	                return response;
+    	            } else {
+    	                throw new ValidationException("Financial institution requires fields that have failed validation.");
+    	            }
+    	        } else{
+    	        	throw new ValidationException("Loan account institution is required");
+    	        }
+    		} catch (RepositoryException | ValidationException e) {
+    			integrationSao.deleteCustomer(customerId);
+    			throw e;
+    		}
+    	}else{
+    		throw new ValidationException("A loan account institution or bank account institution is required for registration.");
+    	}
+        
+
     }
 
     @Transactional()
-    public AddAccountsResponse submitMfaAnswer(NibblerData nibblerData)
+    public AddAccountsResponse submitRoundupAccountMfaAnswer(NibblerData nibblerData)
             throws ServiceException, RepositoryException, ValidationException, ProcessingException {
         Nibbler nibbler = nibblerDao.find(nibblerData.getEmail());
-        Institution persistedInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getBank().getInstitution().getId()));
+        Institution persistedInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getRoundupAccountBank().getInstitution().getId()));
         IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(persistedInstitution.getSupportedInstitution().getAggregatorQualifier());
         
-        if (externalAuthReqsValid(nibblerData.getBank())) {
+        if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
             AddAccountsResponse response = integrationSao.addAccountsMfaAnswer(nibbler.getExtAccessToken(),
             		persistedInstitution.getSupportedInstitution().getExternalId(),
                     nibblerData.getMfaQuestion(), nibblerData.getMfaAnswer());
             if (response != null && response.getMfaType() == MfaType.NON_MFA) {
-                saveCustomerAccounts(nibblerData, response.getAccounts());
+                saveCustomerAccounts(nibblerData, response.getAccounts(), true);
+            }
+            return response;
+        } else {
+            throw new ValidationException("Financial institution requires fields that have failed validation.");
+        }
+    }
+    
+    @Transactional()
+    public AddAccountsResponse submitLoanAccountMfaAnswer(NibblerData nibblerData)
+            throws ServiceException, RepositoryException, ValidationException, ProcessingException {
+        Nibbler nibbler = nibblerDao.find(nibblerData.getEmail());
+        Institution persistedInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getLoanAccountBank().getInstitution().getId()));
+        IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(persistedInstitution.getSupportedInstitution().getAggregatorQualifier());
+        
+        if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
+            AddAccountsResponse response = integrationSao.addAccountsMfaAnswer(nibbler.getExtAccessToken(),
+            		persistedInstitution.getSupportedInstitution().getExternalId(),
+                    nibblerData.getMfaQuestion(), nibblerData.getMfaAnswer());
+            if (response != null && response.getMfaType() == MfaType.NON_MFA) {
+                saveCustomerAccounts(nibblerData, response.getAccounts(), false);
             }
             return response;
         } else {
@@ -437,7 +493,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    private void saveCustomerAccounts(NibblerData nibblerData, Accounts accounts) throws ServiceException, RepositoryException, ProcessingException {
+    private void saveCustomerAccounts(NibblerData nibblerData, Accounts accounts, Boolean forRoundUp) throws ServiceException, RepositoryException, ProcessingException {
     	try {
 	    	Nibbler nibbler = nibblerDao.find(nibblerData.getEmail());
 	    	for (Account account : accounts.getAccount()) {
@@ -454,7 +510,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 				NibblerAccount nibblerAccount = new NibblerAccount();
 	            nibblerAccount.setNumber(account.getAccountNumber());
 	            nibblerAccount.setNumberMask(account.getAccountNumber());
-	            Institution institution = institutionDao.findOne(Long.valueOf(nibblerData.getBank().getInstitution().getId()));
+	            Institution institution = institutionDao.findOne(Long.valueOf(forRoundUp ? nibblerData.getRoundupAccountBank().getInstitution().getId() : nibblerData.getLoanAccountBank().getInstitution().getId()));
 	            nibblerAccount.setInstitution(institution);
 	            nibblerAccount.setNibbler(nibbler);
 	            nibblerAccount.setName(account.getAccountType() + " - " + account.getAccountNumber());
@@ -499,12 +555,34 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 	                    setCreated(balance, nibblerData.getEmail());
 	                    nibblerAccount.getBalances().add(balance);
 	                }
+		    	}else if(StringUtils.equalsIgnoreCase(account.getAccountType(), "student-loan")){
+		    		nibblerAccount.setUseForRounding(false);
+		    		nibblerAccount.setUseForpayoff(true);
+		    		if (account.getBalance() != null) {
+	                    AccountBalance balance = new AccountBalance();
+	                    balance.setAvailable(new BigDecimal(account.getAvailable() != null ? account.getAvailable() : "0.00"));
+	                    balance.setCurrent(new BigDecimal(account.getBalance() != null ? account.getBalance() : "0.00"));
+	                    balance.setAccount(nibblerAccount);
+	                    if(account.getDetail() != null){
+	                    	balance.setInterestRate(new BigDecimal(account.getDetail().getInterestRate() != null ? account.getDetail().getInterestRate() : "0.00"));
+		                    balance.setPaymentMinAmount(new BigDecimal(account.getDetail().getNextPayment() != null ? account.getDetail().getNextPayment() : "0.00"));
+		                    balance.setEscrowBalance(new BigDecimal(account.getDetail().getEscrowBalance() != null ? account.getDetail().getEscrowBalance() : "0.00"));
+		                    balance.setPayoffAmount(new BigDecimal(account.getDetail().getPayoffAmount() != null ? account.getDetail().getPayoffAmount() : "0.00"));
+		                    balance.setLastPaymentAmount(new BigDecimal(account.getDetail().getLastPaymentAmount() != null ? account.getDetail().getLastPaymentAmount() : "0.00"));
+		                    balance.setPaymentDueDate(account.getDetail().getNextPaymentDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getNextPaymentDate()) : new Date());
+		                    balance.setLastPaymentDate(account.getDetail().getLastPaymentReceiveDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getLastPaymentReceiveDate()) : new Date());
+		                    balance.setPrincipalBalance(new BigDecimal(account.getDetail().getPrincipalBalance() != null ? account.getDetail().getPrincipalBalance() : "0.00"));
+		                    balance.setYtdInterestPaid(new BigDecimal(account.getDetail().getYtdInterestPaid() != null ? account.getDetail().getYtdInterestPaid() : "0.00"));
+		                    balance.setYtdPrincipalPaid(new BigDecimal(account.getDetail().getYtdPrincipalPaid() != null ? account.getDetail().getYtdPrincipalPaid() : "0.00"));
+	                    }
+	                    
+	                    setCreated(balance, nibblerData.getEmail());
+	                    nibblerAccount.getBalances().add(balance);
+	                }
 		    	}else if(StringUtils.equalsIgnoreCase(account.getAccountType(), "loan")){
 		    		nibblerAccount.setUseForRounding(false);
-//TODO		    		if(StringUtils.equalsIgnoreCase(institution.getType(), "student-loan"))
-		    			
-		    		
-                    if(!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod")){
+		    		nibblerAccount.setUseForpayoff(true);
+		    		if(!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod")){
                     	nibblerAccount.setUseForpayoff(true);
                     	AccountBalance balance = new AccountBalance();
                     	balance.setInterestRate(new BigDecimal("6.00"));
@@ -518,29 +596,6 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 	                    setCreated(balance, nibblerData.getEmail());
 	                    nibblerAccount.getBalances().add(balance);
 	                    
-                    }else{
-                    	if (account.getBalance() != null) {
-    	                    AccountBalance balance = new AccountBalance();
-    	                    balance.setAvailable(new BigDecimal(account.getAvailable() != null ? account.getAvailable() : "0.00"));
-    	                    balance.setCurrent(new BigDecimal(account.getBalance() != null ? account.getBalance() : "0.00"));
-    	                    balance.setAccount(nibblerAccount);
-    	                    if(account.getDetail() != null){
-    	                    	balance.setInterestRate(new BigDecimal(account.getDetail().getInterestRate() != null ? account.getDetail().getInterestRate() : "0.00"));
-    		                    balance.setPaymentMinAmount(new BigDecimal(account.getDetail().getNextPayment() != null ? account.getDetail().getNextPayment() : "0.00"));
-    		                    balance.setEscrowBalance(new BigDecimal(account.getDetail().getEscrowBalance() != null ? account.getDetail().getEscrowBalance() : "0.00"));
-    		                    balance.setPayoffAmount(new BigDecimal(account.getDetail().getPayoffAmount() != null ? account.getDetail().getPayoffAmount() : "0.00"));
-    		                    balance.setLastPaymentAmount(new BigDecimal(account.getDetail().getLastPaymentAmount() != null ? account.getDetail().getLastPaymentAmount() : "0.00"));
-    		                    balance.setPaymentDueDate(account.getDetail().getNextPaymentDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getNextPaymentDate()) : new Date());
-    		                    balance.setLastPaymentDate(account.getDetail().getLastPaymentReceiveDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getLastPaymentReceiveDate()) : new Date());
-    		                    balance.setPrincipalBalance(new BigDecimal(account.getDetail().getPrincipalBalance() != null ? account.getDetail().getPrincipalBalance() : "0.00"));
-    		                    balance.setYtdInterestPaid(new BigDecimal(account.getDetail().getYtdInterestPaid() != null ? account.getDetail().getYtdInterestPaid() : "0.00"));
-    		                    balance.setYtdPrincipalPaid(new BigDecimal(account.getDetail().getYtdPrincipalPaid() != null ? account.getDetail().getYtdPrincipalPaid() : "0.00"));
-    	                    }
-    	                    
-    	                    setCreated(balance, nibblerData.getEmail());
-    	                    nibblerAccount.getBalances().add(balance);
-    	                }
-
                     }
 		    	}else{
 		    		nibblerAccount.setUseForRounding(false);
