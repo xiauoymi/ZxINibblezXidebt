@@ -6,6 +6,8 @@ package com.nibbledebt.domain.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 /**
  * @author ralam
  *
@@ -85,5 +87,7 @@ public class Payment {
 		this.authorization = authorization;
 	}
 	
-	
+	public String toString(){
+		return ToStringBuilder.reflectionToString(this);
+	}
 }
