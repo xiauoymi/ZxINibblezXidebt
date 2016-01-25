@@ -54,12 +54,7 @@
   			<artifactId>nibble-integration</artifactId>
     		<version>1.0.0-SNAPSHOT</version>
 		    <scope>compile</scope>
-		    <exclusions>
-		    	<exclusion>
-		    		<artifactId>joda-time</artifactId>
-		    		<groupId>joda-time</groupId>
-		    	</exclusion>
-		    </exclusions>
+		    
   		</dependency>
 	  </dependencies>
 

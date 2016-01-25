@@ -10,11 +10,13 @@ import java.util.List;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
@@ -71,6 +73,11 @@ public class InstitutionProcessor {
 	@Autowired
 	private ThreadPoolTaskExecutor instSyncExecutor;
 	
+	@PostConstruct
+	public void initInstitutions() throws BeansException, ProcessingException{
+		context.getBean(this.getClass()).populateInstitutions();
+	}
+	
 	@Cacheable(value="instCache", unless="#result == null")
 	@Transactional(readOnly=true)
 	public List<Bank> getSupportedInstitutions() throws ProcessingException, ServiceException{
@@ -83,7 +90,7 @@ public class InstitutionProcessor {
 				primaries.addAll(institutionDao.findByTestModeSupport("test"));
 			}else{
 				primaries =  institutionDao.findByType("banking");
-				primaries.addAll(institutionDao.findByTestModeSupport("credit_card"));
+				primaries.addAll(institutionDao.findByType("credit_card"));
 			}
 			if(primaries !=null && !primaries.isEmpty()){
 				banks = new ArrayList<>();

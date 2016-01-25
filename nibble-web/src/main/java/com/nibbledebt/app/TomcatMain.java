@@ -26,9 +26,9 @@ public class TomcatMain {
 	      //Look for that variable and default to 8080 if it isn't there.
 	      String webPort = System.getProperty("PORT") == null ? System.getenv("PORT") : System.getProperty("PORT");
 	      String webappDirLocation = System.getProperty("WEBAPP_DIR") == null ? System.getenv("WEBAPP_DIR") : System.getProperty("WEBAPP_DIR");
-	      String ksPath = System.getProperty("KS_PATH") == null ? System.getenv("KS_PATH") : System.getProperty("KS_PATH");
-	      String ksPassword = System.getProperty("KS_PASSWORD") == null ? System.getenv("KS_PASSWORD") : System.getProperty("KS_PASSWORD");
-	      String keyAlias = System.getProperty("KEY_ALIAS") == null ? System.getenv("KEY_ALIAS") : System.getProperty("KEY_ALIAS");
+//	      String ksPath = System.getProperty("KS_PATH") == null ? System.getenv("KS_PATH") : System.getProperty("KS_PATH");
+//	      String ksPassword = System.getProperty("KS_PASSWORD") == null ? System.getenv("KS_PASSWORD") : System.getProperty("KS_PASSWORD");
+//	      String keyAlias = System.getProperty("KEY_ALIAS") == null ? System.getenv("KEY_ALIAS") : System.getProperty("KEY_ALIAS");
 	      System.out.println("detected env variables: PORT[" + webPort +"] , WEBAPP_DIR["+webappDirLocation + "].");
 
 	      if(webPort == null || webPort.isEmpty()) {
