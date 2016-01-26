@@ -6,8 +6,10 @@ package com.nibbledebt.core.processor;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -57,6 +59,7 @@ import com.nibbledebt.domain.model.NibblerData;
 import com.nibbledebt.domain.model.account.Account;
 import com.nibbledebt.domain.model.account.Accounts;
 import com.nibbledebt.domain.model.account.AddAccountsResponse;
+import com.nibbledebt.domain.model.account.AddAllAccountsResponse;
 import com.nibbledebt.domain.model.account.MfaType;
 import com.nibbledebt.integration.sao.IIntegrationSao;
 
@@ -185,7 +188,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
      */
     @Transactional(isolation = Isolation.READ_COMMITTED)
     @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_CREATED)
-    public AddAccountsResponse registerNibbler(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException {
+    public AddAllAccountsResponse registerNibbler(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException {
     	Institution loanAccountInstitution = null;
     	Institution roundupAccountInstitution = null;
     	
@@ -200,6 +203,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     		IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(roundupAccountInstitution!=null ? roundupAccountInstitution.getSupportedInstitution().getAggregatorQualifier() : loanAccountInstitution.getSupportedInstitution().getAggregatorQualifier());
     		
             String customerId = integrationSao.addCustomer(nibblerData.getEmail(), nibblerData.getFirstName(), nibblerData.getLastName());
+            
+            AddAllAccountsResponse overallResponse = new AddAllAccountsResponse();
             try {
     			if (StringUtils.isNotBlank(customerId)) saveCustomerData(nibblerData, customerId);
     			
@@ -207,44 +212,58 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
     	                AddAccountsResponse response = integrationSao.addAccounts(customerId, roundupAccountInstitution.getSupportedInstitution().getExternalId(),
     	                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
-    	                if (response != null && response.getMfaType() == MfaType.NON_MFA) {
-    	                    try {
-    							saveCustomerAccounts(nibblerData, response.getAccounts(), true);
-    						} catch (Exception e) {
-    							integrationSao.deleteCustomer(customerId);
-    							throw e;
-    						}
+    	                if (response != null){
+	    	                overallResponse.setRoundupBankMfaChallenges(response.getMfaChallenges());
+	    	                overallResponse.setRoundupMfaType(response.getMfaType());
+	    	                overallResponse.setAccounts(response.getAccounts());
+	    	                if (response.getMfaType() == MfaType.NON_MFA) {
+	    	                    try {
+	    							saveCustomerAccounts(nibblerData, response.getAccounts(), true);
+	    						} catch (Exception e) {
+	    							integrationSao.deleteCustomer(customerId);
+	    							throw e;
+	    						}
+	    	                }
     	                }
-    	                return response;
+    	                
     	            } else {
     	                throw new ValidationException("Financial institution requires fields that have failed validation.");
     	            }
     	        } 
 
-    	        
-    	        if (nibblerData.getLoanAccountBank() != null && nibblerData.getLoanAccountBank().getInstitution() != null) {
+    			if(nibblerData.getInvitationCode()!=null && nibblerData.getLoanAccountBank() == null ){
+    				
+    			} else if(nibblerData.getInvitationCode()==null && nibblerData.getLoanAccountBank() != null && nibblerData.getLoanAccountBank().getInstitution() != null) {
     	            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
-    	                AddAccountsResponse response = integrationSao.addAccounts(customerId, loanAccountInstitution.getSupportedInstitution().getExternalId(),
+    	            	AddAccountsResponse response = integrationSao.addAccounts(customerId, loanAccountInstitution.getSupportedInstitution().getExternalId(),
     	                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
-    	                if (response != null && response.getMfaType() == MfaType.NON_MFA) {
-    	                    try {
-    							saveCustomerAccounts(nibblerData, response.getAccounts(), true);
-    						} catch (Exception e) {
-    							integrationSao.deleteCustomer(customerId);
-    							throw e;
-    						}
-    	                }
-    	                return response;
+    	            	if (response != null){
+        	            	overallResponse.setLoanBankMfaChallenges(response.getMfaChallenges());
+        	                overallResponse.setLoanMfaType(response.getMfaType());
+        	                List<Account> accts = Arrays.asList(overallResponse.getAccounts().getAccount());
+        	                		accts.addAll(Arrays.asList(response.getAccounts().getAccount()));
+        	                overallResponse.getAccounts().setAccount((Account[])accts.toArray());
+        	                if (response.getMfaType() == MfaType.NON_MFA) {
+        	                    try {
+        							saveCustomerAccounts(nibblerData, response.getAccounts(), false);
+        						} catch (Exception e) {
+        							integrationSao.deleteCustomer(customerId);
+        							throw e;
+        						}
+        	                }
+    	            	}
+    	            	
     	            } else {
     	                throw new ValidationException("Financial institution requires fields that have failed validation.");
     	            }
     	        } else{
-    	        	throw new ValidationException("Loan account institution is required");
+    	        	throw new ValidationException("Loan account or invitation code is required"); 
     	        }
     		} catch (RepositoryException | ValidationException e) {
     			integrationSao.deleteCustomer(customerId);
     			throw e;
     		}
+            return overallResponse;
     	}else{
     		throw new ValidationException("A loan account institution or bank account institution is required for registration.");
     	}
@@ -506,101 +525,116 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 	                setCreated(accountType, nibblerData.getEmail());
 	                accountTypeDao.create(accountType);
 	            }
+	            
+	            if(StringUtils.equalsIgnoreCase(account.getAccountType(), "checking") ||
+            		StringUtils.equalsIgnoreCase(account.getAccountType(), "creditCard") ||
+            		StringUtils.equalsIgnoreCase(account.getAccountType(), "student-loan") || 
+            		StringUtils.equalsIgnoreCase(account.getAccountType(), "loan")){
+	            	
+	            	NibblerAccount nibblerAccount = new NibblerAccount();
+		            nibblerAccount.setNumber(account.getAccountNumber());
+		            nibblerAccount.setNumberMask(account.getAccountNumber());
+		            Institution institution = institutionDao.findOne(Long.valueOf(forRoundUp ? nibblerData.getRoundupAccountBank().getInstitution().getId() : nibblerData.getLoanAccountBank().getInstitution().getId()));
+		            nibblerAccount.setInstitution(institution);
+		            nibblerAccount.setNibbler(nibbler);
+		            nibblerAccount.setName(account.getAccountType() + " - " + account.getAccountNumber());
+		            nibblerAccount.setExternalId(String.valueOf(account.getAccountExternalId()));
+		            nibblerAccount.setAccountType(accountType);
+		            setCreated(nibblerAccount, nibblerData.getEmail());
+		            nibblerAccount.setLastTransactionPull(new Date(System.currentTimeMillis() - 86400000));
+		            
+		            if(forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "checking")){
+			    		nibblerAccount.setUseForRounding(true);
+		                if (account.getBalance() != null) {
+		                    AccountBalance balance = new AccountBalance();
+		                    balance.setAvailable(new BigDecimal(account.getAvailable() != null ? account.getAvailable() : "0.00"));
+		                    balance.setCurrent(new BigDecimal(account.getBalance() != null ? account.getBalance() : "0.00"));
+		                    balance.setAccount(nibblerAccount);
+		                    setCreated(balance, nibblerData.getEmail());
+		                    nibblerAccount.getBalances().add(balance);
+		                }
+			            nibbler.getAccounts().add(nibblerAccount);
+			    	}else if(forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "creditCard")){
+			    		nibblerAccount.setUseForRounding(true);
+			    		if (account.getBalance() != null) {
+		                    AccountBalance balance = new AccountBalance();
+		                    balance.setAvailable(new BigDecimal(account.getAvailable() != null ? account.getAvailable() : "0.00"));
+		                    balance.setCurrent(new BigDecimal(account.getBalance() != null ? account.getBalance() : "0.00"));
+		                    balance.setAccount(nibblerAccount);
+		                    if(account.getDetail() != null){
+			                    balance.setInterestRate(new BigDecimal(account.getDetail().getInterestRate() != null ? account.getDetail().getInterestRate() : "0.00"));
+			                    balance.setCashAdvanceInterestRate(new BigDecimal(account.getDetail().getCashAdvanceInterestRate()!= null ? account.getDetail().getCashAdvanceInterestRate() : "0.00"));
+			                    balance.setCreditMaxAmount(new BigDecimal(account.getDetail().getCreditMaxAmount()!= null ? account.getDetail().getCreditMaxAmount() : "0.00"));
+			                    balance.setPaymentMinAmount(new BigDecimal(account.getDetail().getPaymentMinAmount()!= null ? account.getDetail().getPaymentMinAmount() : "0.00"));
+			                    balance.setPaymentMinAmount(new BigDecimal(account.getDetail().getPaymentMinAmount()!= null ? account.getDetail().getPaymentMinAmount() : "0.00"));
+			                    balance.setLastPaymentAmount(new BigDecimal(account.getDetail().getLastPaymentAmount()!= null ? account.getDetail().getLastPaymentAmount() : "0.00"));
+			                    balance.setPaymentDueDate(account.getDetail().getPaymentDueDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getPaymentDueDate()) : new Date());
+			                    balance.setLastPaymentDate(account.getDetail().getLastPaymentDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getLastPaymentDate()) : new Date());
+			                    balance.setLastPaymentAmount(new BigDecimal(account.getDetail().getLastPaymentAmount()!= null ? account.getDetail().getLastPaymentAmount() : "0.00"));
+		                    	
+		                    }
+		                    setCreated(balance, nibblerData.getEmail());
+		                    nibblerAccount.getBalances().add(balance);
+				            nibbler.getAccounts().add(nibblerAccount);
+		                }
+			    	}else if(!forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "student-loan")){
+			    		nibblerAccount.setUseForRounding(false);
+			    		nibblerAccount.setUseForpayoff(true);
+			    		if (account.getBalance() != null) {
+		                    AccountBalance balance = new AccountBalance();
+		                    balance.setAvailable(new BigDecimal(account.getAvailable() != null ? account.getAvailable() : "0.00"));
+		                    balance.setCurrent(new BigDecimal(account.getBalance() != null ? account.getBalance() : "0.00"));
+		                    balance.setAccount(nibblerAccount);
+		                    if(account.getDetail() != null){
+		                    	balance.setInterestRate(new BigDecimal(account.getDetail().getInterestRate() != null ? account.getDetail().getInterestRate() : "0.00"));
+			                    balance.setPaymentMinAmount(new BigDecimal(account.getDetail().getNextPayment() != null ? account.getDetail().getNextPayment() : "0.00"));
+			                    balance.setEscrowBalance(new BigDecimal(account.getDetail().getEscrowBalance() != null ? account.getDetail().getEscrowBalance() : "0.00"));
+			                    balance.setPayoffAmount(new BigDecimal(account.getDetail().getPayoffAmount() != null ? account.getDetail().getPayoffAmount() : "0.00"));
+			                    balance.setLastPaymentAmount(new BigDecimal(account.getDetail().getLastPaymentAmount() != null ? account.getDetail().getLastPaymentAmount() : "0.00"));
+			                    balance.setPaymentDueDate(account.getDetail().getNextPaymentDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getNextPaymentDate()) : new Date());
+			                    balance.setLastPaymentDate(account.getDetail().getLastPaymentReceiveDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getLastPaymentReceiveDate()) : new Date());
+			                    balance.setPrincipalBalance(new BigDecimal(account.getDetail().getPrincipalBalance() != null ? account.getDetail().getPrincipalBalance() : "0.00"));
+			                    balance.setYtdInterestPaid(new BigDecimal(account.getDetail().getYtdInterestPaid() != null ? account.getDetail().getYtdInterestPaid() : "0.00"));
+			                    balance.setYtdPrincipalPaid(new BigDecimal(account.getDetail().getYtdPrincipalPaid() != null ? account.getDetail().getYtdPrincipalPaid() : "0.00"));
+		                    }
+		                    
+		                    setCreated(balance, nibblerData.getEmail());
+		                    nibblerAccount.getBalances().add(balance);
+				            nibbler.getAccounts().add(nibblerAccount);
+		                }
+			    	}else if(!forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "loan")){
+			    		nibblerAccount.setUseForRounding(false);
+			    		nibblerAccount.setUseForpayoff(true);
+			    		if(!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod")){
+	                    	nibblerAccount.setUseForpayoff(true);
+	                    	AccountBalance balance = new AccountBalance();
+	                    	balance.setInterestRate(new BigDecimal("6.00"));
+		                    balance.setPaymentMinAmount(new BigDecimal("193.33"));
+		                    balance.setPayoffAmount(new BigDecimal("10000.00"));
+		                    balance.setPrincipalBalance(new BigDecimal("10000.00"));
+		                    balance.setYtdInterestPaid(new BigDecimal("0.00"));
+		                    balance.setYtdPrincipalPaid(new BigDecimal("0.00"));
+		                    balance.setAccount(nibblerAccount);
+		                    
+		                    setCreated(balance, nibblerData.getEmail());
+		                    nibblerAccount.getBalances().add(balance);
+				            nibbler.getAccounts().add(nibblerAccount);
+		                    
+	                    }
+			    	}else{
+			    		nibblerAccount.setUseForRounding(false);
+			    	}
+		            
+	            }
 	
-				NibblerAccount nibblerAccount = new NibblerAccount();
-	            nibblerAccount.setNumber(account.getAccountNumber());
-	            nibblerAccount.setNumberMask(account.getAccountNumber());
-	            Institution institution = institutionDao.findOne(Long.valueOf(forRoundUp ? nibblerData.getRoundupAccountBank().getInstitution().getId() : nibblerData.getLoanAccountBank().getInstitution().getId()));
-	            nibblerAccount.setInstitution(institution);
-	            nibblerAccount.setNibbler(nibbler);
-	            nibblerAccount.setName(account.getAccountType() + " - " + account.getAccountNumber());
-	            nibblerAccount.setExternalId(String.valueOf(account.getAccountExternalId()));
-	            nibblerAccount.setAccountType(accountType);
-	            setCreated(nibblerAccount, nibblerData.getEmail());
-	            nibblerAccount.setLastTransactionPull(new Date(System.currentTimeMillis() - 86400000));
-	            nibbler.getAccounts().add(nibblerAccount);
-	
-	            setUpdated(nibbler, nibblerData.getEmail());
-	            nibblerData.setActivationCode(nibbler.getNibblerDir().getActivationCode());
 				
-		    	if(forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "checking")){
-		    		nibblerAccount.setUseForRounding(true);
-	                if (account.getBalance() != null) {
-	                    AccountBalance balance = new AccountBalance();
-	                    balance.setAvailable(new BigDecimal(account.getAvailable() != null ? account.getAvailable() : "0.00"));
-	                    balance.setCurrent(new BigDecimal(account.getBalance() != null ? account.getBalance() : "0.00"));
-	                    balance.setAccount(nibblerAccount);
-	                    setCreated(balance, nibblerData.getEmail());
-	                    nibblerAccount.getBalances().add(balance);
-	                }
-		    	}else if(forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "creditCard")){
-		    		nibblerAccount.setUseForRounding(true);
-		    		if (account.getBalance() != null) {
-	                    AccountBalance balance = new AccountBalance();
-	                    balance.setAvailable(new BigDecimal(account.getAvailable() != null ? account.getAvailable() : "0.00"));
-	                    balance.setCurrent(new BigDecimal(account.getBalance() != null ? account.getBalance() : "0.00"));
-	                    balance.setAccount(nibblerAccount);
-	                    if(account.getDetail() != null){
-		                    balance.setInterestRate(new BigDecimal(account.getDetail().getInterestRate() != null ? account.getDetail().getInterestRate() : "0.00"));
-		                    balance.setCashAdvanceInterestRate(new BigDecimal(account.getDetail().getCashAdvanceInterestRate()!= null ? account.getDetail().getCashAdvanceInterestRate() : "0.00"));
-		                    balance.setCreditMaxAmount(new BigDecimal(account.getDetail().getCreditMaxAmount()!= null ? account.getDetail().getCreditMaxAmount() : "0.00"));
-		                    balance.setPaymentMinAmount(new BigDecimal(account.getDetail().getPaymentMinAmount()!= null ? account.getDetail().getPaymentMinAmount() : "0.00"));
-		                    balance.setPaymentMinAmount(new BigDecimal(account.getDetail().getPaymentMinAmount()!= null ? account.getDetail().getPaymentMinAmount() : "0.00"));
-		                    balance.setLastPaymentAmount(new BigDecimal(account.getDetail().getLastPaymentAmount()!= null ? account.getDetail().getLastPaymentAmount() : "0.00"));
-		                    balance.setPaymentDueDate(account.getDetail().getPaymentDueDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getPaymentDueDate()) : new Date());
-		                    balance.setLastPaymentDate(account.getDetail().getLastPaymentDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getLastPaymentDate()) : new Date());
-		                    balance.setLastPaymentAmount(new BigDecimal(account.getDetail().getLastPaymentAmount()!= null ? account.getDetail().getLastPaymentAmount() : "0.00"));
-	                    	
-	                    }
-	                    setCreated(balance, nibblerData.getEmail());
-	                    nibblerAccount.getBalances().add(balance);
-	                }
-		    	}else if(!forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "student-loan")){
-		    		nibblerAccount.setUseForRounding(false);
-		    		nibblerAccount.setUseForpayoff(true);
-		    		if (account.getBalance() != null) {
-	                    AccountBalance balance = new AccountBalance();
-	                    balance.setAvailable(new BigDecimal(account.getAvailable() != null ? account.getAvailable() : "0.00"));
-	                    balance.setCurrent(new BigDecimal(account.getBalance() != null ? account.getBalance() : "0.00"));
-	                    balance.setAccount(nibblerAccount);
-	                    if(account.getDetail() != null){
-	                    	balance.setInterestRate(new BigDecimal(account.getDetail().getInterestRate() != null ? account.getDetail().getInterestRate() : "0.00"));
-		                    balance.setPaymentMinAmount(new BigDecimal(account.getDetail().getNextPayment() != null ? account.getDetail().getNextPayment() : "0.00"));
-		                    balance.setEscrowBalance(new BigDecimal(account.getDetail().getEscrowBalance() != null ? account.getDetail().getEscrowBalance() : "0.00"));
-		                    balance.setPayoffAmount(new BigDecimal(account.getDetail().getPayoffAmount() != null ? account.getDetail().getPayoffAmount() : "0.00"));
-		                    balance.setLastPaymentAmount(new BigDecimal(account.getDetail().getLastPaymentAmount() != null ? account.getDetail().getLastPaymentAmount() : "0.00"));
-		                    balance.setPaymentDueDate(account.getDetail().getNextPaymentDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getNextPaymentDate()) : new Date());
-		                    balance.setLastPaymentDate(account.getDetail().getLastPaymentReceiveDate()!= null ? new SimpleDateFormat().parse(account.getDetail().getLastPaymentReceiveDate()) : new Date());
-		                    balance.setPrincipalBalance(new BigDecimal(account.getDetail().getPrincipalBalance() != null ? account.getDetail().getPrincipalBalance() : "0.00"));
-		                    balance.setYtdInterestPaid(new BigDecimal(account.getDetail().getYtdInterestPaid() != null ? account.getDetail().getYtdInterestPaid() : "0.00"));
-		                    balance.setYtdPrincipalPaid(new BigDecimal(account.getDetail().getYtdPrincipalPaid() != null ? account.getDetail().getYtdPrincipalPaid() : "0.00"));
-	                    }
-	                    
-	                    setCreated(balance, nibblerData.getEmail());
-	                    nibblerAccount.getBalances().add(balance);
-	                }
-		    	}else if(!forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "loan")){
-		    		nibblerAccount.setUseForRounding(false);
-		    		nibblerAccount.setUseForpayoff(true);
-		    		if(!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod")){
-                    	nibblerAccount.setUseForpayoff(true);
-                    	AccountBalance balance = new AccountBalance();
-                    	balance.setInterestRate(new BigDecimal("6.00"));
-	                    balance.setPaymentMinAmount(new BigDecimal("193.33"));
-	                    balance.setPayoffAmount(new BigDecimal("10000.00"));
-	                    balance.setPrincipalBalance(new BigDecimal("10000.00"));
-	                    balance.setYtdInterestPaid(new BigDecimal("0.00"));
-	                    balance.setYtdPrincipalPaid(new BigDecimal("0.00"));
-	                    balance.setAccount(nibblerAccount);
-	                    
-	                    setCreated(balance, nibblerData.getEmail());
-	                    nibblerAccount.getBalances().add(balance);
-	                    
-                    }
-		    	}else{
-		    		nibblerAccount.setUseForRounding(false);
-		    	}
+				
+		    	
 	    	}
+
+			
+            setUpdated(nibbler, nibblerData.getEmail());
+            nibblerData.setActivationCode(nibbler.getNibblerDir().getActivationCode());
 	    	nibblerDao.update(nibbler);
     	} catch (ParseException e) {
 			throw new ProcessingException("Error while parsing date from account.", e);

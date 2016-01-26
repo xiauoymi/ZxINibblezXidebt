@@ -73,10 +73,10 @@ public class InstitutionProcessor {
 	@Autowired
 	private ThreadPoolTaskExecutor instSyncExecutor;
 	
-	@PostConstruct
-	public void initInstitutions() throws BeansException, ProcessingException{
-		context.getBean(this.getClass()).populateInstitutions();
-	}
+//	@PostConstruct
+//	public void initInstitutions() throws BeansException, ProcessingException{
+//		context.getBean(this.getClass()).populateInstitutions();
+//	}
 	
 	@Cacheable(value="instCache", unless="#result == null")
 	@Transactional(readOnly=true)

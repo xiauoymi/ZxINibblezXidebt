@@ -16,7 +16,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
-import com.nibbledebt.domain.model.account.AddAccountsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +30,8 @@ import com.nibbledebt.core.processor.InstitutionProcessor;
 import com.nibbledebt.core.processor.RegistrationProcessor;
 import com.nibbledebt.domain.model.Bank;
 import com.nibbledebt.domain.model.NibblerData;
+import com.nibbledebt.domain.model.account.AddAccountsResponse;
+import com.nibbledebt.domain.model.account.AddAllAccountsResponse;
 
 /**
  * @author Rocky Alam
@@ -46,18 +47,17 @@ public class RegistrationREST extends AbstractREST {
 	@Autowired
 	private InstitutionProcessor instService;
 	
-	
 	@POST
 	@Path("/register")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
 	@Validatable() //TODO - write custom validator
-	public AddAccountsResponse register(NibblerData nibblerData) throws ProcessingException, ServiceException,
+	public AddAllAccountsResponse register(NibblerData nibblerData) throws ProcessingException, ServiceException,
             RepositoryException, ValidationException{
 		return regService.registerNibbler(nibblerData);
 	}
-
+	
     @POST
     @Path("/submitRoundupMfa")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -79,7 +79,7 @@ public class RegistrationREST extends AbstractREST {
         return regService.submitRoundupAccountMfaAnswer(nibblerData);
 
     }
-//	
+	
 //	@POST
 //	@Path("/registermfa")
 //	@Consumes(MediaType.APPLICATION_JSON)
@@ -99,7 +99,6 @@ public class RegistrationREST extends AbstractREST {
 //	public void sendCode(MfaRequest request) throws ProcessingException, ServiceException{
 //		regService.sendMfaCode(request.getAccessToken(), request.getSendMethod());
 //	}
-	
 	
 	@POST
 	@Path("/mfa")
@@ -129,7 +128,6 @@ public class RegistrationREST extends AbstractREST {
 	public void activate(NibblerData nibblerData) throws ProcessingException, RepositoryException{
 		regService.activateNibbler(nibblerData.getEmail(), nibblerData.getPassword(), nibblerData.getActivationCode());
 	}
-	
 	
 	@GET
 	@Path("/banks")
