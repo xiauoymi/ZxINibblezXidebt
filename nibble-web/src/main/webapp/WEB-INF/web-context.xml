@@ -39,7 +39,7 @@
 		<property name="waitForTasksToCompleteOnShutdown" value="true" />
 	</bean>
 	
-	<aop:aspectj-autoproxy/>
+	<aop:aspectj-autoproxy expose-proxy="true"/>
 	<ctx:component-scan base-package="com.nibbledebt"/>
 
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
