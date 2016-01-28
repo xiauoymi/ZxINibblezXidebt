@@ -21,20 +21,21 @@ public class AmortizationRecord {
 	private BigDecimal interestPayment;
 	private BigDecimal principalPayment;
 	private BigDecimal balance;
-	
+	private BigDecimal extraPayment;
 	
 	
 	public AmortizationRecord() {
 	}
 	
 	public AmortizationRecord(Integer number, String month, Date date, BigDecimal interestPayment,
-			BigDecimal principalPayment, BigDecimal balance) {
+			BigDecimal principalPayment, BigDecimal balance, BigDecimal extraPayment) {
 		this.number = number;
 		this.month = month;
 		this.date = date;
 		this.interestPayment = interestPayment;
 		this.principalPayment = principalPayment;
 		this.balance = balance;
+		this.extraPayment = extraPayment;
 	}
 	/**
 	 * @return the number
@@ -109,6 +110,20 @@ public class AmortizationRecord {
 		this.balance = balance;
 	}
 	
+	/**
+	 * @return the extraPayment
+	 */
+	public BigDecimal getExtraPayment() {
+		return extraPayment;
+	}
+
+	/**
+	 * @param extraPayment the extraPayment to set
+	 */
+	public void setExtraPayment(BigDecimal extraPayment) {
+		this.extraPayment = extraPayment;
+	}
+
 	@Override
 	public String toString(){
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);

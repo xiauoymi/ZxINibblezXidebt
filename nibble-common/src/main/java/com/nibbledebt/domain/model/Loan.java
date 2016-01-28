@@ -19,6 +19,7 @@ public class Loan {
 	private BigDecimal interestRate;
 	private BigDecimal principalBalance;
 	private BigDecimal minimumPayment;
+	private BigDecimal weeklyAverage;
 	private BigDecimal originalCumulativeInterest;
 	private BigDecimal currentCumulativeInterest;
 	private BigDecimal projectedCumulativeInterest;
@@ -212,6 +213,18 @@ public class Loan {
 	public void setProjectedAmortization(
 			List<AmortizationRecord> projectedAmortization) {
 		this.projectedAmortization = projectedAmortization;
+	}
+	/**
+	 * @return the weeklyAverage
+	 */
+	public BigDecimal getWeeklyAverage() {
+		return weeklyAverage;
+	}
+	/**
+	 * @param weeklyAverage the weeklyAverage to set
+	 */
+	public void setWeeklyAverage(BigDecimal weeklyAverage) {
+		this.weeklyAverage = weeklyAverage;
 	}
 	@Override
 	public String toString(){
