@@ -186,87 +186,90 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
      * @throws ProcessingException
      * @throws ServiceException
      */
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor={ValidationException.class, Exception.class})
     @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_CREATED)
     public AddAllAccountsResponse registerNibbler(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException {
-    	Institution loanAccountInstitution = null;
-    	Institution roundupAccountInstitution = null;
-    	
-    	if(nibblerData.getLoanAccountBank()!=null){
-            loanAccountInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getLoanAccountBank().getInstitution().getId()));
-            
-    	}
-    	if(nibblerData.getRoundupAccountBank()!=null){
-            roundupAccountInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getRoundupAccountBank().getInstitution().getId()));
-    	}
-    	if(loanAccountInstitution!=null || roundupAccountInstitution!=null){
-    		IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(roundupAccountInstitution!=null ? roundupAccountInstitution.getSupportedInstitution().getAggregatorQualifier() : loanAccountInstitution.getSupportedInstitution().getAggregatorQualifier());
-    		
-            String customerId = integrationSao.addCustomer(nibblerData.getEmail(), nibblerData.getFirstName(), nibblerData.getLastName());
-            
-            AddAllAccountsResponse overallResponse = new AddAllAccountsResponse();
-            try {
-    			if (StringUtils.isNotBlank(customerId)) saveCustomerData(nibblerData, customerId);
-    			
-    			if (nibblerData.getRoundupAccountBank() != null && nibblerData.getRoundupAccountBank().getInstitution() != null) {
-    	            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
-    	                AddAccountsResponse response = integrationSao.addAccounts(customerId, roundupAccountInstitution.getSupportedInstitution().getExternalId(),
-    	                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
-    	                if (response != null){
-	    	                overallResponse.setRoundupBankMfaChallenges(response.getMfaChallenges());
-	    	                overallResponse.setRoundupMfaType(response.getMfaType());
-	    	                overallResponse.setAccounts(response.getAccounts());
-	    	                if (response.getMfaType() == MfaType.NON_MFA) {
-	    	                    try {
-	    							saveCustomerAccounts(nibblerData, response.getAccounts(), true);
-	    						} catch (Exception e) {
-	    							integrationSao.deleteCustomer(customerId);
-	    							throw e;
-	    						}
-	    	                }
-    	                }
-    	                
-    	            } else {
-    	                throw new ValidationException("Financial institution requires fields that have failed validation.");
-    	            }
-    	        } 
+		Institution loanAccountInstitution = null;
+		Institution roundupAccountInstitution = null;
+		
+		boolean isInvitedCustomer = (nibblerData.getInvitationCode()!=null && nibblerData.getLoanAccountBank() == null) ? true : false ;
+		
+		if(nibblerData.getLoanAccountBank()!=null){
+		    loanAccountInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getLoanAccountBank().getInstitution().getId()));
+		    
+		}
+		if(nibblerData.getRoundupAccountBank()!=null){
+		    roundupAccountInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getRoundupAccountBank().getInstitution().getId()));
+		}
+		if(loanAccountInstitution!=null || roundupAccountInstitution!=null){
+			IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(roundupAccountInstitution!=null ? roundupAccountInstitution.getSupportedInstitution().getAggregatorQualifier() : loanAccountInstitution.getSupportedInstitution().getAggregatorQualifier());
+			
+		    String customerId = integrationSao.addCustomer(nibblerData.getEmail(), nibblerData.getFirstName(), nibblerData.getLastName());
+		    
+		    AddAllAccountsResponse overallResponse = new AddAllAccountsResponse();
+		    try {
+				if (StringUtils.isNotBlank(customerId)) saveCustomerData(nibblerData, customerId);
+				
+				if (nibblerData.getRoundupAccountBank() != null && nibblerData.getRoundupAccountBank().getInstitution() != null) {
+		            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
+		                AddAccountsResponse response = integrationSao.addAccounts(customerId, roundupAccountInstitution.getSupportedInstitution().getExternalId(),
+		                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
+		                if (response != null){
+			                overallResponse.setRoundupBankMfaChallenges(response.getMfaChallenges());
+			                overallResponse.setRoundupMfaType(response.getMfaType());
+			                overallResponse.setAccounts(response.getAccounts());
+			                if (response.getMfaType() == MfaType.NON_MFA) {
+			                    try {
+									saveCustomerAccounts(nibblerData, response.getAccounts(), true);
+								} catch (Exception e) {
+									integrationSao.deleteCustomer(customerId);
+									throw e;
+								}
+			                }
+		                }
+		                
+		            } else {
+						integrationSao.deleteCustomer(customerId);
+		                throw new ValidationException("Financial institution requires fields that have failed validation.");
+		            }
+		        } 
 
-    			if(nibblerData.getInvitationCode()!=null && nibblerData.getLoanAccountBank() == null ){
-    				
-    			} else if(nibblerData.getInvitationCode()==null && nibblerData.getLoanAccountBank() != null && nibblerData.getLoanAccountBank().getInstitution() != null) {
-    	            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
-    	            	AddAccountsResponse response = integrationSao.addAccounts(customerId, loanAccountInstitution.getSupportedInstitution().getExternalId(),
-    	                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
-    	            	if (response != null){
-        	            	overallResponse.setLoanBankMfaChallenges(response.getMfaChallenges());
-        	                overallResponse.setLoanMfaType(response.getMfaType());
-        	                List<Account> accts = Arrays.asList(overallResponse.getAccounts().getAccount());
-        	                		accts.addAll(Arrays.asList(response.getAccounts().getAccount()));
-        	                overallResponse.getAccounts().setAccount((Account[])accts.toArray());
-        	                if (response.getMfaType() == MfaType.NON_MFA) {
-        	                    try {
-        							saveCustomerAccounts(nibblerData, response.getAccounts(), false);
-        						} catch (Exception e) {
-        							integrationSao.deleteCustomer(customerId);
-        							throw e;
-        						}
-        	                }
-    	            	}
-    	            	
-    	            } else {
-    	                throw new ValidationException("Financial institution requires fields that have failed validation.");
-    	            }
-    	        } else{
-    	        	throw new ValidationException("Loan account or invitation code is required"); 
-    	        }
-    		} catch (RepositoryException | ValidationException e) {
-    			integrationSao.deleteCustomer(customerId);
-    			throw e;
-    		}
-            return overallResponse;
-    	}else{
-    		throw new ValidationException("A loan account institution or bank account institution is required for registration.");
-    	}
+				if(!isInvitedCustomer){
+					if(nibblerData.getLoanAccountBank().getInstitution() != null) {
+			            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
+			            	AddAccountsResponse response = integrationSao.addAccounts(customerId, loanAccountInstitution.getSupportedInstitution().getExternalId(),
+			                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
+			            	if (response != null){
+				            	overallResponse.setLoanBankMfaChallenges(response.getMfaChallenges());
+				                overallResponse.setLoanMfaType(response.getMfaType());
+				                overallResponse.getAccounts().getAccount().addAll(response.getAccounts().getAccount());
+				                if (response.getMfaType() == MfaType.NON_MFA) {
+				                    try {
+										saveCustomerAccounts(nibblerData, response.getAccounts(), false);
+									} catch (Exception e) {
+										integrationSao.deleteCustomer(customerId);
+										throw e;
+									}
+				                }
+			            	}
+			            	
+			            } else {
+							integrationSao.deleteCustomer(customerId);
+			                throw new ValidationException("Financial institution requires fields that have failed validation.");
+			            }
+			        }else{
+						integrationSao.deleteCustomer(customerId);
+			        	throw new ValidationException("Loan account or invitation code is required"); 
+			        }
+				}
+			} catch (Exception e) {
+				integrationSao.deleteCustomer(customerId);
+				throw e;
+			}
+		    return overallResponse;
+		}else{
+			throw new ValidationException("A loan account institution or bank account institution is required for registration.");
+		}
         
 
     }

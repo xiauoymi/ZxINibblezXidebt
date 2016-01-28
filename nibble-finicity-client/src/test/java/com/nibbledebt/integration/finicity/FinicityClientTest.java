@@ -127,7 +127,7 @@ public class FinicityClientTest {
         Assert.assertNotNull(responseEntity);
     }
 
-    @Test
+//    @Test
     public void deleteCustomers() throws FinicityAccessException, IOException {
         Customers customers= finicityClient.getCustomers();
         customers.getCustomers();

@@ -68,31 +68,45 @@ public class AccountsProcessor extends AbstractProcessor {
 			
 
 			Map<LocalDate, BigDecimal> paymentMap = new HashMap<>();
+			Double totalPayments = 0d;
 			// convert all payments to a map of month-year and value
 			if(loan.getPayments()!=null){
 				for(Payment payment : loan.getPayments()){					
 					LocalDate paymentDate = payment.getInitiatedTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 					if(paymentMap.get(paymentDate) == null) paymentMap.put(paymentDate, payment.getAmount());
 					else paymentMap.put(paymentDate, paymentMap.get(paymentDate).add(payment.getAmount()));
+					totalPayments += payment.getAmount().doubleValue();
 				}
 				
 			}
-			
+			Double averagePayment = totalPayments/(loan.getPayments().size()/4);
 			
 			int monthIteration = 1;
 			Double originalAccruedMonthlyInterest = 0d;
 			Double currentAccruedMonthlyInterest = 0d;
+			Double projectedAccruedMonthlyInterest = 0d;
 			
 			Double originalPrincipalBalance = loan.getPrincipalBalance().doubleValue();
 			Double currentPrincipalBalance = loan.getPrincipalBalance().doubleValue();
+			Double projectedPrincipalBalance = loan.getPrincipalBalance().doubleValue();
 			Double originalInterest = loan.getOriginalCumulativeInterest()!=null ? loan.getOriginalCumulativeInterest().doubleValue() : 0d;
 			Double currentInterest = loan.getCurrentCumulativeInterest()!=null ? loan.getCurrentCumulativeInterest().doubleValue() : 0d;
+			Double projectedInterest = loan.getProjectedCumulativeInterest()!=null ? loan.getProjectedCumulativeInterest().doubleValue() : 0d;
 			
 			if(loan.getPrincipalBalance().doubleValue() > loan.getMinimumPayment().doubleValue()) {
 				for (LocalDate date = loan.getFirstDayAtNibble().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();;  date = date.plusDays(1)) {
 					originalAccruedMonthlyInterest += (originalPrincipalBalance*((loan.getInterestRate().doubleValue()/date.lengthOfYear())/100d));
+					
 					if(paymentMap.get(date) != null) currentPrincipalBalance -= paymentMap.get(date).doubleValue();
 					currentAccruedMonthlyInterest += (currentPrincipalBalance*((loan.getInterestRate().doubleValue()/date.lengthOfYear())/100d));
+					
+					if(averagePayment > 0){
+						projectedPrincipalBalance -= averagePayment;
+					}else{
+						projectedPrincipalBalance -= 30;
+					}
+
+					projectedAccruedMonthlyInterest += (projectedPrincipalBalance*((loan.getInterestRate().doubleValue()/date.lengthOfYear())/100d));
 					
 					if(date.getDayOfMonth() == date.lengthOfMonth()){
 						
@@ -114,11 +128,22 @@ public class AccountsProcessor extends AbstractProcessor {
 							}
 						}
 						
+						if(projectedPrincipalBalance+projectedAccruedMonthlyInterest > loan.getMinimumPayment().doubleValue()){
+							projectedPrincipalBalance -= (loan.getMinimumPayment().doubleValue()-projectedAccruedMonthlyInterest);
+							loan.getProjectedAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), BigDecimal.valueOf(projectedAccruedMonthlyInterest), BigDecimal.valueOf(loan.getMinimumPayment().doubleValue()-projectedAccruedMonthlyInterest), BigDecimal.valueOf(projectedPrincipalBalance)));
+						}else{
+							if(projectedPrincipalBalance!=0){
+								loan.getProjectedAmortization().add(new AmortizationRecord(monthIteration, date.getMonth().name(), Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), BigDecimal.valueOf(projectedAccruedMonthlyInterest), BigDecimal.valueOf(projectedPrincipalBalance), BigDecimal.ZERO));
+								projectedPrincipalBalance = 0d;
+							}
+						}
+						
 						if(originalPrincipalBalance == 0 && currentPrincipalBalance == 0) break;
 						
 						originalInterest += originalAccruedMonthlyInterest;
 						currentInterest += currentAccruedMonthlyInterest;
-						currentAccruedMonthlyInterest = originalAccruedMonthlyInterest = 0d;
+						projectedInterest += projectedAccruedMonthlyInterest;
+						currentAccruedMonthlyInterest = originalAccruedMonthlyInterest = projectedAccruedMonthlyInterest = 0d;
 						monthIteration++;
 						
 					}
@@ -128,8 +153,10 @@ public class AccountsProcessor extends AbstractProcessor {
 
 			loan.setOriginalCumulativeInterest(BigDecimal.valueOf(originalInterest));
 			loan.setCurrentCumulativeInterest(BigDecimal.valueOf(currentInterest));
+			loan.setProjectedCumulativeInterest(BigDecimal.valueOf(currentInterest));
 			loan.setOriginalPayoffDuration(loan.getOriginalAmortization().size());
 			loan.setCurrentPayoffDuration(loan.getCurrentProjectedAmortization().size());
+			loan.setProjectedPayoffDuration(loan.getCurrentProjectedAmortization().size());
 		}
 		
 		return summary;

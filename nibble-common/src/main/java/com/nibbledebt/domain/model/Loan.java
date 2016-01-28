@@ -21,11 +21,14 @@ public class Loan {
 	private BigDecimal minimumPayment;
 	private BigDecimal originalCumulativeInterest;
 	private BigDecimal currentCumulativeInterest;
+	private BigDecimal projectedCumulativeInterest;
 	private Integer originalPayoffDuration;
 	private Integer currentPayoffDuration; 
+	private Integer projectedPayoffDuration; 
 	
 	private List<AmortizationRecord> originalAmortization;
 	private List<AmortizationRecord> currentProjectedAmortization;
+	private List<AmortizationRecord> projectedAmortization;
 	
 	private List<Payment> payments;
 	
@@ -169,6 +172,46 @@ public class Loan {
 	 */
 	public void setFirstDayAtNibble(Date firstDayAtNibble) {
 		this.firstDayAtNibble = firstDayAtNibble;
+	}
+	
+	/**
+	 * @return the projectedCumulativeInterest
+	 */
+	public BigDecimal getProjectedCumulativeInterest() {
+		return projectedCumulativeInterest;
+	}
+	/**
+	 * @param projectedCumulativeInterest the projectedCumulativeInterest to set
+	 */
+	public void setProjectedCumulativeInterest(
+			BigDecimal projectedCumulativeInterest) {
+		this.projectedCumulativeInterest = projectedCumulativeInterest;
+	}
+	/**
+	 * @return the projectedPayoffDuration
+	 */
+	public Integer getProjectedPayoffDuration() {
+		return projectedPayoffDuration;
+	}
+	/**
+	 * @param projectedPayoffDuration the projectedPayoffDuration to set
+	 */
+	public void setProjectedPayoffDuration(Integer projectedPayoffDuration) {
+		this.projectedPayoffDuration = projectedPayoffDuration;
+	}
+	/**
+	 * @return the projectedAmortization
+	 */
+	public List<AmortizationRecord> getProjectedAmortization() {
+		if(projectedAmortization == null) projectedAmortization = new ArrayList<>();
+		return projectedAmortization;
+	}
+	/**
+	 * @param projectedAmortization the projectedAmortization to set
+	 */
+	public void setProjectedAmortization(
+			List<AmortizationRecord> projectedAmortization) {
+		this.projectedAmortization = projectedAmortization;
 	}
 	@Override
 	public String toString(){
