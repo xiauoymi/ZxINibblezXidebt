@@ -79,7 +79,8 @@ public class AccountsProcessor extends AbstractProcessor {
 				}
 				
 			}
-			Double weeklyAveragePayment = totalPayments/(loan.getPayments().size());
+			Double weeklyAveragePayment = 0d;
+			if(loan.getPayments().size() > 0) weeklyAveragePayment = totalPayments/(loan.getPayments().size());
 			
 			int monthIteration = 1;
 			Double originalAccruedMonthlyInterest = 0d;
