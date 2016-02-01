@@ -9,8 +9,8 @@ package com.nibbledebt.core.data.model;
  */
 public enum NibblerType {
 	starter("starter"),
-	receiver("starter"),
-	contributor("starter");
+	receiver("receiver"),
+	contributor("contributor");
 	
 	String value;
 	

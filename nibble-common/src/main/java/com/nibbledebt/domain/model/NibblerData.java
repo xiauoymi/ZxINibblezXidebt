@@ -14,6 +14,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  */
 public class NibblerData {
+	private Long internalUserId;
 	private String password;	
 	private String firstName;	
 	private String lastName;
@@ -45,6 +46,22 @@ public class NibblerData {
 	
 	private Integer invitationCode;
 	private List<String> inviteEmails;
+
+	/**
+	 * @return the internalUserId
+	 */
+	public Long getInternalUserId() {
+		return internalUserId;
+	}
+
+
+	/**
+	 * @param internalUserId the internalUserId to set
+	 */
+	public void setInternalUserId(Long internalUserId) {
+		this.internalUserId = internalUserId;
+	}
+
 
 	/**
 	 * @return the isFirstLogin

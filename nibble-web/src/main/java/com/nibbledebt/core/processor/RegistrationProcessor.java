@@ -6,10 +6,8 @@ package com.nibbledebt.core.processor;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -18,7 +16,6 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.env.Environment;
@@ -94,52 +91,6 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 
 	@Resource
 	private Environment env;
-
-
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_ACTIVATED)
-    @CacheEvict(value = "nibblerCache", key = "#username")
-    public void activateNibbler(String username, String password, String activationCode) throws ProcessingException, RepositoryException {
-
-        NibblerDirectory nibblerDir = nibblerDirDao.find(username);
-        if (nibblerDir == null) {
-            throw new ProcessingException("The username you have provded does not exist.");
-        }
-        if (StringUtils.equals(nibblerDir.getStatus(), NibblerDirectoryStatus.CREATED.name())) {
-            if (StringUtils.equals(nibblerDir.getActivationCode(), activationCode) && nibblerDir.getPassword().equals(
-                    encoder.encodePassword(
-                            String.valueOf(password),
-                            salt))) {
-                nibblerDir.setStatus(NibblerDirectoryStatus.ACTIVE.name());
-                nibblerDir.setActivationCode("");
-
-
-                Set<NibblerRole> nibblerRoles = new HashSet<>();
-                
-            	NibblerRole nibblerRole = getRole(NibblerRoleType.nibbler_level_1);
-            	nibblerRoles.add(nibblerRole);
-                
-                if(StringUtils.equalsIgnoreCase(nibblerDir.getNibbler().getType().name(), "contributor")){
-                	NibblerRole contributorRole = getRole(NibblerRoleType.contributor);
-                	nibblerRoles.add(contributorRole);
-                }
-                
-                if(StringUtils.equalsIgnoreCase(nibblerDir.getNibbler().getType().name(), "receiver")){
-                	NibblerRole receiverRole = getRole(NibblerRoleType.receiver);
-                	nibblerRoles.add(receiverRole);
-                }
-
-                nibblerDir.setRoles(nibblerRoles);
-                setUpdated(nibblerDir, username);
-                nibblerDirDao.update(nibblerDir);
-
-            } else {
-                throw new ProcessingException("Activation code and/or password does not match the account!");
-            }
-        } else {
-            throw new ProcessingException("Already active!");
-        }
-    }
     
     private NibblerRole getRole(NibblerRoleType roleType) throws RepositoryException{
     	NibblerRole role = nibblerRoleDao.find(roleType.name());
@@ -177,7 +128,27 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
             throw new ValidationException("Financial institution not available.");
         }
 	}
-
+    
+    /**
+     * Registers the user in the nibble database and creates an email with activation code.
+     * @param nibblerData
+     * @return internalUserId
+     * @throws ProcessingException
+     * @throws ServiceException
+     * @throws RepositoryException
+     * @throws ValidationException
+     */
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor={ValidationException.class, Exception.class})
+    @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_CREATED)
+    public Long startRegistration(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException {
+    	try {
+			return saveCustomerData(nibblerData);
+		} catch (Exception e1) {
+			throw new ValidationException("Loan account or invitation code is required"); 
+		}
+    }
+    
+    
     /**
      * Returns a null if no MFA is required, otherwise returns the details of the MFA challenge.
      *
@@ -187,8 +158,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
      * @throws ServiceException
      */
     @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor={ValidationException.class, Exception.class})
-    @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_CREATED)
-    public AddAllAccountsResponse registerNibbler(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException {
+    @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_ACTIVATED)
+    public AddAllAccountsResponse completeRegistration(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException {
 		Institution loanAccountInstitution = null;
 		Institution roundupAccountInstitution = null;
 		
@@ -208,7 +179,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		    
 		    AddAllAccountsResponse overallResponse = new AddAllAccountsResponse();
 		    try {
-				if (StringUtils.isNotBlank(customerId)) saveCustomerData(nibblerData, customerId);
+				if (StringUtils.isNotBlank(customerId)) updateCustomerData(nibblerData, customerId);
 				
 				if (nibblerData.getRoundupAccountBank() != null && nibblerData.getRoundupAccountBank().getInstitution() != null) {
 		            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
@@ -413,6 +384,45 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 //			throw new ProcessingException("Error ocurred while parsing a date." , e);
 //		}
     }
+    
+    @Transactional(propagation = Propagation.REQUIRED)
+    private Long saveCustomerData(NibblerData nibblerData) throws ProcessingException, RepositoryException {
+    	
+    	String actCode = String.valueOf(RandomUtils.nextLong());
+    	Nibbler nibbler = new Nibbler();
+    	nibbler.setFirstName(nibblerData.getFirstName());
+    	nibbler.setLastName(nibblerData.getLastName());
+    	nibbler.setAddressLine1(nibblerData.getAddress1());
+    	nibbler.setAddressLine2(nibblerData.getAddress2());
+    	nibbler.setCity(nibblerData.getCity());
+    	nibbler.setState(nibblerData.getState());
+    	nibbler.setZip(nibblerData.getZip());
+    	nibbler.setType(NibblerType.starter);
+    	nibbler.setEmail(nibblerData.getEmail());
+    	
+    	NibblerDirectory nibblerDir = new NibblerDirectory();
+    	nibblerDir.setUsername(nibblerData.getEmail());
+        nibblerDir.setPassword(
+                encoder.encodePassword(
+                        String.valueOf(nibblerData.getPassword()),
+                        salt));
+        nibblerDir.setStatus(NibblerDirectoryStatus.CREATED.name());
+        nibblerDir.setActivationCode(actCode);
+        
+        NibblerPreference prefs = new NibblerPreference();
+        prefs.setNibbler(nibbler);
+        prefs.setWeeklyTargetAmount(new BigDecimal("9.99"));
+        setCreated(prefs, nibblerData.getEmail());
+        nibbler.setNibblerPreferences(prefs);
+        
+        nibbler.setNibblerDir(nibblerDir);
+        nibblerDir.setNibbler(nibbler);
+        setCreated(nibbler, nibblerData.getEmail());
+        setCreated(nibblerDir, nibblerData.getEmail());
+        nibblerDao.create(nibbler);        
+    	
+    	return nibbler.getId();
+    }
 
 
     /**
@@ -424,94 +434,70 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
      * @throws RepositoryException
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    private void saveCustomerData(NibblerData nibblerData,
+    private void updateCustomerData(NibblerData nibblerData,
                                   String customerId) throws ProcessingException, RepositoryException {
     	
-    	String actCode = String.valueOf(RandomUtils.nextLong());
-    	Integer inviteCode = RandomUtils.nextInt();
+    	Nibbler nibbler = nibblerDao.findOne(nibblerData.getInternalUserId());    	
+    	NibblerDirectory nibblerDir = nibbler.getNibblerDir();
         
     	if(nibblerData.isContributor()){
         	NibblerReceiver receiver = (NibblerReceiver)nibblerDao.findByInvitationCode(nibblerData.getInvitationCode());
-        	NibblerContributor contributor = new NibblerContributor();
+        	NibblerContributor contributor = (NibblerContributor) nibbler;
         	contributor.setExtAccessToken(customerId);
-
-        	contributor.setFirstName(nibblerData.getFirstName());
-        	contributor.setLastName(nibblerData.getLastName());
-        	contributor.setAddressLine1(nibblerData.getAddress1());
-        	contributor.setAddressLine2(nibblerData.getAddress2());
-        	contributor.setCity(nibblerData.getCity());
-        	contributor.setState(nibblerData.getState());
-        	contributor.setZip(nibblerData.getZip());
-        	contributor.setType(nibblerData.isContributor() ? NibblerType.contributor : NibblerType.receiver);
-        	contributor.setEmail(nibblerData.getEmail());
         	contributor.setReceiver(receiver);
-
-        	NibblerDirectory nibblerDir = new NibblerDirectory();
-        	nibblerDir.setUsername(nibblerData.getEmail());
-            nibblerDir.setPassword(
-                    encoder.encodePassword(
-                            String.valueOf(nibblerData.getPassword()),
-                            salt));
-            nibblerDir.setStatus(NibblerDirectoryStatus.CREATED.name());
-            nibblerDir.setActivationCode(actCode);
-            
-            NibblerPreference prefs = new NibblerPreference();
-            prefs.setNibbler(contributor);
-            prefs.setWeeklyTargetAmount(new BigDecimal("9.99"));
-            setCreated(prefs, nibblerData.getEmail());
-            contributor.setNibblerPreferences(prefs);
-            
         	
-            contributor.setNibblerDir(nibblerDir);
-            nibblerDir.setNibbler(contributor);
-            setCreated(contributor, nibblerData.getEmail());
-            setCreated(nibblerDir, nibblerData.getEmail());
-            nibblerDao.create(contributor);
-        }else{
-        	NibblerReceiver receiver = new NibblerReceiver();
-        	receiver.setExtAccessToken(customerId);
+            setUpdated(contributor, nibblerData.getEmail());
+            setUpdated(nibblerDir, nibblerData.getEmail());
+            
+            if (StringUtils.equals(nibblerDir.getActivationCode(), nibblerData.getActivationCode()) ) {
+                nibblerDir.setStatus(NibblerDirectoryStatus.ACTIVE.name());
+                nibblerDir.setActivationCode("");
+                Set<NibblerRole> nibblerRoles = new HashSet<>();
+                
+            	NibblerRole nibblerRole = getRole(NibblerRoleType.nibbler_level_1);
+            	nibblerRoles.add(nibblerRole);
+            	NibblerRole contributorRole = getRole(NibblerRoleType.contributor);
+            	nibblerRoles.add(contributorRole);
 
-        	receiver.setFirstName(nibblerData.getFirstName());
-        	receiver.setLastName(nibblerData.getLastName());
-        	receiver.setAddressLine1(nibblerData.getAddress1());
-        	receiver.setAddressLine2(nibblerData.getAddress2());
-        	receiver.setCity(nibblerData.getCity());
-        	receiver.setState(nibblerData.getState());
-        	receiver.setZip(nibblerData.getZip());
-        	receiver.setEmail(nibblerData.getEmail());
-        	receiver.setType(nibblerData.isContributor() ? NibblerType.contributor : NibblerType.receiver);
+                nibblerDir.setRoles(nibblerRoles);
+                setUpdated(nibblerDir, nibblerData.getEmail());
+
+            } else {
+                throw new ProcessingException("Activation code does not match.");
+            }
+            nibblerDao.update(contributor);
+        }else{
+
+        	Integer inviteCode = RandomUtils.nextInt();
+        	NibblerReceiver receiver = (NibblerReceiver) nibbler;
+        	receiver.setExtAccessToken(customerId);
         	receiver.setInvitationCode(inviteCode);
 
-        	NibblerDirectory nibblerDir = new NibblerDirectory();
-        	nibblerDir.setUsername(nibblerData.getEmail());
-            nibblerDir.setPassword(
-                    encoder.encodePassword(
-                            String.valueOf(nibblerData.getPassword()),
-                            salt));
-            nibblerDir.setStatus(NibblerDirectoryStatus.CREATED.name());
-            nibblerDir.setActivationCode(actCode);
-            
-            NibblerPreference prefs = new NibblerPreference();
-            prefs.setNibbler(receiver);
-            prefs.setWeeklyTargetAmount(new BigDecimal("9.99"));
-            setCreated(prefs, nibblerData.getEmail());
-            receiver.setNibblerPreferences(prefs);
-            
+        	nibblerData.setInvitationCode(inviteCode);
         	
-            receiver.setNibblerDir(nibblerDir);
-            nibblerDir.setNibbler(receiver);
-            setCreated(receiver, nibblerData.getEmail());
-            setCreated(nibblerDir, nibblerData.getEmail());
-            nibblerDao.create(receiver);
-        }
-    	
-    	
-    	nibblerData.setActivationCode(actCode);
-    	nibblerData.setInvitationCode(inviteCode);
-    	
-        
+        	setUpdated(receiver, nibblerData.getEmail());
+        	setUpdated(nibblerDir, nibblerData.getEmail());
+        	
+            if (StringUtils.equals(nibblerDir.getActivationCode(), nibblerData.getActivationCode()) ) {
+                nibblerDir.setStatus(NibblerDirectoryStatus.ACTIVE.name());
+                nibblerDir.setActivationCode("");
+                Set<NibblerRole> nibblerRoles = new HashSet<>();
+                
+            	NibblerRole nibblerRole = getRole(NibblerRoleType.nibbler_level_1);
+            	nibblerRoles.add(nibblerRole);
+            	NibblerRole receiverRole = getRole(NibblerRoleType.receiver);
+            	nibblerRoles.add(receiverRole);
+               
+            	nibblerDir.setRoles(nibblerRoles);
+                setUpdated(nibblerDir, nibblerData.getEmail());
 
-        
+            } else {
+                throw new ProcessingException("Activation code does not match.");
+            }
+            
+            nibblerDao.update(receiver);
+        }
+       
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

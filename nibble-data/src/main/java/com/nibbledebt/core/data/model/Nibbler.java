@@ -82,7 +82,7 @@ public class Nibbler extends AbstractModel {
 	@Column(name="zip", nullable=true, length=100)
 	private Integer zip;
 
-	@Column(name="ext_acct_access_token", nullable=false, length=50)
+	@Column(name="ext_acct_access_token", nullable=true, length=50)
 	private String extAccessToken;
 	
 	@OneToOne(mappedBy="nibbler", orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)

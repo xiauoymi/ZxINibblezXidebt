@@ -67,7 +67,7 @@ public class NibblerDirectory  extends AbstractModel{
 	@Column(name = "last_login_ts", nullable = true)
 	private Date lastLoginTs;
 	
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 	private Nibbler nibbler;
 
 	public NibblerDirectory(){

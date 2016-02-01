@@ -8,6 +8,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -53,9 +54,20 @@ public class RegistrationREST extends AbstractREST {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
 	@Validatable() //TODO - write custom validator
-	public AddAllAccountsResponse register(NibblerData nibblerData) throws ProcessingException, ServiceException,
+	public Long startRegistration(NibblerData nibblerData) throws ProcessingException, ServiceException,
             RepositoryException, ValidationException{
-		return regService.registerNibbler(nibblerData);
+		return regService.startRegistration(nibblerData);
+	}
+	
+	@PUT
+	@Path("/register")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Loggable(logLevel=LogLevel.INFO)
+	@Validatable() //TODO - write custom validator
+	public AddAllAccountsResponse completeRegistration(NibblerData nibblerData) throws ProcessingException, ServiceException,
+            RepositoryException, ValidationException{
+		return regService.completeRegistration(nibblerData);
 	}
 	
     @POST
@@ -118,15 +130,6 @@ public class RegistrationREST extends AbstractREST {
 	@Validatable() //TODO - write custom validator
 	public void mfaQuesResponse(NibblerData data) throws ProcessingException, ServiceException, RepositoryException{
 		regService.submitQuesMfa(data);
-	}
-	
-	@POST
-	@Path("/activate")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Loggable(logLevel=LogLevel.INFO)
-	@Validatable() //TODO - write custom validator
-	public void activate(NibblerData nibblerData) throws ProcessingException, RepositoryException{
-		regService.activateNibbler(nibblerData.getEmail(), nibblerData.getPassword(), nibblerData.getActivationCode());
 	}
 	
 	@GET
