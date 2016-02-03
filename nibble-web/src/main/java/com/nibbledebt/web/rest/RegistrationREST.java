@@ -49,6 +49,17 @@ public class RegistrationREST extends AbstractREST {
 	private InstitutionProcessor instService;
 	
 	@POST
+	@Path("/activate")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Loggable(logLevel=LogLevel.INFO)
+	@Validatable() //TODO - write custom validator
+	public void activate(NibblerData nibblerData) throws ProcessingException, ServiceException,
+            RepositoryException, ValidationException{
+		regService.activateNibbler(nibblerData.getEmail(), nibblerData.getPassword(), nibblerData.getActivationCode());
+	}
+	
+	@POST
 	@Path("/register")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
