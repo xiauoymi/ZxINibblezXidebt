@@ -34,7 +34,11 @@ html {
     height: 100%;
     padding-top: 150px;
     text-align: center;
-    background: #eee;
+    background: #093145;
+}
+
+.control-label-yellow{
+	color: #efd469;
 }
 
 .blur{
@@ -130,7 +134,8 @@ html {
     }
     
     .brand-logo img{
-    	height: 50px;
+    	vertical-align: middle;
+    	
     }
 }
 
