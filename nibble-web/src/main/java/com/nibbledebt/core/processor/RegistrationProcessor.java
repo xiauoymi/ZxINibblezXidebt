@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -43,11 +44,9 @@ import com.nibbledebt.core.data.model.AccountType;
 import com.nibbledebt.core.data.model.Institution;
 import com.nibbledebt.core.data.model.Nibbler;
 import com.nibbledebt.core.data.model.NibblerAccount;
-import com.nibbledebt.core.data.model.NibblerContributor;
 import com.nibbledebt.core.data.model.NibblerDirectory;
 import com.nibbledebt.core.data.model.NibblerDirectoryStatus;
 import com.nibbledebt.core.data.model.NibblerPreference;
-import com.nibbledebt.core.data.model.NibblerReceiver;
 import com.nibbledebt.core.data.model.NibblerRole;
 import com.nibbledebt.core.data.model.NibblerRoleType;
 import com.nibbledebt.core.data.model.NibblerType;
@@ -116,12 +115,12 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
             	NibblerRole nibblerRole = getRole(NibblerRoleType.nibbler_level_1);
             	nibblerRoles.add(nibblerRole);
                 
-                if(StringUtils.equalsIgnoreCase(nibblerDir.getNibbler().getType().name(), "contributor")){
+                if(StringUtils.equalsIgnoreCase(nibblerDir.getNibbler().getType(), "contributor")){
                 	NibblerRole contributorRole = getRole(NibblerRoleType.contributor);
                 	nibblerRoles.add(contributorRole);
                 }
                 
-                if(StringUtils.equalsIgnoreCase(nibblerDir.getNibbler().getType().name(), "receiver")){
+                if(StringUtils.equalsIgnoreCase(nibblerDir.getNibbler().getType(), "receiver")){
                 	NibblerRole receiverRole = getRole(NibblerRoleType.receiver);
                 	nibblerRoles.add(receiverRole);
                 }
@@ -190,7 +189,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	try {
 			return saveCustomerData(nibblerData);
 		} catch (Exception e1) {
-			throw new ValidationException("Loan account or invitation code is required"); 
+			throw new ValidationException("Email address, password and name are required to start the registration process."); 
 		}
     }
     
@@ -433,7 +432,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     @Transactional(propagation = Propagation.REQUIRED)
     private Long saveCustomerData(NibblerData nibblerData) throws ProcessingException, RepositoryException {
     	
-    	String actCode = String.valueOf(RandomUtils.nextLong());
+    	String actCode = String.valueOf(100000 + RandomUtils.nextInt(900000));
     	Nibbler nibbler = new Nibbler();
     	nibbler.setFirstName(nibblerData.getFirstName());
     	nibbler.setLastName(nibblerData.getLastName());
@@ -442,7 +441,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	nibbler.setCity(nibblerData.getCity());
     	nibbler.setState(nibblerData.getState());
     	nibbler.setZip(nibblerData.getZip());
-    	nibbler.setType(NibblerType.starter);
+    	nibbler.setType(NibblerType.starter.name());
     	nibbler.setEmail(nibblerData.getEmail());
     	
     	NibblerDirectory nibblerDir = new NibblerDirectory();
@@ -464,7 +463,9 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
         nibblerDir.setNibbler(nibbler);
         setCreated(nibbler, nibblerData.getEmail());
         setCreated(nibblerDir, nibblerData.getEmail());
-        nibblerDao.create(nibbler);        
+        nibblerDao.create(nibbler);   
+        
+        nibblerData.setActivationCode(actCode);
     	
     	return nibbler.getId();
     }
@@ -486,8 +487,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	NibblerDirectory nibblerDir = nibbler.getNibblerDir();
         
     	if(nibblerData.isContributor()){
-        	NibblerReceiver receiver = (NibblerReceiver)nibblerDao.findByInvitationCode(nibblerData.getInvitationCode());
-        	NibblerContributor contributor = (NibblerContributor) nibbler;
+    		Nibbler receiver = (Nibbler)nibblerDao.findByInvitationCode(nibblerData.getInvitationCode());
+    		Nibbler contributor = (Nibbler) nibbler;
         	contributor.setExtAccessToken(customerId);
         	contributor.setReceiver(receiver);
         	
@@ -502,7 +503,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
         }else{
 
         	Integer inviteCode = RandomUtils.nextInt();
-        	NibblerReceiver receiver = (NibblerReceiver) nibbler;
+        	Nibbler receiver = (Nibbler) nibbler;
         	receiver.setExtAccessToken(customerId);
         	receiver.setInvitationCode(inviteCode);
 

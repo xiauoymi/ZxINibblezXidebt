@@ -28,10 +28,8 @@ import com.nibbledebt.core.data.dao.INibblerDirectoryDao;
 import com.nibbledebt.core.data.dao.INibblerRoleDao;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.Nibbler;
-import com.nibbledebt.core.data.model.NibblerContributor;
 import com.nibbledebt.core.data.model.NibblerDirectory;
 import com.nibbledebt.core.data.model.NibblerDirectoryStatus;
-import com.nibbledebt.core.data.model.NibblerReceiver;
 import com.nibbledebt.core.data.model.NibblerRole;
 import com.nibbledebt.core.data.model.NibblerRoleType;
 import com.nibbledebt.domain.model.Contributor;
@@ -86,10 +84,10 @@ public class UsersProcessor extends AbstractProcessor {
 	@Transactional(readOnly=true)
 //	@Cacheable(value="nibblerContributorCache")
 	public List<Contributor> retrieveContributors(String username) throws RepositoryException{
-		NibblerReceiver receiver = nibblerDao.findReceiver(username);
+		Nibbler receiver = nibblerDao.findReceiver(username);
 		List<Contributor> contributors = new ArrayList<>();
 		if(receiver!=null){
-			for(NibblerContributor cont : receiver.getContributors()){
+			for(Nibbler cont : receiver.getContributors()){
 				Contributor contr = new Contributor();
 				contr.setFirstName(cont.getFirstName());
 				contr.setLastName(cont.getLastName());
@@ -174,7 +172,7 @@ public class UsersProcessor extends AbstractProcessor {
 	@Transactional(isolation=Isolation.READ_COMMITTED)
 	@Notify(notifyMethod=NotifyMethod.EMAIL, notifyType=NotifyType.INVITE)
 	public void sendInvite(NibblerData nibblerData) throws ProcessingException, RepositoryException{
-		NibblerReceiver rec = nibblerDao.findReceiver(nibblerData.getEmail());
+		Nibbler rec = nibblerDao.findReceiver(nibblerData.getEmail());
 		nibblerData.setInvitationCode(rec.getInvitationCode());
 		nibblerData.setFirstName(rec.getFirstName()); 
 		nibblerData.setLastName(rec.getLastName());

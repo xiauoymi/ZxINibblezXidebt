@@ -7,12 +7,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalField;
-import java.time.temporal.TemporalUnit;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,7 +38,6 @@ import com.nibbledebt.core.data.model.AccountTransaction;
 import com.nibbledebt.core.data.model.Location;
 import com.nibbledebt.core.data.model.Nibbler;
 import com.nibbledebt.core.data.model.NibblerAccount;
-import com.nibbledebt.core.data.model.NibblerContributor;
 import com.nibbledebt.core.data.model.NibblerType;
 import com.nibbledebt.core.data.model.TransactionCategory;
 import com.nibbledebt.domain.model.Transaction;
@@ -85,10 +81,10 @@ public class TransactionProcessor extends AbstractProcessor{
 		summary.setPersonId(nibbler.getId());
 		
 		LocalDate now = LocalDate.now();
-		if(StringUtils.equalsIgnoreCase(nibbler.getType().name(), NibblerType.receiver.name())){
+		if(StringUtils.equalsIgnoreCase(nibbler.getType(), NibblerType.receiver.name())){
 			calculateSummary(summary, nibbler, now, false);
-			List<NibblerContributor> contributors = nibblerDao.findContributors(nibbler.getId());
-			for(NibblerContributor contributor : contributors ) calculateSummary(summary, contributor, now, true);
+			List<Nibbler> contributors = nibblerDao.findContributors(nibbler.getId());
+			for(Nibbler contributor : contributors ) calculateSummary(summary, contributor, now, true);
 		}else{
 			calculateSummary(summary, nibbler, now, false);
 		}
