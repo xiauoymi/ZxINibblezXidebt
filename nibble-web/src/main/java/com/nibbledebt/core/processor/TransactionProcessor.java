@@ -81,7 +81,7 @@ public class TransactionProcessor extends AbstractProcessor{
 		summary.setPersonId(nibbler.getId());
 		
 		LocalDate now = LocalDate.now();
-		if(StringUtils.equalsIgnoreCase(nibbler.getType().name(), NibblerType.receiver.name())){
+		if(StringUtils.equalsIgnoreCase(nibbler.getType(), NibblerType.receiver.name())){
 			calculateSummary(summary, nibbler, now, false);
 			List<Nibbler> contributors = nibblerDao.findContributors(nibbler.getId());
 			for(Nibbler contributor : contributors ) calculateSummary(summary, contributor, now, true);

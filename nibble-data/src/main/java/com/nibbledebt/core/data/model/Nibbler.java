@@ -11,8 +11,6 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -61,9 +59,8 @@ public class Nibbler extends AbstractModel {
 	@Column(name="phone", nullable=true, length=11)
 	private String phone;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name="type", nullable=false, length=50, insertable=false, updatable=false)
-	private NibblerType type;
+	@Column(name="type", nullable=false, length=50)
+	private String type;
 	
 	@Column(name="address_line_1", nullable=true, length=100)
 	private String addressLine1;
@@ -336,14 +333,14 @@ public class Nibbler extends AbstractModel {
 	/**
 	 * @return the type
 	 */
-	public NibblerType getType() {
+	public String getType() {
 		return type;
 	}
 
 	/**
 	 * @param type the type to set
 	 */
-	public void setType(NibblerType type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 }

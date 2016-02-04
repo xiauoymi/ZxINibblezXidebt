@@ -52,7 +52,6 @@ public class NotifyAspect {
 			
 			if(notify.notifyType() == NotifyType.ACCOUNT_CREATED){
 				VelocityContext acCtx = new VelocityContext();
-				acCtx.put("activation_link", nibblerData.getUrl()+"#/activate?acode="+nibblerData.getActivationCode());
 				acCtx.put("activation_code", nibblerData.getActivationCode());
 				Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("account-created.vm");
 				StringWriter acWriter = new StringWriter();
@@ -60,7 +59,6 @@ public class NotifyAspect {
 				mandrillSao.sendEmail(ACCOUNT_CREATED_EMAIL_SUBJ, acWriter.toString(), toEmails);
 			} else if(notify.notifyType() == NotifyType.PASSWORD_RESET){
 				VelocityContext prCtx = new VelocityContext();
-				prCtx.put("reset_link", nibblerData.getUrl()+"/nibbleuser.html?rcode="+nibblerData.getResetCode());
 				prCtx.put("reset_code", nibblerData.getResetCode());
 				Template prTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("password-reset.vm");
 				StringWriter writer = new StringWriter();
@@ -71,7 +69,6 @@ public class NotifyAspect {
 				buffer.append(" ");
 				buffer.append(StringUtils.capitalizeFirstLetter(nibblerData.getLastName()));
 				VelocityContext prCtx = new VelocityContext();
-				prCtx.put("invitation_link", nibblerData.getUrl()+"/nibbleuser.html?icode="+nibblerData.getInvitationCode());
 				prCtx.put("invite_code", nibblerData.getInvitationCode());
 				prCtx.put("nibbler_name", buffer.toString());
 				Template prTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("invite-sent.vm");

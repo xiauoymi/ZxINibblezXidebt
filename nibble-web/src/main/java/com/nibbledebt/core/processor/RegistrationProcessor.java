@@ -115,12 +115,12 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
             	NibblerRole nibblerRole = getRole(NibblerRoleType.nibbler_level_1);
             	nibblerRoles.add(nibblerRole);
                 
-                if(StringUtils.equalsIgnoreCase(nibblerDir.getNibbler().getType().name(), "contributor")){
+                if(StringUtils.equalsIgnoreCase(nibblerDir.getNibbler().getType(), "contributor")){
                 	NibblerRole contributorRole = getRole(NibblerRoleType.contributor);
                 	nibblerRoles.add(contributorRole);
                 }
                 
-                if(StringUtils.equalsIgnoreCase(nibblerDir.getNibbler().getType().name(), "receiver")){
+                if(StringUtils.equalsIgnoreCase(nibblerDir.getNibbler().getType(), "receiver")){
                 	NibblerRole receiverRole = getRole(NibblerRoleType.receiver);
                 	nibblerRoles.add(receiverRole);
                 }
@@ -441,7 +441,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	nibbler.setCity(nibblerData.getCity());
     	nibbler.setState(nibblerData.getState());
     	nibbler.setZip(nibblerData.getZip());
-    	nibbler.setType(NibblerType.starter);
+    	nibbler.setType(NibblerType.starter.name());
     	nibbler.setEmail(nibblerData.getEmail());
     	
     	NibblerDirectory nibblerDir = new NibblerDirectory();
@@ -463,7 +463,9 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
         nibblerDir.setNibbler(nibbler);
         setCreated(nibbler, nibblerData.getEmail());
         setCreated(nibblerDir, nibblerData.getEmail());
-        nibblerDao.create(nibbler);        
+        nibblerDao.create(nibbler);   
+        
+        nibblerData.setActivationCode(actCode);
     	
     	return nibbler.getId();
     }
