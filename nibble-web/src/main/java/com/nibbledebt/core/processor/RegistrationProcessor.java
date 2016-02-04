@@ -50,6 +50,7 @@ import com.nibbledebt.core.data.model.NibblerPreference;
 import com.nibbledebt.core.data.model.NibblerReceiver;
 import com.nibbledebt.core.data.model.NibblerRole;
 import com.nibbledebt.core.data.model.NibblerRoleType;
+import com.nibbledebt.core.data.model.NibblerStarter;
 import com.nibbledebt.core.data.model.NibblerType;
 import com.nibbledebt.domain.model.Bank;
 import com.nibbledebt.domain.model.LoginField;
@@ -434,7 +435,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     private Long saveCustomerData(NibblerData nibblerData) throws ProcessingException, RepositoryException {
     	
     	String actCode = String.valueOf(RandomUtils.nextLong());
-    	Nibbler nibbler = new Nibbler();
+    	NibblerStarter nibbler = new NibblerStarter();
     	nibbler.setFirstName(nibblerData.getFirstName());
     	nibbler.setLastName(nibblerData.getLastName());
     	nibbler.setAddressLine1(nibblerData.getAddress1());
