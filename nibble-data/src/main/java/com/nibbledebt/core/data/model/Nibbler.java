@@ -10,14 +10,12 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -30,10 +28,10 @@ import javax.persistence.Table;
  */
 @NamedQueries({
 	@NamedQuery(name="findNibblerByUsername", query="from Nibbler n where n.nibblerDir.username = :username"),
-	@NamedQuery(name="findNibblerByInvitationCode", query="from NibblerReceiver n where n.invitationCode = :invitation_code"),
+	@NamedQuery(name="findNibblerByInvitationCode", query="from Nibbler n where n.invitationCode = :invitation_code"),
 
-	@NamedQuery(name="findContributorsByReceiver", query="from NibblerContributor n where n.receiver.id = :receiver_id"),
-	@NamedQuery(name="findReceiverByUsername", query="from NibblerReceiver n where n.nibblerDir.username = :username")
+	@NamedQuery(name="findContributorsByReceiver", query="from Nibbler n where n.receiver.id = :receiver_id"),
+	@NamedQuery(name="findReceiverByUsername", query="from Nibbler n where n.nibblerDir.username = :username")
 	
 	
 	
@@ -47,8 +45,8 @@ import javax.persistence.Table;
 @AttributeOverrides({
 	@AttributeOverride(name="id", column=@Column(name="nibbler_id"))
 })
-@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="type", discriminatorType=DiscriminatorType.STRING)
+//@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+//@DiscriminatorColumn(name="type", discriminatorType=DiscriminatorType.STRING)
 public class Nibbler extends AbstractModel {	
 	
 	@Column(name="first_name", nullable=false, length=50)
@@ -93,6 +91,59 @@ public class Nibbler extends AbstractModel {
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="nibbler", orphanRemoval=true)
 	private List<NibblerAccount> accounts;
+	
+	@ManyToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name="receiver_id", updatable=true, nullable=true)
+	private Nibbler receiver;
+
+	@Column(name="invitation_code", nullable=true, length=100)
+	private Integer invitationCode;
+	
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="receiver", orphanRemoval=true)
+	private List<Nibbler> contributors;
+
+
+	/**
+	 * @return the invitationCode
+	 */
+	public Integer getInvitationCode() {
+		return invitationCode;
+	}
+
+	/**
+	 * @param invitationCode the invitationCode to set
+	 */
+	public void setInvitationCode(Integer invitationCode) {
+		this.invitationCode = invitationCode;
+	}
+
+	/**
+	 * @return the contributors
+	 */
+	public List<Nibbler> getContributors() {
+		return contributors;
+	}
+
+	/**
+	 * @param contributors the contributors to set
+	 */
+	public void setContributors(List<Nibbler> contributors) {
+		this.contributors = contributors;
+	}	
+	
+	/**
+	 * @return the receiver
+	 */
+	public Nibbler getReceiver() {
+		return receiver;
+	}
+
+	/**
+	 * @param receiver the receiver to set
+	 */
+	public void setReceiver(Nibbler receiver) {
+		this.receiver = receiver;
+	}
 	
 	
 	public Nibbler(){

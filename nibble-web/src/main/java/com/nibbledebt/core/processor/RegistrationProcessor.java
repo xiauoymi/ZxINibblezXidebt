@@ -43,14 +43,11 @@ import com.nibbledebt.core.data.model.AccountType;
 import com.nibbledebt.core.data.model.Institution;
 import com.nibbledebt.core.data.model.Nibbler;
 import com.nibbledebt.core.data.model.NibblerAccount;
-import com.nibbledebt.core.data.model.NibblerContributor;
 import com.nibbledebt.core.data.model.NibblerDirectory;
 import com.nibbledebt.core.data.model.NibblerDirectoryStatus;
 import com.nibbledebt.core.data.model.NibblerPreference;
-import com.nibbledebt.core.data.model.NibblerReceiver;
 import com.nibbledebt.core.data.model.NibblerRole;
 import com.nibbledebt.core.data.model.NibblerRoleType;
-import com.nibbledebt.core.data.model.NibblerStarter;
 import com.nibbledebt.core.data.model.NibblerType;
 import com.nibbledebt.domain.model.Bank;
 import com.nibbledebt.domain.model.LoginField;
@@ -435,7 +432,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     private Long saveCustomerData(NibblerData nibblerData) throws ProcessingException, RepositoryException {
     	
     	String actCode = String.valueOf(RandomUtils.nextLong());
-    	NibblerStarter nibbler = new NibblerStarter();
+    	Nibbler nibbler = new Nibbler();
     	nibbler.setFirstName(nibblerData.getFirstName());
     	nibbler.setLastName(nibblerData.getLastName());
     	nibbler.setAddressLine1(nibblerData.getAddress1());
@@ -487,8 +484,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	NibblerDirectory nibblerDir = nibbler.getNibblerDir();
         
     	if(nibblerData.isContributor()){
-        	NibblerReceiver receiver = (NibblerReceiver)nibblerDao.findByInvitationCode(nibblerData.getInvitationCode());
-        	NibblerContributor contributor = (NibblerContributor) nibbler;
+    		Nibbler receiver = (Nibbler)nibblerDao.findByInvitationCode(nibblerData.getInvitationCode());
+    		Nibbler contributor = (Nibbler) nibbler;
         	contributor.setExtAccessToken(customerId);
         	contributor.setReceiver(receiver);
         	
@@ -503,7 +500,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
         }else{
 
         	Integer inviteCode = RandomUtils.nextInt();
-        	NibblerReceiver receiver = (NibblerReceiver) nibbler;
+        	Nibbler receiver = (Nibbler) nibbler;
         	receiver.setExtAccessToken(customerId);
         	receiver.setInvitationCode(inviteCode);
 
