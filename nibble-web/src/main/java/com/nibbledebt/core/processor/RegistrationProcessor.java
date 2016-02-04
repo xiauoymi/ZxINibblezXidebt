@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -188,7 +189,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	try {
 			return saveCustomerData(nibblerData);
 		} catch (Exception e1) {
-			throw new ValidationException("Loan account or invitation code is required"); 
+			throw new ValidationException("Email address, password and name are required to start the registration process."); 
 		}
     }
     
@@ -431,7 +432,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     @Transactional(propagation = Propagation.REQUIRED)
     private Long saveCustomerData(NibblerData nibblerData) throws ProcessingException, RepositoryException {
     	
-    	String actCode = String.valueOf(RandomUtils.nextLong());
+    	String actCode = String.valueOf(100000 + RandomUtils.nextInt(900000));
     	Nibbler nibbler = new Nibbler();
     	nibbler.setFirstName(nibblerData.getFirstName());
     	nibbler.setLastName(nibblerData.getLastName());
