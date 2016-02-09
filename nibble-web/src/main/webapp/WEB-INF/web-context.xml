@@ -69,6 +69,7 @@
         	<bean class="com.nibbledebt.common.error.ProcessingExceptionMapper" />
         	<bean class="com.nibbledebt.common.error.ServiceExceptionMapper" />
         	<bean class="com.nibbledebt.common.error.RepositoryExceptionMapper" />
+        	<bean class="com.nibbledebt.common.error.ValidationExceptionMapper" />
         </jaxrs:providers>
      </jaxrs:server>
      
@@ -79,6 +80,7 @@
         	<bean class="com.nibbledebt.common.error.ProcessingExceptionMapper" />
         	<bean class="com.nibbledebt.common.error.ServiceExceptionMapper" />
         	<bean class="com.nibbledebt.common.error.RepositoryExceptionMapper" />
+        	<bean class="com.nibbledebt.common.error.ValidationExceptionMapper" />
         </jaxrs:providers>
      </jaxrs:server>
  	
