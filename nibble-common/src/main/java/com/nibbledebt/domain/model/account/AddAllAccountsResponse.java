@@ -1,43 +1,79 @@
 package com.nibbledebt.domain.model.account;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * @author a.salachyonok
  */
 public class AddAllAccountsResponse {
-    private MfaChallenges roundupBankMfaChallenges;
-    private MfaChallenges loanBankMfaChallenges;
+
+    private Map<String, Set<String>> roundupBankQuestionAnswer;
+    private Map<String, String> roundupBankSession;
+    
+
+    private Map<String, Set<String>> loanBankQuestionAnswer;
+    private Map<String, String> loanBankSession;
 
     private MfaType roundupMfaType;
     private MfaType loanMfaType;
 
     private Accounts accounts;
 
-	/**
-	 * @return the roundupBankMfaChallenges
+    /**
+	 * @return the roundupBankQuestionAnswer
 	 */
-	public MfaChallenges getRoundupBankMfaChallenges() {
-		return roundupBankMfaChallenges;
+	public Map<String, Set<String>> getRoundupBankQuestionAnswer() {
+		return roundupBankQuestionAnswer;
 	}
 
 	/**
-	 * @param roundupBankMfaChallenges the roundupBankMfaChallenges to set
+	 * @param roundupBankQuestionAnswer the roundupBankQuestionAnswer to set
 	 */
-	public void setRoundupBankMfaChallenges(MfaChallenges roundupBankMfaChallenges) {
-		this.roundupBankMfaChallenges = roundupBankMfaChallenges;
+	public void setRoundupBankQuestionAnswer(Map<String, Set<String>> roundupBankQuestionAnswer) {
+		this.roundupBankQuestionAnswer = roundupBankQuestionAnswer;
 	}
 
 	/**
-	 * @return the loanBankMfaChallenges
+	 * @return the roundupBankSession
 	 */
-	public MfaChallenges getLoanBankMfaChallenges() {
-		return loanBankMfaChallenges;
+	public Map<String, String> getRoundupBankSession() {
+		return roundupBankSession;
 	}
 
 	/**
-	 * @param loanBankMfaChallenges the loanBankMfaChallenges to set
+	 * @param roundupBankSession the roundupBankSession to set
 	 */
-	public void setLoanBankMfaChallenges(MfaChallenges loanBankMfaChallenges) {
-		this.loanBankMfaChallenges = loanBankMfaChallenges;
+	public void setRoundupBankSession(Map<String, String> roundupBankSession) {
+		this.roundupBankSession = roundupBankSession;
+	}
+
+	/**
+	 * @return the loanBankQuestionAnswer
+	 */
+	public Map<String, Set<String>> getLoanBankQuestionAnswer() {
+		return loanBankQuestionAnswer;
+	}
+
+	/**
+	 * @param loanBankQuestionAnswer the loanBankQuestionAnswer to set
+	 */
+	public void setLoanBankQuestionAnswer(Map<String, Set<String>> loanBankQuestionAnswer) {
+		this.loanBankQuestionAnswer = loanBankQuestionAnswer;
+	}
+
+	/**
+	 * @return the loanBankSession
+	 */
+	public Map<String, String> getLoanBankSession() {
+		return loanBankSession;
+	}
+
+	/**
+	 * @param loanBankSession the loanBankSession to set
+	 */
+	public void setLoanBankSession(Map<String, String> loanBankSession) {
+		this.loanBankSession = loanBankSession;
 	}
 
 	/**

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -87,11 +88,11 @@ public class FinicitySao implements IIntegrationSao{
     }
 
     @Override
-    public AddAccountsResponse addAccountsMfaAnswer(String customerId, String institutionId, String question,
-                                                    String answer) throws ServiceException {
+    public AddAccountsResponse addAccountsMfaAnswer(String customerId, String institutionId,
+    												Map<String, String> questionAnswer, Map<String, String> session) throws ServiceException {
         try {
              AddAccountsResponse response = integrationMapper.
-                     map(finicityClient.addAccountsWithMfaAnswers(customerId, institutionId, question, answer), AddAccountsResponse.class);
+                     map(finicityClient.addAccountsWithMfaAnswers(customerId, institutionId, questionAnswer.keySet().iterator().next(), questionAnswer.get(questionAnswer.keySet().iterator().next())), AddAccountsResponse.class);
             return response;
         } catch (Exception e) {
             throw new ServiceException("Error while retrieving accounts from Finicity", e);

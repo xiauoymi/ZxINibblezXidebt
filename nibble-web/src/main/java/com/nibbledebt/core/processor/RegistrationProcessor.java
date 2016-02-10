@@ -7,8 +7,9 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Random;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -229,7 +230,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		                AddAccountsResponse response = integrationSao.addAccounts(customerId, roundupAccountInstitution.getSupportedInstitution().getExternalId(),
 		                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
 		                if (response != null){
-			                overallResponse.setRoundupBankMfaChallenges(response.getMfaChallenges());
+			                overallResponse.setRoundupBankQuestionAnswer(response.getQuestionAnswer());
 			                overallResponse.setRoundupMfaType(response.getMfaType());
 			                overallResponse.setAccounts(response.getAccounts());
 			                if (response.getMfaType() == MfaType.NON_MFA) {
@@ -254,7 +255,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 			            	AddAccountsResponse response = integrationSao.addAccounts(customerId, loanAccountInstitution.getSupportedInstitution().getExternalId(),
 			                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
 			            	if (response != null){
-				            	overallResponse.setLoanBankMfaChallenges(response.getMfaChallenges());
+				            	overallResponse.setLoanBankQuestionAnswer(response.getQuestionAnswer());
 				                overallResponse.setLoanMfaType(response.getMfaType());
 				                overallResponse.getAccounts().getAccount().addAll(response.getAccounts().getAccount());
 				                if (response.getMfaType() == MfaType.NON_MFA) {
@@ -296,9 +297,13 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
         IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(persistedInstitution.getSupportedInstitution().getAggregatorQualifier());
         
         if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
+        	Map<String, String> questionAnswer = new HashMap<>();
+        	questionAnswer.put(nibblerData.getMfaQuestion(), nibblerData.getMfaAnswer());
+        	Map<String, String> session = new HashMap<>();
+        	
             AddAccountsResponse response = integrationSao.addAccountsMfaAnswer(nibbler.getExtAccessToken(),
             		persistedInstitution.getSupportedInstitution().getExternalId(),
-                    nibblerData.getMfaQuestion(), nibblerData.getMfaAnswer());
+            		questionAnswer, session);
             if (response != null && response.getMfaType() == MfaType.NON_MFA) {
                 saveCustomerAccounts(nibblerData, response.getAccounts(), true);
             }
@@ -316,9 +321,13 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
         IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(persistedInstitution.getSupportedInstitution().getAggregatorQualifier());
         
         if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
+        	Map<String, String> questionAnswer = new HashMap<>();
+        	questionAnswer.put(nibblerData.getMfaQuestion(), nibblerData.getMfaAnswer());
+        	Map<String, String> session = new HashMap<>();
+        	
             AddAccountsResponse response = integrationSao.addAccountsMfaAnswer(nibbler.getExtAccessToken(),
             		persistedInstitution.getSupportedInstitution().getExternalId(),
-                    nibblerData.getMfaQuestion(), nibblerData.getMfaAnswer());
+            		questionAnswer, session);
             if (response != null && response.getMfaType() == MfaType.NON_MFA) {
                 saveCustomerAccounts(nibblerData, response.getAccounts(), false);
             }
