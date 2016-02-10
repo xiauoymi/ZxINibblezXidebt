@@ -186,13 +186,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor={ValidationException.class, Exception.class})
     @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_CREATED)
     public Long startRegistration(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException {
-    	try {
-			return saveCustomerData(nibblerData);
-		} catch (Exception e1) {
-			throw new ValidationException("Email address, password and name are required to start the registration process."); 
-		}
+    	return saveCustomerData(nibblerData);
     }
-    
     
     /**
      * Returns a null if no MFA is required, otherwise returns the details of the MFA challenge.
@@ -430,42 +425,63 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     }
     
     @Transactional(propagation = Propagation.REQUIRED)
-    private Long saveCustomerData(NibblerData nibblerData) throws ProcessingException, RepositoryException {
+    private Long saveCustomerData(NibblerData nibblerData) throws ProcessingException, RepositoryException, ValidationException {
     	
-    	String actCode = String.valueOf(100000 + RandomUtils.nextInt(900000));
-    	Nibbler nibbler = new Nibbler();
-    	nibbler.setFirstName(nibblerData.getFirstName());
-    	nibbler.setLastName(nibblerData.getLastName());
-    	nibbler.setAddressLine1(nibblerData.getAddress1());
-    	nibbler.setAddressLine2(nibblerData.getAddress2());
-    	nibbler.setCity(nibblerData.getCity());
-    	nibbler.setState(nibblerData.getState());
-    	nibbler.setZip(nibblerData.getZip());
-    	nibbler.setType(NibblerType.starter.name());
-    	nibbler.setEmail(nibblerData.getEmail());
+    	Nibbler nibbler = nibblerDao.find(nibblerData.getEmail());
+    	if(nibbler == null){
+    		if(StringUtils.isNotBlank(nibblerData.getFirstName()) && 
+    				StringUtils.isNotBlank(nibblerData.getLastName()) &&
+    				StringUtils.isNotBlank(nibblerData.getEmail()) &&
+    				StringUtils.isNotBlank(nibblerData.getPassword()) &&
+    				StringUtils.isNotBlank(nibblerData.getCity()) && 
+    				StringUtils.isNotBlank(nibblerData.getState()) &&
+    				StringUtils.isNotBlank(String.valueOf(nibblerData.getZip())) ){
+    			
+    			String actCode = String.valueOf(100000 + RandomUtils.nextInt(900000));
+            	nibbler = new Nibbler();
+            	nibbler.setFirstName(nibblerData.getFirstName());
+            	nibbler.setLastName(nibblerData.getLastName());
+            	nibbler.setAddressLine1(nibblerData.getAddress1());
+            	nibbler.setAddressLine2(nibblerData.getAddress2());
+            	nibbler.setCity(nibblerData.getCity());
+            	nibbler.setState(nibblerData.getState());
+            	nibbler.setZip(nibblerData.getZip());
+            	nibbler.setType(NibblerType.starter.name());
+            	nibbler.setEmail(nibblerData.getEmail());
+            	
+            	NibblerDirectory nibblerDir = new NibblerDirectory();
+            	nibblerDir.setUsername(nibblerData.getEmail());
+                nibblerDir.setPassword(
+                        encoder.encodePassword(
+                                String.valueOf(nibblerData.getPassword()),
+                                salt));
+                nibblerDir.setStatus(NibblerDirectoryStatus.CREATED.name());
+                nibblerDir.setActivationCode(actCode);
+                
+                NibblerPreference prefs = new NibblerPreference();
+                prefs.setNibbler(nibbler);
+                prefs.setWeeklyTargetAmount(new BigDecimal("9.99"));
+                setCreated(prefs, nibblerData.getEmail());
+                nibbler.setNibblerPreferences(prefs);
+                
+                nibbler.setNibblerDir(nibblerDir);
+                nibblerDir.setNibbler(nibbler);
+                setCreated(nibbler, nibblerData.getEmail());
+                setCreated(nibblerDir, nibblerData.getEmail());
+                nibblerDao.create(nibbler);   
+                
+                nibblerData.setActivationCode(actCode);
+    		}else{
+    			throw new ValidationException("Username/Password/Name/City/State/Zip are required fields.");
+    		}
+    		
+    	}else{
+    		if(StringUtils.equalsIgnoreCase(nibbler.getNibblerDir().getStatus(), NibblerDirectoryStatus.ACTIVE.name())){
+    			throw new ValidationException("Username already in use.");
+    		}
+    	}
     	
-    	NibblerDirectory nibblerDir = new NibblerDirectory();
-    	nibblerDir.setUsername(nibblerData.getEmail());
-        nibblerDir.setPassword(
-                encoder.encodePassword(
-                        String.valueOf(nibblerData.getPassword()),
-                        salt));
-        nibblerDir.setStatus(NibblerDirectoryStatus.CREATED.name());
-        nibblerDir.setActivationCode(actCode);
-        
-        NibblerPreference prefs = new NibblerPreference();
-        prefs.setNibbler(nibbler);
-        prefs.setWeeklyTargetAmount(new BigDecimal("9.99"));
-        setCreated(prefs, nibblerData.getEmail());
-        nibbler.setNibblerPreferences(prefs);
-        
-        nibbler.setNibblerDir(nibblerDir);
-        nibblerDir.setNibbler(nibbler);
-        setCreated(nibbler, nibblerData.getEmail());
-        setCreated(nibblerDir, nibblerData.getEmail());
-        nibblerDao.create(nibbler);   
-        
-        nibblerData.setActivationCode(actCode);
+    	
     	
     	return nibbler.getId();
     }
