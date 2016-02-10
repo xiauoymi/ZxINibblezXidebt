@@ -199,7 +199,11 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
      */
     @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor={ValidationException.class, Exception.class})
     public AddAllAccountsResponse completeRegistration(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException {
-		Institution loanAccountInstitution = null;
+		if(nibblerData.getInternalUserId() == null){
+			throw new ValidationException("The user id must be provided to complete the registration process.");
+		}
+    	
+    	Institution loanAccountInstitution = null;
 		Institution roundupAccountInstitution = null;
 		
 		boolean isInvitedCustomer = (nibblerData.getInvitationCode()!=null && nibblerData.getLoanAccountBank() == null) ? true : false ;
