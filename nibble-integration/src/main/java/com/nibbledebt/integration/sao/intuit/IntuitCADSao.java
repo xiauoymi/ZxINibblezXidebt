@@ -7,9 +7,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,9 +23,11 @@ import com.nibbledebt.domain.model.Institution;
 import com.nibbledebt.domain.model.LoginField;
 import com.nibbledebt.domain.model.LoginForm;
 import com.nibbledebt.domain.model.Transaction;
+import com.nibbledebt.domain.model.account.Accounts;
 import com.nibbledebt.domain.model.account.AddAccountsResponse;
 import com.nibbledebt.integration.sao.IIntegrationSao;
 import com.nibbledebt.intuit.cad.data.BankingTransaction;
+import com.nibbledebt.intuit.cad.data.ChallengeResponses;
 import com.nibbledebt.intuit.cad.data.Credential;
 import com.nibbledebt.intuit.cad.data.Credentials;
 import com.nibbledebt.intuit.cad.data.CreditCardTransaction;
@@ -34,6 +38,7 @@ import com.nibbledebt.intuit.cad.data.LoanTransaction;
 import com.nibbledebt.intuit.cad.data.TransactionList;
 import com.nibbledebt.intuit.cad.exception.AggCatException;
 import com.nibbledebt.intuit.cad.service.AggCatServiceFactory;
+import com.nibbledebt.intuit.cad.service.ChallengeSession;
 import com.nibbledebt.intuit.cad.service.DiscoverAndAddAccountsResponse;
 
 /**
@@ -122,7 +127,11 @@ public class IntuitCADSao implements IIntegrationSao {
 		
 		try {
 			DiscoverAndAddAccountsResponse response = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, customerId).discoverAndAddAccounts(Long.valueOf(institutionId), institutionLogin);
-			
+			AddAccountsResponse resp = new AddAccountsResponse();
+//			Accounts accounts = new Accounts();
+//			accounts.setAccount(response.getAccountList().getBankingAccountsAndCreditAccountsAndLoanAccounts());
+//			
+//			resp.setAccounts(accounts);
 		} catch (NumberFormatException | AggCatException e) {
 			throw new ServiceException("Error while register customer with Intuit with id:"+institutionId, e);
 		}
@@ -133,8 +142,30 @@ public class IntuitCADSao implements IIntegrationSao {
 	 * @see com.nibbledebt.integration.sao.IIntegrationSao#addAccountsMfaAnswer(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public AddAccountsResponse addAccountsMfaAnswer(String customerId, String institutionId, String question, String answer) throws ServiceException {
-		// TODO Auto-generated method stub
+	public AddAccountsResponse addAccountsMfaAnswer(String customerId, String institutionId,
+													Map<String, String> questionAnswer, Map<String, String> session) throws ServiceException {
+		ChallengeResponses challengeResponses = new ChallengeResponses();
+		for(String question : questionAnswer.keySet()) {
+			challengeResponses.getResponses().add(questionAnswer.get(question));
+		}
+		
+		ChallengeSession challengeSession = new ChallengeSession();
+		for(String sessionProperty : session.keySet()){
+			if(StringUtils.equalsIgnoreCase("challengeNodeId", sessionProperty)){
+				challengeSession.setChallengeNodeId(session.get(sessionProperty));
+			}else if(StringUtils.equalsIgnoreCase("challengeSessionId", sessionProperty)){
+				challengeSession.setChallengeSessionId(session.get(sessionProperty));
+			}else if(StringUtils.equalsIgnoreCase("id", sessionProperty)){
+				challengeSession.setId(session.get(sessionProperty));
+			}
+		}
+		
+		try {
+			DiscoverAndAddAccountsResponse response = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, customerId).discoverAndAddAccounts(challengeResponses, challengeSession);
+			
+		} catch (NumberFormatException | AggCatException e) {
+			throw new ServiceException("Error while register customer with Intuit with id:"+institutionId, e);
+		}
 		return null;
 	}
 
