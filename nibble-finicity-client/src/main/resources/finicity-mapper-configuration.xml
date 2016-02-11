@@ -86,22 +86,22 @@
     <mapping>
         <class-a>com.nibbledebt.integration.finicity.model.accounts.AddAccountsResponse</class-a>
         <class-b>com.nibbledebt.domain.model.account.AddAccountsResponse</class-b>
-        <field>
-            <a>mfaChallenges</a>
-            <b>mfaChallenges</b>
-            <a-hint>
-                com.nibbledebt.integration.finicity.model.accounts.TextMfaChallenges,
-                com.nibbledebt.integration.finicity.model.accounts.ImageMfaChallenges,
-                com.nibbledebt.integration.finicity.model.accounts.ImageChoiceMfaChallenges,
-                com.nibbledebt.integration.finicity.model.accounts.TextChoiceMfaChallenges
-            </a-hint>
-            <b-hint>
-                com.nibbledebt.domain.model.account.TextMfaChallenges,
-                com.nibbledebt.domain.model.account.ImageMfaChallenges,
-                com.nibbledebt.domain.model.account.ImageChoiceMfaChallenges,
-                com.nibbledebt.domain.model.account.TextChoiceMfaChallenges
-            </b-hint>
-        </field>
+<!--         <field> -->
+<!--             <a>mfaChallenges</a> -->
+<!--             <b>mfaChallenges</b> -->
+<!--             <a-hint> -->
+<!--                 com.nibbledebt.integration.finicity.model.accounts.TextMfaChallenges, -->
+<!--                 com.nibbledebt.integration.finicity.model.accounts.ImageMfaChallenges, -->
+<!--                 com.nibbledebt.integration.finicity.model.accounts.ImageChoiceMfaChallenges, -->
+<!--                 com.nibbledebt.integration.finicity.model.accounts.TextChoiceMfaChallenges -->
+<!--             </a-hint> -->
+<!--             <b-hint> -->
+<!--                 com.nibbledebt.domain.model.account.TextMfaChallenges, -->
+<!--                 com.nibbledebt.domain.model.account.ImageMfaChallenges, -->
+<!--                 com.nibbledebt.domain.model.account.ImageChoiceMfaChallenges, -->
+<!--                 com.nibbledebt.domain.model.account.TextChoiceMfaChallenges -->
+<!--             </b-hint> -->
+<!--         </field> -->
     </mapping>
     <mapping>
         <class-a>com.nibbledebt.integration.finicity.model.accounts.ImageMfaChallenges</class-a>

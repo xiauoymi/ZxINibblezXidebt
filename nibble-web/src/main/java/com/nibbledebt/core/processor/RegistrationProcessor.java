@@ -648,8 +648,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 	                    	AccountBalance balance = new AccountBalance();
 	                    	balance.setInterestRate(new BigDecimal("4.29"));
 		                    balance.setPaymentMinAmount(new BigDecimal("301.73"));
-		                    balance.setPayoffAmount(new BigDecimal("29400.00"));
-		                    balance.setPrincipalBalance(new BigDecimal("10000.00"));
+		                    balance.setPayoffAmount(new BigDecimal("33000.00"));
+		                    balance.setPrincipalBalance(new BigDecimal("33000.00"));
 		                    balance.setYtdInterestPaid(new BigDecimal("0.00"));
 		                    balance.setYtdPrincipalPaid(new BigDecimal("0.00"));
 		                    balance.setAccount(nibblerAccount);
