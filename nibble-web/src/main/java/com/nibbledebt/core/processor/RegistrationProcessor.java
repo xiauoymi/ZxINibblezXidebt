@@ -633,9 +633,9 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 			    		if(!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod")){
 	                    	nibblerAccount.setUseForpayoff(true);
 	                    	AccountBalance balance = new AccountBalance();
-	                    	balance.setInterestRate(new BigDecimal("6.00"));
-		                    balance.setPaymentMinAmount(new BigDecimal("193.33"));
-		                    balance.setPayoffAmount(new BigDecimal("10000.00"));
+	                    	balance.setInterestRate(new BigDecimal("4.29"));
+		                    balance.setPaymentMinAmount(new BigDecimal("301.73"));
+		                    balance.setPayoffAmount(new BigDecimal("29400.00"));
 		                    balance.setPrincipalBalance(new BigDecimal("10000.00"));
 		                    balance.setYtdInterestPaid(new BigDecimal("0.00"));
 		                    balance.setYtdPrincipalPaid(new BigDecimal("0.00"));
