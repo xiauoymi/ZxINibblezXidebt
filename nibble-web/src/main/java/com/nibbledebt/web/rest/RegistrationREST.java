@@ -47,7 +47,7 @@ public class RegistrationREST extends AbstractREST {
 	private InstitutionProcessor instService;
 	
 	@POST
-	@Path("/activate")
+	@Path("/register/activate")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
@@ -69,7 +69,7 @@ public class RegistrationREST extends AbstractREST {
 	}
 	
 	@POST
-	@Path("/loanaccount")
+	@Path("/register/loanaccount")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
@@ -80,7 +80,7 @@ public class RegistrationREST extends AbstractREST {
 	}
 	
 	@POST
-	@Path("/roundupaccount")
+	@Path("/register/roundupaccount")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)

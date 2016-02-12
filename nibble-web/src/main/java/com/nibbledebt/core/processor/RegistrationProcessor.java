@@ -151,7 +151,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 						receiver.setInvitationCode(inviteCode);
 
 					    Set<NibblerRole> nibblerRoles = new HashSet<>();
-						nibblerRoles.add(getRole(NibblerRoleType.receiver));
+						nibblerRoles.add(getRole(NibblerRoleType.nibbler_level_1));
 						nibblerRoles.add(getRole(NibblerRoleType.receiver));
 						
 						nibbler.getNibblerDir().setActivationCode("");
@@ -494,6 +494,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		                    nibblerAccount.getBalances().add(balance);
 		                }
 			            nibbler.getAccounts().add(nibblerAccount);
+			            nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
 			    	}else if(forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "creditCard")){
 			    		nibblerAccount.setUseForRounding(true);
 			    		if (account.getBalance() != null) {
@@ -516,6 +517,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		                    setCreated(balance, nibblerData.getEmail());
 		                    nibblerAccount.getBalances().add(balance);
 				            nibbler.getAccounts().add(nibblerAccount);
+				            nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
 		                }
 			    	}else if(!forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "student-loan")){
 			    		nibblerAccount.setUseForRounding(false);
@@ -541,6 +543,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		                    setCreated(balance, nibblerData.getEmail());
 		                    nibblerAccount.getBalances().add(balance);
 				            nibbler.getAccounts().add(nibblerAccount);
+				            nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_ROUNDUP.name());
 		                }
 			    	}else if(!forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "loan")){
 			    		nibblerAccount.setUseForRounding(false);
@@ -559,6 +562,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		                    setCreated(balance, nibblerData.getEmail());
 		                    nibblerAccount.getBalances().add(balance);
 				            nibbler.getAccounts().add(nibblerAccount);
+				            nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_ROUNDUP.name());
 		                    
 	                    }
 			    	}else{
@@ -566,10 +570,6 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 			    	}
 		            
 	            }
-	
-				
-				
-		    	
 	    	}
 
 			
