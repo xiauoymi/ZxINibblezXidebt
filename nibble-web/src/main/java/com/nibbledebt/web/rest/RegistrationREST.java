@@ -87,7 +87,7 @@ public class RegistrationREST extends AbstractREST {
 	@Validatable() //TODO - write custom validator
 	public AddAccountsResponse addRoudnupAccount(NibblerData nibblerData) throws ProcessingException, ServiceException,
             RepositoryException, ValidationException{
-		return regService.addLoanAccount(nibblerData, nibblerData.getEmail());
+		return regService.addRoundupAccount(nibblerData, nibblerData.getEmail());
 	}
 	
     @POST

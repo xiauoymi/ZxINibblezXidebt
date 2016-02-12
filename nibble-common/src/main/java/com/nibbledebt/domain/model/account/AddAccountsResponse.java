@@ -60,6 +60,7 @@ public class AddAccountsResponse {
 	 * @return the accounts
 	 */
 	public Accounts getAccounts() {
+		if(accounts == null) accounts = new Accounts();
 		return accounts;
 	}
 

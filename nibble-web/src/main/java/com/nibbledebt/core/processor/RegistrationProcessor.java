@@ -112,18 +112,15 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_ACTIVATED)
     @CacheEvict(value = "nibblerCache", key = "#username")
     public void activateNibbler(NibblerData nibblerData) throws ProcessingException, RepositoryException, ServiceException {
-        Nibbler nibbler = nibblerDao.find(nibblerData.getEmail());
+        Nibbler nibbler = nibblerDao.findOne(nibblerData.getInternalUserId());
         if (nibbler == null) {
             throw new ProcessingException("The username you have provded does not exist.");
         }
         if (StringUtils.equals(nibbler.getNibblerDir().getStatus(), NibblerDirectoryStatus.CREATED.name())) {
-            if (StringUtils.equals(nibbler.getNibblerDir().getActivationCode(), nibblerData.getActivationCode()) && nibbler.getNibblerDir().getPassword().equals(
-                    encoder.encodePassword(
-                            String.valueOf(nibblerData.getPassword()),
-                            salt))) {
+            if (StringUtils.equals(nibbler.getNibblerDir().getActivationCode(), nibblerData.getActivationCode())) {
             	
             	IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean("finicitySao"); //TODO change to load from configration db    			
-    		    String customerId = integrationSao.addCustomer(nibblerData.getEmail(), nibblerData.getFirstName(), nibblerData.getLastName());
+    		    String customerId = integrationSao.addCustomer(nibblerData.getEmail(), nibbler.getFirstName(), nibbler.getLastName());
             	
     		    try {
 					if(nibblerData.isContributor()){
@@ -139,7 +136,9 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 						contributor.setExtAccessToken(customerId);
 						contributor.setReceiver(receiver);
 						
-					    setUpdated(contributor, nibblerData.getEmail());
+						nibbler.getNibblerDir().setActivationCode("");
+						nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_ROUNDUP.name());
+						
 					    nibbler.getNibblerDir().setRoles(nibblerRoles);
 					    setUpdated(nibbler.getNibblerDir(), nibblerData.getEmail());
 					    setUpdated(nibbler, nibblerData.getEmail());                    
@@ -154,6 +153,9 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 					    Set<NibblerRole> nibblerRoles = new HashSet<>();
 						nibblerRoles.add(getRole(NibblerRoleType.receiver));
 						nibblerRoles.add(getRole(NibblerRoleType.receiver));
+						
+						nibbler.getNibblerDir().setActivationCode("");
+						nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_LOAN_ACCT.name());
 
 						nibblerData.setInvitationCode(inviteCode);
 						
@@ -170,7 +172,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 				}
             	
             } else {
-                throw new ProcessingException("Activation code and/or password does not match the account!");
+                throw new ProcessingException("Activation code does not match our records.");
             }
         } else {
             throw new ProcessingException("Already active!");
@@ -178,10 +180,6 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     }
     
     private AddAccountsResponse addLoanAccount(NibblerData nibblerData, Nibbler nibbler) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
-    	if(nibblerData.getInternalUserId() == null){
-			throw new ValidationException("The user id must be provided to complete the registration process.");
-		}
-    	
 		if(nibblerData.getLoanAccountBank()!=null){
 			Institution loanAccountInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getLoanAccountBank().getInstitution().getId()));
 			if(loanAccountInstitution!=null){
@@ -190,9 +188,9 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 			    AddAccountsResponse overallResponse = new AddAccountsResponse();
 			    try {				
 			    	if(nibblerData.getLoanAccountBank().getInstitution() != null) {
-			            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
+			            if (externalAuthReqsValid(nibblerData.getLoanAccountBank())) {
 			            	AddAccountsResponse response = integrationSao.addAccounts(nibbler.getExtAccessToken(), loanAccountInstitution.getSupportedInstitution().getExternalId(),
-			                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
+			                        nibblerData.getLoanAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
 			            	if (response != null){
 				            	overallResponse.setQuestionAnswer(response.getQuestionAnswer());
 				                overallResponse.setMfaType(response.getMfaType());
@@ -225,46 +223,46 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 	}
     
     private AddAccountsResponse addRoundupAccount(NibblerData nibblerData, Nibbler nibbler) throws NumberFormatException, RepositoryException, ValidationException, ProcessingException{
-
-		Institution roundupAccountInstitution = null;
-
 		if(nibblerData.getRoundupAccountBank()!=null){
-		    roundupAccountInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getRoundupAccountBank().getInstitution().getId()));
-		}
-		
-		if(roundupAccountInstitution!=null){
-			IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(roundupAccountInstitution.getSupportedInstitution().getAggregatorQualifier());
-		
-		    AddAccountsResponse overallResponse = new AddAccountsResponse();
-		    try {				
-				if (nibblerData.getRoundupAccountBank() != null && nibblerData.getRoundupAccountBank().getInstitution() != null) {
-		            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
-		                AddAccountsResponse response = integrationSao.addAccounts(nibbler.getExtAccessToken(), roundupAccountInstitution.getSupportedInstitution().getExternalId(),
-		                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
-		                if (response != null){
-			                overallResponse.setQuestionAnswer(response.getQuestionAnswer());
-			                overallResponse.setMfaType(response.getMfaType());
-			                overallResponse.setAccounts(response.getAccounts());
-			                if (response.getMfaType() == MfaType.NON_MFA) {
-			                    try {
-									saveCustomerAccounts(nibblerData, response.getAccounts(), true);
-								} catch (Exception e) {
-									throw e;
-								}
+			Institution roundupAccountInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getRoundupAccountBank().getInstitution().getId()));
+		    if(roundupAccountInstitution!=null){
+				IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(roundupAccountInstitution.getSupportedInstitution().getAggregatorQualifier());
+			
+			    AddAccountsResponse overallResponse = new AddAccountsResponse();
+			    try {				
+					if (nibblerData.getRoundupAccountBank() != null && nibblerData.getRoundupAccountBank().getInstitution() != null) {
+			            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
+			                AddAccountsResponse response = integrationSao.addAccounts(nibbler.getExtAccessToken(), roundupAccountInstitution.getSupportedInstitution().getExternalId(),
+			                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
+			                if (response != null){
+				                overallResponse.setQuestionAnswer(response.getQuestionAnswer());
+				                overallResponse.setMfaType(response.getMfaType());
+				                overallResponse.setAccounts(response.getAccounts());
+				                if (response.getMfaType() == MfaType.NON_MFA) {
+				                    try {
+										saveCustomerAccounts(nibblerData, response.getAccounts(), true);
+									} catch (Exception e) {
+										throw e;
+									}
+				                }
 			                }
-		                }
-		                
-		            } else {
-		                throw new ValidationException("Financial institution requires fields that have failed validation.");
-		            }
-		        }
-			} catch (Exception e) {
-				throw new ProcessingException("Unexpected exception while trying to add roundup account.", e);
+			                
+			            } else {
+			                throw new ValidationException("Financial institution requires fields that have failed validation.");
+			            }
+			        }
+				} catch (Exception e) {
+					throw new ProcessingException("Unexpected exception while trying to add roundup account.", e);
+				}
+			    return overallResponse;
+			}else{
+				throw new ValidationException("A bank account institution is required for this operation.");
 			}
-		    return overallResponse;
 		}else{
-			throw new ValidationException("A bank account institution is required for this operation.");
+			throw new ValidationException("Could not find institution to add with id: "+ nibblerData.getRoundupAccountBank().getInstitution().getId());
 		}
+		
+		
     }
     
 
@@ -282,9 +280,12 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     
     @Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.DEFAULT, rollbackFor=RepositoryException.class)
 	public AddAccountsResponse addLoanAccount(NibblerData nibblerData, String username) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
-		if (nibblerData.getLoanAccountBank() != null && nibblerData.getLoanAccountBank().getInstitution() != null) {
+    	if(nibblerData.getInternalUserId() == null){
+			throw new ValidationException("The user id must be provided to add a loan account process.");
+		}
+    	if (nibblerData.getLoanAccountBank() != null && nibblerData.getLoanAccountBank().getInstitution() != null) {
             if (externalAuthReqsValid(nibblerData.getLoanAccountBank())) {
-            	Nibbler nibbler = nibblerDao.find(username);
+            	Nibbler nibbler = nibblerDao.findOne(nibblerData.getInternalUserId());
             	if(nibbler != null){
             		return addLoanAccount(nibblerData, nibbler);
             	}else{
@@ -301,9 +302,13 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     
     @Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.DEFAULT, rollbackFor=RepositoryException.class)
 	public AddAccountsResponse addRoundupAccount(NibblerData nibblerData, String username) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
-		if (nibblerData.getLoanAccountBank() != null && nibblerData.getLoanAccountBank().getInstitution() != null) {
-            if (externalAuthReqsValid(nibblerData.getLoanAccountBank())) {
-            	Nibbler nibbler = nibblerDao.find(username);
+    	if(nibblerData.getInternalUserId() == null){
+			throw new ValidationException("The user id must be provided to add a roundup account.");
+		}
+    	
+    	if (nibblerData.getRoundupAccountBank() != null && nibblerData.getRoundupAccountBank().getInstitution() != null) {
+            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
+            	Nibbler nibbler = nibblerDao.findOne(nibblerData.getInternalUserId());
             	if(nibbler != null){
             		return addRoundupAccount(nibblerData, nibbler);
             	}else{
@@ -449,7 +454,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     @Transactional(propagation = Propagation.REQUIRED)
     private void saveCustomerAccounts(NibblerData nibblerData, Accounts accounts, Boolean forRoundUp) throws ServiceException, RepositoryException, ProcessingException {
     	try {
-	    	Nibbler nibbler = nibblerDao.find(nibblerData.getEmail());
+	    	Nibbler nibbler = nibblerDao.findOne(nibblerData.getInternalUserId());
 	    	for (Account account : accounts.getAccount()) {
 	    		
 	    		AccountType accountType = accountTypeDao.find(account.getAccountType());
