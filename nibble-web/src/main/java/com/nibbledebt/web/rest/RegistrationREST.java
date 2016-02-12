@@ -8,7 +8,6 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -32,7 +31,6 @@ import com.nibbledebt.core.processor.RegistrationProcessor;
 import com.nibbledebt.domain.model.Bank;
 import com.nibbledebt.domain.model.NibblerData;
 import com.nibbledebt.domain.model.account.AddAccountsResponse;
-import com.nibbledebt.domain.model.account.AddAllAccountsResponse;
 
 /**
  * @author Rocky Alam
@@ -56,7 +54,7 @@ public class RegistrationREST extends AbstractREST {
 	@Validatable() //TODO - write custom validator
 	public void activate(NibblerData nibblerData) throws ProcessingException, ServiceException,
             RepositoryException, ValidationException{
-		regService.activateNibbler(nibblerData.getEmail(), nibblerData.getPassword(), nibblerData.getActivationCode());
+		regService.activateNibbler(nibblerData);
 	}
 	
 	@POST
@@ -70,15 +68,26 @@ public class RegistrationREST extends AbstractREST {
 		return regService.startRegistration(nibblerData);
 	}
 	
-	@PUT
-	@Path("/register")
+	@POST
+	@Path("/loanaccount")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
 	@Validatable() //TODO - write custom validator
-	public AddAllAccountsResponse completeRegistration(NibblerData nibblerData) throws ProcessingException, ServiceException,
+	public AddAccountsResponse addLoanAccount(NibblerData nibblerData) throws ProcessingException, ServiceException,
             RepositoryException, ValidationException{
-		return regService.completeRegistration(nibblerData);
+		return regService.addLoanAccount(nibblerData, nibblerData.getEmail());
+	}
+	
+	@POST
+	@Path("/roundupaccount")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Loggable(logLevel=LogLevel.INFO)
+	@Validatable() //TODO - write custom validator
+	public AddAccountsResponse addRoudnupAccount(NibblerData nibblerData) throws ProcessingException, ServiceException,
+            RepositoryException, ValidationException{
+		return regService.addLoanAccount(nibblerData, nibblerData.getEmail());
 	}
 	
     @POST
@@ -123,25 +132,25 @@ public class RegistrationREST extends AbstractREST {
 //		regService.sendMfaCode(request.getAccessToken(), request.getSendMethod());
 //	}
 	
-	@POST
-	@Path("/mfa")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Loggable(logLevel=LogLevel.INFO)
-	@Validatable() //TODO - write custom validator
-	public void mfaResponse(NibblerData data) throws ProcessingException, ServiceException, RepositoryException{
-		regService.submitMfa(data);
-	}
-	
-	@POST
-	@Path("/mfaques")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Loggable(logLevel=LogLevel.INFO)
-	@Validatable() //TODO - write custom validator
-	public void mfaQuesResponse(NibblerData data) throws ProcessingException, ServiceException, RepositoryException{
-		regService.submitQuesMfa(data);
-	}
+//	@POST
+//	@Path("/mfa")
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	@Loggable(logLevel=LogLevel.INFO)
+//	@Validatable() //TODO - write custom validator
+//	public void mfaResponse(NibblerData data) throws ProcessingException, ServiceException, RepositoryException{
+//		regService.submitMfa(data);
+//	}
+//	
+//	@POST
+//	@Path("/mfaques")
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	@Loggable(logLevel=LogLevel.INFO)
+//	@Validatable() //TODO - write custom validator
+//	public void mfaQuesResponse(NibblerData data) throws ProcessingException, ServiceException, RepositoryException{
+//		regService.submitQuesMfa(data);
+//	}
 	
 	@GET
 	@Path("/banks")

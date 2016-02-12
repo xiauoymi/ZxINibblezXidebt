@@ -57,7 +57,6 @@ import com.nibbledebt.domain.model.NibblerData;
 import com.nibbledebt.domain.model.account.Account;
 import com.nibbledebt.domain.model.account.Accounts;
 import com.nibbledebt.domain.model.account.AddAccountsResponse;
-import com.nibbledebt.domain.model.account.AddAllAccountsResponse;
 import com.nibbledebt.domain.model.account.MfaType;
 import com.nibbledebt.integration.sao.IIntegrationSao;
 
@@ -93,87 +92,6 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 	@Resource
 	private Environment env;
 	
-	@Transactional(isolation = Isolation.READ_COMMITTED)
-    @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_ACTIVATED)
-    @CacheEvict(value = "nibblerCache", key = "#username")
-    public void activateNibbler(String username, String password, String activationCode) throws ProcessingException, RepositoryException {
-
-        NibblerDirectory nibblerDir = nibblerDirDao.find(username);
-        if (nibblerDir == null) {
-            throw new ProcessingException("The username you have provded does not exist.");
-        }
-        if (StringUtils.equals(nibblerDir.getStatus(), NibblerDirectoryStatus.CREATED.name())) {
-            if (StringUtils.equals(nibblerDir.getActivationCode(), activationCode) && nibblerDir.getPassword().equals(
-                    encoder.encodePassword(
-                            String.valueOf(password),
-                            salt))) {
-                nibblerDir.setStatus(NibblerDirectoryStatus.ACTIVE.name());
-                nibblerDir.setActivationCode("");
-
-
-                Set<NibblerRole> nibblerRoles = new HashSet<>();
-                
-            	NibblerRole nibblerRole = getRole(NibblerRoleType.nibbler_level_1);
-            	nibblerRoles.add(nibblerRole);
-                
-                if(StringUtils.equalsIgnoreCase(nibblerDir.getNibbler().getType(), "contributor")){
-                	NibblerRole contributorRole = getRole(NibblerRoleType.contributor);
-                	nibblerRoles.add(contributorRole);
-                }
-                
-                if(StringUtils.equalsIgnoreCase(nibblerDir.getNibbler().getType(), "receiver")){
-                	NibblerRole receiverRole = getRole(NibblerRoleType.receiver);
-                	nibblerRoles.add(receiverRole);
-                }
-
-                nibblerDir.setRoles(nibblerRoles);
-                setUpdated(nibblerDir, username);
-                nibblerDirDao.update(nibblerDir);
-
-            } else {
-                throw new ProcessingException("Activation code and/or password does not match the account!");
-            }
-        } else {
-            throw new ProcessingException("Already active!");
-        }
-    }
-    
-    private NibblerRole getRole(NibblerRoleType roleType) throws RepositoryException{
-    	NibblerRole role = nibblerRoleDao.find(roleType.name());
-    	if (role == null) {
-    		role = new NibblerRole();
-            setCreated(role, "sysuser");
-            role.setName(roleType.name());
-        }
-    	return role;
-    }
-    
-    @Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.DEFAULT, rollbackFor=RepositoryException.class)
-	public AddAccountsResponse addLoanAccount(NibblerData nibblerData, String username) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
-        Institution persistedInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getLoanAccountBank().getInstitution().getId()));
-        IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(persistedInstitution.getSupportedInstitution().getAggregatorQualifier());
-        
-		if (nibblerData.getLoanAccountBank() != null && nibblerData.getLoanAccountBank().getInstitution() != null) {
-            if (externalAuthReqsValid(nibblerData.getLoanAccountBank())) {
-            	Nibbler nibbler = nibblerDao.find(username);
-            	if(nibbler != null){
-            		AddAccountsResponse response = integrationSao.addAccounts(nibbler.getExtAccessToken(), persistedInstitution.getSupportedInstitution().getExternalId(),
-                            nibblerData.getLoanAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
-            		if (response != null && response.getMfaType() == MfaType.NON_MFA) {
-                        saveCustomerAccounts(nibblerData, response.getAccounts(), false);
-                    }
-                    return response;
-            	}else{
-            		throw new ValidationException("Financial institution requires fields that have failed validation.");
-            	}  
-                
-            } else {
-                throw new ValidationException("Financial institution requires fields that have failed validation.");
-            }
-        } else {
-            throw new ValidationException("Financial institution not available.");
-        }
-	}
     
     /**
      * Registers the user in the nibble database and creates an email with activation code.
@@ -190,105 +108,216 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	return saveCustomerData(nibblerData);
     }
     
-    /**
-     * Returns a null if no MFA is required, otherwise returns the details of the MFA challenge.
-     *
-     * @param nibblerData -nibbler registration data
-     * @return
-     * @throws ProcessingException
-     * @throws ServiceException
-     */
-    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor={ValidationException.class, Exception.class})
-    public AddAllAccountsResponse completeRegistration(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException {
-		if(nibblerData.getInternalUserId() == null){
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_ACTIVATED)
+    @CacheEvict(value = "nibblerCache", key = "#username")
+    public void activateNibbler(NibblerData nibblerData) throws ProcessingException, RepositoryException, ServiceException {
+        Nibbler nibbler = nibblerDao.find(nibblerData.getEmail());
+        if (nibbler == null) {
+            throw new ProcessingException("The username you have provded does not exist.");
+        }
+        if (StringUtils.equals(nibbler.getNibblerDir().getStatus(), NibblerDirectoryStatus.CREATED.name())) {
+            if (StringUtils.equals(nibbler.getNibblerDir().getActivationCode(), nibblerData.getActivationCode()) && nibbler.getNibblerDir().getPassword().equals(
+                    encoder.encodePassword(
+                            String.valueOf(nibblerData.getPassword()),
+                            salt))) {
+            	
+            	IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean("finicitySao"); //TODO change to load from configration db    			
+    		    String customerId = integrationSao.addCustomer(nibblerData.getEmail(), nibblerData.getFirstName(), nibblerData.getLastName());
+            	
+    		    try {
+					if(nibblerData.isContributor()){
+						Nibbler receiver = (Nibbler)nibblerDao.findByInvitationCode(nibblerData.getInvitationCode());
+						nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_LOAN_ACCT.name());
+						nibbler.getNibblerDir().setActivationCode("");
+
+					    Set<NibblerRole> nibblerRoles = new HashSet<>();
+						nibblerRoles.add(getRole(NibblerRoleType.nibbler_level_1));   
+						nibblerRoles.add(getRole(NibblerRoleType.contributor));
+					    
+						Nibbler contributor = (Nibbler) nibbler;
+						contributor.setExtAccessToken(customerId);
+						contributor.setReceiver(receiver);
+						
+					    setUpdated(contributor, nibblerData.getEmail());
+					    nibbler.getNibblerDir().setRoles(nibblerRoles);
+					    setUpdated(nibbler.getNibblerDir(), nibblerData.getEmail());
+					    setUpdated(nibbler, nibblerData.getEmail());                    
+					    nibblerDao.update(contributor);
+					}else{
+
+						Integer inviteCode = RandomUtils.nextInt();
+						Nibbler receiver = (Nibbler) nibbler;
+						receiver.setExtAccessToken(customerId);
+						receiver.setInvitationCode(inviteCode);
+
+					    Set<NibblerRole> nibblerRoles = new HashSet<>();
+						nibblerRoles.add(getRole(NibblerRoleType.receiver));
+						nibblerRoles.add(getRole(NibblerRoleType.receiver));
+
+						nibblerData.setInvitationCode(inviteCode);
+						
+						setUpdated(receiver, nibblerData.getEmail());
+
+					    nibbler.getNibblerDir().setRoles(nibblerRoles);
+					    setUpdated(nibbler.getNibblerDir(), nibblerData.getEmail());
+					    setUpdated(nibbler, nibblerData.getEmail());
+					    nibblerDao.update(receiver);
+					}
+				} catch (Exception e) {
+					integrationSao.deleteCustomer(customerId);
+	                throw new ProcessingException("Unexpected error trying to activate customer account.", e);
+				}
+            	
+            } else {
+                throw new ProcessingException("Activation code and/or password does not match the account!");
+            }
+        } else {
+            throw new ProcessingException("Already active!");
+        }
+    }
+    
+    private AddAccountsResponse addLoanAccount(NibblerData nibblerData, Nibbler nibbler) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
+    	if(nibblerData.getInternalUserId() == null){
 			throw new ValidationException("The user id must be provided to complete the registration process.");
 		}
     	
-    	Institution loanAccountInstitution = null;
-		Institution roundupAccountInstitution = null;
-		
-		boolean isInvitedCustomer = (nibblerData.getInvitationCode()!=null && nibblerData.getLoanAccountBank() == null) ? true : false ;
-		
 		if(nibblerData.getLoanAccountBank()!=null){
-		    loanAccountInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getLoanAccountBank().getInstitution().getId()));
-		    
+			Institution loanAccountInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getLoanAccountBank().getInstitution().getId()));
+			if(loanAccountInstitution!=null){
+				IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(loanAccountInstitution.getSupportedInstitution().getAggregatorQualifier());
+				
+			    AddAccountsResponse overallResponse = new AddAccountsResponse();
+			    try {				
+			    	if(nibblerData.getLoanAccountBank().getInstitution() != null) {
+			            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
+			            	AddAccountsResponse response = integrationSao.addAccounts(nibbler.getExtAccessToken(), loanAccountInstitution.getSupportedInstitution().getExternalId(),
+			                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
+			            	if (response != null){
+				            	overallResponse.setQuestionAnswer(response.getQuestionAnswer());
+				                overallResponse.setMfaType(response.getMfaType());
+				                overallResponse.getAccounts().getAccount().addAll(response.getAccounts().getAccount());
+				                if (response.getMfaType() == MfaType.NON_MFA) {
+				                    try {
+										saveCustomerAccounts(nibblerData, response.getAccounts(), false);
+									} catch (Exception e) {
+										throw new ProcessingException("Unexpected error tryiung to add loan account" , e);
+									}
+				                }
+			            	}
+			            	
+			            } else {
+			                throw new ValidationException("Financial institution requires fields that have failed validation.");
+			            }
+			        }
+				} catch (Exception e) {
+					throw e;
+				}
+			    return overallResponse;
+			}else{
+				throw new ValidationException("A loan account institution or bank account institution is required for registration.");
+			}
+		}else{
+			throw new ValidationException("Could not find institution to add with id: "+ nibblerData.getLoanAccountBank().getInstitution().getId());
 		}
+		
+		
+	}
+    
+    private AddAccountsResponse addRoundupAccount(NibblerData nibblerData, Nibbler nibbler) throws NumberFormatException, RepositoryException, ValidationException, ProcessingException{
+
+		Institution roundupAccountInstitution = null;
+
 		if(nibblerData.getRoundupAccountBank()!=null){
 		    roundupAccountInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getRoundupAccountBank().getInstitution().getId()));
 		}
-		if(loanAccountInstitution!=null || roundupAccountInstitution!=null){
-			IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(roundupAccountInstitution!=null ? roundupAccountInstitution.getSupportedInstitution().getAggregatorQualifier() : loanAccountInstitution.getSupportedInstitution().getAggregatorQualifier());
-			
-		    String customerId = integrationSao.addCustomer(nibblerData.getEmail(), nibblerData.getFirstName(), nibblerData.getLastName());
-		    
-		    AddAllAccountsResponse overallResponse = new AddAllAccountsResponse();
-		    try {
-				if (StringUtils.isNotBlank(customerId)) updateCustomerData(nibblerData, customerId);
-				
+		
+		if(roundupAccountInstitution!=null){
+			IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(roundupAccountInstitution.getSupportedInstitution().getAggregatorQualifier());
+		
+		    AddAccountsResponse overallResponse = new AddAccountsResponse();
+		    try {				
 				if (nibblerData.getRoundupAccountBank() != null && nibblerData.getRoundupAccountBank().getInstitution() != null) {
 		            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
-		                AddAccountsResponse response = integrationSao.addAccounts(customerId, roundupAccountInstitution.getSupportedInstitution().getExternalId(),
+		                AddAccountsResponse response = integrationSao.addAccounts(nibbler.getExtAccessToken(), roundupAccountInstitution.getSupportedInstitution().getExternalId(),
 		                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
 		                if (response != null){
-			                overallResponse.setRoundupBankQuestionAnswer(response.getQuestionAnswer());
-			                overallResponse.setRoundupMfaType(response.getMfaType());
+			                overallResponse.setQuestionAnswer(response.getQuestionAnswer());
+			                overallResponse.setMfaType(response.getMfaType());
 			                overallResponse.setAccounts(response.getAccounts());
 			                if (response.getMfaType() == MfaType.NON_MFA) {
 			                    try {
 									saveCustomerAccounts(nibblerData, response.getAccounts(), true);
 								} catch (Exception e) {
-									integrationSao.deleteCustomer(customerId);
 									throw e;
 								}
 			                }
 		                }
 		                
 		            } else {
-						integrationSao.deleteCustomer(customerId);
 		                throw new ValidationException("Financial institution requires fields that have failed validation.");
 		            }
-		        } 
-
-				if(!isInvitedCustomer){
-					if(nibblerData.getLoanAccountBank().getInstitution() != null) {
-			            if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
-			            	AddAccountsResponse response = integrationSao.addAccounts(customerId, loanAccountInstitution.getSupportedInstitution().getExternalId(),
-			                        nibblerData.getRoundupAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
-			            	if (response != null){
-				            	overallResponse.setLoanBankQuestionAnswer(response.getQuestionAnswer());
-				                overallResponse.setLoanMfaType(response.getMfaType());
-				                overallResponse.getAccounts().getAccount().addAll(response.getAccounts().getAccount());
-				                if (response.getMfaType() == MfaType.NON_MFA) {
-				                    try {
-										saveCustomerAccounts(nibblerData, response.getAccounts(), false);
-									} catch (Exception e) {
-										integrationSao.deleteCustomer(customerId);
-										throw e;
-									}
-				                }
-			            	}
-			            	
-			            } else {
-							integrationSao.deleteCustomer(customerId);
-			                throw new ValidationException("Financial institution requires fields that have failed validation.");
-			            }
-			        }else{
-						integrationSao.deleteCustomer(customerId);
-			        	throw new ValidationException("Loan account or invitation code is required"); 
-			        }
-				}
+		        }
 			} catch (Exception e) {
-				integrationSao.deleteCustomer(customerId);
-				throw e;
+				throw new ProcessingException("Unexpected exception while trying to add roundup account.", e);
 			}
 		    return overallResponse;
 		}else{
-			throw new ValidationException("A loan account institution or bank account institution is required for registration.");
+			throw new ValidationException("A bank account institution is required for this operation.");
 		}
-        
-
     }
+    
 
+	
+    
+    private NibblerRole getRole(NibblerRoleType roleType) throws RepositoryException{
+    	NibblerRole role = nibblerRoleDao.find(roleType.name());
+    	if (role == null) {
+    		role = new NibblerRole();
+            setCreated(role, "sysuser");
+            role.setName(roleType.name());
+        }
+    	return role;
+    }
+    
+    @Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.DEFAULT, rollbackFor=RepositoryException.class)
+	public AddAccountsResponse addLoanAccount(NibblerData nibblerData, String username) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
+		if (nibblerData.getLoanAccountBank() != null && nibblerData.getLoanAccountBank().getInstitution() != null) {
+            if (externalAuthReqsValid(nibblerData.getLoanAccountBank())) {
+            	Nibbler nibbler = nibblerDao.find(username);
+            	if(nibbler != null){
+            		return addLoanAccount(nibblerData, nibbler);
+            	}else{
+            		throw new ValidationException("Financial institution requires fields that have failed validation.");
+            	}  
+                
+            } else {
+                throw new ValidationException("Financial institution requires fields that have failed validation.");
+            }
+        } else {
+            throw new ValidationException("Financial institution not available.");
+        }
+	}
+    
+    @Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.DEFAULT, rollbackFor=RepositoryException.class)
+	public AddAccountsResponse addRoundupAccount(NibblerData nibblerData, String username) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
+		if (nibblerData.getLoanAccountBank() != null && nibblerData.getLoanAccountBank().getInstitution() != null) {
+            if (externalAuthReqsValid(nibblerData.getLoanAccountBank())) {
+            	Nibbler nibbler = nibblerDao.find(username);
+            	if(nibbler != null){
+            		return addRoundupAccount(nibblerData, nibbler);
+            	}else{
+            		throw new ValidationException("Financial institution requires fields that have failed validation.");
+            	}  
+                
+            } else {
+                throw new ValidationException("Financial institution requires fields that have failed validation.");
+            }
+        } else {
+            throw new ValidationException("Financial institution not available.");
+        }
+	}
+    
     @Transactional()
     public AddAccountsResponse submitRoundupAccountMfaAnswer(NibblerData nibblerData)
             throws ServiceException, RepositoryException, ValidationException, ProcessingException {
@@ -354,89 +383,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
         return isValid;
     }
 
-    /**
-     * Returns a null if no MFA is required, otherwise returns the details of the MFA challenge.
-     * @param nibblerData
-     * @return
-     * @throws ProcessingException
-     * @throws ServiceException
-     */
-//	@Transactional(isolation=Isolation.READ_COMMITTED)
-//	public MfaResponse registerNibblerWithMfa(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException{
-//		MfaResponse resp = plaidSao.linkAccountMfa(nibblerData.getInstUsername(), 
-//				nibblerData.getInstPassword(), 
-//				nibblerData.getInstPin(), 
-//				nibblerData.getInstitution());
-//		if(resp!=null){
-//			return resp;
-//		}else{
-//			throw new ProcessingException("There was an issue trying to link the account. Plaid did not respond as expected.");				
-//		}
-//	}
-
-    /**
-     * {"send_method":{"mask":"xxx-xxx-5309"}}
-     *
-     * @param accessToken
-     * @param sendMethod
-     * @throws ProcessingException
-     * @throws ServiceException
-     */
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void sendMfaCode(String accessToken, String sendMethod) throws ProcessingException, ServiceException {
-//		plaidSao.initiateMfaSend(accessToken, "{\"send_method\":{\"mask\":\""+sendMethod+"\"}");
-    }
-
-    //TODO - use Jackson
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_CREATED)
-    public void submitMfa(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException {
-//		LinkResponse response = null;
-//		if(nibblerData.getMfa().length>1){
-//			StringBuffer mfaBuffer = new StringBuffer("[");
-//			for(int i =0; i<nibblerData.getMfa().length; i++){
-//				if(i!=nibblerData.getMfa().length-1) mfaBuffer.append("\""+nibblerData.getMfa()[i]+"\",");
-//				else mfaBuffer.append("\""+nibblerData.getMfa()[i]+"\"");
-//			}
-//			mfaBuffer.append("]");
-//			response = plaidSao.submitMfaResponse(nibblerData.getAccessToken(), mfaBuffer.toString(), nibblerData.getInstitution());
-//		}else {
-//			if(nibblerData.getMfa().length == 1){
-//				StringBuffer mfaBuffer = new StringBuffer(nibblerData.getMfa()[0]);	
-//				response = plaidSao.submitMfaResponse(nibblerData.getAccessToken(), mfaBuffer.toString(), nibblerData.getInstitution());
-//			}
-//		}
-//		
-//		try {
-//			if(response !=null ){
-//				register(nibblerData, response.getAccessToken());
-//				updateAccount(nibblerData, response);
-//			}else{
-//				throw new ProcessingException("MFA responses cannot be empty.");
-//			}
-//		} catch (ParseException e) {
-//			throw new ProcessingException("Error ocurred while parsing a date." , e);
-//		}
-    }
-
-    //TODO - use Jackson
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_CREATED)
-    public void submitQuesMfa(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException {
-//		StringBuffer mfaBuffer = new StringBuffer("[");
-//		for(int i =0; i<nibblerData.getMfa().length; i++){
-//			if(i!=nibblerData.getMfa().length-1) mfaBuffer.append("\""+nibblerData.getMfa()[i]+"\",");
-//			else mfaBuffer.append("\""+nibblerData.getMfa()[i]+"\"");
-//		}
-//		mfaBuffer.append("]");
-//		LinkResponse response = plaidSao.submitMfaResponse(nibblerData.getAccessToken(), mfaBuffer.toString(), nibblerData.getInstitution());
-//		try {
-//			updateAccount(nibblerData, response);
-//		} catch (ParseException e) {
-//			throw new ProcessingException("Error ocurred while parsing a date." , e);
-//		}
-    }
-    
+        
     @Transactional(propagation = Propagation.REQUIRED)
     private Long saveCustomerData(NibblerData nibblerData) throws ProcessingException, RepositoryException, ValidationException {
     	
@@ -497,56 +444,6 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	
     	
     	return nibbler.getId();
-    }
-
-
-    /**
-     * Register nibbler with customerId
-     *
-     * @param nibblerData - nibbler data
-     * @param customerId  - customer id
-     * @throws ProcessingException
-     * @throws RepositoryException
-     */
-    @Transactional(propagation = Propagation.REQUIRED)
-    private void updateCustomerData(NibblerData nibblerData,
-                                  String customerId) throws ProcessingException, RepositoryException {
-    	
-    	Nibbler nibbler = nibblerDao.findOne(nibblerData.getInternalUserId());    	
-    	NibblerDirectory nibblerDir = nibbler.getNibblerDir();
-        
-    	if(nibblerData.isContributor()){
-    		Nibbler receiver = (Nibbler)nibblerDao.findByInvitationCode(nibblerData.getInvitationCode());
-    		Nibbler contributor = (Nibbler) nibbler;
-        	contributor.setExtAccessToken(customerId);
-        	contributor.setReceiver(receiver);
-        	
-            setUpdated(contributor, nibblerData.getEmail());
-            setUpdated(nibblerDir, nibblerData.getEmail());
-            
-            NibblerRole contributorRole = getRole(NibblerRoleType.contributor);
-            nibblerDir.getRoles().add(contributorRole);
-            setUpdated(nibblerDir, nibblerData.getEmail());
-            
-            nibblerDao.update(contributor);
-        }else{
-
-        	Integer inviteCode = RandomUtils.nextInt();
-        	Nibbler receiver = (Nibbler) nibbler;
-        	receiver.setExtAccessToken(customerId);
-        	receiver.setInvitationCode(inviteCode);
-
-        	nibblerData.setInvitationCode(inviteCode);
-        	
-        	setUpdated(receiver, nibblerData.getEmail());
-        	setUpdated(nibblerDir, nibblerData.getEmail());
-        	
-        	NibblerRole contributorRole = getRole(NibblerRoleType.receiver);
-            nibblerDir.getRoles().add(contributorRole);
-            setUpdated(nibblerDir, nibblerData.getEmail());
-            nibblerDao.update(receiver);
-        }
-       
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

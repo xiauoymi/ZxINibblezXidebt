@@ -10,6 +10,8 @@ package com.nibbledebt.core.data.model;
 public enum NibblerDirectoryStatus {
 	CREATED,
 	ACTIVE,
+	ACTIVE_NO_LOAN_ACCT,
+	ACTIVE_NO_ROUNDUP,
 	RESET_REQUIRED,
 	LOCKED_ATTEMPTS,
 	LOCKED_FRAUD;
