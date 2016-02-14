@@ -1,11 +1,13 @@
 package com.nibbledebt.integration.finicity.model.accounts;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
  * @author a.salachyonok
  */
 @JsonRootName("detail")
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class AccountDetail {
 
     /* Account Details: Checking / Savings / CD / Money Market */
