@@ -29,18 +29,19 @@
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
 		<property name="locations">
 			<list>
-				<value>classpath:/com/nibbledebt/external/intuitcad-test.properties</value>
+				<value>classpath:/intuitcad-integration.properties</value>
 			</list>
 		</property>
 	</bean>
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<ctx:component-scan base-package="com.nibbledebt.integration.sao.intuit"  />
-	
-	<bean id="mapper" class="org.dozer.DozerBeanMapper">
-	  <property name="mappingFiles">
-	    <list>
-	      <value>cad-dozer.xml</value>
-	    </list>
-	  </property>
+
+	<bean id="cadMapper" class="org.dozer.DozerBeanMapper">
+		<property name="mappingFiles">
+			<list>
+				<value>cad-mapper-configuration.xml</value>
+			</list>
+		</property>
 	</bean>
+
 </beans>

@@ -66,14 +66,14 @@ public class IntuitClientTest {
 //		Assert.assertNotNull(finicitySecurityContext.getAppToken());
 //	}
 	
-//	@Test
-//	public void getInstitutions() throws AggCatException  {
-//		List<Institution> insts = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "sysuser").getInstitutions().getInstitution();
-//		Assert.assertNotNull(insts);
-//		Assert.assertNotNull(insts.get(0).getInstitutionId());
-//		Assert.assertNotNull(insts.get(0).getHomeUrl());
-//		Assert.assertNotNull(insts.get(0).getInstitutionName());
-//	}
+	@Test
+	public void getInstitutions() throws AggCatException  {
+		List<Institution> insts = AggCatServiceFactory.getService(consumerKey, consumerSecret, samlId, "sysuser").getInstitutions().getInstitution();
+		Assert.assertNotNull(insts);
+		Assert.assertNotNull(insts.get(0).getInstitutionId());
+		Assert.assertNotNull(insts.get(0).getHomeUrl());
+		Assert.assertNotNull(insts.get(0).getInstitutionName());
+	}
 	
 //	@Test
 //	public void testDeserialize(){
