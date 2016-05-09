@@ -14,6 +14,7 @@ import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -49,6 +50,12 @@ public class UsersProcessor extends AbstractProcessor {
 	
 	@Autowired
 	private INibblerRoleDao nibblerRoleDao;
+	
+	@Autowired
+    private MessageDigestPasswordEncoder encoder;
+	
+	@Autowired
+    private String salt;
 		
 	@Transactional(propagation=Propagation.REQUIRED)
 	@CacheEvict(value="nibblerCache", key="#username")
@@ -111,7 +118,7 @@ public class UsersProcessor extends AbstractProcessor {
 	 */
 	@Transactional(isolation=Isolation.READ_COMMITTED)
 	@CacheEvict(value="nibblerCache", key="#username")
-	public void resetPassword(String username, String resetCode) throws ProcessingException, RepositoryException{
+	public void resetPassword(String username, String newPassword, String resetCode) throws ProcessingException, RepositoryException{
 		
 		NibblerDirectory nibblerDir = nibblerDirDao.find(username);
 		if(nibblerDir == null){
@@ -120,6 +127,10 @@ public class UsersProcessor extends AbstractProcessor {
 		if(StringUtils.equals(nibblerDir.getStatus(), NibblerDirectoryStatus.RESET_REQUIRED.name())
 				&& StringUtils.equals(resetCode, nibblerDir.getResetCode())){
 			
+			nibblerDir.setPassword(
+                    encoder.encodePassword(
+                            String.valueOf(newPassword),
+                            salt));
 			nibblerDir.setStatus(NibblerDirectoryStatus.ACTIVE.name());
 			nibblerDir.setResetCode(null);
 			

@@ -112,7 +112,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_ACTIVATED)
     @CacheEvict(value = "nibblerCache", key = "#username")
     public void activateNibbler(NibblerData nibblerData) throws ProcessingException, RepositoryException, ServiceException {
-        Nibbler nibbler = nibblerDao.findOne(nibblerData.getInternalUserId());
+        //Nibbler nibbler = nibblerDao.findOne(nibblerData.getInternalUserId());
+    	Nibbler nibbler = nibblerDao.find(nibblerData.getEmail());
         if (nibbler == null) {
             throw new ProcessingException("The username you have provded does not exist.");
         }
@@ -121,7 +122,6 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
             	
             	IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean("finicitySao"); //TODO change to load from configration db    			
     		    String customerId = integrationSao.addCustomer(nibblerData.getEmail(), nibbler.getFirstName(), nibbler.getLastName());
-            	
     		    try {
 					if(nibblerData.isContributor()){
 						Nibbler receiver = (Nibbler)nibblerDao.findByInvitationCode(nibblerData.getInvitationCode());

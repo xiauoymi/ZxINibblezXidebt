@@ -37,18 +37,31 @@ app.factory('userFactory', function($http){
         if (NibbleUtils.isDebug()) {
             console.log("factory method: activate() -> ", nibbler);
         }
-        return $http.post(urlBase + '/activate', nibbler);
+        return $http.post(urlBase + '/register/activate', nibbler);
     };
 
     /**
      * Forgot Password
      * @param email
      */
-    userFactory.forgotPassword = function(email) {
+    userFactory.forgotPassword = function(nibbler) {
         if (NibbleUtils.isDebug()) {
-            console.log("factory method: forgotPassword() ->", email);
+            console.log("factory method: forgotPassword() ->", nibbler);
         }
-        //Todo:asa  implement later
+        return $http.post(urlBase + '/sendResetCode', nibbler);
+    };
+    
+    /**
+     * Reset Password
+     * @param email
+     * @param newpassword
+     * @param resetcode
+     */
+    userFactory.resetPassword = function(nibbler) {
+        if (NibbleUtils.isDebug()) {
+            console.log("factory method: resetPassword() ->", nibbler);
+        }
+        return $http.post(urlBase + '/reset', nibbler);
     };
 
     /**

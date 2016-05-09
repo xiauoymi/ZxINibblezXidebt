@@ -23,7 +23,7 @@ public class BillingProcessor extends AbstractProcessor {
 	private INibblerDao nibblerDao;
 	
 
-	@Scheduled(cron="0 0 * * 1")
+	@Scheduled(cron="0 0 * * 1 *")
 	public void processWeeklyPayment() throws RepositoryException{
 		List<Nibbler> nibblers = nibblerDao.findAll();
 		for(Nibbler nibbler : nibblers){

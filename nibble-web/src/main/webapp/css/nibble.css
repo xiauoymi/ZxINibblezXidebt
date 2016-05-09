@@ -5844,7 +5844,7 @@ a.label:focus {
 }
 .badge {
   display: inline-block;
-  min-width: 10px;
+  min-width: 20px;
   padding: 3px 7px;
   font-size: 12px;
   font-weight: bold;
@@ -5854,7 +5854,7 @@ a.label:focus {
   white-space: nowrap;
   text-align: center;
   background-color: #777777;
-  border-radius: 10px;
+  border-radius: 20px;
 }
 .badge:empty {
   display: none;
@@ -9412,4 +9412,48 @@ button.close {
 }
 .fa-medium:before {
   content: "\f23a";
+}
+.btn-sm-cus {
+  font-size: 18px;
+  line-height: 1.3333333;
+  border-radius: 6px;
+  width: 150px;
+}
+.btn-lg-cus {
+  font-size: 18px;
+  line-height: 1.3333333;
+  border-radius: 6px;
+}
+.btn-lg-full {
+  font-size: 18px;
+  line-height: 1.3333333;
+  border-radius: 6px;
+  width: 100%;
+}
+.line {
+	height: 2px; 
+	background-color: black; 
+	text-align: center;
+}
+.step1 {
+	position: relative; 
+	top: -0.8em; 
+	float: left; 
+	margin-left: -2px;
+}
+.step2 {
+	margin-left:-2%; 
+	position: relative; 
+	top: -0.9em;
+}
+.step3 {
+	margin-left: 25%; 
+	position: relative; 
+	top: -0.9em;
+}
+.step4 {
+	float: right; 
+	margin-right:-2px; 
+	position: relative; 
+	top: -0.8em;
 }

@@ -1,16 +1,17 @@
 'use strict';
 app.controller('ForgotCtrl',
-    function LoginCtrl($scope, $state, userFactory) {
-
+    function ForgotCtrl($scope, $state, userFactory) {
 
         /**
          * send password
          */
         $scope.sendPassword = function () {
-            userFactory.forgotPassword($scope.forgot.email).success(function(data) {
+            userFactory.forgotPassword($scope.forgot)
+            .success(function (data) {
                 $scope.forgot.condition = "complete";
-            }).error(function(data, status) {
-                NibbleUtils.errorCallback($scope, $state, data, status);
+            })
+            .error(function (data, status) {
+            	$scope.msg_alerts= [{type:'danger', msg:"The username you have provded does not exist."}];
             });
         };
 
@@ -38,5 +39,5 @@ app.controller('ForgotCtrl',
             $scope.forgot = {};
             $scope.forgot.condition = "default";
             $scope.forgot.email = "";
-        }
+        };
     });

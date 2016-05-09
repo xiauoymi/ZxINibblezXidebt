@@ -8,12 +8,64 @@ app.controller('RegisterCtrl',
             $scope.initData = function() {
                 $scope.registration = {};
                 $scope.newuser = {
-                    email: "test001@yopmail.com",
-                    password: "QWEqweqwe",
-                    repassword: "QWEqweqwe",
-                    firstName: "John",
-                    lastName: "Doe"
+                    email: "",
+                    password: "",
+                    repassword: "",
+                    firstName: "",
+                    lastName: ""
                 };
+                $scope.states = [
+							'Alabama',
+							'Alaska',
+							'Arizona',
+							'Arkansas',
+							'California',
+							'Colorado',
+							'Connecticut',
+							'Delaware',
+							'District of Columbia',
+							'Florida',
+							'Georgia',
+							'Hawaii',
+							'Idaho',
+							'Illinois',
+							'Indiana',
+							'Iowa',
+							'Kansas',
+							'Kentucky',
+							'Louisiana',
+							'Maine',
+							'Maryland',
+							'Massachusetts',
+							'Michigan',
+							'Minnesota',
+							'Mississippi',
+							'Missouri',
+							'Montana',
+							'Nebraska',
+							'Nevada',
+							'New Hampshire',
+							'New Jersey',
+							'New Mexico',
+							'New York',
+							'North Carolina',
+							'North Dakota',
+							'Ohio',
+							'Oklahoma',
+							'Oregon',
+							'Pennsylvania',
+							'Rhode Island',
+							'South Carolina',
+							'South Dakota',
+							'Tennessee',
+							'Texas',
+							'Utah',
+							'Vermont',
+							'Virginia',
+							'Washington',
+							'West Virginia',
+							'Wisconsin',
+							'Wyoming'];
                 $scope.banks = [];
                 $scope.selected = undefined;
                 /* add watcher for custom password validation */
@@ -300,7 +352,4 @@ app.controller('RegisterCtrl',
             $scope.isBankNotSelected = function() {
                 return $scope.selected == undefined;
             }
-
-
-
         });

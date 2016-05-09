@@ -45,7 +45,7 @@ public class UserMgmtREST  extends AbstractREST {
 	@Loggable(logLevel=LogLevel.INFO)
 	@Validatable() //TODO - write custom validator
 	public void reset(NibblerData nibblerData) throws ProcessingException, RepositoryException{
-		usersProcessor.resetPassword(nibblerData.getEmail(), nibblerData.getResetCode());
+		usersProcessor.resetPassword(nibblerData.getEmail(), nibblerData.getPassword(), nibblerData.getResetCode());
 	}
 	
 	@POST
@@ -57,7 +57,6 @@ public class UserMgmtREST  extends AbstractREST {
 		usersProcessor.generateResetCode(nibblerData.getEmail(), null);
 	}	
 
-	
 	@GET
 	@Path("/useruq")
 	@Consumes(MediaType.APPLICATION_JSON)

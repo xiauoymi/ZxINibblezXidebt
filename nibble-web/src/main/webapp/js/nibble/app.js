@@ -62,6 +62,14 @@ app.config(['$stateProvider', '$urlRouterProvider',
                     requireLogin: false
                 }
             })
+            .state('user.reset', {
+                url: "/reset",
+                templateUrl: "/view/user/reset.html",
+                controller: "ResetCtrl",
+                data: {
+                    requireLogin: false
+                }
+            })
 
         ;
 

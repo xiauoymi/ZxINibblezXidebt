@@ -6,14 +6,37 @@
         <div class="form-group">
             <h3 class="form-primary-heading text-center">Create a New Account</h3>
         </div>
-        <hr/>
         <alert class="text-center" ng-repeat="alert in msg_alerts" type="{{alert.type}}" close="closeAlert($index)">
             {{alert.msg}}
         </alert>
 
         <div ng-switch-default>
+            <br/>
+        	<div class="line">
+	        	<span class="step1 badge badge-info">1</span>
+	        	<span class="step2 badge">2</span>
+	        	<span class="step3 badge">3</span>
+				<span class="step4 badge">4</span>
+			</div>
+			<br/>
             <div class="form-group">
                 <h4 class="form-primary-heading">Enter your information:</h4>
+            </div>
+            <div class="form-group">
+                <input
+                        type="text" class="form-control empty"
+                        placeholder="&#xf05a;    First Name"
+                        name="firstname" required
+                        ng-model="newuser.firstName"
+                        xt-validation-tooltip>
+            </div>
+            <div class="form-group">
+                <input
+                        type="text" class="form-control empty"
+                        placeholder="&#xf05a;    Last Name"
+                        name="lastname" required
+                        ng-model="newuser.lastName"
+                        xt-validation-tooltip>
             </div>
             <div class="form-group">
                 <input
@@ -30,7 +53,8 @@
                         placeholder="&#xf023;    Password" name="password"
                         required ng-model="newuser.password"
                         msg-strength="Password Strength"
-                        xt-validation-tooltip>
+                        xt-validation-tooltip
+                        title="Passwod must include" data-toggle="tooltip">
 
                 <div class="progress">
                     <div class="progress-bar"
@@ -53,45 +77,27 @@
                         xt-validation-tooltip>
 
             </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf05a;    First Name"
-                        name="firstname" required
-                        ng-model="newuser.firstName"
-                        xt-validation-tooltip>
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf05a;    Last Name"
-                        name="lastname" required
-                        ng-model="newuser.lastName"
-                        xt-validation-tooltip>
-            </div>
-            <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block"
+            <div class="form-group text-center">
+                <button class="btn btn-sm-cus btn-nibble-primary"
+                        ng-click="goToLogin()">
+                    Cancel <i class="fa fa-md font-color-white"></i>
+                </button>
+                <button class="btn btn-sm-cus btn-nibble-primary"
                         ng-click="registerForm2()"
                         ng-disabled="invalidRegisterForm1()">
-                    Next - Contact Information <i
-                        class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+                    Continue <i class="fa fa-md font-color-white"></i>
                 </button>
-            </div>
-            <hr/>
-            <div class="row">
-                <div class="col-md-offset-1">
-                    <small><a href="" ng-click="goToLogin()"><i
-                            class="fa fa-arrow-left"></i> Back to login</a></small>
-                </div>
             </div>
         </div>
         <div ng-switch-when="registrationForm2">
-            <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block"
-                        ng-click="backToForm1()">
-                    <i class="fa fa-md fa-arrow-left font-color-white"></i> Back
-                </button>
-            </div>
+        	<br/>
+        	<div class="line">
+	        	<span class="step1 badge">1</span>
+	        	<span class="step2 badge badge-info">2</span>
+	        	<span class="step3 badge">3</span>
+				<span class="step4 badge">4</span>
+			</div>
+			<br/>
             <div class="form-group">
                 <h4 class="form-primary-heading">Fill out your contact
                     information:</h4>
@@ -120,35 +126,38 @@
                         xt-validation-tooltip>
             </div>
             <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf015;    State"
-                        name="regstate" required
-                        ng-model="newuser.state"
-                        xt-validation-tooltip>
+                <select ng-model="newuser.state" placeholder="&#xf015; State" xt-validation-tooltip class="form-control empty"
+                        name="regstate" required>
+                    <option value="">Choose State</option>    
+                	<option ng-repeat="x in states">{{x}}</option>
+				</select>
             </div>
             <div class="form-group">
                 <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf015;    Zip"
-                        name="zipcode" required
+                        type="text" class="form-control empty" maxlength="5"
+                        placeholder="&#xf015;    Zipcode"
+                        name="zipcode" required onkeypress='return event.charCode >= 48 && event.charCode <= 57'
                         ng-model="newuser.zip"
-                        xt-validation-tooltip>
+                        xt-validation-tooltip zip-code msg-zip-code="Zipcode must be 5 characters long, all numbers">
             </div>
             <div class="form-group">
                 <input
-                        type="number" class="form-control empty"
+                        type="text" class="form-control empty" maxlength="10"
                         placeholder="&#xf095;    Phone"
-                        name="phone" required
+                        name="phone" required onkeypress='return event.charCode >= 48 && event.charCode <= 57'
                         ng-model="newuser.phone"
-                        xt-validation-tooltip>
+                        xt-validation-tooltip phone-number msg-phone-number="Phone Numbers must be ten digits long">
             </div>
-            <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block"
+            <div class="form-group text-center">
+                <button class="btn btn-sm-cus btn-nibble-primary"
+                        ng-click="backToForm1()">
+                    <i class="fa fa-md font-color-white"></i> Back
+                </button>
+                <button class="btn btn-lg-cus btn-nibble-primary "
                         ng-click="linkAccount()"
                         ng-disabled="invalidRegisterForm2()">
                     Next - Link an Account <i
-                        class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+                        class="fa fa-md pull-right font-color-white"></i>
                 </button>
             </div>
             <div class="form-group">
@@ -157,11 +166,11 @@
                 </div>
             </div>
             <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block"
+                <button class="btn btn-lg-full btn-nibble-primary btn-block"
                         ng-click="finishRegistration()"
                         ng-disabled="invalidRegisterForm2()">
                     Finish Registration <i
-                        class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+                        class="fa fa-md font-color-white"></i>
                 </button>
             </div>
             <hr/>
@@ -173,6 +182,14 @@
             </div>
         </div>
         <div id="registration_form3" ng-switch-when="linkAccount">
+        	<br/>
+        	<div class="line">
+	        	<span class="step1 badge">1</span>
+	        	<span class="step2 badge">2</span>
+	        	<span class="step3 badge badge-info">3</span>
+				<span class="step4 badge">4</span>
+			</div>
+			<br/>
             <div class="form-group">
                 <button class="btn btn-lg btn-nibble-primary btn-block"
                         ng-click="registerForm2()">
@@ -205,6 +222,14 @@
             </div>
         </div>
         <div ng-switch-when="registrationFinish">
+        	<br/>
+        	<div class="line">
+	        	<span class="step1 badge">1</span>
+	        	<span class="step2 badge">2</span>
+	        	<span class="step3 badge">3</span>
+				<span class="step4 badge badge-info">4</span>
+			</div>
+			<br/>
             <div class="row">
                 <div class="col-md-12">
                     <p>Congratulations! Your Nibble Account was successfully
