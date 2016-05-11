@@ -67,8 +67,8 @@
 				    <property name="connectionTestQuery" value="select 1" />
 				    <property name="driverClassName" value="org.postgresql.Driver" />
 				    <property name="jdbcUrl" value="jdbc:postgresql://localhost:5432/nweb" />
-				    <property name="username" value="pbach" />
-				    <property name="password" value="pbach" />
+				    <property name="username" value="nweb" />
+				    <property name="password" value="nweb" />
 				</bean>
 			</constructor-arg>
 		</bean>
@@ -87,9 +87,9 @@
 				    <property name="maximumPoolSize" value="15" />
 				    <property name="connectionTestQuery" value="select 1" />
 				    <property name="driverClassName" value="org.postgresql.Driver" />
-				    <property name="jdbcUrl" value="jdbc:postgresql://localhost:5432/nweb" />
-				    <property name="username" value="pbach" />
-				    <property name="password" value="pbach" />		
+				    <property name="jdbcUrl" value="#{ 'jdbc:postgresql://' + @dbUrl.getHost() + ':' + @dbUrl.getPort() + @dbUrl.getPath() }" />
+				    <property name="username" value="#{ @dbUrl.getUserInfo().split(':')[0] }" />
+				    <property name="password" value="#{ @dbUrl.getUserInfo().split(':')[1] }" />		
 				</bean>
 			</constructor-arg>
 		</bean>

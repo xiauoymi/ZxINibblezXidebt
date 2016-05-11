@@ -144,10 +144,10 @@ public class UsersProcessor extends AbstractProcessor {
 	
 	@Transactional(isolation=Isolation.READ_COMMITTED)
 	@Notify(notifyMethod=NotifyMethod.EMAIL, notifyType=NotifyType.PASSWORD_RESET)
-	@CacheEvict(value="nibblerCache", key="#username")
-	public void generateResetCode(String username, String resetCode) throws ProcessingException, RepositoryException{
+	@CacheEvict(value="nibblerCache", key="#nibblerData")
+	public void generateResetCode(NibblerData nibblerData) throws ProcessingException, RepositoryException{
 		
-		NibblerDirectory nibblerDir = nibblerDirDao.find(username);
+		NibblerDirectory nibblerDir = nibblerDirDao.find(nibblerData.getEmail());
 		if(nibblerDir == null){
 			throw new ProcessingException("The username you have provded does not exist.");
 		}
@@ -157,13 +157,13 @@ public class UsersProcessor extends AbstractProcessor {
 			nibblerDir.setStatus(NibblerDirectoryStatus.RESET_REQUIRED.name());
 			String rcode  = UUID.randomUUID().toString();
 			nibblerDir.setResetCode(rcode);
-			resetCode = rcode;
+			nibblerData.setResetCode(rcode);
 			
 			if(nibblerDir.getRoles() == null || nibblerDir.getRoles().isEmpty()){
 				NibblerRole nibblerRole = nibblerRoleDao.find(NibblerRoleType.nibbler_level_1.name());
 				if(nibblerRole == null){
 					nibblerRole = new NibblerRole();	
-					setCreated(nibblerRole, username);
+					setCreated(nibblerRole, nibblerData.getEmail());
 					nibblerRole.setName(NibblerRoleType.nibbler_level_1.name());	
 				}
 				
@@ -172,7 +172,7 @@ public class UsersProcessor extends AbstractProcessor {
 				nibblerDir.setRoles(nibblerRoles);
 			}			
 			
-			setUpdated(nibblerDir, username);
+			setUpdated(nibblerDir, nibblerData.getEmail());
 			nibblerDirDao.update(nibblerDir);
 			
 		}else{

@@ -22,7 +22,7 @@ import com.nibbledebt.common.error.NotificationException;
 import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.domain.model.NibblerData;
-import com.nibbledebt.integration.sao.mandrill.MandrillSao;
+import com.nibbledebt.integration.sao.mandrill.AWSMailSao;
 
 /**
  * @author ralam1
@@ -34,8 +34,9 @@ public class NotifyAspect {
 	private static final String ACCOUNT_CREATED_EMAIL_SUBJ = "Nibble Account Activation";
 	private static final String PASSWORD_RESET_EMAIL_SUBJ = "Nibble Password Reset";
 	private static final String INVITE_EMAIL_SUBJ = " needs your help.";
+	
 	@Autowired
-	private MandrillSao mandrillSao;
+	private AWSMailSao awsMailSao;
 	
 	@Autowired
 	private VelocityEngineFactoryBean velocityEngineFactory;
@@ -56,14 +57,15 @@ public class NotifyAspect {
 				Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("account-created.vm");
 				StringWriter acWriter = new StringWriter();
 				acTmpl.merge(acCtx, acWriter);				
-				mandrillSao.sendEmail(ACCOUNT_CREATED_EMAIL_SUBJ, acWriter.toString(), toEmails);
+				awsMailSao.sendEmail(ACCOUNT_CREATED_EMAIL_SUBJ, acWriter.toString(), toEmails);
 			} else if(notify.notifyType() == NotifyType.PASSWORD_RESET){
 				VelocityContext prCtx = new VelocityContext();
 				prCtx.put("reset_code", nibblerData.getResetCode());
+				prCtx.put("email", nibblerData.getEmail());
 				Template prTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("password-reset.vm");
 				StringWriter writer = new StringWriter();
 				prTmpl.merge(prCtx, writer);
-				mandrillSao.sendEmail(PASSWORD_RESET_EMAIL_SUBJ, writer.toString(), toEmails);
+				awsMailSao.sendEmail(PASSWORD_RESET_EMAIL_SUBJ, writer.toString(), toEmails);
 			} else if(notify.notifyType() == NotifyType.INVITE){
 				StringBuffer buffer = new StringBuffer(StringUtils.capitalizeFirstLetter(nibblerData.getFirstName()));
 				buffer.append(" ");
@@ -74,7 +76,7 @@ public class NotifyAspect {
 				Template prTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("invite-sent.vm");
 				StringWriter writer = new StringWriter();
 				prTmpl.merge(prCtx, writer);
-				mandrillSao.sendEmail(buffer.toString() + INVITE_EMAIL_SUBJ, writer.toString(), nibblerData.getInviteEmails());
+				awsMailSao.sendEmail(buffer.toString() + INVITE_EMAIL_SUBJ, writer.toString(), nibblerData.getInviteEmails());
 			}
 		} catch (Exception e) {
 			throw new NotificationException("Error reading template.", e);

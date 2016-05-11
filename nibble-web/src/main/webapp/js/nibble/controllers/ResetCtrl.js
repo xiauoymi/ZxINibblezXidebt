@@ -69,7 +69,7 @@ app.controller('ResetCtrl',
             	$scope.reset.email = email;
             }
             if (resetcode != "") {
-            	 $scope.reset.resetcode = resetcode;
+            	 $scope.reset.resetCode = resetcode;
             }
             
             $scope.reset.repassword = "";
