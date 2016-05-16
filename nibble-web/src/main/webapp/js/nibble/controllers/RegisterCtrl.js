@@ -190,6 +190,9 @@ app.controller('RegisterCtrl',
              * Show form for link account
              */
             $scope.linkAccount = function() {
+            	$scope.linkaccount = {};
+            	$scope.linkaccount.search ="";
+            	
                 accountFactory.getInstitutions().success(function(data) {
                     var items = data;
                     for (var i=0; i<items.length; i++) {
@@ -198,6 +201,28 @@ app.controller('RegisterCtrl',
                     }
                     $scope.banks = items;
                     $scope.registration.condition = "linkAccount";
+                })
+                .error(function (data, status) {
+                        NibbleUtils.errorCallback($scope, $state, data, status);
+                });
+
+            };
+            
+            /**
+             * Show form for link account
+             */
+            $scope.loanAccount = function() {
+            	$scope.loanaccount = {};
+            	$scope.loanaccount.search ="";
+            	
+                accountFactory.getInstitutions().success(function(data) {
+                    var items = data;
+                    for (var i=0; i<items.length; i++) {
+                        items[i].institution.logoUrl = NibbleUtils.getServicesUrl() + "/rest/logo/" +
+                        window.encodeURIComponent(items[i].institution.logoCode);
+                    }
+                    $scope.banks = items;
+                    $scope.registration.condition = "loanAccount";
                 })
                 .error(function (data, status) {
                         NibbleUtils.errorCallback($scope, $state, data, status);
@@ -219,6 +244,14 @@ app.controller('RegisterCtrl',
                     .error(function(data, status) {
                         NibbleUtils.errorCallback($scope, $state, data, status);
                 });
+            };
+            
+            /**
+             * Finish registration process
+             */
+            $scope.confirmRegistration = function() {
+                var nibbler = $scope.createNibblerObject();
+                $scope.registration.condition = "registrationConfirm";
             };
 
             $scope.createNibblerObject = function() {

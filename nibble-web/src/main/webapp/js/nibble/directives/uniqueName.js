@@ -6,7 +6,7 @@ app.directive('uniqueName', function($http) {
         link: function(scope, elem, attr, ctrl) {
         	elem.bind('blur', function (e) {
                 var currentValue = elem.val();
-                $http.get(NibbleUtils.getServicesUrl() +'/rest/useruq?register_username=' + value).success(function(data) {
+                $http.get(NibbleUtils.getServicesUrl() +'/rest/useruq?register_username=' + currentValue).success(function(data) {
                 	ctrl.$setValidity('uniquename', data);
                     
                 }).error(function(data, status, headers, config) {

@@ -231,5 +231,14 @@ public class InstitutionProcessor {
 		}  catch (RepositoryException e) {
 			throw new ProcessingException("Error while retrieving supported institutions list.", e);
 		}
-	}	
+	}
+	
+	@Cacheable(value="instCache", unless="#result == null")
+	@Transactional(readOnly=true)
+	public List<Institution> getApiFinicityInstitutions() throws ProcessingException, ServiceException{
+		IIntegrationSao integrationSao = (IIntegrationSao) context.getBean("finicitySao");
+		List<Institution> institutions = integrationSao.getInstitutions();
+		return institutions;
+		
+	}
 }

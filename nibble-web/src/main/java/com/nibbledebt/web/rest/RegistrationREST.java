@@ -29,6 +29,7 @@ import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.processor.InstitutionProcessor;
 import com.nibbledebt.core.processor.RegistrationProcessor;
 import com.nibbledebt.domain.model.Bank;
+import com.nibbledebt.domain.model.Institution;
 import com.nibbledebt.domain.model.NibblerData;
 import com.nibbledebt.domain.model.account.AddAccountsResponse;
 
@@ -158,6 +159,14 @@ public class RegistrationREST extends AbstractREST {
 	@Loggable(logLevel=LogLevel.INFO)
 	public List<Bank> getSupportedBanks() throws ProcessingException, ServiceException{
 		return instService.getSupportedInstitutions();
+	}
+	
+	@GET
+	@Path("/institutions")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Loggable(logLevel=LogLevel.INFO)
+	public List<Institution> getApiBanks() throws ProcessingException, ServiceException{
+		return instService.getApiFinicityInstitutions();
 	}
 	
 	@GET

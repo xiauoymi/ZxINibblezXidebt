@@ -12,7 +12,7 @@ app.factory('accountFactory', function($http){
         if (NibbleUtils.isDebug()) {
             console.log("factory method: getInstitutions() -> ");
         }
-        return $http.get(urlBase + '/banks');
+        return $http.get(urlBase + '/institutions');
     };
 
     /**

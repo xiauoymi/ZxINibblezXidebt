@@ -167,7 +167,7 @@
             </div>
             <div class="form-group">
                 <button class="btn btn-lg-full btn-nibble-primary btn-block"
-                        ng-click="finishRegistration()"
+                        ng-click="confirmRegistration()"
                         ng-disabled="invalidRegisterForm2()">
                     Finish Registration <i
                         class="fa fa-md font-color-white"></i>
@@ -197,8 +197,7 @@
                 </button>
             </div>
             <div class="form-group">
-                <h4 class="form-primary-heading">Link an account to Nibble
-                    from:</h4>
+                <h4 class="form-primary-heading">Choose your bank</h4>
             </div>
             <div class="form-group">
                 <div class="row">
@@ -210,13 +209,130 @@
                 </div>
             </div>
             <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block" ng-click="finishRegistration()"
-                        type="submit" id="register_finish" ng-disabled="isBankNotSelected()">Finish
+                <input
+                        type="text" class="form-control empty"
+                        placeholder="&#xf015;    Search"
+                        name="city" required
+                        ng-model="linkaccount.search"
+                        xt-validation-tooltip>
+            </div>
+            <div class="form-group text-center">
+                <button class="btn btn-sm-cus btn-nibble-primary"
+                        ng-click="backToForm1()">
+                    <i class="fa fa-md font-color-white"></i> Cancel
+                </button>
+                <button class="btn btn-lg-cus btn-nibble-primary "
+                        ng-click="linkAccount()"
+                        ng-disabled="invalidRegisterForm2()">
+                    Submit <i
+                        class="fa fa-md pull-right font-color-white"></i>
                 </button>
             </div>
             <hr/>
             <div class="row">
                 <div class="col-md-offset-1">
+                    <small><a href="" ng-click="goToLogin()"><i class="fa fa-arrow-left"></i> Back to login</a></small>
+                </div>
+            </div>
+        </div>
+        <div id="registration_form3" ng-switch-when="loanAccount">
+        	<br/>
+        	<div class="line">
+	        	<span class="step1 badge">1</span>
+	        	<span class="step2 badge">2</span>
+	        	<span class="step3 badge badge-info">3</span>
+				<span class="step4 badge">4</span>
+			</div>
+			<br/>
+            <div class="form-group">
+                <button class="btn btn-lg btn-nibble-primary btn-block"
+                        ng-click="registerForm2()">
+                    <i class="fa fa-md fa-arrow-left font-color-white"></i> Back
+                </button>
+            </div>
+            <div class="form-group">
+                <h4 class="form-primary-heading">Choose your loan provider Or Enter your referral code </h4>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4 banks"
+                         ng-repeat="bank in banks">
+                        <img ng-src="{{bank.institution.logoUrl}}" class="img-responsive nibble-institution-logo"
+                             ng-click="clickModal($index)">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <input
+                        type="text" class="form-control empty"
+                        placeholder="&#xf015;    Search"
+                        name="city" required
+                        ng-model="loadaccount.search"
+                        xt-validation-tooltip>
+            </div>
+            <div class="form-group text-center">
+                <button class="btn btn-sm-cus btn-nibble-primary"
+                        ng-click="backToForm1()">
+                    <i class="fa fa-md font-color-white"></i> Cancel
+                </button>
+                <button class="btn btn-lg-cus btn-nibble-primary "
+                        ng-click="linkAccount()"
+                        ng-disabled="invalidRegisterForm2()">
+                    Submit <i
+                        class="fa fa-md pull-right font-color-white"></i>
+                </button>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-offset-1">
+                    <small><a href="" ng-click="goToLogin()"><i class="fa fa-arrow-left"></i> Back to login</a></small>
+                </div>
+            </div>
+        </div>
+        <div ng-switch-when="registrationConfirm">
+        	<br/>
+        	<div class="line">
+	        	<span class="step1 badge">1</span>
+	        	<span class="step2 badge">2</span>
+	        	<span class="step3 badge">3</span>
+				<span class="step4 badge badge-info">4</span>
+			</div>
+			<br/>
+			<div class="form-group text-center">
+                <h4 class="form-primary-heading">Review your info</h4>
+            </div>
+            <div class="row text-center">
+                <div class="col-md-12">
+                    <p>First Name:{{newuser.firstName}}</p>
+                </div>
+                <div class="col-md-12">
+                    <p>Last Name:{{newuser.lastName}}</p>
+                </div>
+                <div class="col-md-12">
+                    <p>Email Address:{{newuser.email}}</p>
+                </div>
+                <div class="col-md-12">
+                    <p>Password:Confirmed Match</p>
+                </div>
+                <div class="col-md-12">
+                    <p>Address:{{newuser.address1}}</p>
+                </div>
+                <div class="col-md-12">
+                    <p>City:{{newuser.city}}</p>
+                </div>
+                <div class="col-md-12">
+                    <p>States:{{newuser.state}}</p>
+                </div>
+                <div class="col-md-12">
+                    <p>Zip Code:{{newuser.zip}}</p>
+                </div>
+                <div class="col-md-12">
+                    <p>Phone #:{{newuser.phone}}</p>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-offset-1 col-md-10">
                     <small><a href="" ng-click="goToLogin()"><i class="fa fa-arrow-left"></i> Back to login</a></small>
                 </div>
             </div>
@@ -448,9 +564,9 @@
             </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-default" ng-click="cancel()">Close</button>
+            <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
             <button id="registration_form3_modal_save" type="button"
-                    class="btn btn-nibble-primary" ng-disabled="invalidModalForm()" ng-click="ok()">Save changes
+                    class="btn btn-nibble-primary" ng-disabled="invalidModalForm()" ng-click="ok()">Connect Securely
             </button>
         </div>
 
