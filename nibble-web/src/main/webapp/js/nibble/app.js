@@ -25,6 +25,10 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 url: "/accounts",
                 templateUrl: "/view/dashboard/accounts.html",
                 controller: "AccountsCtrl"
+            }).state('dashboard.users', {
+                url: "/users",
+                templateUrl: "/view/dashboard/users.html",
+                controller: "UsersCtrl"
             })
 
             /***********************************************/

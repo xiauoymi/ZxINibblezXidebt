@@ -128,7 +128,7 @@
             <div class="form-group">
                 <select ng-model="newuser.state" placeholder="&#xf015; State" xt-validation-tooltip class="form-control empty"
                         name="regstate" required>
-                    <option value="">Choose State</option>    
+                    <option value="">Choose State</option>
                 	<option ng-repeat="x in states">{{x}}</option>
 				</select>
             </div>
@@ -167,7 +167,7 @@
             </div>
             <div class="form-group">
                 <button class="btn btn-lg-full btn-nibble-primary btn-block"
-                        ng-click="confirmRegistration()"
+                        ng-click="finishRegistration()"
                         ng-disabled="invalidRegisterForm2()">
                     Finish Registration <i
                         class="fa fa-md font-color-white"></i>
