@@ -91,6 +91,16 @@ app.factory('userFactory', function($http){
     userFactory.profile = function() {
         return $http.get(urlBase + '/profile');
     };
+    
+    
+    /**
+     * Search users
+     * @param searchForm - search form
+     * @returns {HttpPromise}
+     */
+    userFactory.users = function(searchForm) {
+        return $http.post(urlBase + '/users',searchForm);
+    };
 
     return userFactory;
 });

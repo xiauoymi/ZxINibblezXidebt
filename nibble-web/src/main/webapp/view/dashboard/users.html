@@ -4,55 +4,147 @@
     </div>
     <div class="container">
         <div class="row">
-            <div class="col-xs-12" style="overflow-x: auto;">
-                <table ng-table="tableSettings" show-filter="false" class="table table-bordered table-striped">
-                    <thead>
-                        <th> First Name</th>
-                        <th> Last Name</th>
-                        <th> Service Fee</th>
-                        <th> Trigger Amount</th>
-                        <th> Email Adress</th>
-                        <th> Referral#</th>
-                        <th> Funding Account</th>
-                        <th> Loan Account</th>
-                        <th> Password</th>
-                        <th></th>
-                    </thead>
-                    <tbody>
-                            <tr ng-repeat="user in users" ng-include="getTemplate(user)">
-                            </tr>
-                    </tbody>
-                </table>
+            <div class="col-md-12 text-center center-block">
+                <img alt="Nibble" ng-src="../images/logo.JPG" class="img-responsive nibble-logo" style="height: 150px; width: 150px;">
             </div>
+            <div class="col-md-12">
+            <form name="userSearch.form" novalidate>
+            <div id="user-content"
+                 class="col-md-6 col-md-offset-3 login-panel light-pattern"
+                 >
+            <div class="form-group">
+            <input type="text" name="firstName" placeholder="First name" ng-model="searchForm.firstName" class="editable-input form-control input-sm" />
+            </div>
+            <div class="form-group">
+            <input type="text" name="lastName" placeholder="Last name" ng-model="searchForm.lastName" class="editable-input form-control input-sm" />
+            </div>
+            <div class="form-group">
+            <input type="email" name="email" placeholder="Email adress" ng-model="searchForm.email" class="editable-input form-control input-sm" />
+            </div>
+            <div class="form-group">
+            <input type="text" name="phone" placeholder="Phone #" ng-model="searchForm.phone" class="editable-input form-control input-sm" /></div>
+            <div class="form-group">
+            <input type="text" name="referral" placeholder="Referral Number" ng-model="searchForm.referral" class="editable-input form-control input-sm" />
+            </div>
+            <div class="form-group text-center">
+                <button class="btn btn-sm-cus btn-info" ng-click="resetSearchForm()">
+                    Clear Form <i class="fa fa-md font-color-white"></i>
+                </button>
+                <button class="btn btn-sm-cus btn-info" ng-click="loadUsers()">
+                    Search <i class="fa fa-md font-color-white"></i>
+                </button>
+            </div>
+            </div>
+            </form>
+            <alert class="text-center" ng-repeat="alert in searchFormErrors" type="{{alert.type}}" close="closeAlert($index)">
+                {{alert.msg}}
+            </alert>
+            <div class="col-md-3"></div>
+        </div>
+        </div>        
+
+
+        <div class="row">
+                <table ng-table="tableSettings" class="table table-bordered table-hover table-condensed editable-table" ng-form="tableForm" disable-filter="isAdding" demo-tracked-table="tableTracker">
+        <colgroup>
+          <col width="10%" />
+          <col width="10%" />
+          <col width="5%" />
+          <col width="5%" />
+          <col width="10%" />
+          <col width="10%" />
+          <col width="10%" />
+          <col width="10%" />
+          <col width="10%" />
+        </colgroup>
+        <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+          <td title="'First Name'" sortable="'firstName'" ng-switch="row.isEditing" ng-class="firstfirstName.$dirty ? 'bg-warning' : ''" ng-form="firstName" demo-tracked-table-cell>
+            <span ng-switch-default class="editable-text">{{row.firstName}}</span>
+            <div class="controls" ng-class="firstName".$invalid && firstName.$dirty ? 'has-error' : ''" ng-switch-when="true">
+              <input type="text" name="firstName"" ng-model="row.firstName" class="editable-input form-control input-sm" required />
+            </div>
+          </td>
+          <td title="'Last Name'" sortable="'lastName'" ng-switch="row.isEditing" ng-class="lastName.$dirty ? 'bg-warning' : ''" ng-form="lastName" demo-tracked-table-cell>
+            <span ng-switch-default class="editable-text">{{row.lastName}}</span>
+            <div class="controls" ng-class="lastName".$invalid && lastName.$dirty ? 'has-error' : ''" ng-switch-when="true">
+              <input type="text" name="lastName"" ng-model="row.lastName" class="editable-input form-control input-sm" required />
+            </div>
+          </td>
+
+          <td title="'Service fee'" sortable="'serviceFee'" ng-switch="row.isEditing" ng-class="serviceFee.$dirty ? 'bg-warning' : ''" ng-form="serviceFee" demo-tracked-table-cell>
+            <span ng-switch-default class="editable-text">{{row.serviceFee}}</span>
+            <div class="controls" ng-class="serviceFee".$invalid && serviceFee.$dirty ? 'has-error' : ''" ng-switch-when="true">
+              <input type="number" name="serviceFee"" ng-model="row.serviceFee" class="editable-input form-control input-sm" required />
+            </div>
+          </td>
+
+          <td title="'Trigger Amount'" sortable="'triggerAmount'" ng-switch="row.isEditing" ng-class="triggerAmount.$dirty ? 'bg-warning' : ''" ng-form="triggerAmount" demo-tracked-table-cell>
+            <span ng-switch-default class="editable-text">{{row.triggerAmount}}</span>
+            <div class="controls" ng-class="triggerAmount".$invalid && triggerAmount.$dirty ? 'has-error' : ''" ng-switch-when="true">
+              <input type="number" name="triggerAmount"" ng-model="row.triggerAmount" class="editable-input form-control input-sm" required />
+            </div>
+          </td>          
+
+          <td title="'Email Adress'" sortable="'email'" ng-switch="row.isEditing" ng-class="email.$dirty ? 'bg-warning' : ''" ng-form="email" demo-tracked-table-cell>
+            <span ng-switch-default class="editable-text">{{row.email}}</span>
+            <div class="controls" ng-class="email".$invalid && email.$dirty ? 'has-error' : ''" ng-switch-when="true">
+              <input type="email" name="email"" ng-model="row.email" class="editable-input form-control input-sm" required />
+            </div>
+          </td>      
+
+          <td title="'Referral#'" sortable="'referral'" ng-switch="row.isEditing" ng-class="referral.$dirty ? 'bg-warning' : ''" ng-form="referral" demo-tracked-table-cell>
+            <span ng-switch-default class="editable-text">{{row.referral}}</span>
+            <div class="controls" ng-class="referral".$invalid && referral.$dirty ? 'has-error' : ''" ng-switch-when="true">
+              <input type="text" name="referral"" ng-model="row.referral" class="editable-input form-control input-sm" required />
+            </div>
+          </td>
+
+          <td title="'Funding Account'" sortable="'fundingAccount'" ng-switch="row.isEditing" ng-class="fundingAccount.$dirty ? 'bg-warning' : ''" ng-form="fundingAccount" demo-tracked-table-cell>
+            <span ng-switch-default class="editable-text">{{row.fundingAccount}}</span>
+            <div class="controls" ng-class="fundingAccount".$invalid && fundingAccount.$dirty ? 'has-error' : ''" ng-switch-when="true">
+              <input type="text" name="fundingAccount"" ng-model="row.fundingAccount" class="editable-input form-control input-sm" required />
+            </div>
+          </td>              
+
+
+         <td title="'Loan Account'" sortable="'loanAccount'" ng-switch="row.isEditing" ng-class="loanAccount.$dirty ? 'bg-warning' : ''" ng-form="loanAccount" demo-tracked-table-cell>
+            <span ng-switch-default class="editable-text">{{row.loanAccount}}</span>
+            <div class="controls" ng-class="loanAccount".$invalid && loanAccount.$dirty ? 'has-error' : ''" ng-switch-when="true">
+              <input type="text" name="loanAccount"" ng-model="row.loanAccount" class="editable-input form-control input-sm" required />
+            </div>
+          </td>          
+
+         <td title="'Password'" sortable="'password'" ng-switch="row.isEditing" ng-class="password.$dirty ? 'bg-warning' : ''" ng-form="password" demo-tracked-table-cell>
+            <span ng-switch-default class="editable-text">{{row.password}}</span>
+            <div class="controls" ng-class="password".$invalid && password.$dirty ? 'has-error' : ''" ng-switch-when="true">
+              <input type="password" name="password"" ng-model="row.password" class="editable-input form-control input-sm" required />
+            </div>
+          </td>  
+                      
+          <td>
+            <button class="btn btn-primary btn-sm" ng-click="saveUser(row, rowForm)" ng-if="row.isEditing" ng-disabled="rowForm.$pristine || rowForm.$invalid"><span class="glyphicon glyphicon-ok"></span></button>
+            <button class="btn btn-default btn-sm" ng-click="cancel($index);row.isEditing=!row.isEditing" ng-if="row.isEditing"><span class="glyphicon glyphicon-remove"></span></button>
+            <button class="btn btn-default btn-sm" ng-click="editUser(row)" ng-if="!row.isEditing"><span class="glyphicon glyphicon-pencil"></span></button>
+            <!-- <button class="btn btn-danger btn-sm" ng-click="remove(row)" ng-if="!row.isEditing"><span class="glyphicon glyphicon-trash"></span></button> -->
+
+            <button class="btn btn-default btn-sm" ng-click="remove(row)" uib-tooltip="OK" tooltip-placement="top" ng-if="!row.isEditing"><span class="fa fa-sign-in"></span></button>
+            <button class="btn btn-default btn-sm" ng-click="remove(row)" ng-if="!row.isEditing"><span class="fa fa-money"></span></button>
+            <button class="btn btn-danger btn-sm" ng-click="remove(row)" ng-if="!row.isEditing"><span class="fa fa-play -lg"></span></button>
+            <button class="btn btn-success btn-sm" ng-click="remove(row)" ng-if="false"><span class="fa fa-pause"  aria-hidden="true"></span></button>
+            <button class="btn btn-default btn-sm" ng-click="remove(row)" ng-if="!row.isEditing"><span class="fa fa-envelope-o"></span></button>
+          </td>
+        </tr>
+      </table>
+      <div>
+        <alert class="text-center" ng-repeat="alert in saveUserErrors" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}
+        </alert>
+      </div>
         </div>
     </div>
-    <script type="text/ng-template" id="display">
-        <td>{{user.firstName}}</td>
-        <td>{{user.lastName}}</td>
-        <td>{{user.serviceFee}}</td>
-        <td>{{user.triggerAmount}}</td>
-        <td>{{user.email}}</td>
-        <td>{{user.referral}}</td>
-        <td>{{user.fundingAccount}}</td>
-        <td>{{user.loanAccount}}</td>
-        <td>{{user.password}}</td>
-        <td>
-            <button ng-click="editUser(user)">Edit</button>
-        </td>
-    </script>
-    <script type="text/ng-template" id="edit">
-        <td><input type="text" ng-model="seletedUser.firstName"></td>
-        <td><input type="text" ng-model="seletedUser.lastName"></td>
-        <td><input type="number" ng-model="seletedUser.serviceFee"></td>
-        <td><input type="number" ng-model="seletedUser.triggerAmount"></td>
-        <td><input type="email" ng-model="seletedUser.email"></td>
-        <td><input type="text" ng-model="seletedUser.referral"></td>
-        <td><input type="text" ng-model="seletedUser.fundingAccount"></td>
-        <td><input type="text" ng-model="seletedUser.loanAccount"></td>
-        <td><input type="password" ng-model="seletedUser.password"></td>
-        <td>
-            <button ng-click="saveUser(seletedUser)">Save</button>
-            <button ng-click="reset()">Cancel</button>
-        </td>
-    </script>
+    <div>
+
+
+
+    </div>
 </div>
+

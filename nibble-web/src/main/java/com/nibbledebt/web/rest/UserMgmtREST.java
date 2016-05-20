@@ -4,6 +4,7 @@
 package com.nibbledebt.web.rest;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -24,6 +25,7 @@ import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.common.security.MemberDetails;
 import com.nibbledebt.common.validator.Validatable;
 import com.nibbledebt.core.data.error.RepositoryException;
+import com.nibbledebt.core.data.model.Nibbler;
 import com.nibbledebt.core.processor.UsersProcessor;
 import com.nibbledebt.domain.model.NibblerData;
 
@@ -44,7 +46,7 @@ public class UserMgmtREST  extends AbstractREST {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
 	@Validatable() //TODO - write custom validator
-	public void reset(NibblerData nibblerData) throws ProcessingException, RepositoryException{
+	public void register(NibblerData nibblerData) throws ProcessingException, RepositoryException{
 		usersProcessor.resetPassword(nibblerData.getEmail(), nibblerData.getPassword(), nibblerData.getResetCode());
 	}
 	
@@ -84,5 +86,21 @@ public class UserMgmtREST  extends AbstractREST {
 		nibblerData.setInviteEmails(Arrays.asList(emails));
 		nibblerData.setEmail(getCurrentUser());
 		this.usersProcessor.sendInvite(nibblerData);
+	}
+	
+	@POST
+	@Path("/users")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Loggable(logLevel=LogLevel.INFO)
+	public List<NibblerData> loadUsers(Nibbler nibbler) throws ProcessingException, RepositoryException{
+		return usersProcessor.loadUsers(nibbler);
+	}
+	
+	@POST
+	@Path("/update")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Loggable(logLevel=LogLevel.INFO)
+	public void update(NibblerData nibblerData) throws ProcessingException, RepositoryException{
+		usersProcessor.update(nibblerData);
 	}
 }

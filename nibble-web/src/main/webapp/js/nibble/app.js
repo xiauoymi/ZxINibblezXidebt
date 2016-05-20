@@ -1,6 +1,6 @@
 'use strict';
 var app = angular.module('nibbleuser',
-    ['ui.router', 'ui.bootstrap', 'xtForm', 'snap', 'chart.js',
+    ['ui.router','ui.bootstrap', 'xtForm', 'snap', 'chart.js',
         'angular-svg-round-progress', 'ngTable', 'ngCookies']);
 
 app.config(['$stateProvider', '$urlRouterProvider',
