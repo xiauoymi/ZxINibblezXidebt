@@ -1,0 +1,67 @@
+<div id="activation_panel">
+	<div id="activate_form">
+		<form id="activate-form" class="form-primary" method="POST">
+			<div class="form-group">
+				<h3 class="form-primary-heading">Activate your account</h3>
+				<div id="alert_message"
+					class="alert alert-danger alert-dismissible fade in hidden">
+					<button type="button" class="close" data-dismiss="alert"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<div id="message" class="text-center">&nbsp;</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="activation_username" class="sr-only">Username</label> <input
+					type="text" id="activation_username" class="form-control empty"
+					placeholder="&#xF007;    Username" name="activation_username"
+					required autofocus data-parsley-minlength="8"
+					data-parsley-validation-threshold="2" data-parsley-trigger="change"
+					data-parsley-required-message="The username is required"
+					data-parsley-minlength-message="The username you have entered is invalid">
+			</div>
+			<div class="form-group">
+				<label for="activation_password" class="sr-only">Password</label> <input
+					type="password" id="activation_password" class="form-control empty"
+					placeholder="&#xF023;    Password" name="activation_password"
+					required data-parsley-minlength="8"
+					data-parsley-validation-threshold="8" data-parsley-trigger="change"
+					data-parsley-required-message="The password is required">
+			</div>
+			<div class="form-group">
+				<label for="activation_code" class="sr-only">Activation Code</label>
+				<input type="password" id="activation_code"
+					class="form-control empty" placeholder="&#xf005;    Activation Code"
+					name="activation_code" required data-parsley-minlength="8"
+					data-parsley-validation-threshold="8" data-parsley-trigger="change"
+					data-parsley-required-message="The activation code is required">
+			</div>
+			<div class="form-group">
+				<button id="activate_now"
+					class="btn btn-lg btn-nibble-primary btn-block" type="submit">Activate</button>
+			</div>
+			<div class="form-group">
+				<a href="" id="forgot_now"><h4>Forgot your password?</h4> </a>
+			</div>
+		
+		</form>
+	</div>
+	<div id="activate_result" class="hidden">
+		<div class="row">
+			<div class="col-md-12">
+				<p>Your account has been successfully activated. Please click
+					the link below to go back to the Login screen and begin Nibbling at
+					your debt.</p>
+			</div>
+		</div>
+	</div>
+	<hr />
+	<div class="row">
+		<div class="col-md-offset-1 col-md-10">
+			<a href="" id="login_now"><i
+					class="fa fa-arrow-left"></i> Back to login</a>
+		</div>
+	</div>
+	
+</div>

@@ -1,0 +1,14 @@
+<footer class="footer">
+	<div class="phxadmin-copyright">
+		<p>Copyright &copy; 2015-2016 Mozido Inc.</p>
+	</div>
+</footer>
+<footer class="footer">
+  <div class="container">
+    <p class="text-muted">Copyright &copy; 2015-2016 Mozido Inc.</p>
+    <p class="pull-right">
+    	Follow us on: 
+    		
+    </p>
+  </div>
+</footer>

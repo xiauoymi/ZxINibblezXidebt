@@ -6,6 +6,7 @@ package com.nibbledebt.domain.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nibbledebt.core.data.model.NibblerDirectoryStatus;
 import com.nibbledebt.domain.model.account.Account;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -29,7 +30,7 @@ public class NibblerData {
 	private Bank loanAccountBank;
 	private String activationCode;
 	private String url;
-	
+	private boolean suspendedUp90;
 	private String status;
 	private String resetCode;
 
@@ -426,7 +427,19 @@ public class NibblerData {
 	public void setInviteEmails(List<String> inviteEmails) {
 		this.inviteEmails = inviteEmails;
 	}
+	
+	public boolean isSuspendedUp90() {
+		return suspendedUp90;
+	}
 
+
+	public void setSuspendedUp90(boolean suspendedUp90) {
+		this.suspendedUp90 = suspendedUp90;
+	}
+	
+	public boolean isActive(){
+		return NibblerDirectoryStatus.ACTIVE.name().equals(status);
+	}
 
 	@Override
 	public String toString(){

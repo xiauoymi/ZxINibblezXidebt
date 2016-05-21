@@ -1,0 +1,2 @@
+insert into account_type (id, code, description, createdTs, createdUser) values (1, 'loan', 'accounts to apply nibble funds to', now(), 'admin');
+insert into account_type (id, code, description, createdTs, createdUser) values (2, 'funding', 'accounts to apply nibble funds from', now(), 'admin');

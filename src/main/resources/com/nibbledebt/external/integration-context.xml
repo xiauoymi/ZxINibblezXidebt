@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	 <bean id="velocityEngineFactory" class="org.springframework.ui.velocity.VelocityEngineFactoryBean" 
+          p:resourceLoaderPath="classpath:/com/nibbledebt/templates" 
+          p:preferFileSystemAccess="false"/>
+	
+	<bean id="plaidConnectClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create" >
+		<constructor-arg><value>#{'${plaid.url}' + '${plaid.conn.context}'}</value></constructor-arg>
+		<constructor-arg>
+			<list>
+				<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+			</list>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="plaidAuthClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create" >
+		<constructor-arg><value>#{'${plaid.url}' + '${plaid.auth.context}'}</value></constructor-arg>
+		<constructor-arg>
+			<list>
+				<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="plaidAuthStepClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create" >
+		<constructor-arg><value>#{'${plaid.url}' + '${plaid.auth.context}' +'/'+'${plaid.step.context}'}</value></constructor-arg>
+		<constructor-arg>
+			<list>
+				<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="plaidConnectStepClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create" >
+		<constructor-arg><value>#{'${plaid.url}' + '${plaid.conn.context}' +'/'+'${plaid.step.context}'}</value></constructor-arg>
+		<constructor-arg>
+			<list>
+				<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="plaidBalanceClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create" >
+		<constructor-arg><value>#{'${plaid.url}' + '${plaid.baln.context}'}</value></constructor-arg>
+		<constructor-arg>
+			<list>
+				<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="plaidInstClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create" >
+		<constructor-arg><value>#{'${plaid.url}' + '${plaid.inst.context}'}</value></constructor-arg>
+		<constructor-arg>
+			<list>
+				<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+			</list>
+		</constructor-arg>
+	</bean>	
+	
+	<bean id="plaidUpgradeClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create" >
+		<constructor-arg><value>#{'${plaid.url}' + '${plaid.upgr.context}'}</value></constructor-arg>
+		<constructor-arg>
+			<list>
+				<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="plaidConnectGetClient" class="org.apache.cxf.jaxrs.client.WebClient" factory-method="create" >
+		<constructor-arg><value>#{'${plaid.url}' + '${plaid.conn.context}' +'/'+ '${plaid.get.context}'}</value></constructor-arg>
+		<constructor-arg>
+			<list>
+				<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<beans profile="postgres-local, embedded-local">
+		
+	</beans>
+	
+	<beans profile="heroku-dev">
+		
+	</beans>
+</beans>

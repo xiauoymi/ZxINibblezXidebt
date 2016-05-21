@@ -1,0 +1,51 @@
+<div id="login_panel">
+	<h3 class="form-primary-heading text-center">Login to your account</h3>
+	<div id="alert_message"
+		class="alert alert-danger alert-dismissible fade in hidden">
+		<button type="button" class="close" data-dismiss="alert"
+			aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+		<div id="message" class="text-center">&nbsp;</div>
+	</div>
+	<form id="login-form" class="form-primary" action="/sslogin"
+		method="POST">
+		<div class="form-group">
+			<label for="nibbler_username" class="sr-only">Username</label> <input
+				type="text" id="nibbler_username" class="form-control empty"
+				placeholder="&#xF007;    Username" name="nibbler_username" required
+				autofocus data-parsley-minlength="8"
+				data-parsley-validation-threshold="2" data-parsley-trigger="change"
+				data-parsley-required-message="The username is required"
+				data-parsley-minlength-message="The username you have entered is invalid">
+		</div>
+		<div class="form-group">
+			<label for="inputPassword" class="sr-only">Password</label> <input
+				type="password" id="inputPassword" class="form-control empty"
+				placeholder="&#xF023;    Password" name="nibbler_password" required
+				data-parsley-minlength="8" data-parsley-validation-threshold="8"
+				data-parsley-trigger="change"
+				data-parsley-required-message="The password is required">
+		</div>
+		<div class="checkbox">
+			<label> <input type="checkbox" value="remember-me">
+				Remember me
+			</label>
+		</div>
+		<div class="form-group">
+			<button class="btn btn-lg btn-nibble-primary btn-block" type="submit">Sign
+				in</button>
+		</div>
+		<div class="form-group">
+			<a id="forgot_now" href=""><h4>Forgot your password?</h4> </a>
+		</div>
+		<hr />
+		<div class="form-group">
+			<p>
+				Not a Nibbler yet? <a href="" id="register_now"><i
+					class="fa fa-user"></i> Become one today</a>
+			</p>
+		</div>
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+	</form>
+</div>

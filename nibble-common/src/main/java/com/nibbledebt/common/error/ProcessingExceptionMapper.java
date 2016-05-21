@@ -4,6 +4,7 @@
 package com.nibbledebt.common.error;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 
 /**

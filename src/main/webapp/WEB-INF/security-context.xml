@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:sec="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<bean id="encoder" class="org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder" >
+ 		<constructor-arg><value>SHA-256</value></constructor-arg>
+ 	</bean>
+ 	
+ 	<bean id="salt" class="java.lang.String">
+ 		<constructor-arg><value>c3a4a52c16676d63d45d31b2008b7850</value></constructor-arg>
+ 	</bean>
+	
+	<sec:global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
+	
+	<bean id="authEntryPoint" class="com.nibbledebt.common.security.AjaxAwareEntryPoint" >
+		<constructor-arg name="loginUrl" value="/nibbleuser.html"/>
+	</bean>
+
+	<sec:http use-expressions="true" auto-config="true" entry-point-ref="authEntryPoint">	
+<!--         <sec:intercept-url pattern="/login*" access="permitAll"/> -->
+<!--         <sec:intercept-url pattern="/rest/register/**" access="permitAll"/> -->
+<!--         <sec:intercept-url pattern="/rest/logo/**" access="permitAll"/> -->
+<!--         <sec:intercept-url pattern="/rest/banks/**" access="permitAll"/> -->
+<!--         <sec:intercept-url pattern="/rest/**" access="isAuthenticated() and hasRole('nibbler-level1')"/> -->
+        <sec:intercept-url pattern="/nibbleuser.html**" access="permitAll"/>
+        <sec:intercept-url pattern="/index.html**" access="permitAll"/>
+        <sec:intercept-url pattern="/nibblehome.html**" access="isAuthenticated() and hasRole('nibbler_level_1')"/>
+        
+        <sec:form-login login-page="/nibbleuser.html"   
+        				login-processing-url="/sslogin"
+        				authentication-failure-url="/nibbleuser.html?message=Your username/password was incorrect."
+        				default-target-url="/nibblehome.html"
+        				password-parameter="nibbler_password"
+        				username-parameter="nibbler_username"/>
+        <sec:session-management  session-fixation-protection="newSession" invalid-session-url="/nibbleuser.html?message=Your previous session has expired."/>
+<!--         <sec:csrf /> -->
+ 
+	    <!-- enable remember me -->
+	    <sec:remember-me 
+	        token-validity-seconds="1209600"
+			remember-me-parameter="remember-me" 
+			data-source-ref="dataSource" />
+	</sec:http>
+	    
+    <beans profile="postgres-local, embedded-local" default-autowire="default" >
+    
+	    <sec:authentication-manager>	    	
+	     	<sec:authentication-provider>
+	     		<sec:user-service>
+		            <sec:user name="admin1234" password="admin1234" authorities="nibbler_level_1" />
+		        </sec:user-service>
+	     	</sec:authentication-provider>
+	     	<sec:authentication-provider ref="authProvider" />
+	 	</sec:authentication-manager>
+	 	
+	 	<bean id="authProvider" class="com.nibbledebt.common.security.MemberAuthenticationProvider" />
+ 	</beans>
+ 	
+ 	
+ 	<beans profile="heroku-dev" default-autowire="default" >
+	 	<sec:authentication-manager>	    	
+	     	<sec:authentication-provider>
+	     		<sec:user-service>
+		            <sec:user name="admin1234" password="admin1234" authorities="nibbler_level_1" />
+		        </sec:user-service>
+	     	</sec:authentication-provider>
+	     	<sec:authentication-provider ref="authProvider" />
+	 	</sec:authentication-manager>
+	 	
+	 	<bean id="authProvider" class="com.nibbledebt.common.security.MemberAuthenticationProvider" />
+ 	
+ 	</beans>
+ 	
+ 
+
+</beans>
