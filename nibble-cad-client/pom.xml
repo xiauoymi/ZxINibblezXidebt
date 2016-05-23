@@ -28,7 +28,7 @@
 		                <sourceRoot>${basedir}/src/main/java</sourceRoot>
 		                <xsdOptions>
 		                    <xsdOption>
-		                        <xsd>${basedir}/src/main/resources/xsds/accountlist_1.xsd</xsd>
+		                        <xsd>http://schema.intuit.com/platform/fdatafeed/accountlist/v1</xsd>
 		                        <packagename>com.nibbledebt.intuit.cad.data</packagename>
 		                    </xsdOption>
 		                </xsdOptions>

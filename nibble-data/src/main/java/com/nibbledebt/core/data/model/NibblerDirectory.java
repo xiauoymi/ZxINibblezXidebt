@@ -67,6 +67,10 @@ public class NibblerDirectory  extends AbstractModel{
 	@Column(name = "last_login_ts", nullable = true)
 	private Date lastLoginTs;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "last_update_st", nullable = true)
+	private Date lastUpdateStatus;
+	
 	@OneToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 	private Nibbler nibbler;
 
@@ -185,6 +189,15 @@ public class NibblerDirectory  extends AbstractModel{
 	public void setLastLoginTs(Date lastLoginTs) {
 		this.lastLoginTs = lastLoginTs;
 	}
+
+	public Date getLastUpdateStatus() {
+		return lastUpdateStatus;
+	}
+
+	public void setLastUpdateStatus(Date lastUpdateStatus) {
+		this.lastUpdateStatus = lastUpdateStatus;
+	}
+	
 	
 	
 }

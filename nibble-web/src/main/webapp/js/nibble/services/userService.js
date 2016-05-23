@@ -101,6 +101,45 @@ app.factory('userFactory', function($http){
     userFactory.users = function(searchForm) {
         return $http.post(urlBase + '/users',searchForm);
     };
+    
+    /**
+     * Update user
+     * @param User - user form
+     * @returns {HttpPromise}
+     */
+    userFactory.update = function(user) {
+        return $http.post(urlBase + '/update',user);
+    };
+    
+    
+    /**
+     * Active user
+     * @param User - user form
+     * @returns {HttpPromise}
+     */
+    userFactory.active = function(user) {
+        return $http.post(urlBase + '/activate',user);
+    };
+    
+    
+    /**
+     * Suspend user
+     * @param User - user form
+     * @returns {HttpPromise}
+     */
+    userFactory.suspend = function(user) {
+        return $http.post(urlBase + '/suspend',user);
+    };
+    
+    
+    /**
+     * Login as user
+     * @param User - user form
+     * @returns {HttpPromise}
+     */
+    userFactory.loginAs = function(user) {
+        return $http.post(urlBase + '/loginAs',user);
+    };
 
     return userFactory;
 });

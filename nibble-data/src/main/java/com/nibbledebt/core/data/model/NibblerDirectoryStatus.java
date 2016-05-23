@@ -14,5 +14,6 @@ public enum NibblerDirectoryStatus {
 	ACTIVE_NO_ROUNDUP,
 	RESET_REQUIRED,
 	LOCKED_ATTEMPTS,
+	SUSPEND,
 	LOCKED_FRAUD;
 }

@@ -76,7 +76,7 @@ public class NibblerDao extends AbstractHibernateDao<Nibbler> implements INibble
 			cr.add(Restrictions.eq("firstName", nibbler.getFirstName()));
 		}
 		if(!StringUtils.isEmpty(nibbler.getLastName())){
-			cr.add(Restrictions.eq("lastName", nibbler.getFirstName()));
+			cr.add(Restrictions.eq("lastName", nibbler.getLastName()));
 		}
 		if(!StringUtils.isEmpty(nibbler.getEmail())){
 			cr.add(Restrictions.eq("email", nibbler.getEmail()));

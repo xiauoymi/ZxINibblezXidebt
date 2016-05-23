@@ -41,6 +41,18 @@ NibbleUtils.errorCallback = function($scope, $state, data, status) {
     };
 };
 
+
+
+NibbleUtils.pushErrorCallback = function($scope,msg_alerts, $state, data, status) {
+    if (status == 403 || status == "403") {
+        $state.go('user.login', {message: "Please LogIn."});
+    }
+    $scope[msg_alerts] = [{type:'danger', msg:data.message}];
+    $scope.closeAlert = function(index) {
+        $scope[msg_alerts].splice(index, 1);
+    };
+};
+
 NibbleUtils.checkExceptedURLs = function(url) {
     var excArray = NibbleUtils.exceptedURLs();
     for (var i=0; i < excArray.length; i++) {

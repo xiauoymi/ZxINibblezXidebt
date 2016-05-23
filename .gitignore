@@ -1,2 +1,14 @@
-/target/
-/${env:MY_ROOT}/
+.classpath
+.project
+.settings
+.springBeans
+target
+**/.classpath
+**/.project
+**/.settings
+**/.springBeans
+**/target
+/bin/
+/tomcat.8080/
+/tomcat.8081/
+/tomcat.9000/

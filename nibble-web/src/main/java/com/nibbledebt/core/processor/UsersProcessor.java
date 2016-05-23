@@ -15,15 +15,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nibbledebt.common.error.DefaultException;
 import com.nibbledebt.common.error.ProcessingException;
 import com.nibbledebt.common.notifier.Notify;
 import com.nibbledebt.common.notifier.NotifyMethod;
 import com.nibbledebt.common.notifier.NotifyType;
+import com.nibbledebt.common.security.MemberAuthentication;
+import com.nibbledebt.common.security.MemberDetails;
 import com.nibbledebt.core.data.dao.INibblerDao;
 import com.nibbledebt.core.data.dao.INibblerDirectoryDao;
 import com.nibbledebt.core.data.dao.INibblerRoleDao;
@@ -189,7 +194,7 @@ public class UsersProcessor extends AbstractProcessor {
 
 	@Transactional(readOnly = true)
 	@Cacheable(value = "nibblerCache")
-	public List<NibblerData> loadUsers(Nibbler nibb) throws RepositoryException {
+	public List<NibblerData> loadUsers(Nibbler nibb) throws DefaultException, RepositoryException {
 		List<Nibbler> nibblers = nibblerDao.find(nibb);
 		List<NibblerData> nibblerDatas = new ArrayList<NibblerData>();
 		for (Nibbler nibbler : nibblers) {
@@ -201,6 +206,18 @@ public class UsersProcessor extends AbstractProcessor {
 				mData.setEmail(nibbler.getNibblerDir().getUsername());
 				mData.setPassword(nibbler.getNibblerDir().getPassword());
 				mData.setStatus(nibbler.getNibblerDir().getStatus());
+				mData.setAddress1(nibbler.getAddressLine1());
+				mData.setAddress2(nibbler.getAddressLine2());
+				mData.setCity(nibbler.getCity());
+				mData.setZip(nibbler.getZip());
+				mData.setState(nibbler.getState());
+				mData.setPhone(nibbler.getPhone());
+				mData.setStatus(nibbler.getNibblerDir().getStatus());
+				if (nibbler.getNibblerDir().getLastUpdateStatus() != null) {
+					float diff = (new Date().getTime() - nibbler.getNibblerDir().getLastUpdateStatus().getTime()) / 1000
+							* 60 * 60 * 24;
+					mData.setSuspendedUp90(diff > 90);
+				}
 				nibblerDatas.add(mData);
 			}
 		}
@@ -208,22 +225,85 @@ public class UsersProcessor extends AbstractProcessor {
 	}
 
 	@Transactional(isolation = Isolation.READ_COMMITTED)
-	@CacheEvict(value = "nibblerCache", key = "#username")
-	public void update(NibblerData nibblerData) throws RepositoryException {
-		Nibbler entity=nibblerDao.findOne(nibblerData.getInternalUserId());
-		if(!StringUtils.equals(entity.getNibblerDir().getPassword(), nibblerData.getPassword())){
+	@CacheEvict(value = "nibblerCache")
+	public void update(NibblerData nibblerData) throws DefaultException, RepositoryException {
+		Nibbler entity = nibblerDao.findOne(nibblerData.getInternalUserId());
+		if (!StringUtils.equals(entity.getNibblerDir().getPassword(), nibblerData.getPassword())) {
 			entity.getNibblerDir().setPassword(encoder.encodePassword(String.valueOf(nibblerData.getPassword()), salt));
 		}
-		if(!StringUtils.equals(entity.getFirstName(), nibblerData.getFirstName())){
+		if (!StringUtils.equals(entity.getFirstName(), nibblerData.getFirstName())) {
 			entity.setFirstName(nibblerData.getFirstName());
 		}
-		if(!StringUtils.equals(entity.getLastName(), nibblerData.getLastName())){
+		if (!StringUtils.equals(entity.getLastName(), nibblerData.getLastName())) {
 			entity.setLastName(nibblerData.getLastName());
 		}
-		if(!StringUtils.equals(entity.getEmail(), nibblerData.getEmail())){
+		if (!StringUtils.equals(entity.getEmail(), nibblerData.getEmail())) {
 			entity.setEmail(nibblerData.getEmail());
 		}
-		
+		if (!StringUtils.equals(entity.getAddressLine1(), nibblerData.getAddress1())) {
+			entity.setAddressLine1(nibblerData.getAddress1());
+		}
+		if (!StringUtils.equals(entity.getAddressLine2(), nibblerData.getAddress2())) {
+			entity.setAddressLine2(nibblerData.getAddress2());
+		}
+		if (!StringUtils.equals(entity.getCity(), nibblerData.getCity())) {
+			entity.setCity(nibblerData.getCity());
+		}
+		if (!StringUtils.equals(entity.getState(), nibblerData.getState())) {
+			entity.setState(nibblerData.getState());
+		}
+		if (Integer.compare(entity.getZip(), nibblerData.getZip()) != 0) {
+			entity.setZip(nibblerData.getZip());
+		}
+		if (!StringUtils.equals(entity.getPhone(), nibblerData.getPhone())) {
+			entity.setPhone(nibblerData.getPhone());
+		}
+
 		nibblerDao.update(entity);
+	}
+
+	@Transactional(isolation = Isolation.READ_COMMITTED)
+	@CacheEvict(value = "nibblerCache")
+	public void suspend(NibblerData nibblerData) throws DefaultException, RepositoryException {
+		Nibbler entity = nibblerDao.findOne(nibblerData.getInternalUserId());
+		entity.getNibblerDir().setStatus(NibblerDirectoryStatus.SUSPEND.name());
+		entity.getNibblerDir().setLastUpdateStatus(new Date());
+	}
+
+	@Transactional(isolation = Isolation.READ_COMMITTED)
+	@CacheEvict(value = "nibblerCache")
+	public void activateSuspendedUser(NibblerData nibblerData) throws DefaultException, RepositoryException {
+		Nibbler entity = nibblerDao.findOne(nibblerData.getInternalUserId());
+		float diff = 0;
+		if (entity.getNibblerDir() != null)
+			diff = (new Date().getTime() - entity.getNibblerDir().getLastUpdateStatus().getTime())
+					/ (1000 * 60 * 60 * 24);
+		else
+			diff = 91;
+		if (diff > 90) {
+			entity.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
+		} else {
+			throw new DefaultException("The suspended accounts is not up to 90 days");
+		}
+	}
+
+	@Transactional(readOnly = true)
+	@Cacheable(value = "nibblerCache")
+	public MemberAuthentication loginAs(NibblerData nibblerData) throws Exception {
+		Nibbler nibbler = nibblerDao.findOne(nibblerData.getInternalUserId());
+		MemberAuthentication userAuth = new MemberAuthentication();
+		MemberDetails userDetails = new MemberDetails();
+		userDetails.setFirstName(nibbler.getFirstName());
+		userDetails.setLastName(nibbler.getLastName());
+		userDetails.setIsFirstLogin(nibbler.getNibblerDir().getLastLoginTs() == null);
+		List<GrantedAuthority> auths = new ArrayList<>();
+		for (NibblerRole role : nibbler.getNibblerDir().getRoles()) {
+			auths.add(new SimpleGrantedAuthority(role.getName()));
+		}
+		userDetails.setUsername(nibbler.getNibblerDir().getUsername());
+		userDetails.setAuthorities(auths);
+		userAuth.setAuthenticated(true);
+		userAuth.setPrincipal(userDetails);
+		return userAuth;
 	}
 }

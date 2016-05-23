@@ -70,6 +70,7 @@
         	<bean class="com.nibbledebt.common.error.ServiceExceptionMapper" />
         	<bean class="com.nibbledebt.common.error.RepositoryExceptionMapper" />
         	<bean class="com.nibbledebt.common.error.ValidationExceptionMapper" />
+        	<bean class="com.nibbledebt.common.error.DefaultExceptionMapper" />
         </jaxrs:providers>
      </jaxrs:server>
      

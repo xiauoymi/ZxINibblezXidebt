@@ -1,7 +1,61 @@
 'use strict';
 app.controller('UsersCtrl',
-    function AccountsCtrl($scope, $rootScope, $state, $stateParams, NgTableParams, userFactory) {
-		
+    function AccountsCtrl($scope, $rootScope, $state, $stateParams, NgTableParams,$modal, userFactory) {
+	
+
+	
+    $scope.states = [
+						'Alabama',
+						'Alaska',
+						'Arizona',
+						'Arkansas',
+						'California',
+						'Colorado',
+						'Connecticut',
+						'Delaware',
+						'District of Columbia',
+						'Florida',
+						'Georgia',
+						'Hawaii',
+						'Idaho',
+						'Illinois',
+						'Indiana',
+						'Iowa',
+						'Kansas',
+						'Kentucky',
+						'Louisiana',
+						'Maine',
+						'Maryland',
+						'Massachusetts',
+						'Michigan',
+						'Minnesota',
+						'Mississippi',
+						'Missouri',
+						'Montana',
+						'Nebraska',
+						'Nevada',
+						'New Hampshire',
+						'New Jersey',
+						'New Mexico',
+						'New York',
+						'North Carolina',
+						'North Dakota',
+						'Ohio',
+						'Oklahoma',
+						'Oregon',
+						'Pennsylvania',
+						'Rhode Island',
+						'South Carolina',
+						'South Dakota',
+						'Tennessee',
+						'Texas',
+						'Utah',
+						'Vermont',
+						'Virginia',
+						'Washington',
+						'West Virginia',
+						'Wisconsin',
+						'Wyoming'];
 	
 		$scope.users=[		
 //		    {firstName:"KOKO",
@@ -31,7 +85,6 @@ app.controller('UsersCtrl',
 	    
 	    $scope.cancel =  function (idx) {
 	    	$scope.users[idx]=angular.copy($scope.originalUser);
-	    	$scope.users[idx].isEditing=false;
 		}
 
 		$scope.editUser = function (user) {
@@ -39,9 +92,82 @@ app.controller('UsersCtrl',
 			user.isEditing= true;
 	    };
 	
-	    $scope.saveUser = function (idx) {
-	        console.log("Saving user");
-	        $scope.reset();
+	    $scope.saveUser = function (user) {
+	    	userFactory.update(user)
+            .success( function (data) {
+            	$scope.loadUsers();
+            })
+            .error( function (data, status) {
+                NibbleUtils.pushErrorCallback($scope,'saveUserErrors', $state, data, status);
+                var modalInstance = $modal.open({
+                    animation: true,
+                    templateUrl: 'myModalContent.html',
+                    controller: 'ModalInstanceCtrl',
+                    
+                    backdrop: 'static',
+                    resolve: {
+          	    	  saveUserErrors: function () {
+          	          return $scope.saveUserErrors;
+          	        }
+          	      }
+                });
+            })
+	    };
+	    
+	    
+	    $scope.active = function (user) {
+	    	userFactory.active(user)
+            .success( function (data) {
+            	$scope.loadUsers();
+            })
+            .error( function (data, status, headers, config, statusText ) {
+                NibbleUtils.pushErrorCallback($scope,'saveUserErrors', $state, data, status);
+                var modalInstance = $modal.open({
+                    animation: true,
+                    templateUrl: 'myModalContent.html',
+                    controller: 'ModalInstanceCtrl',
+                    
+                    backdrop: 'static',
+                    resolve: {
+          	    	  saveUserErrors: function () {
+          	          return $scope.saveUserErrors;
+          	        }
+          	      }
+                });
+            })
+	    };
+	    
+	    $scope.suspend = function (user) {
+	    	userFactory.suspend(user)
+            .success( function (data) {
+            	$scope.loadUsers();
+            })
+            .error( function (data, status) {
+                NibbleUtils.pushErrorCallback($scope,'saveUserErrors', $state, data, status);
+                var modalInstance = $modal.open({
+                    animation: true,
+                    templateUrl: 'myModalContent.html',
+                    controller: 'ModalInstanceCtrl',
+                    
+                    backdrop: 'static',
+                    resolve: {
+          	    	  saveUserErrors: function () {
+          	          return $scope.saveUserErrors;
+          	        }
+          	      }
+                });
+            })
+	    };
+	    
+	    
+	    $scope.loginAs = function (user) {
+	    	userFactory.loginAs(user)
+            .success( function (data) {
+            	$state.go('dashboard.home');
+            })
+            .error( function (data, status) {
+                NibbleUtils.pushErrorCallback($scope,'saveUserErrors', $state, data, status);
+            })
 	    };
 	    
         $scope.initCtrl = function () {
@@ -61,8 +187,8 @@ app.controller('UsersCtrl',
                 $scope.initUsersTable();
             })
             .error( function (data, status) {
-                NibbleUtils.errorCallback($scope, $state, data, status);
-            })
+                NibbleUtils.pushErrorCallback($scope,'searchFormErrors',$state, data, status);
+            });
         };
         
         $scope.initUsersTable = function () {
@@ -81,3 +207,21 @@ app.controller('UsersCtrl',
         };
         
     });
+
+
+//Please note that $uibModalInstance represents a modal window (instance) dependency.
+//It is not the same as the $uibModal service used above.
+
+app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, saveUserErrors) {
+
+$scope.saveUserErrors = saveUserErrors;
+
+
+$scope.ok = function () {
+	$modalInstance.close();
+};
+
+$scope.cancel = function () {
+	$modalInstance.dismiss('cancel');
+};
+});

@@ -76,8 +76,8 @@ public class InstitutionProcessor {
 	@PostConstruct
 	public void initInstitutions() throws BeansException, ProcessingException{
 		if(StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "heroku-dev")){
-
-			context.getBean(this.getClass()).populateInstitutions();
+			//TODO - have to remove comment and fix it
+			//context.getBean(this.getClass()).populateInstitutions();
 		}
 	}
 	

@@ -40,11 +40,11 @@
         				password-parameter="nibbler_password"
         				username-parameter="nibbler_username"/>
         
-        <sec:session-management  session-fixation-protection="newSession" invalid-session-url="/#/home?message=Your previous session has expired.">
+        <sec:session-management  session-fixation-protection="newSession" invalid-session-url="/#/login?message=Your previous session has expired.">
         	<sec:concurrency-control max-sessions="1" />
         </sec:session-management>
 <!--         <sec:csrf /> -->
- 
+ 	<sec:logout logout-success-url="/#/login" logout-url="/logout" />
 	    <!-- enable remember me -->
 	    <sec:remember-me 
 	        token-validity-seconds="1209600"

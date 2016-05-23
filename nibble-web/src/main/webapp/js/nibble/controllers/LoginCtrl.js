@@ -23,7 +23,7 @@ app.controller('LoginCtrl',
                             if (NibbleUtils.isDebug()) {
                                 console.log(dataProfile);
                             }
-                            $state.go('dashboard.home');
+                            $state.go('dashboard.users');
                         })
                         .error(function(dataProfile) {
                             console.log(dataProfile);

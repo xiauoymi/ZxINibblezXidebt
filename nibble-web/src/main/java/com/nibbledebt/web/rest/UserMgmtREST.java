@@ -19,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import com.nibbledebt.common.error.DefaultException;
 import com.nibbledebt.common.error.ProcessingException;
 import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
@@ -92,15 +93,35 @@ public class UserMgmtREST  extends AbstractREST {
 	@Path("/users")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
-	public List<NibblerData> loadUsers(Nibbler nibbler) throws ProcessingException, RepositoryException{
+	public List<NibblerData> loadUsers(Nibbler nibbler) throws DefaultException, RepositoryException{
 		return usersProcessor.loadUsers(nibbler);
 	}
 	
 	@POST
 	@Path("/update")
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
-	public void update(NibblerData nibblerData) throws ProcessingException, RepositoryException{
+	public void update(NibblerData nibblerData) throws DefaultException, RepositoryException{
 		usersProcessor.update(nibblerData);
+	}
+	
+	@POST
+	@Path("/suspend")
+	@Loggable(logLevel=LogLevel.INFO)
+	public void suspend(NibblerData nibblerData) throws DefaultException, RepositoryException{
+		usersProcessor.suspend(nibblerData);
+	}
+	
+	@POST
+	@Path("/activate")
+	@Loggable(logLevel=LogLevel.INFO)
+	public void activate(NibblerData nibblerData) throws DefaultException, RepositoryException{
+		usersProcessor.activateSuspendedUser(nibblerData);
+	}
+	
+	@POST
+	@Path("/loginAs")
+	@Loggable(logLevel=LogLevel.INFO)
+	public void loginAs(NibblerData nibblerData) throws Exception{
+		SecurityContextHolder.getContext().setAuthentication(usersProcessor.loginAs(nibblerData));
 	}
 }
