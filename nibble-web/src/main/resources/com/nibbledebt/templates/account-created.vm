@@ -309,13 +309,13 @@
 							<table width="100%" cellpadding="0" cellspacing="0" style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;">
 								<tr style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;">
 									<td class="content-block" style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;vertical-align: top;padding: 0 0 20px;">
-										Thank you for giving us a try! Get started by activating your account.
+                                        Thanks for signing up for Nibble! You’ll soon be on your way to
+                                        financial freedom! Click the link below to continue registering your account.
 									</td>
 								</tr>
 								<tr style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;">
 									<td class="content-block" style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;vertical-align: top;padding: 0 0 20px;">
-										You can activate your account using the activation step on the Android/iOS App by clicking <a href="http://nibble.college/#/activate">Activation</a>
-										You will need the following activation code (we know its long, just copy-paste it): ${activation_code}
+										<a href="http://localhost:5000/#/activate?code=${activation_code}">http://localhost:5000/#/activate?code=${activation_code}</a>
 									</td>
 								</tr>
 								<tr style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;">

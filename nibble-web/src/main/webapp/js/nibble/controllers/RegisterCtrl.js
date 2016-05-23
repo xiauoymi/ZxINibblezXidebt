@@ -231,6 +231,30 @@ app.controller('RegisterCtrl',
             };
 
             /**
+             * Confirm registration
+             */
+            $scope.confirmRegistration = function() {
+                var nibbler = $scope.createNibblerObject();
+                userFactory.registerNibbler(nibbler).success(function(data){
+                    if (NibbleUtils.isDebug()) {
+                        console.log("Register Nibbler response data : ", data);
+                    }
+                    $scope.parseRegisterResponse(data);
+
+                    $modal.open({
+                        animation: true,
+                        templateUrl: 'myModalContent.html',
+                        controller: 'ConfirmModalInstanceCtrl',
+                        backdrop: 'static'
+                    });
+
+                })
+                .error(function(data, status) {
+                    NibbleUtils.errorCallback($scope, $state, data, status);
+                });
+            };
+
+            /**
              * Finish registration process
              */
             $scope.finishRegistration = function() {
@@ -246,14 +270,6 @@ app.controller('RegisterCtrl',
                 });
             };
             
-            /**
-             * Finish registration process
-             */
-            $scope.confirmRegistration = function() {
-                var nibbler = $scope.createNibblerObject();
-                $scope.registration.condition = "registrationConfirm";
-            };
-
             $scope.createNibblerObject = function() {
                 var nibbler = {};
                 nibbler.username = $scope.newuser.username;
@@ -386,3 +402,9 @@ app.controller('RegisterCtrl',
                 return $scope.selected == undefined;
             }
         });
+
+app.controller('ConfirmModalInstanceCtrl', function ($scope, $modalInstance) {
+    $scope.ok = function () {
+        $modalInstance.close();
+    };
+});
