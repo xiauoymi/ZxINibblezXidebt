@@ -99,22 +99,24 @@ app.controller('UsersCtrl',
             })
             .error( function (data, status) {
                 NibbleUtils.pushErrorCallback($scope,'saveUserErrors', $state, data, status);
-                var modalInstance = $modal.open({
-                    animation: true,
-                    templateUrl: 'myModalContent.html',
-                    controller: 'ModalInstanceCtrl',
-                    
-                    backdrop: 'static',
-                    resolve: {
-          	    	  saveUserErrors: function () {
-          	          return $scope.saveUserErrors;
-          	        }
-          	      }
-                });
+                $scope.popupError();
             })
 	    };
 	    
-	    
+	    $scope.popupError=function(){
+	    	 $modal.open({
+                 animation: true,
+                 templateUrl: 'myModalContent.html',
+                 controller: 'ModalInstanceCtrl',
+                 
+                 backdrop: 'static',
+                 resolve: {
+       	    	  saveUserErrors: function () {
+       	          return $scope.saveUserErrors;
+       	        }
+       	      }
+             });
+	    };
 	    $scope.active = function (user) {
 	    	userFactory.active(user)
             .success( function (data) {
@@ -122,18 +124,7 @@ app.controller('UsersCtrl',
             })
             .error( function (data, status, headers, config, statusText ) {
                 NibbleUtils.pushErrorCallback($scope,'saveUserErrors', $state, data, status);
-                var modalInstance = $modal.open({
-                    animation: true,
-                    templateUrl: 'myModalContent.html',
-                    controller: 'ModalInstanceCtrl',
-                    
-                    backdrop: 'static',
-                    resolve: {
-          	    	  saveUserErrors: function () {
-          	          return $scope.saveUserErrors;
-          	        }
-          	      }
-                });
+                $scope.popupError();
             })
 	    };
 	    
@@ -144,18 +135,7 @@ app.controller('UsersCtrl',
             })
             .error( function (data, status) {
                 NibbleUtils.pushErrorCallback($scope,'saveUserErrors', $state, data, status);
-                var modalInstance = $modal.open({
-                    animation: true,
-                    templateUrl: 'myModalContent.html',
-                    controller: 'ModalInstanceCtrl',
-                    
-                    backdrop: 'static',
-                    resolve: {
-          	    	  saveUserErrors: function () {
-          	          return $scope.saveUserErrors;
-          	        }
-          	      }
-                });
+                $scope.popupError();
             })
 	    };
 	    
@@ -167,6 +147,7 @@ app.controller('UsersCtrl',
             })
             .error( function (data, status) {
                 NibbleUtils.pushErrorCallback($scope,'saveUserErrors', $state, data, status);
+                $scope.popupError();
             })
 	    };
 	    
@@ -188,6 +169,7 @@ app.controller('UsersCtrl',
             })
             .error( function (data, status) {
                 NibbleUtils.pushErrorCallback($scope,'searchFormErrors',$state, data, status);
+                //$scope.popupError();
             });
         };
         

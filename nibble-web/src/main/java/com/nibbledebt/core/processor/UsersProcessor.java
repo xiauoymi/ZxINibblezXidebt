@@ -203,7 +203,7 @@ public class UsersProcessor extends AbstractProcessor {
 				mData.setInternalUserId(nibbler.getId());
 				mData.setFirstName(nibbler.getFirstName());
 				mData.setLastName(nibbler.getLastName());
-				mData.setEmail(nibbler.getNibblerDir().getUsername());
+				mData.setEmail(nibbler.getEmail());
 				mData.setPassword(nibbler.getNibblerDir().getPassword());
 				mData.setStatus(nibbler.getNibblerDir().getStatus());
 				mData.setAddress1(nibbler.getAddressLine1());
@@ -275,15 +275,13 @@ public class UsersProcessor extends AbstractProcessor {
 	public void activateSuspendedUser(NibblerData nibblerData) throws DefaultException, RepositoryException {
 		Nibbler entity = nibblerDao.findOne(nibblerData.getInternalUserId());
 		float diff = 0;
-		if (entity.getNibblerDir() != null)
+		if (entity.getNibblerDir() != null && entity.getNibblerDir().getLastUpdateStatus()!=null)
 			diff = (new Date().getTime() - entity.getNibblerDir().getLastUpdateStatus().getTime())
 					/ (1000 * 60 * 60 * 24);
-		else
-			diff = 91;
-		if (diff > 90) {
+		if (false) {
 			entity.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
 		} else {
-			throw new DefaultException("The suspended accounts is not up to 90 days");
+			throw new DefaultException("This account has been suspended for more than 90 days. Please have them create a new account.");
 		}
 	}
 

@@ -5,22 +5,23 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.auth.PropertiesCredentials;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AWSJavaMailTransport;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
+import com.amazonaws.services.simpleemail.model.Body;
+import com.amazonaws.services.simpleemail.model.Content;
+import com.amazonaws.services.simpleemail.model.Destination;
 import com.amazonaws.services.simpleemail.model.ListVerifiedEmailAddressesResult;
+import com.amazonaws.services.simpleemail.model.Message;
+import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.amazonaws.services.simpleemail.model.VerifyEmailAddressRequest;
+import com.amazonaws.services.simpleemail.model.VerifyEmailIdentityRequest;
 import com.nibbledebt.common.error.NotificationException;
 
 @Component()
@@ -47,54 +48,49 @@ public class AWSMailSao {
         AmazonSimpleEmailService ses = new AmazonSimpleEmailServiceClient(credentials);
 
         verifyEmailAddress(ses, FROM);
-
-		/*
-		 * Setup JavaMail to use the Amazon Simple Email Service by specifying
-		 * the "aws" protocol.
-		 */
-		Properties props = new Properties();
-		props.setProperty("mail.transport.protocol", "aws");
-
-        /*
-         * Setting mail.aws.user and mail.aws.password are optional. Setting
-         * these will allow you to send mail using the static transport send()
-         * convince method.  It will also allow you to call connect() with no
-         * parameters. Otherwise, a user name and password must be specified
-         * in connect.
-         */
-        props.setProperty("mail.aws.user", "AKIAJCUEGJLQGVM4NGFQ");
-        props.setProperty("mail.aws.password", "tcb0TrTFoSa8BTXTTRBK6QmD0sMFtli1iG0jpzVW");
-
-        Session session = Session.getInstance(props);
-
-        try {
-            // Create a new Message
-            Message msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress(FROM));
-            msg.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail.get(0)));
-            msg.setSubject(subject);
-            msg.setContent(content, "text/html");
-            msg.saveChanges();
-
-            // Reuse one Transport object for sending all your messages
-            // for better performance
-            Transport t = new AWSJavaMailTransport(session, null);
-            t.connect();
-            t.sendMessage(msg, null);
-
-            // Close your transport when you're completely done sending
-            // all your messages
-            t.close();
-        } catch (AddressException e) {
-            e.printStackTrace();
-            System.out.println("Caught an AddressException, which means one or more of your "
-                    + "addresses are improperly formatted.");
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            System.out.println("Caught a MessagingException, which means that there was a "
-                    + "problem sending your message to Amazon's E-mail Service check the "
-                    + "stack trace for more information.");
+       // verifyEmailAddress(ses, toEmail.get(0));
+        
+     // Construct an object to contain the recipient address.
+        Destination destination = new Destination().withToAddresses(toEmail);
+        
+        // Create the subject and body of the message.
+        Content textBody = new Content().withData(content); 
+        Body body = new Body().withHtml(textBody);
+        
+        // Create a message with the specified subject and body.
+        Message message = new Message().withSubject(new Content().withData(subject)).withBody(body);
+        // Assemble the email.
+        SendEmailRequest request = new SendEmailRequest().withSource(FROM).withDestination(destination).withMessage(message);
+        
+        try
+        {        
+            System.out.println("Attempting to send an email through Amazon SES by using the AWS SDK for Java...");
+        
+            // Instantiate an Amazon SES client, which will make the service call. The service call requires your AWS credentials. 
+            // Because we're not providing an argument when instantiating the client, the SDK will attempt to find your AWS credentials 
+            // using the default credential provider chain. The first place the chain looks for the credentials is in environment variables 
+            // AWS_ACCESS_KEY_ID and AWS_SECRET_KEY. 
+            // For more information, see http://docs.aws.amazon.com/AWSSdkDocsJava/latest/DeveloperGuide/credentials.html
+            //AmazonSimpleEmailServiceClient client = new AmazonSimpleEmailServiceClient();
+               
+            // Choose the AWS region of the Amazon SES endpoint you want to connect to. Note that your sandbox 
+            // status, sending limits, and Amazon SES identity-related settings are specific to a given AWS 
+            // region, so be sure to select an AWS region in which you set up Amazon SES. Here, we are using 
+            // the US West (Oregon) region. Examples of other regions that Amazon SES supports are US_EAST_1 
+            // and EU_WEST_1. For a complete list, see http://docs.aws.amazon.com/ses/latest/DeveloperGuide/regions.html 
+            Region REGION = Region.getRegion(Regions.US_EAST_1);
+            ses.setRegion(REGION);
+       
+            // Send the email.
+            ses.sendEmail(request);  
+            System.out.println("Email sent!");
         }
+        catch (Exception ex) 
+        {
+            System.out.println("The email was not sent.");
+            System.out.println("Error message: " + ex.getMessage());
+        }
+    
     }
 
     /**

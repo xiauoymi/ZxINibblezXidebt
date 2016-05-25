@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -73,18 +74,18 @@ public class NibblerDao extends AbstractHibernateDao<Nibbler> implements INibble
 	public List<Nibbler> find(Nibbler nibbler) throws RepositoryException {
 		Criteria cr = this.getCurrentSession().createCriteria(Nibbler.class);
 		if(!StringUtils.isEmpty(nibbler.getFirstName())){
-			cr.add(Restrictions.eq("firstName", nibbler.getFirstName()));
+			cr.add(Restrictions.ilike("firstName", nibbler.getFirstName()+"%"));
 		}
 		if(!StringUtils.isEmpty(nibbler.getLastName())){
-			cr.add(Restrictions.eq("lastName", nibbler.getLastName()));
+			cr.add(Restrictions.ilike("lastName", nibbler.getLastName()+"%"));
 		}
 		if(!StringUtils.isEmpty(nibbler.getEmail())){
-			cr.add(Restrictions.eq("email", nibbler.getEmail()));
+			cr.add(Restrictions.ilike("email", nibbler.getEmail()+"%"));
 		}
 		if(!StringUtils.isEmpty(nibbler.getPhone())){
-			cr.add(Restrictions.eq("phone", nibbler.getPhone()));
+			cr.add(Restrictions.ilike("phone", nibbler.getPhone()+"%"));
 		}
-		
+		cr.addOrder(Order.asc("lastName"));
 		return cr.list();
 	}
 

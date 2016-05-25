@@ -838,21 +838,6 @@ html.sb-static .sb-slidebar,
 .table {
   margin-top: 20px;
 }
-.table thead tr th {
-  background: #fa8e09;
-  color: #ffffff;
-  font-family: 'Ubuntu', sans-serif;
-  font-size: 1em;
-}
-.table tbody tr .odd {
-  background: rgba(151, 187, 205, 0.5);
-}
-.table tbody tr .even {
-  background: rgba(151, 187, 205, 0.5);
-}
-.table tbody tr td {
-  font-size: 1.1em;
-}
 .pagination > .active > a,
 .pagination > .active > span,
 .pagination > .active > a:hover,
@@ -861,8 +846,8 @@ html.sb-static .sb-slidebar,
 .pagination > .active > span:focus {
   z-index: 2;
   color: #ffffff;
-  background-color: rgba(250, 142, 9, 0.7) !important;
-  border-color: #fa8e09 !important;
+  background-color: #5bc0de !important;
+  border-color: #5bc0de !important;
   cursor: default;
 }
 .dataTables_paginate {
@@ -3308,11 +3293,11 @@ th {
   padding: 8px;
   line-height: 1.42857143;
   vertical-align: top;
-  border-top: 1px solid #dddddd;
+  border-top: 1px solid #333333;
 }
 .table > thead > tr > th {
   vertical-align: bottom;
-  border-bottom: 2px solid #dddddd;
+  border-bottom: 2px solid #333333;
 }
 .table > caption + thead > tr:first-child > th,
 .table > colgroup + thead > tr:first-child > th,
@@ -3323,7 +3308,7 @@ th {
   border-top: 0;
 }
 .table > tbody + tbody {
-  border-top: 2px solid #dddddd;
+  border-top: 2px solid #333333;
 }
 .table .table {
   background-color: #ffffff;
@@ -3337,7 +3322,7 @@ th {
   padding: 5px;
 }
 .table-bordered {
-  border: 1px solid #dddddd;
+  border: 1px solid #333333;
 }
 .table-bordered > thead > tr > th,
 .table-bordered > tbody > tr > th,
@@ -3345,7 +3330,7 @@ th {
 .table-bordered > thead > tr > td,
 .table-bordered > tbody > tr > td,
 .table-bordered > tfoot > tr > td {
-  border: 1px solid #dddddd;
+  border: 1px solid #333333;
 }
 .table-bordered > thead > tr > th,
 .table-bordered > thead > tr > td {
@@ -9456,4 +9441,36 @@ button.close {
 	margin-right:-2px; 
 	position: relative; 
 	top: -0.8em;
+}
+
+
+/** Editable table ust3000
+------------------------- */
+
+.demoTable td:last-child {
+  min-width: 90px;
+}
+
+
+
+.editable-table > tbody > tr > td {
+  padding: 4px
+}
+.editable-text {
+  padding-left: 4px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  display: inline-block;
+}
+.editable-table tbody > tr > td > .controls {
+  //width: 100%
+}
+.editable-input {
+  padding-left: 3px;
+}
+.editable-input.input-sm {
+  height: 30px;
+  font-size: 14px;
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
