@@ -29,7 +29,8 @@ import javax.persistence.TemporalType;
 @NamedQueries({
 	@NamedQuery(name="findInstitutionByName", query="from Institution i where i.supportedInstitution.displayName = :name"),
 	@NamedQuery(name="findInstitutionBySupportedInstitution", query="from Institution i where i.supportedInstitution = :supportedInstitutionId"),
-	@NamedQuery(name="findInstitutionByType", query="from Institution i where i.supportedInstitution.type = :type"),
+	@NamedQuery(name="findByExternalId", query="from Institution i where i.supportedInstitution.externalId = :externalId"),
+	@NamedQuery(name="findInstitutionByType", query="from Institution i where i.supportedInstitution.type = :type "),
 	@NamedQuery(name="findInstitutionByTypeAndTestModeSupport", query="from Institution i where i.supportedInstitution.supportsTestMode = true and i.supportedInstitution.type= :type")
 })
 @Entity()
@@ -54,7 +55,7 @@ public class Institution extends AbstractModel {
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="institution", orphanRemoval=true)
 	private List<Field> fields;
 	
-	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumn(name="supported_institution_id", updatable=true, nullable=false)
 	private SupportedInstitution supportedInstitution;
 

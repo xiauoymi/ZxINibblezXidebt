@@ -26,7 +26,6 @@
 		<module>nibble-common</module>
 		<module>nibble-notification</module>
 		<module>nibble-cad-client</module>
-		<module>nibble-payments</module>
 	</modules>
 	
 	<dependencies>
@@ -333,11 +332,10 @@
                         <id>copy-dependencies</id>
                         <phase>package</phase>
                         <goals><goal>copy-dependencies</goal></goals>
+                        
 		                <configuration>
 		                  	<outputDirectory>${project.basedir}/target/lib</outputDirectory>
-		                <excludeTransitive>true</excludeTransitive>
 		                </configuration>
-		                
                     </execution>
                 </executions>
             </plugin>

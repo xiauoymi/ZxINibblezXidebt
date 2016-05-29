@@ -17,5 +17,7 @@ public interface ISupportedInstitutionDao extends IDao<SupportedInstitution>{
 	SupportedInstitution findByType(String type) throws RepositoryException;
 
 	SupportedInstitution findByTestModeSupport(String type) throws RepositoryException;
+	
+	SupportedInstitution findByExternlId(String type) throws RepositoryException;
 
 }

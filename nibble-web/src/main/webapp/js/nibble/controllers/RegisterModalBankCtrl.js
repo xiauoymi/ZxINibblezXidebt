@@ -1,9 +1,10 @@
 'use strict';
 app.controller('RegisterModalBankCtrl',
-    function RegisterModalBankCtrl($scope, $modalInstance, clickedBank) {
+    function RegisterModalBankCtrl($scope, $modalInstance, clickedBank,user,submitFunction) {
         $scope.bank = clickedBank;
         $scope.institutionParams = [];
-
+        $scope.user=user;
+        $scope.submitFunction=submitFunction;
         var mas = clickedBank.loginForm.loginField;
         var filtered = [];
 
@@ -15,6 +16,7 @@ app.controller('RegisterModalBankCtrl',
 
         var ordered = [];
         var sortFlag = false;
+
         for (var j = 0; j < filtered.length; j++) {
             if (filtered[j].displayOrder != null) {
                 ordered[(filtered[j].displayOrder - 1)] = filtered[j];
@@ -32,7 +34,8 @@ app.controller('RegisterModalBankCtrl',
         $scope.keys = ordered;
 
         $scope.ok = function () {
-            $modalInstance.close($scope.bank);
+             $scope.submitFunction($scope.bank,$scope.user.email);
+            //$modalInstance.close($scope.bank);
         };
 
         $scope.cancel = function () {
@@ -56,4 +59,3 @@ app.controller('RegisterModalBankCtrl',
         };
 
     });
-

@@ -202,7 +202,7 @@ public class TransactionProcessor extends AbstractProcessor{
 		return wtrxs;
 	}
 	
-	@Scheduled(fixedDelay=60000)
+	@Scheduled(fixedDelay=6000000)
 	@Loggable(logLevel=LogLevel.INFO)
 	@Transactional(propagation=Propagation.REQUIRES_NEW, isolation=Isolation.READ_COMMITTED)
 	public void calculateTransactionRoundups() throws ProcessingException, RepositoryException{

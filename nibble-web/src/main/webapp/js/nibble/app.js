@@ -48,7 +48,8 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 controller: "RegisterCtrl",
                 data: {
                     requireLogin: false
-                }
+                },
+                params: {user:null,activate:false }
             })
             .state('user.activation', {
                 url: "/activate",

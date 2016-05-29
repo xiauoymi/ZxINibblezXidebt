@@ -55,6 +55,17 @@ public class SupportedInstitutionDao extends AbstractHibernateDao<SupportedInsti
 			  throw new RepositoryException(e);
 		}
 	}
+
+	@Override
+	public SupportedInstitution findByExternlId(String externalId) throws RepositoryException {
+		try {
+			Query query = this.getCurrentSession().getNamedQuery("findSupportedInstitutionByExternalId");
+			query.setString("externalId", externalId);
+			return (SupportedInstitution)query.uniqueResult();
+		} catch (Exception e) {
+			  throw new RepositoryException(e);
+		}
+	}
 	
 	
 }

@@ -12,7 +12,7 @@
   padding-bottom: 10px;
 }
 .login-panel > .panel-heading {
-  color: #fa8e09;
+  color: #89C4F4;
   background-color: rgba(250, 255, 129, 0.5);
   border-color: rgba(250, 255, 129, 0.5);
 }
@@ -21,7 +21,7 @@
 }
 .login-panel > .panel-heading .badge {
   color: rgba(250, 255, 129, 0.5);
-  background-color: #fa8e09;
+  background-color: #89C4F4;
 }
 .login-panel > .panel-footer + .panel-collapse > .panel-body {
   border-bottom-color: none;
@@ -193,7 +193,7 @@ body,
   padding-bottom: 0 0 0 0;
   text-align: center;
   width: auto;
-  border-bottom: 1px solid #fa8e09 !important;
+  border-bottom: 1px solid #89C4F4 !important;
   background: rgba(250, 142, 9, 0.1);
 }
 .logo-header {
@@ -226,7 +226,7 @@ body,
   vertical-align: middle;
 }
 .logo-punch {
-  color: #fa8e09;
+  color: #89C4F4;
   text-align: center;
   font-family: Raleway;
   font-size: 25px;
@@ -243,8 +243,8 @@ body,
 }
 .btn-nibble-primary {
   color: #ffffff;
-  background-color: #fa8e09;
-  border-color: #fa8e09;
+  background-color: #89C4F4;
+  border-color: #89C4F4;
 }
 .btn-nibble-primary:hover,
 .btn-nibble-primary:focus,
@@ -253,8 +253,8 @@ body,
 .btn-nibble-primary.active,
 .open > .dropdown-toggle.btn-nibble-primary {
   color: #ffffff;
-  background-color: #cc7204;
-  border-color: #c26d04;
+  background-color: rgb(95, 176, 243);
+  border-color: rgb(95, 176, 243);
 }
 .btn-nibble-primary:active,
 .btn-nibble-primary.active,
@@ -279,11 +279,11 @@ fieldset[disabled] .btn-nibble-primary:active,
 .btn-nibble-primary.disabled.active,
 .btn-nibble-primary[disabled].active,
 fieldset[disabled] .btn-nibble-primary.active {
-  background-color: #fa8e09;
-  border-color: #fa8e09;
+  background-color: #89C4F4;
+  border-color: #89C4F4;
 }
 .btn-nibble-primary .badge {
-  color: #fa8e09;
+  color: #89C4F4;
   background-color: #ffffff;
 }
 h1 {
@@ -295,7 +295,7 @@ hr {
   width: auto;
   margin-left: auto;
   margin-right: auto;
-  border-top: 1px solid #fa8e09 !important;
+  border-top: 1px solid #89C4F4 !important;
 }
 .parsley-error {
   background-color: #f2dede !important;
@@ -339,7 +339,7 @@ hr {
   top: 10px;
   -webkit-transition: -webkit-transform 200ms, all 200ms;
   transition: -webkit-transform 200ms, all 200ms;
-  background-color: #fa8e09;
+  background-color: #89C4F4;
 }
 .navicon-animated span:before,
 .navicon-animated span:after {
@@ -351,7 +351,7 @@ hr {
   content: '';
   -webkit-transition: -webkit-transform 200ms, top 200ms;
   transition: transform 200ms, top 200ms;
-  background-color: #fa8e09;
+  background-color: #89C4F4;
 }
 .navicon-animated span:before {
   top: -8px;
@@ -496,12 +496,12 @@ footer {
   text-decoration: none;
 }
 .sb-slidebar a:hover {
-  color: #fa8e09;
+  color: #89C4F4;
   /* Link hover colour. */
   text-decoration: underline;
 }
 .sb-slidebar a.active {
-  color: #fa8e09;
+  color: #89C4F4;
   /* Link hover colour. */
   text-decoration: underline;
 }
@@ -596,14 +596,14 @@ img.img-me {
   color: #DEDEDE;
 }
 .sb-slidebar ul.sb-nav li a:hover {
-  color: #fa8e09;
+  color: #89C4F4;
   text-decoration: none;
 }
 .sb-slidebar ul.sb-nav li span:hover {
-  color: #fa8e09;
+  color: #89C4F4;
 }
 .sb-slidebar ul.sb-nav li a.active {
-  color: #fa8e09;
+  color: #89C4F4;
   text-decoration: none;
 }
 /* Anchor Links */
@@ -821,7 +821,7 @@ html.sb-static .sb-slidebar,
   border-radius: 5px;
 }
 .dash-panel > .panel-heading {
-  color: #fa8e09;
+  color: #89C4F4;
   background-color: rgba(250, 255, 129, 0.5);
   border-color: rgba(250, 255, 129, 0.5);
 }
@@ -830,7 +830,7 @@ html.sb-static .sb-slidebar,
 }
 .dash-panel > .panel-heading .badge {
   color: rgba(250, 255, 129, 0.5);
-  background-color: #fa8e09;
+  background-color: #89C4F4;
 }
 .dash-panel > .panel-footer + .panel-collapse > .panel-body {
   border-bottom-color: none;
@@ -856,7 +856,7 @@ html.sb-static .sb-slidebar,
 }
 .dataTables_paginate li .active {
   background: rgba(250, 142, 9, 0.5);
-  color: #fa8e09;
+  color: #89C4F4;
 }
 .dataTables_paginate .paginate_button :hover {
   background: rgba(250, 142, 9, 0.2);
@@ -1032,11 +1032,11 @@ html.sb-static .sb-slidebar,
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
   /* the inverse circle "cut" */
-  background-image: -moz-radial-gradient(0px 50%, /* the -23px left position varies by your "gap" */ circle closest-corner, /* keep radius to half height */ transparent 0, /* transparent at center */ transparent 45px, /*transparent at edge of gap */ transparent 0px, /* start circle "border" */ #fa8e09 57px /* end circle border and begin color of rest of background */);
-  background-image: -webkit-radial-gradient(50%, circle closest-side, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 118px, rgba(0, 0, 0, 0) 0, #fa8e09 120px);
-  background-image: -ms-radial-gradient(50%, circle closest-corner, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 118px, rgba(0, 0, 0, 0) 0, #fa8e09 120px);
-  background-image: -o-radial-gradient(50%, circle closest-corner, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 118px, rgba(0, 0, 0, 0) 0, #fa8e09 120px);
-  background-image: radial-gradient(50%, circle closest-corner, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 118px, rgba(0, 0, 0, 0) 0, #fa8e09 120px);
+  background-image: -moz-radial-gradient(0px 50%, /* the -23px left position varies by your "gap" */ circle closest-corner, /* keep radius to half height */ transparent 0, /* transparent at center */ transparent 45px, /*transparent at edge of gap */ transparent 0px, /* start circle "border" */ #89C4F4 57px /* end circle border and begin color of rest of background */);
+  background-image: -webkit-radial-gradient(50%, circle closest-side, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 118px, rgba(0, 0, 0, 0) 0, #89C4F4 120px);
+  background-image: -ms-radial-gradient(50%, circle closest-corner, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 118px, rgba(0, 0, 0, 0) 0, #89C4F4 120px);
+  background-image: -o-radial-gradient(50%, circle closest-corner, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 118px, rgba(0, 0, 0, 0) 0, #89C4F4 120px);
+  background-image: radial-gradient(50%, circle closest-corner, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 118px, rgba(0, 0, 0, 0) 0, #89C4F4 120px);
 }
 /*! normalize.css v3.0.2 | MIT License | git.io/normalize */
 html {

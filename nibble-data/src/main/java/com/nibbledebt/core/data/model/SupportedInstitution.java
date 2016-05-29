@@ -26,7 +26,8 @@ import javax.persistence.UniqueConstraint;
 @NamedQueries({
 	@NamedQuery(name="findSupportedInstitutionByDisplayName", query="from SupportedInstitution i where i.displayName = :displayName"),
 	@NamedQuery(name="findSupportedInstitutionByType", query="from SupportedInstitution i where i.type = :type"),
-	@NamedQuery(name="findSupportedInstitutionByTypeAndTestModeSupport", query="from SupportedInstitution i where i.supportsTestMode = true and i.type= :type")
+	@NamedQuery(name="findSupportedInstitutionByTypeAndTestModeSupport", query="from SupportedInstitution i where i.supportsTestMode = true and i.type= :type"),
+	@NamedQuery(name="findSupportedInstitutionByExternalId", query="from SupportedInstitution i where i.externalId= :externalId")
 })
 @Entity()
 @Table(	name="supported_institution",
@@ -60,7 +61,7 @@ public class SupportedInstitution extends AbstractModel {
 	private String aggregatorQualifier;
 	
 	@Column(name="priority", nullable=false)
-	private Short priority = 1;
+	private Short priority;
 	
 	@Column(name="logo_code", nullable=false, length=20)
 	private String logoCode;
@@ -151,6 +152,9 @@ public class SupportedInstitution extends AbstractModel {
 	 * @return the priority
 	 */
 	public Short getPriority() {
+		if(priority==null){
+			return 1;
+		}
 		return priority;
 	}
 

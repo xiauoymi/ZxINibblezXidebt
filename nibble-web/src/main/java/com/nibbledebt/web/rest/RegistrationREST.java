@@ -170,6 +170,13 @@ public class RegistrationREST extends AbstractREST {
 	}
 	
 	@GET
+	@Path("/searchInstitutions/{search}")
+	@Loggable(logLevel=LogLevel.INFO)
+	public List<Bank> getApiBanksByName(@PathParam("search") String search) throws ProcessingException, ServiceException{
+		return instService.getApiBanks(search);
+	}
+	
+	@GET
 	@Path("/loans")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)

@@ -95,7 +95,7 @@ public class InstitutionPopulator implements RunnableAsync<SupportedInstitution>
 		
 	}
 	
-	private void convertToFields(List<LoginField> loginFields, com.nibbledebt.core.data.model.Institution inst){
+	static void convertToFields(List<LoginField> loginFields, com.nibbledebt.core.data.model.Institution inst){
 		List<com.nibbledebt.core.data.model.Field> fields = new ArrayList<>();
 		for(LoginField loginField : loginFields){
 			Field field = new Field();

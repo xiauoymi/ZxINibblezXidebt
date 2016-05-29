@@ -4,7 +4,6 @@
 package com.nibbledebt.common.error;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 
 /**
@@ -19,7 +18,7 @@ public class ProcessingExceptionMapper implements
 	 */
 	@Override
 	public Response toResponse(ProcessingException arg0) {
-		return Response.status(502).entity(arg0.getMessage()).build();
+		return Response.status(502).entity(arg0).build();
 	}
 
 }

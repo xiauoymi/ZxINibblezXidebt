@@ -19,7 +19,7 @@ public class ValidationExceptionMapper implements
 	 */
 	@Override
 	public Response toResponse(ValidationException arg0) {
-		return Response.status(Status.BAD_REQUEST).entity(arg0.getMessage()).build();
+		return Response.status(Status.BAD_REQUEST).entity(arg0).build();
 	}
 
 }

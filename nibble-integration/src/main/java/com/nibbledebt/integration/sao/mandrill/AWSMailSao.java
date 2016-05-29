@@ -3,15 +3,13 @@ package com.nibbledebt.integration.sao.mandrill;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
 
-
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
-import com.amazonaws.services.simpleemail.AWSJavaMailTransport;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
 import com.amazonaws.services.simpleemail.model.Body;
@@ -21,13 +19,12 @@ import com.amazonaws.services.simpleemail.model.ListVerifiedEmailAddressesResult
 import com.amazonaws.services.simpleemail.model.Message;
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.amazonaws.services.simpleemail.model.VerifyEmailAddressRequest;
-import com.amazonaws.services.simpleemail.model.VerifyEmailIdentityRequest;
 import com.nibbledebt.common.error.NotificationException;
 
 @Component()
 public class AWSMailSao {
     private static final String FROM = "tyler@nibbledebt.com";
-
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(AWSMailSao.class);
     /**
      * Send email using the AWS service.
      * 
@@ -64,7 +61,7 @@ public class AWSMailSao {
         
         try
         {        
-            System.out.println("Attempting to send an email through Amazon SES by using the AWS SDK for Java...");
+            LOG.info("Attempting to send an email through Amazon SES by using the AWS SDK for Java...");
         
             // Instantiate an Amazon SES client, which will make the service call. The service call requires your AWS credentials. 
             // Because we're not providing an argument when instantiating the client, the SDK will attempt to find your AWS credentials 
@@ -83,12 +80,12 @@ public class AWSMailSao {
        
             // Send the email.
             ses.sendEmail(request);  
-            System.out.println("Email sent!");
+            LOG.info("Email sent!");
         }
         catch (Exception ex) 
         {
-            System.out.println("The email was not sent.");
-            System.out.println("Error message: " + ex.getMessage());
+            LOG.info("The email was not sent.");
+            LOG.info("Error message: " + ex.getMessage());
         }
     
     }
@@ -109,7 +106,7 @@ public class AWSMailSao {
         if (verifiedEmails.getVerifiedEmailAddresses().contains(address)) return;
 
         ses.verifyEmailAddress(new VerifyEmailAddressRequest().withEmailAddress(address));
-        System.out.println("Please check the email address " + address + " to verify it");
-        System.exit(0);
+        LOG.info("Please check the email address " + address + " to verify it");
+        //System.exit(0);
     }
 }

@@ -55,9 +55,8 @@ public class MemberAuthenticationProvider implements AuthenticationProvider {
 							"The username/password you have entered is incorrect.") {
 						private static final long serialVersionUID = 89758937555L;
 					};
-				} else if(StringUtils.equals(nibbler.getPassword(), 
-									encoder.encodePassword(String.valueOf(authentication.getCredentials()),
-									salt)) && !nibbler.getStatus().equalsIgnoreCase(NibblerDirectoryStatus.ACTIVE.name())){
+					//TODO StringUtils.equals(nibbler.getPassword(), encoder.encodePassword(String.valueOf(authentication.getCredentials()),salt))
+				} else if(true && !nibbler.getStatus().equalsIgnoreCase(NibblerDirectoryStatus.ACTIVE.name())){
 					  if(StringUtils.equals(nibbler.getStatus(), NibblerDirectoryStatus.RESET_REQUIRED.name())){
 							throw new AuthenticationException(
 									"This password on this account needs to be reset.") {

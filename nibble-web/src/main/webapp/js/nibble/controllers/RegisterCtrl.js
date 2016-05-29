@@ -6,6 +6,7 @@ app.controller('RegisterCtrl',
              * init data and watchers
              */
             $scope.initData = function() {
+            	
                 $scope.registration = {};
                 $scope.newuser = {
                     email: "",
@@ -88,12 +89,17 @@ app.controller('RegisterCtrl',
                         }
                     }
                 });
+            
+            if($stateParams.activate){
+           		$scope.activate=$stateParams.activate;
+           		$scope.initLinkAccount("linkAccount");
+           	}
+           	if($stateParams.user)
+           	$scope.user=$stateParams.user;
             };
             /* init alerts */
             NibbleUtils.initAlerts($scope, $stateParams.message);
 
-            /* init data */
-            $scope.initData();
 
             /**
              * show second registration form
@@ -113,7 +119,7 @@ app.controller('RegisterCtrl',
              * back to link account
              */
             $scope.backToLinkAccount = function() {
-                $scope.registration.condition = "linkAccount";
+                $scope.initLinkAccount("linkAccount");
             };
 
             /**
@@ -189,25 +195,71 @@ app.controller('RegisterCtrl',
             /**
              * Show form for link account
              */
-            $scope.linkAccount = function() {
+            $scope.initLinkAccount = function(step) {
             	$scope.linkaccount = {};
             	$scope.linkaccount.search ="";
-            	
-                accountFactory.getInstitutions().success(function(data) {
-                    var items = data;
-                    for (var i=0; i<items.length; i++) {
-                        items[i].institution.logoUrl = NibbleUtils.getServicesUrl() + "/rest/logo/" +
-                        window.encodeURIComponent(items[i].institution.logoCode);
+            	$scope.registration.condition = step;
+                accountFactory.getInstitutions().then(function(data) {
+                    let items = data.data;
+                    let length=items.length<6?items.length:6;
+                    for (let i=0; i<length; i++) {
+                    	if(items[i].institution.logoCode){
+                            if(items[i].institution.logoCode.match('genericbank')){
+                                items[i].institution.defaultLogo=true;
+                            }
+                    		items[i].institution.logoUrl = NibbleUtils.getServicesUrl() + "/rest/logo/" +
+                            window.encodeURIComponent(items[i].institution.logoCode);	
+                    	}
                     }
                     $scope.banks = items;
-                    $scope.registration.condition = "linkAccount";
-                })
-                .error(function (data, status) {
-                        NibbleUtils.errorCallback($scope, $state, data, status);
+                },function (data, status) {
+                		NibbleUtils.errorCallback($scope, $state, data, status);
                 });
 
             };
-            
+
+            $scope.addRoundupAccount=function(bank,email){
+                accountFactory.updateRoundupAccount({roundupAccountBank:bank,email:email}).then(function(data){
+                   $scope.initLinkAccount("loanAccount");
+                },function (data, status) {
+                        NibbleUtils.errorCallback($scope, $state, data, status);
+                });
+            };
+
+            $scope.addLoanAccount=function(bank,email){
+                accountFactory.updateLoanAccount({updateLoanAccountBank:bank,email:email}).then(function(data){
+                   $scope.initLinkAccount("registrationConfirm");
+                },function (data, status) {
+                        NibbleUtils.errorCallback($scope, $state, data, status);
+                });
+            };
+
+            $scope.searchInstitutions = function() {
+                accountFactory.searchInstitutions($scope.linkaccount.search).then(function(data) {
+                    let items = data.data;
+                    let length=items.length<10?items.length:10;
+                    for (let i=0; i<length; i++) {
+                        if(items[i].institution.logoCode){
+                            if(items[i].institution.logoCode.match('genericbank')){
+                                items[i].institution.defaultLogo=true;
+                            }
+                            items[i].institution.logoUrl = NibbleUtils.getServicesUrl() + "/rest/logo/" +
+                            window.encodeURIComponent(items[i].institution.logoCode);   
+                        }
+                    }
+                    $scope.banks = items;
+                },function (data, status) {
+                        NibbleUtils.errorCallback($scope, $state, data, status);
+                });               
+
+            };
+
+            $scope.autoCompletSearch=function(){
+                 if($scope.linkaccount.search.length>3){
+                     $scope.searchInstitutions();
+                }
+            }
+
             /**
              * Show form for link account
              */
@@ -215,16 +267,15 @@ app.controller('RegisterCtrl',
             	$scope.loanaccount = {};
             	$scope.loanaccount.search ="";
             	
-                accountFactory.getInstitutions().success(function(data) {
-                    var items = data;
+                accountFactory.getInstitutions().then(function(data) {
+                    var items = data.data;
                     for (var i=0; i<items.length; i++) {
                         items[i].institution.logoUrl = NibbleUtils.getServicesUrl() + "/rest/logo/" +
                         window.encodeURIComponent(items[i].institution.logoCode);
                     }
                     $scope.banks = items;
                     $scope.registration.condition = "loanAccount";
-                })
-                .error(function (data, status) {
+                },function (data, status) {
                         NibbleUtils.errorCallback($scope, $state, data, status);
                 });
 
@@ -235,7 +286,7 @@ app.controller('RegisterCtrl',
              */
             $scope.confirmRegistration = function() {
                 var nibbler = $scope.createNibblerObject();
-                userFactory.registerNibbler(nibbler).success(function(data){
+                userFactory.registerNibbler(nibbler).then(function(data){
                     if (NibbleUtils.isDebug()) {
                         console.log("Register Nibbler response data : ", data);
                     }
@@ -248,8 +299,8 @@ app.controller('RegisterCtrl',
                         backdrop: 'static'
                     });
 
-                })
-                .error(function(data, status) {
+                }
+                ,function(data, status) {
                     NibbleUtils.errorCallback($scope, $state, data, status);
                 });
             };
@@ -259,13 +310,12 @@ app.controller('RegisterCtrl',
              */
             $scope.finishRegistration = function() {
                 var nibbler = $scope.createNibblerObject();
-                userFactory.registerNibbler(nibbler).success(function(data){
+                userFactory.registerNibbler(nibbler).then(function(data){
                     if (NibbleUtils.isDebug()) {
                         console.log("Register Nibbler response data : ", data);
                     }
                     $scope.parseRegisterResponse(data);
-                })
-                    .error(function(data, status) {
+                },function(data, status) {
                         NibbleUtils.errorCallback($scope, $state, data, status);
                 });
             };
@@ -329,11 +379,10 @@ app.controller('RegisterCtrl',
                 nibbler.mfaQuestion = $scope.registration.mfa.mfaQuestion;
                 nibbler.mfaAnswer = $scope.registration.mfa.mfaAnswer;
 
-                userFactory.submitMfa(nibbler).success(function(data){
+                userFactory.submitMfa(nibbler).then(function(data){
                     console.log(data);
                     $scope.parseRegisterResponse(data);
-                })
-                    .error(function(data, status) {
+                },function(data, status) {
                         NibbleUtils.errorCallback($scope, $state, data, status);
                     });
             };
@@ -344,7 +393,7 @@ app.controller('RegisterCtrl',
              * Open modal form with institution credentials form
              * @param bankIndex
              */
-            $scope.clickModal = function(bankIndex) {
+            $scope.clickModal = function(bankIndex,submitFunction) {
                 var bank = $scope.banks[bankIndex];
                 if (bank) {
                     if (bank.loginForm.loginField != null && bank.loginForm.loginField.length > 0) {
@@ -357,6 +406,12 @@ app.controller('RegisterCtrl',
                             resolve: {
                                 clickedBank: function () {
                                     return bank;
+                                },
+                                user:function(){
+                                    return $scope.user;
+                                },
+                                submitFunction:function(){
+                                    return submitFunction;
                                 }
                             }
                         });
@@ -372,6 +427,7 @@ app.controller('RegisterCtrl',
                 } else {
                     $scope.msg_alerts= [{type:'danger', msg:"Ops! contact with administrator (variable 'bank' is undefined)"}];
                 }
+            
             };
 
             /**
@@ -401,6 +457,10 @@ app.controller('RegisterCtrl',
             $scope.isBankNotSelected = function() {
                 return $scope.selected == undefined;
             }
+            
+
+            /* init data */
+            $scope.initData();
         });
 
 app.controller('ConfirmModalInstanceCtrl', function ($scope, $modalInstance) {

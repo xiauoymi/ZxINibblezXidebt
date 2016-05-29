@@ -18,5 +18,6 @@ public interface IInstitutionDao extends IDao<Institution> {
 	List<Institution> findByType(String type) throws RepositoryException;
 	Institution find(String instName, String externalId)  throws RepositoryException;
 	Institution findBySupportedInstitution(Long supportedInstitutionId) throws RepositoryException;
+	Institution findByExternalId(Long externalId) throws RepositoryException;
 	List<Institution> findByTestModeSupport(String type) throws RepositoryException;
 }

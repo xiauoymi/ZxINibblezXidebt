@@ -37,13 +37,3 @@ INSERT INTO supported_institution(supported_institution_id, created_ts, created_
 INSERT INTO supported_institution(supported_institution_id, created_ts, created_user, aggregator_name, display_name, external_id, logo_code, name, priority, type, aggregator_qualifier, supports_test_mode)  VALUES (37, now(), 'sysuser', 'finicity', 'Fin Bank', '101732', 'logo_finbank', 'FinBank', 2, 'test', 'finicitySao', true);
 
 
-
-INSERT INTO nibbler (nibbler_id, created_ts, created_user, updated_ts, updated_user, address_line_1, address_line_2, city, email, ext_acct_access_token, first_name, invitation_code, last_name, phone, state, type, zip, receiver_id) VALUES (4, '2016-05-18 23:39:16.352', 'admin@admin.com', NULL, NULL, 'admin', 'admin', 'admin', 'admin@admin.com', NULL, 'admin', NULL, 'admin', NULL, 'Arizona', 'starter', 12345, NULL);
-INSERT INTO nibbler (nibbler_id, created_ts, created_user, updated_ts, updated_user, address_line_1, address_line_2, city, email, ext_acct_access_token, first_name, invitation_code, last_name, phone, state, type, zip, receiver_id) VALUES (7, '2016-05-18 23:40:08.451', 'ust3000@hotmail.com', NULL, NULL, 'admin', 'admin', 'admin', 'ust3000@hotmail.com', NULL, 'admin', NULL, 'admin', NULL, 'Arizona', 'starter', 12345, NULL);
-INSERT INTO nibbler_directory (nibbler_directory_id, created_ts, created_user, updated_ts, updated_user, activation_code, last_login_ts, password, reset_code, status, username, nibbler_nibbler_id) VALUES (8, '2016-05-18 23:40:08.451', 'ust3000@hotmail.com', NULL, NULL, '823688', NULL, '7616a4a36254e9f1d3fd8b5803f9d919b96631789fb1dbcf6f9fd27335c1acf0', NULL, 'ACTIVE', 'ust3000@hotmail.com', 7);
-INSERT INTO nibbler_directory (nibbler_directory_id, created_ts, created_user, updated_ts, updated_user, activation_code, last_login_ts, password, reset_code, status, username, nibbler_nibbler_id) VALUES (5, '2016-05-18 23:39:16.352', 'admin@admin.com', NULL, NULL, '328811', '2016-05-19 00:19:55.53', '7616a4a36254e9f1d3fd8b5803f9d919b96631789fb1dbcf6f9fd27335c1acf0', NULL, 'ACTIVE', 'admin@admin.com', 4);
-INSERT INTO nibbler_directory_role (nibbler_directory_id, nibbler_role_id) VALUES (5, -1);
-INSERT INTO nibbler_directory_role (nibbler_directory_id, nibbler_role_id) VALUES (8, -1);
-INSERT INTO nibbler_role (nibbler_role_id, created_ts, created_user, updated_ts, updated_user, description, name) VALUES (-1, '2016-05-18 23:39:16.352', 'admin', NULL, NULL, NULL, 'nibbler_level_1');
-
-

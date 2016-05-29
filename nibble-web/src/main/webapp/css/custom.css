@@ -99,3 +99,8 @@ input.ng-invalid.ng-dirty{
     font-weight: 100;
     line-height: 1;
 }
+
+.post-content {
+    top:10;
+    position: absolute;
+}

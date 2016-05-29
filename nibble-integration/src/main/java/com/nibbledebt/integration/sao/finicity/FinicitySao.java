@@ -55,6 +55,18 @@ public class FinicitySao implements IIntegrationSao{
 		}
 	}
 	
+	public List<Institution>  getInstitutions(String search,Integer start,Integer limit) throws ServiceException {
+		List<Institution> institutions = new ArrayList<>();
+		try {
+			for(com.nibbledebt.integration.finicity.model.Institution finst : Arrays.asList(finicityClient.getInstitutions(search,start,limit).getInstitution())){
+				institutions.add(integrationMapper.map(finst, Institution.class));
+			}
+			return institutions;
+		} catch (Exception e) {
+			throw new ServiceException("Error while retrieving the supported institutions from Finicity.", e);
+		}
+	}
+	
 	public Institution getInstitution(String institutionIdentifier) throws ServiceException {
 		try {
 			return integrationMapper.map(finicityClient.getInstitution(institutionIdentifier), Institution.class);

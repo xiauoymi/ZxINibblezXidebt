@@ -8,7 +8,7 @@ app.controller('ActivateCtrl', function ActivateCtrl($scope, $state, userFactory
         $scope.activation = {};
         $scope.activation.condition = "default";
         $scope.user = {};
-        var code = NibbleUtils.getParameterByName("acode");
+        var code = NibbleUtils.getParameterByName("code");
         if (code != "") {
             $scope.user.activationCode = code;
         }
@@ -45,6 +45,13 @@ app.controller('ActivateCtrl', function ActivateCtrl($scope, $state, userFactory
     };
 
     $scope.initData();
+    
+    /**
+     * Redirects user into account, to the linking bank account flow
+     */
+    $scope.goToAccountLinking = function(){
+    	$state.go('user.register',{user:$scope.user,activate:true});
+    };
 
 
 });

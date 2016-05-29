@@ -1,0 +1,1 @@
+web: java -Xms128M -Xmx512M  -DWEBAPP_DIR=nibble-web\src\main\webapp\ -Dspring.profiles.active=embedded-local,postgres-local   -cp nibble-web\target\classes;target\lib\* com.nibbledebt.app.TomcatMain

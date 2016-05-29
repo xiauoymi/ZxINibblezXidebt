@@ -21,7 +21,7 @@
         <alert class="text-center" ng-repeat="alert in msg_alerts" type="{{alert.type}}" close="closeAlert($index)">
             {{alert.msg}}
         </alert>
-
+		
         <div ng-switch-default>
             <br/>
         	<div class="line">
@@ -32,7 +32,7 @@
 			</div>
 			<br/>
             <div class="form-group">
-                <h4 class="form-primary-heading">Enter your information:</h4>
+                <h4 class="form-primary-heading">Enter your information {{activate}} dd {{registration.condition}}:</h4>
             </div>
             <div class="form-group">
                 <input
@@ -201,9 +201,12 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-4 banks"
-                         ng-repeat="bank in banks">
-                        <img ng-src="{{bank.institution.logoUrl}}" class="img-responsive nibble-institution-logo"
-                             ng-click="clickModal($index)">
+                         ng-repeat="bank in banks" >
+                        <img ng-src="{{bank.institution.logoUrl}}" title="{{bank.institution.name}}" class="img-responsive nibble-institution-logo"
+                             ng-click="clickModal($index,addRoundupAccount)">
+                              <div ng-show="::bank.institution.defaultLogo" class="caption post-content">
+                             <p align="center">{{bank.institution.name}}</p>
+                             </div>
                     </div>
                 </div>
             </div>
@@ -212,7 +215,7 @@
                         type="text" class="form-control empty"
                         placeholder="&#xf015;    Search"
                         name="city" required
-                        ng-model="linkaccount.search"
+                        ng-model="linkaccount.search" ng-keypress="autoCompletSearch()"
                         xt-validation-tooltip>
             </div>
             <div class="form-group text-center">
@@ -220,9 +223,9 @@
                         ng-click="backToForm1()">
                     <i class="fa fa-md font-color-white"></i> Cancel
                 </button>
-                <button class="btn btn-lg-cus btn-nibble-primary "
-                        ng-click="linkAccount()"
-                        ng-disabled="invalidRegisterForm2()">
+                <button class="btn btn-sm-cus btn-nibble-primary"
+                        ng-click="searchInstitutions()"
+                        ng-disabled="linkaccount.search.length>0">
                     Submit <i
                         class="fa fa-md pull-right font-color-white"></i>
                 </button>
@@ -239,8 +242,8 @@
         	<div class="line">
 	        	<span class="step1 badge">1</span>
 	        	<span class="step2 badge">2</span>
-	        	<span class="step3 badge badge-info">3</span>
-				<span class="step4 badge">4</span>
+	        	<span class="step3 badge">3</span>
+				<span class="step4 badge badge-info">4</span>
 			</div>
 			<br/>
             <div class="form-group">
@@ -255,9 +258,12 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-4 banks"
-                         ng-repeat="bank in banks">
-                        <img ng-src="{{bank.institution.logoUrl}}" class="img-responsive nibble-institution-logo"
-                             ng-click="clickModal($index)">
+                         ng-repeat="bank in banks" >
+                        <img ng-src="{{bank.institution.logoUrl}}" title="{{bank.institution.name}}" class="img-responsive nibble-institution-logo"
+                             ng-click="clickModal($index,addLoanAccount)">
+                              <div ng-show="::bank.institution.defaultLogo" class="caption post-content">
+                             <p align="center">{{bank.institution.name}}</p>
+                             </div>
                     </div>
                 </div>
             </div>
@@ -266,7 +272,7 @@
                         type="text" class="form-control empty"
                         placeholder="&#xf015;    Search"
                         name="city" required
-                        ng-model="loadaccount.search"
+                        ng-model="linkaccount.search" ng-keypress="autoCompletSearch()"
                         xt-validation-tooltip>
             </div>
             <div class="form-group text-center">
@@ -538,36 +544,50 @@
 
     <script type="text/ng-template" id="registermodal.html">
 
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <div id="modal-title-div">
-                <h4 class="modal-title">{{bank.institutionName}} Authentication Information Required </h4>
-            </div>
-        </div>
         <div class="modal-body">
+        <div class="row">
+        <div class="col-md-12 text-center center-block">
+        <img ng-src="{{bank.institution.logoUrl}}" title="{{bank.institution.name}}" style="height: 150px; width: 150px;">
+        </div>
+        <div class="col-md-12">
             <form name="institution.form"
                   class="form-primary" novalidate
                   xt-form strategy="focusedAndDirtyOrSubmitted"
                   focus-error="true" role="form">
-                <div class="form-group" ng-repeat="key in keys">
-                    <input type="{{fieldType(key)}}" class="form-control empty"
-                           placeholder="{{fieldPlaceholder(key)}}"
-                           value=""
+                  <div class="row">
+                   <div class="form-group">
+            <h5 class="form-primary-heading pull-left">Insert {{fieldPlaceholder(keys[0])}} for your {{bank.institution.name}}</h5>
+        </div>
+                <div class="form-group" ng-repeat="key in keys track by $index">
+                <div class="form-group" ng-show="keys[$index]">
+                    <input ng-hide="::keys[$index].value" type="{{fieldType(key)}}" class="form-control empty"
+                           placeholder="&#xf023;    {{fieldPlaceholder(key)}}"
+                           value="$index"
                            name="{{key.name}}" required
                            ng-model="keys[$index].value"
                            xt-validation-tooltip>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+</div>
+  <div ng-show="::keys[$index].mask" class="form-group">
+      <div class="pull-left">
+        <label>
+          <input  type="checkbox" ng-click="key.mask=!key.mask"> Show {{fieldPlaceholder(key)}}
+        </label>
+      </div>
+  </div>
+                            </div>
+                            </div>
+            <div class="form-group">           
             <button id="registration_form3_modal_save" type="button"
                     class="btn btn-nibble-primary" ng-disabled="invalidModalForm()" ng-click="ok()">Connect Securely
             </button>
+             <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
         </div>
+
+            </form>
+            </div>
+            </div>
+        </div>
+       
 
 
     </script>

@@ -27,7 +27,7 @@ public class AccountTypeDao extends AbstractHibernateDao<AccountType> implements
 			query.setString("code", code);
 			return (AccountType)query.uniqueResult();
 		} catch (Exception e) {
-			  throw new RepositoryException(e);
+			  return null;
 		}
 	}
 }

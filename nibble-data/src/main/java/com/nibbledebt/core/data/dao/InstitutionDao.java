@@ -83,6 +83,17 @@ public class InstitutionDao extends AbstractHibernateDao<Institution> implements
 			  throw new RepositoryException(e);
 		}
 	}
+
+	@Override
+	public Institution findByExternalId(Long externalId) throws RepositoryException {
+		try {
+			Query query = this.getCurrentSession().getNamedQuery("findByExternalId");
+			query.setString("externalId", ""+externalId);
+			return (Institution)query.uniqueResult();
+		} catch (Exception e) {
+			  throw new RepositoryException(e);
+		}
+	}
 	
 	
 	

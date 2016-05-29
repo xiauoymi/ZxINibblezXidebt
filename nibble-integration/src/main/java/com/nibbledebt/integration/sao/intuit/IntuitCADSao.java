@@ -213,4 +213,10 @@ public class IntuitCADSao implements IIntegrationSao {
            throw new ServiceException("Error while retrieving transactions for customer with customerId["+customerId+"] and accountId["+accountId+"].", e);
        }
 	}
+
+	@Override
+	public List<Institution> getInstitutions(String search, Integer start, Integer limit) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
