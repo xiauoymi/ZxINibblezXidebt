@@ -53,9 +53,10 @@ public class RegistrationREST extends AbstractREST {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
 	@Validatable() //TODO - write custom validator
-	public void activate(NibblerData nibblerData) throws ProcessingException, ServiceException,
+	public NibblerData activate(NibblerData nibblerData) throws ProcessingException, ServiceException,
             RepositoryException, ValidationException{
 		regService.activateNibbler(nibblerData);
+		return nibblerData;
 	}
 	
 	@POST
@@ -77,7 +78,7 @@ public class RegistrationREST extends AbstractREST {
 	@Validatable() //TODO - write custom validator
 	public AddAccountsResponse addLoanAccount(NibblerData nibblerData) throws ProcessingException, ServiceException,
             RepositoryException, ValidationException{
-		return regService.addLoanAccount(nibblerData, nibblerData.getEmail());
+			return regService.addLoanAccount(nibblerData, nibblerData.getEmail());
 	}
 	
 	@POST
@@ -88,7 +89,7 @@ public class RegistrationREST extends AbstractREST {
 	@Validatable() //TODO - write custom validator
 	public AddAccountsResponse addRoudnupAccount(NibblerData nibblerData) throws ProcessingException, ServiceException,
             RepositoryException, ValidationException{
-		return regService.addRoundupAccount(nibblerData, nibblerData.getEmail());
+			return regService.addRoundupAccount(nibblerData, nibblerData.getEmail());
 	}
 	
     @POST

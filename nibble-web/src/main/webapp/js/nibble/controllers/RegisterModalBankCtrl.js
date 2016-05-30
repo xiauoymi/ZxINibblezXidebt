@@ -35,7 +35,7 @@ app.controller('RegisterModalBankCtrl',
 
         $scope.ok = function () {
              $scope.submitFunction($scope.bank,$scope.user.email);
-            //$modalInstance.close($scope.bank);
+             $modalInstance.close();
         };
 
         $scope.cancel = function () {

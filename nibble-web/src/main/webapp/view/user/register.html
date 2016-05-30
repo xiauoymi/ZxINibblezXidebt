@@ -32,7 +32,7 @@
 			</div>
 			<br/>
             <div class="form-group">
-                <h4 class="form-primary-heading">Enter your information {{activate}} dd {{registration.condition}}:</h4>
+                <h4 class="form-primary-heading">Enter your information :</h4>
             </div>
             <div class="form-group">
                 <input
@@ -281,8 +281,8 @@
                     <i class="fa fa-md font-color-white"></i> Cancel
                 </button>
                 <button class="btn btn-lg-cus btn-nibble-primary "
-                        ng-click="linkAccount()"
-                        ng-disabled="invalidRegisterForm2()">
+                        ng-click="searchInstitutions()"
+                        ng-disabled="linkaccount.search.length>0">
                     Submit <i
                         class="fa fa-md pull-right font-color-white"></i>
                 </button>
@@ -295,47 +295,59 @@
             </div>
         </div>
         <div ng-switch-when="registrationConfirm">
-        	<br/>
-        	<div class="line">
-	        	<span class="step1 badge">1</span>
-	        	<span class="step2 badge">2</span>
-	        	<span class="step3 badge">3</span>
-				<span class="step4 badge badge-info">4</span>
-			</div>
 			<br/>
 			<div class="form-group text-center">
                 <h4 class="form-primary-heading">Review your info</h4>
             </div>
-            <div class="row text-center">
+            <div class="row text-center" style="border-radius: 25px;border: 2px solid #89C4F4;">
                 <div class="col-md-12">
-                    <p>First Name:{{newuser.firstName}}</p>
+                    <p>First Name:{{user.firstName}}</p>
                 </div>
                 <div class="col-md-12">
-                    <p>Last Name:{{newuser.lastName}}</p>
+                    <p>Last Name:{{user.lastName}}</p>
                 </div>
                 <div class="col-md-12">
-                    <p>Email Address:{{newuser.email}}</p>
+                    <p>Email Address:{{user.email}}</p>
                 </div>
                 <div class="col-md-12">
                     <p>Password:Confirmed Match</p>
                 </div>
                 <div class="col-md-12">
-                    <p>Address:{{newuser.address1}}</p>
+                    <p>Address:{{user.address1}}</p>
                 </div>
                 <div class="col-md-12">
-                    <p>City:{{newuser.city}}</p>
+                    <p>City:{{user.city}}</p>
                 </div>
                 <div class="col-md-12">
-                    <p>States:{{newuser.state}}</p>
+                    <p>States:{{user.state}}</p>
                 </div>
                 <div class="col-md-12">
-                    <p>Zip Code:{{newuser.zip}}</p>
+                    <p>Zip Code:{{user.zip}}</p>
                 </div>
                 <div class="col-md-12">
-                    <p>Phone #:{{newuser.phone}}</p>
+                    <p>Phone #:{{user.phone}}</p>
                 </div>
+                <div ng-repeat="funding in roundupAccount.data.accounts.account" class="col-md-12">
+                    <p>Funding Account :********{{showAccountNumber(funding.accountNumber)}}</p>
+                </div>
+                <div ng-repeat="loan in loanAccount.data.accounts.account" class="col-md-12">
+                    <p>Funding Account :********{{showAccountNumber(loan.accountNumber)}}</p>
+                </div> 
+                <div class="col-md-12">
+                    <p>Referral Code :*****</p>
+                </div>              
             </div>
             <hr/>
+            <div class="form-group text-center">
+                <button class="btn btn-sm-cus btn-nibble-primary"
+                        ng-click="backToForm1()">
+                    Edit <i class="fa fa-md font-color-white"></i>
+                </button>
+                <button class="btn btn-sm-cus btn-nibble-primary"
+                        ng-click="registration.condition='registrationFinish'">
+                    Continue <i class="fa fa-md font-color-white"></i>
+                </button>
+            </div>            
             <div class="row">
                 <div class="col-md-offset-1 col-md-10">
                     <small><a href="" ng-click="goToLogin()"><i class="fa fa-arrow-left"></i> Back to login</a></small>
@@ -343,17 +355,10 @@
             </div>
         </div>
         <div ng-switch-when="registrationFinish">
-        	<br/>
-        	<div class="line">
-	        	<span class="step1 badge">1</span>
-	        	<span class="step2 badge">2</span>
-	        	<span class="step3 badge">3</span>
-				<span class="step4 badge badge-info">4</span>
-			</div>
-			<br/>
             <div class="row">
-                <div class="col-md-12">
-                    <p>Congratulations! Your Nibble Account was successfully
+                <div class="col-md-12" style="border-radius: 25px;border: 2px solid #89C4F4;">
+                    <h1 class="form-primary-heading text-center">Congratulations!</h1>
+                    <p>Your Nibble Account was successfully
                         created. Please check your email for instructions on how to
                         activate your account.</p>
                 </div>

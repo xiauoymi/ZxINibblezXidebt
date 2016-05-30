@@ -139,6 +139,7 @@ app.controller('RegisterCtrl',
              * @returns {boolean|FormController.$invalid|*|ngModel.NgModelController.$invalid|context.ctrl.$invalid}
              */
             $scope.invalidRegisterForm2 = function() {
+                if($scope.registration.condition="registrationForm2")
                 return $scope.registration.form.address1.$invalid ||
                         $scope.registration.form.address2.$invalid ||
                         $scope.registration.form.city.$invalid ||
@@ -220,6 +221,7 @@ app.controller('RegisterCtrl',
 
             $scope.addRoundupAccount=function(bank,email){
                 accountFactory.updateRoundupAccount({roundupAccountBank:bank,email:email}).then(function(data){
+                   $scope.roundupAccount=data; 
                    $scope.initLinkAccount("loanAccount");
                 },function (data, status) {
                         NibbleUtils.errorCallback($scope, $state, data, status);
@@ -227,8 +229,9 @@ app.controller('RegisterCtrl',
             };
 
             $scope.addLoanAccount=function(bank,email){
-                accountFactory.updateLoanAccount({updateLoanAccountBank:bank,email:email}).then(function(data){
-                   $scope.initLinkAccount("registrationConfirm");
+                accountFactory.updateLoanAccount({loanAccountBank:bank,email:email}).then(function(data){
+                     $scope.loanAccount=data; 
+                   $scope.registration.condition ="registrationConfirm";
                 },function (data, status) {
                         NibbleUtils.errorCallback($scope, $state, data, status);
                 });
@@ -255,15 +258,15 @@ app.controller('RegisterCtrl',
             };
 
             $scope.autoCompletSearch=function(){
-                 if($scope.linkaccount.search.length>3){
+                 if($scope.linkaccount && $scope.linkaccount.search && $scope.linkaccount.search.length>3){
                      $scope.searchInstitutions();
                 }
             }
 
             /**
-             * Show form for link account
+             * Show form for loan account
              */
-            $scope.loanAccount = function() {
+            $scope.initLoanAccount = function() {
             	$scope.loanaccount = {};
             	$scope.loanaccount.search ="";
             	
@@ -345,6 +348,10 @@ app.controller('RegisterCtrl',
                 return nibbler;
             };
 
+            $scope.showAccountNumber= function(x){
+                if(x.length>3)
+                return x.substring(x.length-4,x.length-1);
+            };
             /**
              * parse response and forward
              */

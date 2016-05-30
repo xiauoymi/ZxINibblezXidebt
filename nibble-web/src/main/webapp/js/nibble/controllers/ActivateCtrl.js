@@ -37,6 +37,7 @@ app.controller('ActivateCtrl', function ActivateCtrl($scope, $state, userFactory
     $scope.activateAccount = function () {
         userFactory.activate($scope.user)
             .success(function (data) {
+                $scope.user=data;
                 $scope.activation.condition = "activated";
             })
             .error(function (data, status) {

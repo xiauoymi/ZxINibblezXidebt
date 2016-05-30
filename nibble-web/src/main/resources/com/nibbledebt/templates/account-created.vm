@@ -315,7 +315,7 @@
 								</tr>
 								<tr style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;">
 									<td class="content-block" style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;vertical-align: top;padding: 0 0 20px;">
-										<a href="http://localhost:5000/#/activate?code=${activation_code}">http://localhost:5000/#/activate?code=${activation_code}</a>
+										<a href="http://http://nibble.college/#/activate?code=${activation_code}">http://localhost:5000/#/activate?code=${activation_code}</a>
 									</td>
 								</tr>
 								<tr style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;">

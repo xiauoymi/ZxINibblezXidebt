@@ -120,7 +120,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     public void activateNibbler(NibblerData nibblerData) throws ProcessingException, RepositoryException, ServiceException {
         //Nibbler nibbler = nibblerDao.findOne(nibblerData.getInternalUserId());
     	Nibbler nibbler = nibblerDao.find(nibblerData.getEmail());
-        if (nibbler == null) {
+        try{
+    	if (nibbler == null) {
             throw new ProcessingException("The username you have provided does not exist.");
         }
         if (StringUtils.equals(nibbler.getNibblerDir().getStatus(), NibblerDirectoryStatus.CREATED.name())) {
@@ -186,12 +187,22 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
         	if(!nibbler.getAccounts().isEmpty()){
         		throw new ProcessingException("Already active!");
         	}
+        }}catch (Exception e){
+        	throw new ProcessingException("Unexpected error trying to activate customer account.");
         }
+        nibblerData.setFirstName(nibbler.getFirstName());
+        nibblerData.setLastName(nibbler.getLastName());
+        nibblerData.setAddress1(nibbler.getAddressLine1());
+        nibblerData.setAddress2(nibbler.getAddressLine2());
+        nibblerData.setState(nibbler.getState());
+        nibblerData.setZip(nibbler.getZip());
+        nibblerData.setCity(nibbler.getCity());
+        nibblerData.setPhone(nibbler.getPhone());
     }
     
     private AddAccountsResponse addLoanAccount(NibblerData nibblerData, Nibbler nibbler) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
 		if(nibblerData.getLoanAccountBank()!=null){
-			Institution loanAccountInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getLoanAccountBank().getInstitution().getId()));
+			Institution loanAccountInstitution = institutionDao.findByExternalId(Long.valueOf(nibblerData.getLoanAccountBank().getInstitution().getId()));
 			if(loanAccountInstitution==null){
 				loanAccountInstitution=createInstitution(nibblerData.getLoanAccountBank());
 			}
@@ -238,7 +249,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		if(nibblerData.getRoundupAccountBank()!=null){
 			AddAccountsResponse overallResponse = new AddAccountsResponse();
 			    try {				
-					Institution roundupAccountInstitution = institutionDao.findOne(Long.valueOf(nibblerData.getRoundupAccountBank().getInstitution().getId()));
+					Institution roundupAccountInstitution = institutionDao.findByExternalId(Long.valueOf(nibblerData.getRoundupAccountBank().getInstitution().getId()));
 				    if(roundupAccountInstitution==null){
 				    	roundupAccountInstitution=createInstitution(nibblerData.getRoundupAccountBank());
 				    }
@@ -297,6 +308,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	if(username == null){
 			throw new ValidationException("The user id must be provided to add a loan account process.");
 		}
+    	try{
     	if (nibblerData.getLoanAccountBank() != null && nibblerData.getLoanAccountBank().getInstitution() != null) {
             if (externalAuthReqsValid(nibblerData.getLoanAccountBank())) {
             	Nibbler nibbler = nibblerDao.find(username);
@@ -312,7 +324,9 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
             }
         } else {
             throw new ValidationException("Financial institution not available.");
-        }
+        }} catch (Exception e) {
+			throw new ValidationException("Error while adding loan account, please contact support.");
+		}
 	}
     
     @Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.DEFAULT, rollbackFor=RepositoryException.class)
@@ -320,7 +334,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	if(username == null){
 			throw new ValidationException("The user id must be provided to add a roundup account.");
 		}
-    	
+    	try{
     	if (nibblerData.getRoundupAccountBank() != null && nibblerData.getRoundupAccountBank().getInstitution() != null) {
             if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
             	Nibbler nibbler = nibblerDao.find(username);
@@ -336,7 +350,11 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
             }
         } else {
             throw new ValidationException("Financial institution not available.");
-        }
+        }}
+    	catch (Exception e) {
+			throw new ValidationException("Error while adding account, please contact support.");
+		}
+		
 	}
     
     @Transactional()
@@ -472,7 +490,6 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	try {
 	    	Nibbler nibbler = nibblerDao.findOne(nibblerData.getInternalUserId());
 	    	for (Account account : accounts.getAccount()) {
-	    		System.out.println("account.getAccountType()==>"+account.getAccountType());
 	    		AccountType accountType = accountTypeDao.find(account.getAccountType());
 	            if (accountType == null) {
 	                accountType = new AccountType();
@@ -612,6 +629,9 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		supportedInstitution.setPriority(Short.valueOf("1"));
 		supportedInstitution.setLogoCode(bank.getInstitution().getLogoCode());
 		supportedInstitution.setSupportsTestMode(false);
+		supportedInstitution.setCreatedUser("sysscheduler");
+		supportedInstitution.setCreatedTs(new Date());
+		supportedInstitution.setType(bank.getInstitution().getType());
 		supportedInstitutionDao.saveOrUpdate(supportedInstitution);
 		LoginForm loginForm = bank.getLoginForm();
 		if(loginForm == null){
@@ -621,7 +641,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		com.nibbledebt.core.data.model.Institution persistedInstitution = new com.nibbledebt.core.data.model.Institution();
 		persistedInstitution.setHomeUrl(bank.getInstitution().getHomeUrl());
 		persistedInstitution.setCreatedTs(new Date());
-		persistedInstitution.setCreatedUser("sysuser");
+		persistedInstitution.setCreatedUser("sysscheduler");
 		persistedInstitution.setLastSyncedTs(new Date());
 		persistedInstitution.setSupportedInstitution(supportedInstitution);
 		InstitutionPopulator.convertToFields(loginForm.getLoginField(), persistedInstitution);

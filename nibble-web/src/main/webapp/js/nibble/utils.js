@@ -35,10 +35,15 @@ NibbleUtils.errorCallback = function($scope, $state, data, status) {
     if (status == 403 || status == "403") {
         $state.go('user.login', {message: "Please LogIn."});
     }
-    if(data.message){
+    if(data && data.data && data.data.message){
+        $scope.msg_alerts = [{type:'danger', msg:data.data.message}];
+    }
+    else if(data.message){
     	$scope.msg_alerts = [{type:'danger', msg:data.message}];
-    }else{
+    }else if(data){
     	$scope.msg_alerts = [{type:'danger', msg:data}];
+    }else{
+        $scope.msg_alerts = [{type:'danger', msg:"Error while processing, please contact support!"}];
     }
     $scope.closeAlert = function(index) {
         $scope.msg_alerts.splice(index, 1);

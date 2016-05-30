@@ -43,6 +43,7 @@ import com.nibbledebt.core.data.model.TransactionCategory;
 import com.nibbledebt.domain.model.Transaction;
 import com.nibbledebt.domain.model.TransactionSummary;
 import com.nibbledebt.integration.sao.IIntegrationSao;
+import com.nibbledebt.integration.sao.mandrill.AWSMailSao;
 
 /**
  * @author Rocky Alam
@@ -65,6 +66,9 @@ public class TransactionProcessor extends AbstractProcessor{
 	@Autowired
 	@Qualifier("finicitySao")
 	private IIntegrationSao integrationSao;
+	
+	@Autowired
+	private AWSMailSao awsMailSao;
 	
 	@Autowired
 	private ITransactionCategoryDao trxCatDao;
@@ -230,10 +234,12 @@ public class TransactionProcessor extends AbstractProcessor{
 		//TODO create a payment event from source to destination for the week
 	}
 	
-//	@Scheduled(fixedDelay=60000)
+	@Scheduled(cron="0 0 3 * * ?")
 	@Loggable(logLevel=LogLevel.INFO)
 	@Transactional(propagation=Propagation.REQUIRES_NEW, isolation=Isolation.READ_COMMITTED)
 	public void pullTrxs() throws ProcessingException, ServiceException, RepositoryException{
+		StringBuilder faildTxAccount=new StringBuilder("Failed transaction download : ");
+		boolean isFailed=false;
 		try {
 			List<NibblerAccount> accts = nibblerAcctDao.findAll();	
 
@@ -241,6 +247,7 @@ public class TransactionProcessor extends AbstractProcessor{
 			Long fromDate = toDate-5184000000l; //60 days
 			for(NibblerAccount acct : accts){
 				if(acct.getUseForRounding()){
+					try{
 					List<Transaction> extTrxs = integrationSao.retrieveTransactions(acct.getNibbler().getExtAccessToken(), acct.getExternalId(), acct.getLastTransactionPull()==null ? new Date(fromDate) : acct.getLastTransactionPull(), new Date(toDate), "desc");
 					for(Transaction trx : extTrxs){
 						AccountTransaction atrx = new AccountTransaction();
@@ -271,16 +278,27 @@ public class TransactionProcessor extends AbstractProcessor{
 						atrx.setLocation(location);
 						acct.getTransactions().add(atrx);
 					}
-					acct.setLastTransactionPull(new Date((toDate/1000)*1000));
+					acct.setLastTransactionPull(new Date(toDate));
 
 					setUpdated(acct, SYS_USER);
 					nibblerAcctDao.update(acct);
+					}catch(Exception e){
+						isFailed=true;
+						faildTxAccount.append("<br>-").append(acct.getNibbler().getFirstName()).append(" ").append(acct.getNibbler().getLastName());
+					}
 				}
 				
+			}
+			if(isFailed){
+				faildTxAccount.append("<br>Best regards,");
+				List<String> toEmail=new ArrayList<String>();
+				toEmail.add("m.boutaskiouine@gmail.com");
+				awsMailSao.sendEmail("Failed transaction download", faildTxAccount.toString(), toEmail);
 			}
 		} catch (Exception e) {
 			throw new ProcessingException("Error while processing transactions.", e);
 		}
+		calculateTransactionRoundups();
 	}
 	
 	@Loggable(logLevel=LogLevel.INFO)

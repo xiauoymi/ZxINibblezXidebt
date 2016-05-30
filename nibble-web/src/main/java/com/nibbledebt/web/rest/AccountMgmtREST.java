@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.nibbledebt.common.error.ProcessingException;
+import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.common.security.MemberDetails;
@@ -135,5 +136,12 @@ public class AccountMgmtREST extends AbstractREST {
 	@PreAuthorize("hasRole('nibbler_level_1')")
 	public void updateLoanAcct(Long acctountId) throws ProcessingException, RepositoryException{
 		accountsProcessor.updateLoanAccount(getCurrentUser(), acctountId);
+	}
+	
+	@GET
+	@Path("/pullTx")
+	@Loggable(logLevel=LogLevel.INFO)
+	public void pullTx() throws ProcessingException, RepositoryException, ServiceException{
+		 trxsProcessor.pullTrxs();
 	}
 }

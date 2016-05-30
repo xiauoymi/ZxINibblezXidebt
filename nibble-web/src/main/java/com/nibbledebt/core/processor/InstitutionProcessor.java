@@ -266,27 +266,30 @@ public class InstitutionProcessor {
 	@Cacheable(value = "instCache", unless = "#result == null")
 	@Transactional(readOnly = true)
 	public List<Bank> getApiBanks(String search) throws ProcessingException, ServiceException {
-		IIntegrationSao integrationSao = (IIntegrationSao) context.getBean("finicitySao");
-		List<Institution> institutions = integrationSao.getInstitutions(search, 1, 10);
 		List<Bank> result = new ArrayList<Bank>();
-		institutions.forEach(institution -> {
-			Bank bank = new Bank();
-			try {
-				bank.setLoginForm(integrationSao.getInstitutionLoginForm(institution.getId()));
-				if (institution.getLogoCode() == null) {
-					SupportedInstitution supportedInstitution = supportedInstitutionDao
-							.findByExternlId(institution.getId());
-					institution.setLogoCode(supportedInstitution.getLogoCode() == null ? "genericbank"
-							: supportedInstitution.getLogoCode());
+		try {
+			IIntegrationSao integrationSao = (IIntegrationSao) context.getBean("finicitySao");
+			List<Institution> institutions = integrationSao.getInstitutions(search, 1, 10);
+			institutions.forEach(institution -> {
+				Bank bank = new Bank();
+				try {
+					bank.setLoginForm(integrationSao.getInstitutionLoginForm(institution.getId()));
+					if (institution.getLogoCode() == null) {
+						SupportedInstitution supportedInstitution = supportedInstitutionDao
+								.findByExternlId(institution.getId());
+						institution.setLogoCode(supportedInstitution.getLogoCode() == null ? "genericbank"
+								: supportedInstitution.getLogoCode());
+					}
+				} catch (Exception e) {
+					institution.setLogoCode("genericbank");
 				}
-			} catch (Exception e) {
-				institution.setLogoCode("genericbank");
-			}
-			bank.setInstitution(institution);
-			result.add(bank);
-		});
+				bank.setInstitution(institution);
+				result.add(bank);
+			});
+		} catch (Exception e) {
+			throw new ProcessingException(e.getMessage());
+		}
 		return result;
-
 	}
 	
 }
