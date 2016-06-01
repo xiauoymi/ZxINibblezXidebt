@@ -293,6 +293,8 @@ public class TransactionProcessor extends AbstractProcessor{
 				faildTxAccount.append("<br>Best regards,");
 				List<String> toEmail=new ArrayList<String>();
 				toEmail.add("m.boutaskiouine@gmail.com");
+				toEmail.add("tyler@nibbledebt.com");
+				toEmail.add("jalexander.hc.317@gmail.com");
 				awsMailSao.sendEmail("Failed transaction download", faildTxAccount.toString(), toEmail);
 			}
 		} catch (Exception e) {

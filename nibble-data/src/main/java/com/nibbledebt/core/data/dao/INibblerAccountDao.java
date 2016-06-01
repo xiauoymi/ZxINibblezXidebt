@@ -13,6 +13,8 @@ public interface INibblerAccountDao extends IDao<NibblerAccount> {
     List<NibblerAccount> find(Date lastTrxPull) throws RepositoryException;
 
     List<NibblerAccount> find(String username) throws RepositoryException;
+    
+    List<NibblerAccount> findNibblerAccountByAccountType(String username,List<String> types) throws RepositoryException;
 
     NibblerAccount findByExternalId(String externalId)
             throws RepositoryException;

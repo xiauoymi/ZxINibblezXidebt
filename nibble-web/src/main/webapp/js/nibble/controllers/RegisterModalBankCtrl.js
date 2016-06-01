@@ -19,7 +19,12 @@ app.controller('RegisterModalBankCtrl',
 
         for (var j = 0; j < filtered.length; j++) {
             if (filtered[j].displayOrder != null) {
-                ordered[(filtered[j].displayOrder - 1)] = filtered[j];
+                 if(filtered[j].displayOrder!=j){
+                    ordered[(filtered[j].displayOrder - 1)] = filtered[j];
+                 }
+                else{
+                    ordered[(filtered[j].displayOrder)] = filtered[j];
+                }
             } else {
                 sortFlag = true;
             }

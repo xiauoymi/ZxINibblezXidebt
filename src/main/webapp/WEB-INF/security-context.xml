@@ -34,7 +34,8 @@
         				authentication-failure-url="/nibbleuser.html?message=Your username/password was incorrect."
         				default-target-url="/nibblehome.html"
         				password-parameter="nibbler_password"
-        				username-parameter="nibbler_username"/>
+        				username-parameter="nibbler_username" 
+        				/>
         <sec:session-management  session-fixation-protection="newSession" invalid-session-url="/nibbleuser.html?message=Your previous session has expired."/>
 <!--         <sec:csrf /> -->
  

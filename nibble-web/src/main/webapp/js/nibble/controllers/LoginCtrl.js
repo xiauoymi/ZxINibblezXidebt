@@ -26,11 +26,11 @@ app.controller('LoginCtrl',
                             $state.go('dashboard.users');
                         })
                         .error(function(dataProfile) {
-                            console.log(dataProfile);
+                            NibbleUtils.errorCallback($scope, $state, dataProfile, status);
                         });
                 })
                 .error(function(data) {
-                    console.log(data);
+                    NibbleUtils.errorCallback($scope, $state, data, status);
                 })
         }
 

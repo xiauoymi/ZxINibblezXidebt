@@ -71,6 +71,17 @@ public class RegistrationREST extends AbstractREST {
 	}
 	
 	@POST
+	@Path("/updateRegister")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Loggable(logLevel=LogLevel.INFO)
+	@Validatable() //TODO - write custom validator
+	public Long updateRegistration(NibblerData nibblerData) throws ProcessingException, ServiceException,
+            RepositoryException, ValidationException{
+		return regService.updateCustomerData(nibblerData);
+	}
+	
+	@POST
 	@Path("/register/loanaccount")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -78,7 +89,18 @@ public class RegistrationREST extends AbstractREST {
 	@Validatable() //TODO - write custom validator
 	public AddAccountsResponse addLoanAccount(NibblerData nibblerData) throws ProcessingException, ServiceException,
             RepositoryException, ValidationException{
-			return regService.addLoanAccount(nibblerData, nibblerData.getEmail());
+			return regService.addLoanAccount(nibblerData);
+	}
+	
+	@POST
+	@Path("/register/loanaccountByReferral")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Loggable(logLevel=LogLevel.INFO)
+	@Validatable() //TODO - write custom validator
+	public AddAccountsResponse addLoanAccountByReferral(NibblerData nibblerData) throws ProcessingException, ServiceException,
+            RepositoryException, ValidationException{
+			return regService.addLoanAccountByReferral(nibblerData);
 	}
 	
 	@POST

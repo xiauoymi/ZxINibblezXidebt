@@ -6,7 +6,7 @@ app.controller('RegisterCtrl',
              * init data and watchers
              */
             $scope.initData = function() {
-            	
+            	$scope.isEditing=false;
                 $scope.registration = {};
                 $scope.newuser = {
                     email: "",
@@ -90,6 +90,25 @@ app.controller('RegisterCtrl',
                     }
                 });
             
+                $scope.$watch('user.password', function(pass) {
+                    if ($scope.registration.form && $scope.registration.form.password) {
+                        $scope.registration.passwordStrenth = pwdstrength.getStrength(pass);
+                        if (pwdstrength.getStrength(pass) < 45) {
+                            $scope.registration.form.password.$setValidity('strength', false);
+                        } else {
+                            $scope.registration.form.password.$setValidity('strength', true);
+                        }
+                    }
+                });
+                /* add watcher for retype password validation */
+                $scope.$watch('user.repassword', function(pass) {
+                    if ($scope.registration.form && $scope.registration.form.repassword) {
+                        if ($scope.newuser.repassword != null && $scope.newuser.repassword != '') {
+                            $scope.registration.form.repassword.$setValidity('equalto',
+                                $scope.newuser.password == $scope.newuser.repassword);
+                        }
+                    }
+                });
             if($stateParams.activate){
            		$scope.activate=$stateParams.activate;
            		$scope.initLinkAccount("linkAccount");
@@ -199,6 +218,7 @@ app.controller('RegisterCtrl',
             $scope.initLinkAccount = function(step) {
             	$scope.linkaccount = {};
             	$scope.linkaccount.search ="";
+                $scope.linkaccount.referral="";
             	$scope.registration.condition = step;
                 accountFactory.getInstitutions().then(function(data) {
                     let items = data.data;
@@ -222,6 +242,12 @@ app.controller('RegisterCtrl',
             $scope.addRoundupAccount=function(bank,email){
                 accountFactory.updateRoundupAccount({roundupAccountBank:bank,email:email}).then(function(data){
                    $scope.roundupAccount=data; 
+                    $modal.open({
+                        animation: true,
+                        templateUrl: 'accountLinked.html',
+                        controller: 'ConfirmModalInstanceCtrl',
+                        backdrop: 'static'
+                    });
                    $scope.initLinkAccount("loanAccount");
                 },function (data, status) {
                         NibbleUtils.errorCallback($scope, $state, data, status);
@@ -230,6 +256,15 @@ app.controller('RegisterCtrl',
 
             $scope.addLoanAccount=function(bank,email){
                 accountFactory.updateLoanAccount({loanAccountBank:bank,email:email}).then(function(data){
+                     $scope.loanAccount=data; 
+                   $scope.registration.condition ="registrationConfirm";
+                },function (data, status) {
+                        NibbleUtils.errorCallback($scope, $state, data, status);
+                });
+            };
+
+            $scope.addLoanAccountByReferral=function(){
+                accountFactory.updateLoanAccountByReferral({email:$scope.user.email,referral:$scope.linkaccount.referral}).then(function(data){
                      $scope.loanAccount=data; 
                    $scope.registration.condition ="registrationConfirm";
                 },function (data, status) {
@@ -258,7 +293,7 @@ app.controller('RegisterCtrl',
             };
 
             $scope.autoCompletSearch=function(){
-                 if($scope.linkaccount && $scope.linkaccount.search && $scope.linkaccount.search.length>3){
+                 if($scope.linkaccount && $scope.linkaccount.search && $scope.linkaccount.search.length>1){
                      $scope.searchInstitutions();
                 }
             }
@@ -287,9 +322,10 @@ app.controller('RegisterCtrl',
             /**
              * Confirm registration
              */
-            $scope.confirmRegistration = function() {
-                var nibbler = $scope.createNibblerObject();
+            $scope.confirmRegistration = function(user) {
+                var nibbler = $scope.createNibblerObject(user);
                 userFactory.registerNibbler(nibbler).then(function(data){
+                    $scope.isEditing=false;
                     if (NibbleUtils.isDebug()) {
                         console.log("Register Nibbler response data : ", data);
                     }
@@ -308,6 +344,21 @@ app.controller('RegisterCtrl',
                 });
             };
 
+            $scope.updateRegister = function(user) {
+                var nibbler = $scope.createNibblerObject(user);
+                userFactory.updateRegister(nibbler).then(function(data){
+                    $scope.isEditing=false;
+                    if (NibbleUtils.isDebug()) {
+                        console.log("Register Nibbler response data : ", data);
+                    }
+                }
+                ,function(data, status) {
+                    NibbleUtils.errorCallback($scope, $state, data, status);
+                });
+            };
+
+            
+
             /**
              * Finish registration process
              */
@@ -323,19 +374,22 @@ app.controller('RegisterCtrl',
                 });
             };
             
-            $scope.createNibblerObject = function() {
+            $scope.createNibblerObject = function(user) {
+                if(!user){
+                    user=$scope.newuser;
+                }
                 var nibbler = {};
-                nibbler.username = $scope.newuser.username;
-                nibbler.firstName = $scope.newuser.firstName;
-                nibbler.lastName = $scope.newuser.lastName;
-                nibbler.password = $scope.newuser.password;
-                nibbler.address1 = $scope.newuser.address1;
-                nibbler.address2 = $scope.newuser.address2;
-                nibbler.city = $scope.newuser.city;
-                nibbler.state = $scope.newuser.state;
-                nibbler.zip = $scope.newuser.zip;
-                nibbler.email = $scope.newuser.email;
-                nibbler.phone = $scope.newuser.phone;
+                nibbler.username = user.username;
+                nibbler.firstName = user.firstName;
+                nibbler.lastName = user.lastName;
+                nibbler.password = user.password;
+                nibbler.address1 = user.address1;
+                nibbler.address2 = user.address2;
+                nibbler.city = user.city;
+                nibbler.state = user.state;
+                nibbler.zip = user.zip;
+                nibbler.email = user.email;
+                nibbler.phone = user.phone;
                 nibbler.url = NibbleUtils.getBaseUrl();
                 if ($scope.selected != undefined) {
                     nibbler.bank = {

@@ -45,6 +45,10 @@ app.controller('ActivateCtrl', function ActivateCtrl($scope, $state, userFactory
             });
     };
 
+    $scope.forgotPassword = function () {
+            $state.go('user.forgot');
+    };
+
     $scope.initData();
     
     /**

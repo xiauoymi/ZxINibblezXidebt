@@ -34,8 +34,8 @@ import javax.persistence.UniqueConstraint;
 	@NamedQuery(name="findAcctByUser", query="from NibblerAccount na where na.nibbler.nibblerDir.username = :username"),
 	@NamedQuery(name="findAcctByExtId", query="from NibblerAccount na where na.externalId = :externalId"),
 	@NamedQuery(name="findAcctByUseForPayoff", query="from NibblerAccount na where na.useForpayoff = true and na.nibbler.nibblerDir.username = :username"),
-    @NamedQuery(name="findAcctByUserAndId", query="from NibblerAccount na where na.id = :id and na.nibbler.nibblerDir.username = :username")
-	
+    @NamedQuery(name="findAcctByUserAndId", query="from NibblerAccount na where na.id = :id and na.nibbler.nibblerDir.username = :username"),
+	@NamedQuery(name="findNibblerAccountByAccountType", query="from NibblerAccount na where na.nibbler.nibblerDir.username = :username and accountType.code in :types")
 })
 @Entity()
 @Table(	name="nibbler_account",
@@ -52,7 +52,7 @@ public class NibblerAccount extends AbstractModel{
 	@Column(name="external_id", nullable=false, length=50)
 	private String externalId;
 	
-	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@ManyToOne(cascade=CascadeType.PERSIST, fetch=FetchType.EAGER)
 	@JoinColumn(name="institution_id", updatable=true, nullable=false)
 	private Institution institution;
 		
@@ -72,11 +72,11 @@ public class NibblerAccount extends AbstractModel{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastTransactionPull;
 	
-	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="account_type_id", updatable=true, nullable=false)
 	private AccountType accountType;
 	
-	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@ManyToOne( fetch=FetchType.LAZY)
 	@JoinColumn(name="nibbler_id", updatable=true, nullable=false)
 	private Nibbler nibbler;
 	
@@ -330,6 +330,49 @@ public class NibblerAccount extends AbstractModel{
 	 */
 	public void setCreditActivity(List<PaymentActivity> creditActivity) {
 		this.creditActivity = creditActivity;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((accountType == null) ? 0 : accountType.hashCode());
+		result = prime * result + ((institution == null) ? 0 : institution.hashCode());
+		result = prime * result + ((nibbler == null) ? 0 : nibbler.hashCode());
+		result = prime * result + ((number == null) ? 0 : number.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		NibblerAccount other = (NibblerAccount) obj;
+		if (accountType == null) {
+			if (other.accountType != null)
+				return false;
+		} else if (!getAccountType().equals(other.accountType))
+			return false;
+		if (institution == null) {
+			if (other.institution != null)
+				return false;
+		} else if (!institution.equals(other.institution))
+			return false;
+		if (nibbler == null) {
+			if (other.nibbler != null)
+				return false;
+		} else if (!nibbler.equals(other.nibbler))
+			return false;
+		if (number == null) {
+			if (other.number != null)
+				return false;
+		} else if (!number.equals(other.number))
+			return false;
+		return true;
 	}
 	
 }

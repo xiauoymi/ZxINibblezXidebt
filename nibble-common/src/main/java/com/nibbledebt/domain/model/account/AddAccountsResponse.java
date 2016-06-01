@@ -13,7 +13,8 @@ public class AddAccountsResponse {
     private MfaType mfaType;
 
     private Accounts accounts;
-
+    
+    private String referral;
 	/**
 	 * @return the questionAnswer
 	 */
@@ -71,4 +72,13 @@ public class AddAccountsResponse {
 		this.accounts = accounts;
 	}
 
+	public String getReferral() {
+		return referral;
+	}
+
+	public void setReferral(String referral) {
+		this.referral = referral;
+	}
+
+	
 }

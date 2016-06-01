@@ -33,6 +33,7 @@ public class NibblerData {
 	private boolean suspendedUp90;
 	private String status;
 	private String resetCode;
+	private String referral;
 
     private String mfaQuestion;
     private String mfaAnswer;
@@ -445,4 +446,16 @@ public class NibblerData {
 	public String toString(){
 		return ToStringBuilder.reflectionToString(this);
 	}
+
+
+	public String getReferral() {
+		return referral;
+	}
+
+
+	public void setReferral(String referral) {
+		this.referral = referral;
+	}
+	
+	
 }

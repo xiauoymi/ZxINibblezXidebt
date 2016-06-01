@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.h2.util.StringUtils;
+
 /**
  * @author alam_home
  *
@@ -175,6 +177,9 @@ public class LoginField {
 	 * @return the displayFlag
 	 */
 	public Boolean getDisplayFlag() {
+		if(displayFlag!=null)
+		return displayFlag && StringUtils.isNullOrEmpty(value) ;
+		else
 		return displayFlag;
 	}
 

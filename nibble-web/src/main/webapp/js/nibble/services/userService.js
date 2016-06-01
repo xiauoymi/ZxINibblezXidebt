@@ -16,6 +16,13 @@ app.factory('userFactory', function($http){
         return $http.post(urlBase + '/register', nibbler);
     };
 
+    userFactory.updateRegister = function(nibbler) {
+        if (NibbleUtils.isDebug()) {
+            console.log("factory method: registerNibbler() -> ", nibbler);
+        }
+        return $http.post(urlBase + '/updateRegister', nibbler);
+    };
+
     /**
      * submit mfa answers
      * @param nibbler
@@ -74,7 +81,8 @@ app.factory('userFactory', function($http){
     userFactory.login = function(login, pwd, remember) {
         var requestForm = $.param({
             nibbler_username: login,
-            nibbler_password: pwd
+            nibbler_password: pwd,
+            'remember-me':remember
         });
         var config = {
             headers : {

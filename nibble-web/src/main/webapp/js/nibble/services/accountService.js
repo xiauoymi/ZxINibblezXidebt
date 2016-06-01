@@ -60,5 +60,16 @@ app.factory('accountFactory', function($http){
         return $http.post(urlBase + '/register/loanaccount', account);
     };
 
+    
+    /**
+     * update account's loan by referral
+     * @param account
+     * @returns {HttpPromise}
+     */
+    accountFactory.updateLoanAccountByReferral = function(account) {
+        return $http.post(urlBase + '/register/loanaccountByReferral', account);
+    };
+
+
     return accountFactory;
 });

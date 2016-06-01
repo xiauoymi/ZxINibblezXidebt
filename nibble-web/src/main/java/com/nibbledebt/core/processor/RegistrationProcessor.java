@@ -6,9 +6,12 @@ package com.nibbledebt.core.processor;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,6 +19,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -36,6 +40,7 @@ import com.nibbledebt.common.notifier.NotifyMethod;
 import com.nibbledebt.common.notifier.NotifyType;
 import com.nibbledebt.core.data.dao.IAccountTypeDao;
 import com.nibbledebt.core.data.dao.IInstitutionDao;
+import com.nibbledebt.core.data.dao.INibblerAccountDao;
 import com.nibbledebt.core.data.dao.INibblerDao;
 import com.nibbledebt.core.data.dao.INibblerDirectoryDao;
 import com.nibbledebt.core.data.dao.INibblerRoleDao;
@@ -82,6 +87,10 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 
     @Autowired
     private IInstitutionDao institutionDao;
+    
+    @Autowired
+    private INibblerAccountDao nibblerAccountDao;
+    
     
 	@Autowired
 	private ISupportedInstitutionDao supportedInstitutionDao;
@@ -200,50 +209,80 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
         nibblerData.setPhone(nibbler.getPhone());
     }
     
-    private AddAccountsResponse addLoanAccount(NibblerData nibblerData, Nibbler nibbler) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
-		if(nibblerData.getLoanAccountBank()!=null){
-			Institution loanAccountInstitution = institutionDao.findByExternalId(Long.valueOf(nibblerData.getLoanAccountBank().getInstitution().getId()));
-			if(loanAccountInstitution==null){
-				loanAccountInstitution=createInstitution(nibblerData.getLoanAccountBank());
-			}
-				IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(loanAccountInstitution.getSupportedInstitution().getAggregatorQualifier());
+    
+    
+    
+    
+    private AddAccountsResponse addLoanAccountByReferral(NibblerData nibblerData, Nibbler nibbler) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
+		try {
+			if(nibblerData.getReferral()!=null){
+				Nibbler referralNibbler=nibblerDao.findByReferral(nibblerData.getReferral());
+				List<String> types=Arrays.asList("student_loan","loan","student_loan");
+				List<NibblerAccount> nibblerAccounts=nibblerAccountDao.findNibblerAccountByAccountType(referralNibbler.getNibblerDir().getUsername(),types);
+				List<Account> accounts=saveLoanAccounts(nibblerData, nibblerAccounts);
+				AddAccountsResponse overallResponse = new AddAccountsResponse();
+				overallResponse.getAccounts().getAccount().addAll(accounts);
+				overallResponse.setReferral(nibbler.getReferral());
+				return overallResponse;
 				
-			    AddAccountsResponse overallResponse = new AddAccountsResponse();
-			    try {				
-			    	if(nibblerData.getLoanAccountBank().getInstitution() != null) {
-			            if (externalAuthReqsValid(nibblerData.getLoanAccountBank())) {
-			            	AddAccountsResponse response = integrationSao.addAccounts(nibbler.getExtAccessToken(), loanAccountInstitution.getSupportedInstitution().getExternalId(),
-			                        nibblerData.getLoanAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
-			            	if (response != null){
-				            	overallResponse.setQuestionAnswer(response.getQuestionAnswer());
-				                overallResponse.setMfaType(response.getMfaType());
-				                overallResponse.getAccounts().getAccount().addAll(response.getAccounts().getAccount());
-				                if (response.getMfaType() == MfaType.NON_MFA) {
-				                    try {
-										saveCustomerAccounts(nibblerData, response.getAccounts(), false);
-									} catch (Exception e) {
-										throw new ProcessingException("Unexpected error tryiung to add loan account" , e);
-									}
-				                }
-			            	}
-			            	
-			            } else {
-			                throw new ValidationException("Financial institution requires fields that have failed validation.");
-			            }
-			        }
-				} catch (Exception e) {
-					throw e;
-				}
-			    return overallResponse;
-//			}else{
-//				throw new ValidationException("A loan account institution or bank account institution is required for registration.");
-//			}
-		}else{
-			throw new ValidationException("Could not find institution to add with id: "+ nibblerData.getLoanAccountBank().getInstitution().getId());
+			}else{
+				throw new ValidationException("Could not find this referral code "+ nibblerData.getReferral());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ProcessingException("Unexpected exception while trying to add loan account.");
 		}
 		
 		
 	}
+    
+    private AddAccountsResponse addLoanAccount(NibblerData nibblerData, Nibbler nibbler) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
+ 		if(nibblerData.getLoanAccountBank()!=null){
+ 			Institution loanAccountInstitution = institutionDao.findByExternalId(Long.valueOf(nibblerData.getLoanAccountBank().getInstitution().getId()));
+ 			if(loanAccountInstitution==null){
+ 				loanAccountInstitution=createInstitution(nibblerData.getLoanAccountBank());
+ 			}
+ 				IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean(loanAccountInstitution.getSupportedInstitution().getAggregatorQualifier());
+ 				
+ 			    AddAccountsResponse overallResponse = new AddAccountsResponse();
+ 			    try {				
+ 			    	if(nibblerData.getLoanAccountBank().getInstitution() != null) {
+ 			            if (externalAuthReqsValid(nibblerData.getLoanAccountBank())) {
+ 			            	AddAccountsResponse response = integrationSao.addAccounts(nibbler.getExtAccessToken(), loanAccountInstitution.getSupportedInstitution().getExternalId(),
+ 			                        nibblerData.getLoanAccountBank().getLoginForm().getLoginField().toArray(new LoginField[]{}));
+ 			            	if (response != null){
+ 				            	overallResponse.setQuestionAnswer(response.getQuestionAnswer());
+ 				                overallResponse.setMfaType(response.getMfaType());
+ 				                overallResponse.getAccounts().getAccount().addAll(response.getAccounts().getAccount());
+ 				                if (response.getMfaType() == MfaType.NON_MFA) {
+ 				                    try {
+ 										saveCustomerAccounts(nibblerData, response.getAccounts(), false);
+ 										overallResponse.setReferral(nibbler.getReferral());
+ 				                    } catch (Exception e) {
+ 										throw new ProcessingException("Unexpected error tryiung to add loan account" , e);
+ 									}
+ 				                }
+ 			            	}
+ 			            	
+ 			            } else {
+ 			                throw new ValidationException("Financial institution requires fields that have failed validation.");
+ 			            }
+ 			        }
+ 				} catch (Exception e) {
+ 					throw e;
+ 				}
+ 			    return overallResponse;
+// 			}else{
+// 				throw new ValidationException("A loan account institution or bank account institution is required for registration.");
+// 			}
+ 		}else{
+ 			throw new ValidationException("Could not find institution to add with id: "+ nibblerData.getLoanAccountBank().getInstitution().getId());
+ 		}
+ 		
+ 		
+ 	}
+     
+  
     
     private AddAccountsResponse addRoundupAccount(NibblerData nibblerData, Nibbler nibbler) throws NumberFormatException, RepositoryException, ValidationException, ProcessingException{
 		if(nibblerData.getRoundupAccountBank()!=null){
@@ -277,7 +316,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 			            }
 			        }
 				} catch (Exception e) {
-					throw new ProcessingException("Unexpected exception while trying to add roundup account.", e);
+					throw new ProcessingException("Unexpected exception while trying to add roundup account.");
 				}
 			    return overallResponse;
 //			}else{
@@ -304,7 +343,20 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     }
     
     @Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.DEFAULT, rollbackFor=RepositoryException.class)
-	public AddAccountsResponse addLoanAccount(NibblerData nibblerData, String username) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
+    @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_LINKED)
+    public AddAccountsResponse addLoanAccountByReferral(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
+    	String username=nibblerData.getEmail();
+    	if(username == null){
+			throw new ValidationException("The user id must be provided to add a loan account process.");
+		}
+    	Nibbler nibbler = nibblerDao.find(username);
+    	return addLoanAccountByReferral(nibblerData, nibbler);
+    }
+    
+    @Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.DEFAULT, rollbackFor=RepositoryException.class)
+    @Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_LINKED)
+    public AddAccountsResponse addLoanAccount(NibblerData nibblerData) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
+    	String username=nibblerData.getEmail();
     	if(username == null){
 			throw new ValidationException("The user id must be provided to add a loan account process.");
 		}
@@ -330,7 +382,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 	}
     
     @Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.DEFAULT, rollbackFor=RepositoryException.class)
-	public AddAccountsResponse addRoundupAccount(NibblerData nibblerData, String username) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
+    public AddAccountsResponse addRoundupAccount(NibblerData nibblerData, String username) throws ProcessingException, ServiceException, RepositoryException, ValidationException{
     	if(username == null){
 			throw new ValidationException("The user id must be provided to add a roundup account.");
 		}
@@ -338,6 +390,9 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	if (nibblerData.getRoundupAccountBank() != null && nibblerData.getRoundupAccountBank().getInstitution() != null) {
             if (externalAuthReqsValid(nibblerData.getRoundupAccountBank())) {
             	Nibbler nibbler = nibblerDao.find(username);
+            	if(!nibbler.isLinkedWith(nibblerData.getRoundupAccountBank().getInstitution().getId())){
+            		nibbler.getAccounts().clear();
+            	}
             	nibblerData.setInternalUserId(nibbler.getId());
             	if(nibbler != null){
             		return addRoundupAccount(nibblerData, nibbler);
@@ -356,6 +411,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		}
 		
 	}
+    
+    
     
     @Transactional()
     public AddAccountsResponse submitRoundupAccountMfaAnswer(NibblerData nibblerData)
@@ -447,7 +504,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
             	nibbler.setZip(nibblerData.getZip());
             	nibbler.setType(NibblerType.starter.name());
             	nibbler.setEmail(nibblerData.getEmail());
-            	
+            	nibbler.setPhone(nibblerData.getPhone());
             	NibblerDirectory nibblerDir = new NibblerDirectory();
             	nibblerDir.setUsername(nibblerData.getEmail());
                 nibblerDir.setPassword(
@@ -484,8 +541,38 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	
     	return nibbler.getId();
     }
-
+    
     @Transactional(propagation = Propagation.REQUIRED)
+    public Long updateCustomerData(NibblerData nibblerData) throws ProcessingException, RepositoryException, ValidationException {
+    	
+    	Nibbler nibbler = nibblerDao.find(nibblerData.getEmail());
+    		if(StringUtils.isNotBlank(nibblerData.getFirstName()) && 
+    				StringUtils.isNotBlank(nibblerData.getLastName()) &&
+    				StringUtils.isNotBlank(nibblerData.getEmail()) &&
+    				StringUtils.isNotBlank(nibblerData.getPassword()) &&
+    				StringUtils.isNotBlank(nibblerData.getCity()) && 
+    				StringUtils.isNotBlank(nibblerData.getState()) &&
+    				StringUtils.isNotBlank(String.valueOf(nibblerData.getZip())) ){
+            	nibbler.setFirstName(nibblerData.getFirstName());
+            	nibbler.setLastName(nibblerData.getLastName());
+            	nibbler.setAddressLine1(nibblerData.getAddress1());
+            	nibbler.setAddressLine2(nibblerData.getAddress2());
+            	nibbler.setCity(nibblerData.getCity());
+            	nibbler.setState(nibblerData.getState());
+            	nibbler.setZip(nibblerData.getZip());
+            	nibbler.setEmail(nibblerData.getEmail());
+            	nibbler.setPhone(nibblerData.getPhone());
+            	nibbler.getNibblerDir().setPassword(
+                        encoder.encodePassword(
+                                String.valueOf(nibblerData.getPassword()),
+                                salt));                
+                nibblerDao.update(nibbler);   
+    		}else{
+    			throw new ValidationException("Username/Password/Name/City/State/Zip are required fields.");
+    		}
+    	return nibbler.getId();
+    }
+    
     private void saveCustomerAccounts(NibblerData nibblerData, Accounts accounts, Boolean forRoundUp) throws ServiceException, RepositoryException, ProcessingException {
     	try {
 	    	Nibbler nibbler = nibblerDao.findOne(nibblerData.getInternalUserId());
@@ -525,7 +612,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		                    setCreated(balance, nibblerData.getEmail());
 		                    nibblerAccount.getBalances().add(balance);
 		                }
-			            nibbler.getAccounts().add(nibblerAccount);
+			            nibbler.addAccount(nibblerAccount);
 			            nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
 			    	}else if(forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "creditCard")){
 			    		nibblerAccount.setUseForRounding(true);
@@ -548,7 +635,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		                    }
 		                    setCreated(balance, nibblerData.getEmail());
 		                    nibblerAccount.getBalances().add(balance);
-				            nibbler.getAccounts().add(nibblerAccount);
+				            nibbler.addAccount(nibblerAccount);
 				            nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
 		                }
 			    	}else if(!forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "student-loan")){
@@ -574,7 +661,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		                    
 		                    setCreated(balance, nibblerData.getEmail());
 		                    nibblerAccount.getBalances().add(balance);
-				            nibbler.getAccounts().add(nibblerAccount);
+				            nibbler.addAccount(nibblerAccount);
 				            nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_ROUNDUP.name());
 		                }
 			    	}else if(!forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "loan")){
@@ -593,7 +680,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		                    
 		                    setCreated(balance, nibblerData.getEmail());
 		                    nibblerAccount.getBalances().add(balance);
-				            nibbler.getAccounts().add(nibblerAccount);
+				            nibbler.addAccount(nibblerAccount);
 				            nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_ROUNDUP.name());
 		                    
 	                    }
@@ -607,9 +694,76 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 			
             setUpdated(nibbler, nibblerData.getEmail());
             nibblerData.setActivationCode(nibbler.getNibblerDir().getActivationCode());
-	    	nibblerDao.update(nibbler);
+            if(!forRoundUp){
+            	nibbler.setReferral(nibbler.getExtAccessToken());
+            }
+	    	nibblerDao.saveOrUpdate(nibbler);
     	} catch (ParseException e) {
-			throw new ProcessingException("Error while parsing date from account.", e);
+    		e.printStackTrace();
+			throw new ProcessingException("Error while parsing date from account.");
+		}
+    }
+
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    private List<Account> saveLoanAccounts(NibblerData nibblerData, List<NibblerAccount> nibblerAccounts) throws ServiceException, RepositoryException, ProcessingException {
+    	try {
+	    	Nibbler nibbler = nibblerDao.find(nibblerData.getEmail());
+	    	List<Account> accounts=new ArrayList<Account>();
+	    	for (NibblerAccount nibblerAccountOld : nibblerAccounts) {
+	    		NibblerAccount nibblerAccount=new NibblerAccount();
+	    		BeanUtils.copyProperties(nibblerAccountOld, nibblerAccount, "id","nibbler");
+	            if(StringUtils.equalsIgnoreCase(nibblerAccount.getAccountType().getCode(), "checking") ||
+            		StringUtils.equalsIgnoreCase(nibblerAccount.getAccountType().getCode(), "creditCard") ||
+            		StringUtils.equalsIgnoreCase(nibblerAccount.getAccountType().getCode(), "student-loan") || 
+            		StringUtils.equalsIgnoreCase(nibblerAccount.getAccountType().getCode(), "loan")){
+	            	Account account = new Account();
+	            	accounts.add(account);
+		            nibblerAccount.setNumber(account.getAccountNumber());
+		            account.setAccountNumber(nibblerAccount.getNumber());
+		            nibblerAccount.setNibbler(nibbler);
+		            account.setAccountExternalId(nibblerAccount.getExternalId());
+		            setCreated(nibblerAccount, nibblerData.getEmail());
+		            nibblerAccount.setLastTransactionPull(new Date(System.currentTimeMillis() - 86400000));
+		            
+		            if(StringUtils.equalsIgnoreCase(nibblerAccount.getAccountType().getCode(), "student-loan")){
+			    		nibblerAccount.setUseForRounding(false);
+			    		nibblerAccount.setUseForpayoff(true);
+			    		nibblerAccount.getBalances().forEach(balance->{
+			    			setCreated(balance, nibblerData.getEmail());
+			    			nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_ROUNDUP.name());
+			    		});
+			    	}else if(StringUtils.equalsIgnoreCase(nibblerAccount.getAccountType().getCode(), "loan")){
+			    		if(!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod")){
+	                    	nibblerAccount.setUseForpayoff(true);
+	                    	AccountBalance balance = new AccountBalance();
+	                    	balance.setInterestRate(new BigDecimal("4.29"));
+		                    balance.setPaymentMinAmount(new BigDecimal("301.73"));
+		                    balance.setPayoffAmount(new BigDecimal("33000.00"));
+		                    balance.setPrincipalBalance(new BigDecimal("33000.00"));
+		                    balance.setYtdInterestPaid(new BigDecimal("0.00"));
+		                    balance.setYtdPrincipalPaid(new BigDecimal("0.00"));
+		                    balance.setAccount(nibblerAccount);
+		                    
+		                    setCreated(balance, nibblerData.getEmail());
+		                    nibblerAccount.getBalances().add(balance);
+				            nibbler.addAccount(nibblerAccount);
+				            nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_ROUNDUP.name());
+		                    
+	                    }
+			    	}else{
+			    		nibblerAccount.setUseForRounding(false);
+			    	}
+		            
+	            }
+	    	}
+            setUpdated(nibbler, nibblerData.getEmail());
+            nibblerData.setActivationCode(nibbler.getNibblerDir().getActivationCode());
+            nibbler.setReferral(nibbler.getExtAccessToken());
+	    	nibblerDao.update(nibbler);
+	    	return accounts;
+    	} catch (Exception e) {
+			throw new ProcessingException("Error while parsing date from account.");
 		}
     }
 

@@ -19,86 +19,85 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * @author ralam1
  *
  */
 @NamedQueries({
-	@NamedQuery(name="findNibblerByUsername", query="from Nibbler n where n.nibblerDir.username = :username"),
-	@NamedQuery(name="findNibblerByInvitationCode", query="from Nibbler n where n.invitationCode = :invitation_code"),
+		@NamedQuery(name = "findNibblerByUsername", query = "from Nibbler n where n.nibblerDir.username = :username"),
+		@NamedQuery(name = "findNibblerByInvitationCode", query = "from Nibbler n where n.invitationCode = :invitation_code"),
+		@NamedQuery(name = "findNibblerByReferralCode", query = "from Nibbler n where n.referral = :referral"),
+		@NamedQuery(name = "findContributorsByReceiver", query = "from Nibbler n where n.receiver.id = :receiver_id"),
+		@NamedQuery(name = "findReceiverByUsername", query = "from Nibbler n where n.nibblerDir.username = :username")
 
-	@NamedQuery(name="findContributorsByReceiver", query="from Nibbler n where n.receiver.id = :receiver_id"),
-	@NamedQuery(name="findReceiverByUsername", query="from Nibbler n where n.nibblerDir.username = :username")
-	
-	
-	
 })
 @Entity()
-@Table(	name="nibbler"
-//		uniqueConstraints = {
-//			@UniqueConstraint(columnNames = {"activation_code", ""})
-//		}
-		)
-@AttributeOverrides({
-	@AttributeOverride(name="id", column=@Column(name="nibbler_id"))
-})
-//@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-//@DiscriminatorColumn(name="type", discriminatorType=DiscriminatorType.STRING)
-public class Nibbler extends AbstractModel {	
-	
-	@Column(name="first_name", nullable=false, length=50)
+@Table(name = "nibbler"
+// uniqueConstraints = {
+// @UniqueConstraint(columnNames = {"activation_code", ""})
+// }
+)
+@AttributeOverrides({ @AttributeOverride(name = "id", column = @Column(name = "nibbler_id")) })
+// @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+// @DiscriminatorColumn(name="type", discriminatorType=DiscriminatorType.STRING)
+public class Nibbler extends AbstractModel {
+
+	@Column(name = "first_name", nullable = false, length = 50)
 	private String firstName;
-	
-	@Column(name="last_name", nullable=false, length=50)
+
+	@Column(name = "last_name", nullable = false, length = 50)
 	private String lastName;
-	
-	@Column(name="email", nullable=false, length=50)
+
+	@Column(name = "email", nullable = false, length = 50)
 	private String email;
-	
-	@Column(name="phone", nullable=true, length=11)
+
+	@Column(name = "phone", nullable = true, length = 11)
 	private String phone;
-	
-	@Column(name="type", nullable=false, length=50)
+
+	@Column(name = "type", nullable = false, length = 50)
 	private String type;
-	
-	@Column(name="address_line_1", nullable=true, length=100)
+
+	@Column(name = "address_line_1", nullable = true, length = 100)
 	private String addressLine1;
-	
-	@Column(name="address_line_2", nullable=true, length=100)
+
+	@Column(name = "address_line_2", nullable = true, length = 100)
 	private String addressLine2;
-	
-	@Column(name="city", nullable=true, length=100)
+
+	@Column(name = "city", nullable = true, length = 100)
 	private String city;
-	
-	@Column(name="state", nullable=true, length=100)
+
+	@Column(name = "state", nullable = true, length = 100)
 	private String state;
-	
-	@Column(name="zip", nullable=true, length=100)
+
+	@Column(name = "zip", nullable = true, length = 100)
 	private Integer zip;
 
-	@Column(name="ext_acct_access_token", nullable=true, length=50)
+	@Column(name = "ext_acct_access_token", nullable = true, length = 50)
 	private String extAccessToken;
-	
-	@OneToOne(mappedBy="nibbler", orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+
+	@OneToOne(mappedBy = "nibbler", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private NibblerDirectory nibblerDir;
-	
-	@OneToOne(mappedBy="nibbler", orphanRemoval=true, cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+
+	@OneToOne(mappedBy = "nibbler", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private NibblerPreference nibblerPreferences;
-	
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="nibbler", orphanRemoval=true)
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "nibbler", orphanRemoval = true)
 	private List<NibblerAccount> accounts;
-	
-	@ManyToOne(cascade=CascadeType.ALL)
-	@JoinColumn(name="receiver_id", updatable=true, nullable=true)
+
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "receiver_id", updatable = true, nullable = true)
 	private Nibbler receiver;
 
-	@Column(name="invitation_code", nullable=true, length=100)
+	@Column(name = "invitation_code", nullable = true, length = 100)
 	private Integer invitationCode;
-	
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="receiver", orphanRemoval=true)
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "receiver", orphanRemoval = true)
 	private List<Nibbler> contributors;
 
+	@Column(name = "referral_code", nullable = true, unique = true, length = 10)
+	private String referral;
 
 	/**
 	 * @return the invitationCode
@@ -108,7 +107,8 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param invitationCode the invitationCode to set
+	 * @param invitationCode
+	 *            the invitationCode to set
 	 */
 	public void setInvitationCode(Integer invitationCode) {
 		this.invitationCode = invitationCode;
@@ -122,12 +122,13 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param contributors the contributors to set
+	 * @param contributors
+	 *            the contributors to set
 	 */
 	public void setContributors(List<Nibbler> contributors) {
 		this.contributors = contributors;
-	}	
-	
+	}
+
 	/**
 	 * @return the receiver
 	 */
@@ -136,17 +137,17 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param receiver the receiver to set
+	 * @param receiver
+	 *            the receiver to set
 	 */
 	public void setReceiver(Nibbler receiver) {
 		this.receiver = receiver;
 	}
-	
-	
-	public Nibbler(){
+
+	public Nibbler() {
 		super();
 	}
-	
+
 	/**
 	 * @return the firstName
 	 */
@@ -155,7 +156,8 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param firstName the firstName to set
+	 * @param firstName
+	 *            the firstName to set
 	 */
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
@@ -169,7 +171,8 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param lastName the lastName to set
+	 * @param lastName
+	 *            the lastName to set
 	 */
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
@@ -183,7 +186,8 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param email the email to set
+	 * @param email
+	 *            the email to set
 	 */
 	public void setEmail(String email) {
 		this.email = email;
@@ -197,7 +201,8 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param phone the phone to set
+	 * @param phone
+	 *            the phone to set
 	 */
 	public void setPhone(String phone) {
 		this.phone = phone;
@@ -211,7 +216,8 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param addressLine1 the addressLine1 to set
+	 * @param addressLine1
+	 *            the addressLine1 to set
 	 */
 	public void setAddressLine1(String addressLine1) {
 		this.addressLine1 = addressLine1;
@@ -225,7 +231,8 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param addressLine2 the addressLine2 to set
+	 * @param addressLine2
+	 *            the addressLine2 to set
 	 */
 	public void setAddressLine2(String addressLine2) {
 		this.addressLine2 = addressLine2;
@@ -239,7 +246,8 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param city the city to set
+	 * @param city
+	 *            the city to set
 	 */
 	public void setCity(String city) {
 		this.city = city;
@@ -253,7 +261,8 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param state the state to set
+	 * @param state
+	 *            the state to set
 	 */
 	public void setState(String state) {
 		this.state = state;
@@ -267,7 +276,8 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param zip the zip to set
+	 * @param zip
+	 *            the zip to set
 	 */
 	public void setZip(Integer zip) {
 		this.zip = zip;
@@ -281,7 +291,8 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param extAccessToken the extAccessToken to set
+	 * @param extAccessToken
+	 *            the extAccessToken to set
 	 */
 	public void setExtAccessToken(String extAccessToken) {
 		this.extAccessToken = extAccessToken;
@@ -295,7 +306,8 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param nibblerDir the nibblerDir to set
+	 * @param nibblerDir
+	 *            the nibblerDir to set
 	 */
 	public void setNibblerDir(NibblerDirectory nibblerDir) {
 		this.nibblerDir = nibblerDir;
@@ -309,7 +321,8 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param nibblerPreferences the nibblerPreferences to set
+	 * @param nibblerPreferences
+	 *            the nibblerPreferences to set
 	 */
 	public void setNibblerPreferences(NibblerPreference nibblerPreferences) {
 		this.nibblerPreferences = nibblerPreferences;
@@ -319,12 +332,14 @@ public class Nibbler extends AbstractModel {
 	 * @return the accounts
 	 */
 	public List<NibblerAccount> getAccounts() {
-		if(accounts == null) accounts = new ArrayList<>();
+		if (accounts == null)
+			accounts = new ArrayList<>();
 		return accounts;
 	}
 
 	/**
-	 * @param accounts the accounts to set
+	 * @param accounts
+	 *            the accounts to set
 	 */
 	public void setAccounts(List<NibblerAccount> accounts) {
 		this.accounts = accounts;
@@ -338,9 +353,35 @@ public class Nibbler extends AbstractModel {
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param type
+	 *            the type to set
 	 */
 	public void setType(String type) {
 		this.type = type;
 	}
+
+	public String getReferral() {
+		return referral;
+	}
+
+	public void setReferral(String referral) {
+		this.referral = referral;
+	}
+
+	public void addAccount(NibblerAccount account) {
+		if (account != null && !getAccounts().contains(account)) {
+			getAccounts().add(account);
+		}
+	}
+
+	public boolean isLinkedWith(String id) {
+		return getAccounts().stream().anyMatch(a -> {
+			if (a != null && a.getInstitution() != null && a.getInstitution().getSupportedInstitution()!=null && a.getInstitution().getSupportedInstitution().getExternalId()!=null)
+				return a.getInstitution().getSupportedInstitution().getExternalId().equals(id);
+			else
+				return false;
+		});
+
+	}
+
 }

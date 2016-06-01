@@ -34,6 +34,7 @@ public class NotifyAspect {
 	private static final String ACCOUNT_CREATED_EMAIL_SUBJ = "Nibble Account Activation";
 	private static final String PASSWORD_RESET_EMAIL_SUBJ = "Nibble Password Reset";
 	private static final String INVITE_EMAIL_SUBJ = " needs your help.";
+	private static final String ACCOUNT_LINKED_EMAIL_SUBJ = "Nibble Account Linked";
 	
 	@Autowired
 	private AWSMailSao awsMailSao;
@@ -77,6 +78,15 @@ public class NotifyAspect {
 				StringWriter writer = new StringWriter();
 				prTmpl.merge(prCtx, writer);
 				awsMailSao.sendEmail(buffer.toString() + INVITE_EMAIL_SUBJ, writer.toString(), nibblerData.getInviteEmails());
+			}else if(notify.notifyType() == NotifyType.ACCOUNT_LINKED){
+				VelocityContext acCtx = new VelocityContext();
+				acCtx.put("firstName", nibblerData.getFirstName());
+				acCtx.put("lastName", nibblerData.getLastName());
+				acCtx.put("referral", nibblerData.getReferral());
+				Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("account-linked.vm");
+				StringWriter acWriter = new StringWriter();
+				acTmpl.merge(acCtx, acWriter);				
+				awsMailSao.sendEmail(ACCOUNT_LINKED_EMAIL_SUBJ, acWriter.toString(), toEmails);
 			}
 		} catch (Exception e) {
 			throw new NotificationException("Error reading template.", e);

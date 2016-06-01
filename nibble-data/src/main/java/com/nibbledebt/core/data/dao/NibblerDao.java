@@ -89,4 +89,15 @@ public class NibblerDao extends AbstractHibernateDao<Nibbler> implements INibble
 		return cr.list();
 	}
 
+	@Override
+	public Nibbler findByReferral(String referralCode) throws RepositoryException {
+		try {
+			Query query = this.getCurrentSession().getNamedQuery("findNibblerByReferralCode");
+			query.setString("referral", referralCode);
+			return (Nibbler)query.uniqueResult();
+		} catch (Exception e) {
+			  throw new RepositoryException(e);
+		}
+	}
+
 }

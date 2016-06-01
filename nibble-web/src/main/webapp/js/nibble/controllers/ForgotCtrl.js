@@ -11,7 +11,7 @@ app.controller('ForgotCtrl',
                 $scope.forgot.condition = "complete";
             })
             .error(function (data, status) {
-            	$scope.msg_alerts= [{type:'danger', msg:"The username you have provded does not exist."}];
+            	NibbleUtils.errorCallback($scope, $state, data, status);
             });
         };
 

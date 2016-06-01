@@ -139,9 +139,10 @@ public class InstitutionProcessor {
 					}
 				}
 			}
-			return banks.subList(0, 5);
+			int length=banks.size()>5?5:banks.size();
+			return banks.subList(0, length);
 		} catch (RepositoryException e) {
-			throw new ProcessingException("Error while retrieving supported institutions.", e);
+			throw new ProcessingException("Error while retrieving supported institutions.");
 		}
 	}
 
