@@ -149,5 +149,16 @@ app.factory('userFactory', function($http){
         return $http.post(urlBase + '/loginAs',user);
     };
 
+
+
+    /**
+     * send weekly update
+     * @param User - user form
+     * @returns {HttpPromise}
+     */
+    userFactory.sendWeeklyEmail = function(user) {
+        return $http.post(urlBase + '/emailUpdate',user);
+    };
+
     return userFactory;
 });

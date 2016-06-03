@@ -23,7 +23,7 @@ import com.nibbledebt.common.error.NotificationException;
 
 @Component()
 public class AWSMailSao {
-    private static final String FROM = "tyler@nibbledebt.com";
+    private static final String FROM = "info@nibbledebt.com";
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(AWSMailSao.class);
     /**
      * Send email using the AWS service.

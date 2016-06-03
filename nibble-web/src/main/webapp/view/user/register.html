@@ -75,7 +75,7 @@
                         type="password" class="form-control empty"
                         placeholder="&#xf023;    Password" name="password"
                         required ng-model="newuser.password"
-                        msg-strength="Password must be at least 8 Characters in length and contain one Capital Letter is required and one number"
+                        msg-strength="Password requires 8 characters, one capital and one number."
                         xt-validation-tooltip
                         title="Passwod must include" data-toggle="tooltip">
 
@@ -225,8 +225,10 @@
                 <input
                         type="text" class="form-control empty"
                         placeholder="&#xf015;    Search"
-                        name="city" required
-                        ng-model="linkaccount.search" ng-keypress="autoCompletSearch()"
+                        name="search" required
+                        ng-model="linkaccount.search" 
+                        ng-blur="autoCompletSearch()"
+                        ng-keypress="$event.which === 32 && autoCompletSearch()"
                         xt-validation-tooltip>
             </div>
             <div class="form-group text-center">
@@ -289,8 +291,10 @@
             <div class="form-group">
                 <input
                         type="text" class="form-control empty"
-                        placeholder="&#xf015;    Search"
-                        ng-model="linkaccount.search" ng-keypress="autoCompletSearch()"
+                        placeholder="&#xf015;    Search" 
+                        ng-blur="autoCompletSearch()"
+                        ng-keypress="$event.which === 32 && autoCompletSearch()"
+                        ng-model="linkaccount.search"
                         >
             </div>
             <div class="form-group text-center">
@@ -351,7 +355,7 @@
                         type="password" class="form-control empty"
                         placeholder="&#xf023;    Password" name="password"
                         required ng-model="user.password"
-                        msg-strength="Password must be at least 8 Characters in length and contain one Capital Letter is required and one number"
+                        msg-strength="Password requires 8 characters, one capital and one number."
                         xt-validation-tooltip
                         title="Passwod must include" data-toggle="tooltip">
 

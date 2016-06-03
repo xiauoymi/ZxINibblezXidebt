@@ -29,6 +29,7 @@ import com.nibbledebt.common.error.ProcessingException;
 import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
+import com.nibbledebt.common.notifier.Notify;
 import com.nibbledebt.core.data.dao.IAccountTransactionDao;
 import com.nibbledebt.core.data.dao.INibblerAccountDao;
 import com.nibbledebt.core.data.dao.INibblerDao;
@@ -77,12 +78,14 @@ public class TransactionProcessor extends AbstractProcessor{
 	}
 	
 	@Transactional(readOnly=true)
+	@Notify
 	public TransactionSummary getWeeklyTrxSummary(String username) throws ProcessingException, RepositoryException{
 		TransactionSummary summary = new TransactionSummary();
 		Nibbler nibbler = nibblerDao.find(username);
 		summary.setPersonFirstName(nibbler.getFirstName());
 		summary.setPersonLastName(nibbler.getLastName());
 		summary.setPersonId(nibbler.getId());
+		summary.setEmail(nibbler.getEmail());
 		
 		LocalDate now = LocalDate.now();
 		if(StringUtils.equalsIgnoreCase(nibbler.getType(), NibblerType.receiver.name())){
@@ -222,7 +225,8 @@ public class TransactionProcessor extends AbstractProcessor{
 			}
 						
 			unroundedTrx.setRounded(true);
-			unroundedTrx.getAccount().setCumulativeRoundupsAmount(unroundedTrx.getAccount().getCumulativeRoundupsAmount()!=null ? unroundedTrx.getAccount().getCumulativeRoundupsAmount().add(unroundedTrx.getRoundupAmount()) : unroundedTrx.getRoundupAmount());
+			BigDecimal cumulativeRoundupsAmount=unroundedTrx.getAccount().getCumulativeRoundupsAmount();
+			unroundedTrx.getAccount().setCumulativeRoundupsAmount(cumulativeRoundupsAmount!=null ? cumulativeRoundupsAmount.add(unroundedTrx.getRoundupAmount()) : unroundedTrx.getRoundupAmount());
 			accountTrxDao.update(unroundedTrx);
 		}
 	}
@@ -234,7 +238,7 @@ public class TransactionProcessor extends AbstractProcessor{
 		//TODO create a payment event from source to destination for the week
 	}
 	
-	@Scheduled(cron="0 0 3 * * ?")
+	@Scheduled(cron="0 0 3 * * ?",zone="CST")
 	@Loggable(logLevel=LogLevel.INFO)
 	@Transactional(propagation=Propagation.REQUIRES_NEW, isolation=Isolation.READ_COMMITTED)
 	public void pullTrxs() throws ProcessingException, ServiceException, RepositoryException{
@@ -284,7 +288,10 @@ public class TransactionProcessor extends AbstractProcessor{
 					nibblerAcctDao.update(acct);
 					}catch(Exception e){
 						isFailed=true;
-						faildTxAccount.append("<br>-").append(acct.getNibbler().getFirstName()).append(" ").append(acct.getNibbler().getLastName());
+						String name=acct.getNibbler().getFirstName()+" "+acct.getNibbler().getLastName();
+						if(faildTxAccount.indexOf(name)<0){
+							faildTxAccount.append("<br>-").append(name);
+						}
 					}
 				}
 				

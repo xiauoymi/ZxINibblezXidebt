@@ -1,5 +1,15 @@
 <div ng-controller="UsersCtrl" ng-init="initCtrl()">
-
+    <script type="text/ng-template" id="messageModalContent.html">
+        <div class="modal-header">
+            <h3 class="modal-title">{{title}}</h3>
+        </div>
+        <div class="modal-body">
+            {{message}}
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+        </div>
+    </script>    
 
      <script type="text/ng-template" id="myModalContent.html">
         <alert class="text-center" ng-repeat="alert in saveUserErrors" type="{{alert.type}}" close="cancel()">
@@ -68,28 +78,28 @@
           focus-error="true" role="form">
           <td title="'First Name'" sortable="'firstName'" ng-switch="row.isEditing" ng-class="firstName.$dirty ? 'bg-warning' : ''" ng-form="firstName" demo-tracked-table-cell>
             <span ng-switch-default class="editable-text">{{row.firstName}}</span>
-            <div class="controls" ng-class="firstName".$invalid && firstName.$dirty ? 'has-error' : ''" ng-switch-when="true">
+            <div class="controls" ng-class="firstName.$invalid && firstName.$dirty ? 'has-error' : ''" ng-switch-when="true">
               <input type="text" name="firstName"" ng-model="row.firstName" class="editable-input form-control input-sm" required xt-validation-tooltip/>
             </div>
           </td>
           <td title="'Last Name'" sortable="'lastName'" ng-switch="row.isEditing" ng-class="lastName.$dirty ? 'bg-warning' : ''" ng-form="lastName" demo-tracked-table-cell>
             <span ng-switch-default class="editable-text">{{row.lastName}}</span>
-            <div class="controls" ng-class="lastName".$invalid && lastName.$dirty ? 'has-error' : ''" ng-switch-when="true">
+            <div class="controls" ng-class="lastName.$invalid && lastName.$dirty ? 'has-error' : ''" ng-switch-when="true">
               <input type="text" name="lastName"" ng-model="row.lastName" class="editable-input form-control input-sm" required xt-validation-tooltip/>
             </div>
           </td>
 
-          <td title="'Service fee'" sortable="'serviceFee'" ng-switch="row.isEditing" ng-class="serviceFee.$dirty ? 'bg-warning' : ''" ng-form="serviceFee" demo-tracked-table-cell>
-            <span ng-switch-default class="editable-text">545</span>
-             <div class="controls" ng-class="serviceFee".$invalid && serviceFee.$dirty ? 'has-error' : ''" ng-switch-when="true">
-              <input type="number" name="serviceFee"" ng-model="row.serviceFee" class="editable-input form-control input-sm"  xt-validation-tooltip/>
+          <td title="'Service fee'" sortable="'feeAmount'" ng-switch="row.isEditing" ng-class="feeAmount.$dirty ? 'bg-warning' : ''" ng-form="feeAmount" demo-tracked-table-cell>
+            <span ng-switch-default class="editable-text">{{row.feeAmount}}</span>
+             <div class="controls" ng-class="feeAmount.$invalid && feeAmount.$dirty ? 'has-error' : ''" ng-switch-when="true">
+              <input type="number" step="0.01" name="feeAmount" value="-1.00" ng-model="row.feeAmount" class="editable-input form-control input-sm"  xt-validation-tooltip/>
             </div>
           </td>
 
-          <td title="'Trigger Amount'" sortable="'triggerAmount'" ng-switch="row.isEditing" ng-class="triggerAmount.$dirty ? 'bg-warning' : ''" ng-form="triggerAmount" demo-tracked-table-cell>
-            <span ng-switch-default class="editable-text">500</span>
-            <div class="controls" ng-class="triggerAmount".$invalid && triggerAmount.$dirty ? 'has-error' : ''" ng-switch-when="true">
-              <input type="number" name="triggerAmount"" ng-model="row.triggerAmount" class="editable-input form-control input-sm"  xt-validation-tooltip/>
+          <td title="'Trigger Amount'" sortable="'weeklyTargetAmount'" ng-switch="row.isEditing" ng-class="weeklyTargetAmount.$dirty ? 'bg-warning' : ''" ng-form="weeklyTargetAmount" demo-tracked-table-cell>
+            <span ng-switch-default class="editable-text">{{row.weeklyTargetAmount}}</span>
+            <div class="controls" ng-class="weeklyTargetAmount.$invalid && weeklyTargetAmount$dirty ? 'has-error' : ''" ng-switch-when="true">
+              <input type="number" step="0.01" name="weeklyTargetAmount" ng-model="row.weeklyTargetAmount" class="editable-input form-control input-sm"  xt-validation-tooltip/>
             </div>
           </td>          
 
@@ -99,16 +109,16 @@
             <span ng-switch-default class="editable-text">{{row.address2}}</span>
             <span ng-switch-default class="editable-text">{{row.city}} {{row.state}} {{row.zip}}</span><ng-switch-default br>
             <span ng-switch-default class="editable-text">{{row.phone}}</span>
-            <div class="controls" ng-class="email".$invalid && email.$dirty ? 'has-error' : ''" ng-switch-when="true">
+            <div class="controls" ng-class="email.$invalid && email.$dirty ? 'has-error' : ''" ng-switch-when="true">
               <input type="email" name="email"" ng-model="row.email"  placeholder="Email" class="editable-input form-control input-sm"  required xt-validation-tooltip/>
             </div>
-            <div class="controls" ng-class="address1".$invalid && address1.$dirty ? 'has-error' : ''" ng-switch-when="true">
+            <div class="controls" ng-class="address1.$invalid && address1.$dirty ? 'has-error' : ''" ng-switch-when="true">
               <input type="text" name="address1" placeholder="Adress line 1" ng-model="row.address1" class="editable-input form-control input-sm"  xt-validation-tooltip/>
             </div>    
-            <div class="controls" ng-class="address2".$invalid && address2.$dirty ? 'has-error' : ''" ng-switch-when="true">
+            <div class="controls" ng-class="address2.$invalid && address2.$dirty ? 'has-error' : ''" ng-switch-when="true">
               <input type="text" name="address2"  placeholder="Adress line 2" ng-model="row.address2" class="editable-input form-control input-sm"  xt-validation-tooltip/>
             </div>    
-            <div class="controls" ng-class="zip".$invalid && zip.$dirty ? 'has-error' : ''" ng-switch-when="true">
+            <div class="controls" ng-class="zip.$invalid && zip.$dirty ? 'has-error' : ''" ng-switch-when="true">
               <input type="text" name="city" placeholder="City" ng-model="row.city" class="editable-input form-control input-sm"  xt-validation-tooltip/>
               <select ng-model="row.state" placeholder="State" xt-validation-tooltip class="form-control empty"
                         name="state" required>
@@ -122,7 +132,7 @@
                         ng-model="row.zip"
                         xt-validation-tooltip zip-code msg-zip-code="Zipcode must be 5 characters long, all numbers">
             </div>
-            <div class="controls" ng-class="phone".$invalid && phone.$dirty ? 'has-error' : ''" ng-switch-when="true">
+            <div class="controls" ng-class="phone.$invalid && phone.$dirty ? 'has-error' : ''" ng-switch-when="true">
                <input
                         type="text" maxlength="10" class="form-control empty" 
                         placeholder="Phone"
@@ -133,24 +143,24 @@
           </td>       
           <td title="'Referral#'" sortable="'referral'" ng-switch="row.isEditing" ng-class="referral.$dirty ? 'bg-warning' : ''" ng-form="referral" demo-tracked-table-cell>
             <span ng-switch-default class="editable-text">{{row.referral}}</span>
-            <div class="controls" ng-class="referral".$invalid && referral.$dirty ? 'has-error' : ''" ng-switch-when="true">
+            <div class="controls" ng-class="referral.$invalid && referral.$dirty ? 'has-error' : ''" ng-switch-when="true">
               <input type="text" name="referral"" ng-model="row.referral" class="editable-input form-control input-sm" />
             </div>
           </td>
 
           <td title="'Funding Account'" sortable="'fundingAccount'" ng-switch="row.isEditing" ng-class="fundingAccount.$dirty ? 'bg-warning' : ''" ng-form="fundingAccount" demo-tracked-table-cell>
-            <span ng-switch-default class="editable-text">Failed</span>
+            <span ng-switch-default class="editable-text">{{row.fundingConnected?'Connected':'Failed'}}</span>
           </td>              
 
 
          <td title="row.isEditing?'Phone':'Loan Account'" sortable="'loanAccount'"  ng-switch="row.isEditing" ng-class="loanAccount.$dirty ? 'bg-warning' : ''" ng-form="loanAccount" demo-tracked-table-cell>
-            <span ng-switch-default class="editable-text">Failed</span>
+            <span ng-switch-default class="editable-text">{{row.LoanConnected?'Connected':'Failed'}}</span>
           </td>        
           
 
          <td title="'Password'" sortable="'password'" ng-switch="row.isEditing" ng-class="password.$dirty ? 'bg-warning' : ''" required ng-form="password" demo-tracked-table-cell>
             <span ng-switch-default class="editable-text">*******</span>
-            <div class="controls" ng-class="password".$invalid && password.$dirty ? 'has-error' : ''" ng-switch-when="true">
+            <div class="controls" ng-class="password.$invalid && password.$dirty ? 'has-error' : ''" ng-switch-when="true">
               <input type="text" name="password"" ng-model="row.password" class="editable-input form-control input-sm" required xt-validation-tooltip />
             </div>
           </td>  
@@ -164,10 +174,10 @@
             <button class="btn btn-default btn-xs" ng-click="editUser(row)" ng-if="!row.isEditing"><span class="glyphicon glyphicon-pencil"></span> Edit</button>
             <!-- <button class="btn btn-danger btn-xs" ng-click="remove(row)" ng-if="!row.isEditing"><span class="glyphicon glyphicon-trash"></span></button> -->
             <button class="btn btn-default btn-xs" ng-click="loginAs(row)" ng-if="!row.isEditing"><span class="fa fa-sign-in"></span> Login</button>
-            <button class="btn btn-default btn-xs" ng-click="remove(row)" ng-if="!row.isEditing"><span class="fa fa-money"></span>Refund</button>
+            <button class="btn btn-default btn-xs" ng-if="row.active" ng-click="refund(row)" ng-if="!row.isEditing"><span class="fa fa-money"></span>Refund</button>
             <button class="btn btn-danger btn-xs" ng-click="active(row)" ng-if="!row.active && !suspendedUp90"><span class="fa fa-play"></span> Suspended</button>
             <button class="btn btn-success btn-xs" ng-click="suspend(row)" ng-if="row.active"><span class="fa fa-pause"  aria-hidden="true"></span> Active</button>
-            <button class="btn btn-default btn-xs" ng-click="remove(row)" ng-if="!row.isEditing"><span class="fa fa-envelope-o"></span> Email</button>
+            <button class="btn btn-default btn-xs" ng-click="sendWeeklyEmail(row)" ng-if="!row.isEditing"><span class="fa fa-envelope-o"></span> Email</button>
             </div>
           </td>
         </tr>

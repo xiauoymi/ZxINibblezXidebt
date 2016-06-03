@@ -4,6 +4,7 @@
 package com.nibbledebt.core.data.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.AttributeOverride;
@@ -19,7 +20,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 /**
  * @author ralam1
@@ -317,6 +317,11 @@ public class Nibbler extends AbstractModel {
 	 * @return the nibblerPreferences
 	 */
 	public NibblerPreference getNibblerPreferences() {
+		if(nibblerPreferences==null){
+			nibblerPreferences= new NibblerPreference();
+			nibblerPreferences.setCreatedTs(new Date());
+			nibblerPreferences.setCreatedUser(this.getCreatedUser());
+		}
 		return nibblerPreferences;
 	}
 

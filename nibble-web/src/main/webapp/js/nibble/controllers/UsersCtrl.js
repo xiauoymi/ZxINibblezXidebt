@@ -150,7 +150,49 @@ app.controller('UsersCtrl',
                 $scope.popupError();
             })
 	    };
+
 	    
+	   	$scope.sendWeeklyEmail = function (user) {
+	    	userFactory.sendWeeklyEmail(user)
+            .success( function (data) {
+                   $modal.open({
+                        animation: true,
+                        templateUrl: 'messageModalContent.html',
+                        controller: 'MessageModalInstanceCtrl',
+                        backdrop: 'static',
+                        resolve: {
+                        	title:function(){
+                        		return "Information";
+                        	},
+                        	message:function(){
+                        		return "Weekly update email has been sent successfully";
+                        	}
+                        }
+                    });            	
+            })
+            .error( function (data, status) {
+                NibbleUtils.pushErrorCallback($scope,'saveUserErrors', $state, data, status);
+                $scope.popupError();
+            })
+	    };
+
+	    $scope.refund=function(){
+	    	                   $modal.open({
+                        animation: true,
+                        templateUrl: 'messageModalContent.html',
+                        controller: 'MessageModalInstanceCtrl',
+                        backdrop: 'static',
+                        resolve: {
+                        	title:function(){
+                        		return "Information";
+                        	},
+                        	message:function(){
+                        		return "Refund has been sent! This is just a dummy message because we have not yet finished requirement 6";
+                        	}
+                        }
+                    });   
+	    };
+
         $scope.initCtrl = function () {
         	 $scope.resetSearchForm();
         	 $scope.loadUsers();
@@ -200,10 +242,22 @@ $scope.saveUserErrors = saveUserErrors;
 
 
 $scope.ok = function () {
+	$scope.msg_alerts=[];
 	$modalInstance.close();
 };
 
 $scope.cancel = function () {
+	$scope.msg_alerts=[];
 	$modalInstance.dismiss('cancel');
 };
+});
+
+
+
+app.controller('MessageModalInstanceCtrl', function ($scope, $modalInstance,title,message) {
+	$scope.message=message;
+	$scope.title=title;
+    $scope.ok = function () {
+        $modalInstance.close();
+    };
 });

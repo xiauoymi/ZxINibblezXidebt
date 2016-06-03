@@ -3,17 +3,24 @@
  */
 package com.nibbledebt.web.rest;
 
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import com.nibbledebt.common.error.DefaultException;
 import com.nibbledebt.common.error.ProcessingException;
+import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.common.security.MemberDetails;
@@ -74,8 +82,12 @@ public class UserMgmtREST  extends AbstractREST {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Loggable(logLevel=LogLevel.INFO)
 	@PreAuthorize("hasRole('nibbler_level_1')")
-	public MemberDetails getProfile(){
-		return ((MemberDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+	public MemberDetails getProfile() throws ProcessingException{
+		try {
+			return ((MemberDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+		} catch (Exception e) {
+			throw new ProcessingException("Nibble's web app is coming soon. Please check your email for weekly updates or contact us at info@nibbledebt.com");
+		}
 	}
 	
 	@POST
@@ -123,5 +135,16 @@ public class UserMgmtREST  extends AbstractREST {
 	@Loggable(logLevel=LogLevel.INFO)
 	public void loginAs(NibblerData nibblerData) throws Exception{
 		SecurityContextHolder.getContext().setAuthentication(usersProcessor.loginAs(nibblerData));
+	}
+	
+	
+	@GET
+	@Path("/setsuspendeddate/{username}/{date}")
+	@Loggable(logLevel=LogLevel.INFO)
+	@PreAuthorize("hasRole('nibbler_level_1')")
+	public void setsuspendeddate(@PathParam("username") String username,@PathParam("date") String date) throws ProcessingException, ServiceException, DefaultException, RepositoryException, ParseException{
+		DateTimeFormatter dTF = DateTimeFormatter.ofPattern("uuuuddMM");
+		Date d=Date.from(LocalDate.parse(date, dTF).atStartOfDay(ZoneId.systemDefault()).toInstant());
+		usersProcessor.setsuspendeddate(username, d);
 	}
 }

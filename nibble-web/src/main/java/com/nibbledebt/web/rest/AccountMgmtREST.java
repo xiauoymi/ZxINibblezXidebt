@@ -29,6 +29,7 @@ import com.nibbledebt.core.processor.TransactionProcessor;
 import com.nibbledebt.core.processor.UsersProcessor;
 import com.nibbledebt.domain.model.Contributor;
 import com.nibbledebt.domain.model.LoanSummary;
+import com.nibbledebt.domain.model.NibblerData;
 import com.nibbledebt.domain.model.Transaction;
 import com.nibbledebt.domain.model.TransactionSummary;
 import com.nibbledebt.domain.model.account.Account;
@@ -61,6 +62,17 @@ public class AccountMgmtREST extends AbstractREST {
 		}
 		return contributors;
 	}
+	
+	@POST
+	@Path("/emailUpdate")
+	@Loggable(logLevel=LogLevel.INFO)
+	@PreAuthorize("hasRole('nibbler_level_1')")
+	public void emailUpdate(NibblerData nibblerData) throws ProcessingException, RepositoryException{
+		trxsProcessor.getWeeklyTrxSummary(nibblerData.getEmail());
+	}
+	
+	
+	
 	
 	@GET
 	@Path("/isfirstlogin")

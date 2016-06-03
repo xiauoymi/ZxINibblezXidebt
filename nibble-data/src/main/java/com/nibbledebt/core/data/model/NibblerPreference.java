@@ -26,13 +26,20 @@ public class NibblerPreference extends AbstractModel {
 	 @Column(name="weekly_target_amount", nullable=false, scale=2, precision=10)
 	 private BigDecimal weeklyTargetAmount;
 	 
+	 @Column(name="fee_amount", scale=2, precision=10)
+	 private BigDecimal feeAmount;
+	 
+	 
 	 @OneToOne(fetch = FetchType.LAZY)
 	 private Nibbler nibbler;
-
+	 
 	/**
 	 * @return the weeklyTargetAmount
 	 */
 	public BigDecimal getWeeklyTargetAmount() {
+		if(weeklyTargetAmount==null){
+			weeklyTargetAmount= new BigDecimal(5);
+		}
 		return weeklyTargetAmount;
 	}
 
@@ -55,6 +62,16 @@ public class NibblerPreference extends AbstractModel {
 	 */
 	public void setNibbler(Nibbler nibbler) {
 		this.nibbler = nibbler;
+	}
+
+	public BigDecimal getFeeAmount() {
+		if(feeAmount==null)
+			feeAmount= new BigDecimal(2);
+		return feeAmount;
+	}
+
+	public void setFeeAmount(BigDecimal feeAmount) {
+		this.feeAmount = feeAmount;
 	}
 	 
 	 

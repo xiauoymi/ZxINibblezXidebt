@@ -34,9 +34,15 @@ public class NibblerData {
 	private String status;
 	private String resetCode;
 	private String referral;
-
+	private boolean loanConnected;
+	private boolean fundingConnected;
+	
     private String mfaQuestion;
     private String mfaAnswer;
+    
+    private Double weeklyTargetAmount;
+    
+    private Double feeAmount;
 	
 	private Boolean isFirstLogin;
 	
@@ -455,6 +461,46 @@ public class NibblerData {
 
 	public void setReferral(String referral) {
 		this.referral = referral;
+	}
+
+
+	public Double getWeeklyTargetAmount() {
+		return weeklyTargetAmount;
+	}
+
+
+	public void setWeeklyTargetAmount(Double weeklyTargetAmount) {
+		this.weeklyTargetAmount = weeklyTargetAmount;
+	}
+
+
+	public Double getFeeAmount() {
+		return feeAmount;
+	}
+
+
+	public void setFeeAmount(Double feeAmount) {
+		this.feeAmount = feeAmount;
+	}
+
+
+	public boolean isLoanConnected() {
+		return loanConnected;
+	}
+
+
+	public void setLoanConnected(boolean loanConnected) {
+		this.loanConnected = loanConnected;
+	}
+
+
+	public boolean isFundingConnected() {
+		return fundingConnected;
+	}
+
+
+	public void setFundingConnected(boolean fundingConnected) {
+		this.fundingConnected = fundingConnected;
 	}
 	
 	

@@ -3,6 +3,7 @@
  */
 package com.nibbledebt.core.processor;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import java.util.UUID;
 import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
@@ -193,7 +195,7 @@ public class UsersProcessor extends AbstractProcessor {
 	}
 
 	@Transactional(readOnly = true)
-	@Cacheable(value = "nibblerCache")
+	@CachePut(value = "nibblerCache")
 	public List<NibblerData> loadUsers(Nibbler nibb) throws DefaultException, RepositoryException {
 		List<Nibbler> nibblers = nibblerDao.find(nibb);
 		List<NibblerData> nibblerDatas = new ArrayList<NibblerData>();
@@ -213,6 +215,15 @@ public class UsersProcessor extends AbstractProcessor {
 				mData.setState(nibbler.getState());
 				mData.setPhone(nibbler.getPhone());
 				mData.setStatus(nibbler.getNibblerDir().getStatus());
+				mData.setReferral(nibbler.getReferral());
+				mData.setFeeAmount(nibbler.getNibblerPreferences().getFeeAmount().doubleValue());
+				mData.setWeeklyTargetAmount(nibbler.getNibblerPreferences().getWeeklyTargetAmount().doubleValue());
+				mData.setFundingConnected(nibbler.getAccounts().stream().anyMatch(a -> {
+					return a.getUseForRounding();
+				}));
+				mData.setLoanConnected(nibbler.getAccounts().stream().anyMatch(a->{
+					return a.getUseForpayoff();
+				}));
 				if (nibbler.getNibblerDir().getLastUpdateStatus() != null) {
 					float diff = (new Date().getTime() - nibbler.getNibblerDir().getLastUpdateStatus().getTime()) / 1000
 							* 60 * 60 * 24;
@@ -258,7 +269,16 @@ public class UsersProcessor extends AbstractProcessor {
 		if (!StringUtils.equals(entity.getPhone(), nibblerData.getPhone())) {
 			entity.setPhone(nibblerData.getPhone());
 		}
-
+		if (!StringUtils.equals(entity.getNibblerPreferences().getWeeklyTargetAmount().toString(),
+				nibblerData.getWeeklyTargetAmount().toString())) {
+			entity.getNibblerPreferences().setWeeklyTargetAmount(new BigDecimal(nibblerData.getWeeklyTargetAmount()));
+		}
+		if (!StringUtils.equals(entity.getNibblerPreferences().getFeeAmount().toString(), nibblerData.getFeeAmount().toString())) {
+			entity.getNibblerPreferences().setFeeAmount(new BigDecimal(nibblerData.getFeeAmount().toString()));
+		}
+		if (!StringUtils.equals(entity.getReferral(), nibblerData.getReferral())) {
+			entity.setReferral(nibblerData.getReferral());
+		}
 		nibblerDao.update(entity);
 	}
 
@@ -272,16 +292,24 @@ public class UsersProcessor extends AbstractProcessor {
 
 	@Transactional(isolation = Isolation.READ_COMMITTED)
 	@CacheEvict(value = "nibblerCache")
+	public void setsuspendeddate(String username, Date d) throws DefaultException, RepositoryException {
+		Nibbler entity = nibblerDao.find(username);
+		entity.getNibblerDir().setLastUpdateStatus(d);
+	}
+
+	@Transactional(isolation = Isolation.READ_COMMITTED)
+	@CacheEvict(value = "nibblerCache")
 	public void activateSuspendedUser(NibblerData nibblerData) throws DefaultException, RepositoryException {
 		Nibbler entity = nibblerDao.findOne(nibblerData.getInternalUserId());
 		float diff = 0;
-		if (entity.getNibblerDir() != null && entity.getNibblerDir().getLastUpdateStatus()!=null)
+		if (entity.getNibblerDir() != null && entity.getNibblerDir().getLastUpdateStatus() != null)
 			diff = (new Date().getTime() - entity.getNibblerDir().getLastUpdateStatus().getTime())
 					/ (1000 * 60 * 60 * 24);
-		if (false) {
+		if (diff < 90) {
 			entity.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
 		} else {
-			throw new DefaultException("This account has been suspended for more than 90 days. Please have them create a new account.");
+			throw new DefaultException(
+					"This account has been suspended for more than 90 days. Please have them create a new account.");
 		}
 	}
 

@@ -14,6 +14,7 @@ import java.util.List;
 public class TransactionSummary {
 	private String personLastName;
 	private String personFirstName;
+	private String email;
 	private Long personId;
 	private List<Transaction> trxs;
 	private BigDecimal day0total = BigDecimal.ZERO;
@@ -236,5 +237,12 @@ public class TransactionSummary {
 	public void setContributorSummaries(List<TransactionSummary> contributorSummaries) {
 		this.contributorSummaries = contributorSummaries;
 	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
 	
 }

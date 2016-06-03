@@ -103,9 +103,9 @@ app.controller('RegisterCtrl',
                 /* add watcher for retype password validation */
                 $scope.$watch('user.repassword', function(pass) {
                     if ($scope.registration.form && $scope.registration.form.repassword) {
-                        if ($scope.newuser.repassword != null && $scope.newuser.repassword != '') {
+                        if ($scope.user.repassword != null && $scope.user.repassword != '') {
                             $scope.registration.form.repassword.$setValidity('equalto',
-                                $scope.newuser.password == $scope.newuser.repassword);
+                                $scope.user.password == $scope.user.repassword);
                         }
                     }
                 });
@@ -293,7 +293,7 @@ app.controller('RegisterCtrl',
             };
 
             $scope.autoCompletSearch=function(){
-                 if($scope.linkaccount && $scope.linkaccount.search && $scope.linkaccount.search.length>1){
+                 if($scope.linkaccount && $scope.linkaccount.search && $scope.linkaccount.search.length>0){
                      $scope.searchInstitutions();
                 }
             }

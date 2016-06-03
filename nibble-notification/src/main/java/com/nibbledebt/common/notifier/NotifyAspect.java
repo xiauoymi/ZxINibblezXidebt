@@ -22,6 +22,7 @@ import com.nibbledebt.common.error.NotificationException;
 import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.domain.model.NibblerData;
+import com.nibbledebt.domain.model.TransactionSummary;
 import com.nibbledebt.integration.sao.mandrill.AWSMailSao;
 
 /**
@@ -90,6 +91,26 @@ public class NotifyAspect {
 			}
 		} catch (Exception e) {
 			throw new NotificationException("Error reading template.", e);
+		}
+		
+	}
+	
+	
+	@Loggable(logLevel=LogLevel.INFO)
+	@AfterReturning(pointcut="@annotation(notify)",returning="summary")
+	public void sendWeeklyTrxSummary(JoinPoint joinPoint, Notify notify,TransactionSummary summary) throws NotificationException{
+		try {
+			List<String> toEmails = new ArrayList<String>();
+			toEmails.add(summary.getEmail());					
+			if(notify.notifyType() == NotifyType.DEFAULT){
+				VelocityContext acCtx = new VelocityContext();
+				Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("weekly-update.vm");
+				StringWriter acWriter = new StringWriter();
+				acTmpl.merge(acCtx, acWriter);				
+				awsMailSao.sendEmail("Weekly Reporting", acWriter.toString(), toEmails);
+			} 
+		} catch (Exception e) {
+			throw new NotificationException("Error reading template : "+e.getMessage());
 		}
 		
 	}

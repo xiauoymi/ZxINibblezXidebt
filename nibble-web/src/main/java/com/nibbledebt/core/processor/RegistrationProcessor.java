@@ -133,6 +133,9 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	if (nibbler == null) {
             throw new ProcessingException("The username you have provided does not exist.");
         }
+    	if(!StringUtils.equals(nibbler.getNibblerDir().getPassword(), encoder.encodePassword(nibblerData.getPassword(), salt))){
+    		throw new ProcessingException("The password you have entered is incorrect.");
+    	}
         if (StringUtils.equals(nibbler.getNibblerDir().getStatus(), NibblerDirectoryStatus.CREATED.name())) {
             if (StringUtils.equals(nibbler.getNibblerDir().getActivationCode(), nibblerData.getActivationCode())) {
             	
@@ -184,7 +187,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 					}
 				} catch (Exception e) {
 					integrationSao.deleteCustomer(customerId);
-	                throw new ProcessingException("Unexpected error trying to activate customer account.", e);
+	                throw new ProcessingException("Unexpected error trying to activate customer account.");
 				}
             	
             } else {
@@ -196,7 +199,11 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
         	if(!nibbler.getAccounts().isEmpty()){
         		throw new ProcessingException("Already active!");
         	}
-        }}catch (Exception e){
+        }}
+        catch(ProcessingException e){
+        	throw e;
+        }
+        catch (Exception e){
         	throw new ProcessingException("Unexpected error trying to activate customer account.");
         }
         nibblerData.setFirstName(nibbler.getFirstName());
@@ -217,6 +224,9 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		try {
 			if(nibblerData.getReferral()!=null){
 				Nibbler referralNibbler=nibblerDao.findByReferral(nibblerData.getReferral());
+				if(referralNibbler==null){
+					throw new ValidationException("Incorrect referral code. Please try agian.");
+				}
 				List<String> types=Arrays.asList("student_loan","loan","student_loan");
 				List<NibblerAccount> nibblerAccounts=nibblerAccountDao.findNibblerAccountByAccountType(referralNibbler.getNibblerDir().getUsername(),types);
 				List<Account> accounts=saveLoanAccounts(nibblerData, nibblerAccounts);
@@ -226,9 +236,12 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 				return overallResponse;
 				
 			}else{
-				throw new ValidationException("Could not find this referral code "+ nibblerData.getReferral());
+				throw new ValidationException("Incorrect referral code. Please try agian.");
 			}
-		} catch (Exception e) {
+		} catch (ValidationException e){
+			throw e;
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			throw new ProcessingException("Unexpected exception while trying to add loan account.");
 		}
@@ -350,6 +363,9 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 			throw new ValidationException("The user id must be provided to add a loan account process.");
 		}
     	Nibbler nibbler = nibblerDao.find(username);
+    	nibblerData.setFirstName(nibbler.getFirstName());
+    	nibblerData.setLastName(nibbler.getLastName());
+    	nibblerData.setReferral(nibbler.getReferral());
     	return addLoanAccountByReferral(nibblerData, nibbler);
     }
     
@@ -364,6 +380,9 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     	if (nibblerData.getLoanAccountBank() != null && nibblerData.getLoanAccountBank().getInstitution() != null) {
             if (externalAuthReqsValid(nibblerData.getLoanAccountBank())) {
             	Nibbler nibbler = nibblerDao.find(username);
+            	nibblerData.setFirstName(nibbler.getFirstName());
+            	nibblerData.setLastName(nibbler.getLastName());
+            	nibblerData.setReferral(nibbler.getReferral());
             	nibblerData.setInternalUserId(nibbler.getId());
             	if(nibbler != null){
             		return addLoanAccount(nibblerData, nibbler);
@@ -744,12 +763,10 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		                    balance.setYtdInterestPaid(new BigDecimal("0.00"));
 		                    balance.setYtdPrincipalPaid(new BigDecimal("0.00"));
 		                    balance.setAccount(nibblerAccount);
-		                    
 		                    setCreated(balance, nibblerData.getEmail());
 		                    nibblerAccount.getBalances().add(balance);
 				            nibbler.addAccount(nibblerAccount);
 				            nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_ROUNDUP.name());
-		                    
 	                    }
 			    	}else{
 			    		nibblerAccount.setUseForRounding(false);
@@ -773,7 +790,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		
 	}
 	
-	public Institution createInstitution(Bank bank) throws RepositoryException, ServiceException{
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.DEFAULT, rollbackFor=RepositoryException.class)
+	public Institution createInstitution(Bank bank) throws RepositoryException, ServiceException, ValidationException{
 		SupportedInstitution supportedInstitution=new SupportedInstitution();
 		supportedInstitution.setAggegatorName("finicity");
 		supportedInstitution.setAggregatorQualifier("finicitySao");
@@ -791,6 +809,9 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		if(loginForm == null){
 			IIntegrationSao integrationSao = (IIntegrationSao) appContext.getBean("finicitySao");
 			loginForm = integrationSao.getInstitutionLoginForm(supportedInstitution.getExternalId());
+			if(loginForm==null){
+				throw new ValidationException("Financial institution requires fields that have failed validation.");
+			}
 		}
 		com.nibbledebt.core.data.model.Institution persistedInstitution = new com.nibbledebt.core.data.model.Institution();
 		persistedInstitution.setHomeUrl(bank.getInstitution().getHomeUrl());
@@ -802,4 +823,5 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		institutionDao.create(persistedInstitution);
 		return persistedInstitution;
 	}
+	
 }

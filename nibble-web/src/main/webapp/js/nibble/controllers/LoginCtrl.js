@@ -26,6 +26,7 @@ app.controller('LoginCtrl',
                             $state.go('dashboard.users');
                         })
                         .error(function(dataProfile) {
+                            dataProfile="Nibble's web app is coming soon. Please check your email for weekly updates or contact us at info@nibbledebt.com";
                             NibbleUtils.errorCallback($scope, $state, dataProfile, status);
                         });
                 })
