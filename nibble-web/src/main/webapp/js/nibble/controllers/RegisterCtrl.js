@@ -357,7 +357,16 @@ app.controller('RegisterCtrl',
                 });
             };
 
-            
+            $scope.editUser=function(user){
+                $scope.oldUser=angular.copy(user);
+                $scope.isEditing=true;
+            };
+
+            $scope.cancelEditUser=function(){
+                $scope.user=angular.copy($scope.oldUser);
+                $scope.isEditing=false;
+            };
+
 
             /**
              * Finish registration process

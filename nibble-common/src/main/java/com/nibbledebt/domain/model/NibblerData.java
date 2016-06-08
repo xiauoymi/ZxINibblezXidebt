@@ -4,6 +4,7 @@
 package com.nibbledebt.domain.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.nibbledebt.core.data.model.NibblerDirectoryStatus;
@@ -36,7 +37,8 @@ public class NibblerData {
 	private String referral;
 	private boolean loanConnected;
 	private boolean fundingConnected;
-	
+	private Date dateOfBirth;
+	private String ssn;
     private String mfaQuestion;
     private String mfaAnswer;
     
@@ -501,6 +503,26 @@ public class NibblerData {
 
 	public void setFundingConnected(boolean fundingConnected) {
 		this.fundingConnected = fundingConnected;
+	}
+
+
+	public Date getDateOfBirth() {
+		return dateOfBirth;
+	}
+
+
+	public void setDateOfBirth(Date dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
+
+
+	public String getSsn() {
+		return ssn;
+	}
+
+
+	public void setSsn(String ssn) {
+		this.ssn = ssn;
 	}
 	
 	

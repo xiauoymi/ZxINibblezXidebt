@@ -171,6 +171,22 @@
                         ng-model="newuser.phone"
                         xt-validation-tooltip phone-number msg-phone-number="Phone Numbers must be ten digits long">
             </div>
+            <div class="form-group">
+                <input
+                        type="date" class="form-control empty"
+                        placeholder="&#xf095;    Date of Birth"
+                        name="dateOfBirth" required
+                        ng-model="newuser.dateOfBirth">
+            </div>
+            <div class="form-group">
+                <input
+                        type="text" class="form-control empty" maxlength="4"
+                        placeholder="&#xf095;    Last 4 of SSN"
+                        name="ssn" required onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                        ng-model="newuser.ssn"
+                        xt-validation-tooltip ssn-number msg-ssn-number="SSN Numbers must be four digits long">
+            </div>
+
 
             <div class="form-group text-center">
                 <button class="btn btn-sm-cus btn-nibble-primary"
@@ -426,9 +442,25 @@
                         ng-model="user.phone"
                         xt-validation-tooltip phone-number msg-phone-number="Phone Numbers must be ten digits long">
             </div>
+            <div class="form-group">
+                <input
+                        type="date" class="form-control empty"
+                        placeholder="&#xf095;    Date of Birth"
+                        name="dateOfBirth" required
+                        ng-model="user.dateOfBirth">
+            </div>
+            <div class="form-group">
+                <input
+                        type="text" class="form-control empty" maxlength="4"
+                        placeholder="&#xf095;    Last 4 of SSN"
+                        name="ssn" required onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                        ng-model="user.ssn"
+                        xt-validation-tooltip ssn-number msg-ssn-number="SSN Numbers must be four digits long">
+            </div>
+
             <div class="form-group text-center">
                 <button class="btn btn-sm-cus btn-nibble-primary"
-                        ng-click="isEditing=false">
+                        ng-click="cancelEditUser()">
                     Cancel <i class="fa fa-md font-color-white"></i>
                 </button>
                 <button class="btn btn-sm-cus btn-nibble-primary"
@@ -481,7 +513,7 @@
                 <br>
                 <div class="form-group text-center">
                     <button class="btn btn-sm-cus btn-nibble-primary"
-                            ng-click="isEditing=true">
+                            ng-click="editUser(user)">
                         Edit <i class="fa fa-md font-color-white"></i>
                     </button>
                     <button class="btn btn-sm-cus btn-nibble-primary"

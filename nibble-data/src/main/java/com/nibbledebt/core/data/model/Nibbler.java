@@ -20,6 +20,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * @author ralam1
@@ -98,6 +100,10 @@ public class Nibbler extends AbstractModel {
 
 	@Column(name = "referral_code", nullable = true, unique = true, length = 10)
 	private String referral;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dateOfBirth;
+	private String ssn;
 
 	/**
 	 * @return the invitationCode
@@ -388,5 +394,23 @@ public class Nibbler extends AbstractModel {
 		});
 
 	}
+
+	public Date getDateOfBirth() {
+		return dateOfBirth;
+	}
+
+	public void setDateOfBirth(Date dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
+
+	public String getSsn() {
+		return ssn;
+	}
+
+	public void setSsn(String ssn) {
+		this.ssn = ssn;
+	}
+	
+	
 
 }
