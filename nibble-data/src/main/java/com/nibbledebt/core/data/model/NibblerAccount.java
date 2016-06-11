@@ -101,6 +101,18 @@ public class NibblerAccount extends AbstractModel{
 	@OrderBy("initiatedTs asc")
 	private List<PaymentActivity> creditActivity;
 	
+	private String fundingSourceId;
+	
+	private String dwollaLoanId;
+	
+	private Integer balanceBelow20=new Integer(0);
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastCheckingBalance;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastPaymentFee;
+	
 	public NibblerAccount(){
 		super();
 	}
@@ -280,6 +292,9 @@ public class NibblerAccount extends AbstractModel{
 	 * @return the cumulativeRoundupsAmount
 	 */
 	public BigDecimal getCumulativeRoundupsAmount() {
+		if(cumulativeRoundupsAmount==null){
+			cumulativeRoundupsAmount=new BigDecimal("0");
+		}
 		return cumulativeRoundupsAmount;
 	}
 
@@ -330,6 +345,52 @@ public class NibblerAccount extends AbstractModel{
 	 */
 	public void setCreditActivity(List<PaymentActivity> creditActivity) {
 		this.creditActivity = creditActivity;
+	}
+	
+
+
+	public String getFundingSourceId() {
+		return fundingSourceId;
+	}
+
+	public void setFundingSourceId(String fundingSourceId) {
+		this.fundingSourceId = fundingSourceId;
+	}
+
+	
+	
+	public String getDwollaLoanId() {
+		return dwollaLoanId;
+	}
+
+	public void setDwollaLoanId(String dwollaLoanId) {
+		this.dwollaLoanId = dwollaLoanId;
+	}
+
+	public int getBalanceBelow20() {
+		return balanceBelow20;
+	}
+
+	public void setBalanceBelow20(int balanceBelow20) {
+		this.balanceBelow20 = balanceBelow20;
+	}
+
+	public Date getLastCheckingBalance() {
+		return lastCheckingBalance;
+	}
+
+	public void setLastCheckingBalance(Date lastCheckingBalance) {
+		this.lastCheckingBalance = lastCheckingBalance;
+	}
+	
+	
+	
+	public Date getLastPaymentFee() {
+		return lastPaymentFee;
+	}
+
+	public void setLastPaymentFee(Date lastPaymentFee) {
+		this.lastPaymentFee = lastPaymentFee;
 	}
 
 	@Override

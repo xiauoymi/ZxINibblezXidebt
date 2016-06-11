@@ -53,15 +53,14 @@
   			<groupId>com.nibbledebt</groupId>
   			<artifactId>nibble-integration</artifactId>
     		<version>1.0.0-SNAPSHOT</version>
-		    <scope>compile</scope>
-		    
+		    <scope>compile</scope>		    
   		</dependency>
-<!--   		<dependency> -->
-<!--   			<groupId>com.nibbledebt</groupId> -->
-<!--   			<artifactId>nibble-payments</artifactId> -->
-<!--     		<version>1.0.0-SNAPSHOT</version> -->
-<!-- 		    <scope>compile</scope> -->
-<!--   		</dependency> -->
+  		<dependency>
+  			<groupId>com.nibbledebt</groupId>
+  			<artifactId>nibble-payments</artifactId>
+    		<version>1.0.0-SNAPSHOT</version>
+		    <scope>compile</scope>
+  		</dependency>
 	  </dependencies>
 
     <build>

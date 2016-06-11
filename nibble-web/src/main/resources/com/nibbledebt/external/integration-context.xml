@@ -12,6 +12,6 @@
 	
 	<import resource="classpath:finicity-integration-context.xml"/>
 	<import resource="classpath:intuit-integration-context.xml"/>
-	
+	<import resource="classpath:payments-context.xml"/>
 	
 </beans>

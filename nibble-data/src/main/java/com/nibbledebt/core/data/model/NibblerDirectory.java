@@ -71,6 +71,8 @@ public class NibblerDirectory  extends AbstractModel{
 	@Column(name = "last_update_st", nullable = true)
 	private Date lastUpdateStatus;
 	
+	private String locationHeader;
+	
 	@OneToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 	private Nibbler nibbler;
 
@@ -196,6 +198,14 @@ public class NibblerDirectory  extends AbstractModel{
 
 	public void setLastUpdateStatus(Date lastUpdateStatus) {
 		this.lastUpdateStatus = lastUpdateStatus;
+	}
+
+	public String getLocationHeader() {
+		return locationHeader;
+	}
+
+	public void setLocationHeader(String locationHeader) {
+		this.locationHeader = locationHeader;
 	}
 	
 	

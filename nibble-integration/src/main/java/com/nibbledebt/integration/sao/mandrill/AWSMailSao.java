@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.velocity.VelocityEngineFactoryBean;
 
 import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.regions.Region;
@@ -25,6 +27,10 @@ import com.nibbledebt.common.error.NotificationException;
 public class AWSMailSao {
     private static final String FROM = "info@nibbledebt.com";
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(AWSMailSao.class);
+    
+	@Autowired
+	private VelocityEngineFactoryBean velocityEngineFactory;
+	
     /**
      * Send email using the AWS service.
      * 
@@ -109,4 +115,5 @@ public class AWSMailSao {
         LOG.info("Please check the email address " + address + " to verify it");
         //System.exit(0);
     }
+    
 }

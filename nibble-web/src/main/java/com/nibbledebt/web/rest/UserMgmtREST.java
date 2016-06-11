@@ -20,7 +20,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +34,7 @@ import com.nibbledebt.common.security.MemberDetails;
 import com.nibbledebt.common.validator.Validatable;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.Nibbler;
+import com.nibbledebt.core.processor.BillingProcessor;
 import com.nibbledebt.core.processor.UsersProcessor;
 import com.nibbledebt.domain.model.NibblerData;
 
@@ -49,6 +49,9 @@ public class UserMgmtREST  extends AbstractREST {
 	
 	@Autowired
 	private UsersProcessor usersProcessor;
+	
+	@Autowired
+	private BillingProcessor billingProcessor;
 	
 	@POST
 	@Path("/reset")
@@ -146,5 +149,14 @@ public class UserMgmtREST  extends AbstractREST {
 		DateTimeFormatter dTF = DateTimeFormatter.ofPattern("uuuuddMM");
 		Date d=Date.from(LocalDate.parse(date, dTF).atStartOfDay(ZoneId.systemDefault()).toInstant());
 		usersProcessor.setsuspendeddate(username, d);
+	}
+	
+	@GET
+	@Path("/bill")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Loggable(logLevel=LogLevel.INFO)
+	public void bill() throws ProcessingException, RepositoryException{
+		billingProcessor.processPayment();
 	}
 }

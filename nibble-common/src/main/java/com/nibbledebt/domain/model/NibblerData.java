@@ -4,12 +4,12 @@
 package com.nibbledebt.domain.model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.nibbledebt.core.data.model.NibblerDirectoryStatus;
 import com.nibbledebt.domain.model.account.Account;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * @author ralam1
@@ -37,7 +37,7 @@ public class NibblerData {
 	private String referral;
 	private boolean loanConnected;
 	private boolean fundingConnected;
-	private Date dateOfBirth;
+	private String dateOfBirth;
 	private String ssn;
     private String mfaQuestion;
     private String mfaAnswer;
@@ -506,12 +506,12 @@ public class NibblerData {
 	}
 
 
-	public Date getDateOfBirth() {
+	public String getDateOfBirth() {
 		return dateOfBirth;
 	}
 
 
-	public void setDateOfBirth(Date dateOfBirth) {
+	public void setDateOfBirth(String dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
 

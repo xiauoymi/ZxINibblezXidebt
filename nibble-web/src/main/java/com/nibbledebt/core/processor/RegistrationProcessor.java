@@ -4,6 +4,7 @@
 package com.nibbledebt.core.processor;
 
 import java.math.BigDecimal;
+import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -66,7 +68,10 @@ import com.nibbledebt.domain.model.account.Account;
 import com.nibbledebt.domain.model.account.Accounts;
 import com.nibbledebt.domain.model.account.AddAccountsResponse;
 import com.nibbledebt.domain.model.account.MfaType;
+import com.nibbledebt.dwolla.IDwollaClient;
 import com.nibbledebt.integration.sao.IIntegrationSao;
+
+import io.swagger.client.ApiException;
 
 /**
  * @author ralam1
@@ -106,6 +111,9 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 
 	@Resource
 	private Environment env;
+	
+	@Autowired
+	private IDwollaClient dwollaClient;
 	
     
     /**
@@ -524,6 +532,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
             	nibbler.setType(NibblerType.starter.name());
             	nibbler.setEmail(nibblerData.getEmail());
             	nibbler.setPhone(nibblerData.getPhone());
+            	nibbler.setSsn(nibblerData.getSsn());
+            	nibbler.setDateOfBirth(nibblerData.getDateOfBirth());
             	NibblerDirectory nibblerDir = new NibblerDirectory();
             	nibblerDir.setUsername(nibblerData.getEmail());
                 nibblerDir.setPassword(
@@ -544,7 +554,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
                 setCreated(nibbler, nibblerData.getEmail());
                 setCreated(nibblerDir, nibblerData.getEmail());
                 nibblerDao.create(nibbler);   
-                
+
                 nibblerData.setActivationCode(actCode);
     		}else{
     			throw new ValidationException("Username/Password/Name/City/State/Zip are required fields.");
@@ -595,6 +605,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
     private void saveCustomerAccounts(NibblerData nibblerData, Accounts accounts, Boolean forRoundUp) throws ServiceException, RepositoryException, ProcessingException {
     	try {
 	    	Nibbler nibbler = nibblerDao.findOne(nibblerData.getInternalUserId());
+	    	String locationHeader=null;
 	    	for (Account account : accounts.getAccount()) {
 	    		AccountType accountType = accountTypeDao.find(account.getAccountType());
 	            if (accountType == null) {
@@ -633,6 +644,16 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		                }
 			            nibbler.addAccount(nibblerAccount);
 			            nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
+			            if(locationHeader==null)
+			            try {
+							locationHeader=dwollaClient.createCustomer(nibblerAccount);
+							nibbler.getNibblerDir().setLocationHeader(locationHeader);
+							String fundingSourceId=dwollaClient.createAccount(nibblerAccount, locationHeader);
+							nibblerAccount.setFundingSourceId(fundingSourceId);
+						} catch (UnknownHostException | ApiException e) {
+							e.printStackTrace();
+							throw new ProcessingException("Error while adding dwolla account.");
+						}
 			    	}else if(forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "creditCard")){
 			    		nibblerAccount.setUseForRounding(true);
 			    		if (account.getBalance() != null) {
@@ -657,6 +678,16 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 				            nibbler.addAccount(nibblerAccount);
 				            nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
 		                }
+			    		 if(locationHeader==null)
+			    		try {
+							locationHeader=dwollaClient.createCustomer(nibblerAccount);
+							nibbler.getNibblerDir().setLocationHeader(locationHeader);
+							String fundingSourceId=dwollaClient.createAccount(nibblerAccount, locationHeader);
+							nibblerAccount.setFundingSourceId(fundingSourceId);
+						} catch (UnknownHostException | ApiException e) {
+							e.printStackTrace();
+							throw new ProcessingException("Error while adding dwolla account.");
+						}
 			    	}else if(!forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "student-loan")){
 			    		nibblerAccount.setUseForRounding(false);
 			    		nibblerAccount.setUseForpayoff(true);
@@ -683,7 +714,16 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 				            nibbler.addAccount(nibblerAccount);
 				            nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_ROUNDUP.name());
 		                }
-			    	}else if(!forRoundUp && StringUtils.equalsIgnoreCase(account.getAccountType(), "loan")){
+			    		 if(locationHeader==null)
+			    		try {
+							locationHeader=nibbler.getNibblerDir().getLocationHeader();
+							String dwollaLoanId=dwollaClient.createAccount(nibblerAccount, locationHeader);
+							nibblerAccount.setDwollaLoanId(dwollaLoanId);
+						} catch (ApiException e) {
+							e.printStackTrace();
+							throw new ProcessingException("Error while adding dwolla account.");
+						}
+			    	}else if(!forRoundUp/** && StringUtils.equalsIgnoreCase(account.getAccountType(), "loan")**/){//TODO REMOVE COMMENT IN PROD
 			    		nibblerAccount.setUseForRounding(false);
 			    		nibblerAccount.setUseForpayoff(true);
 			    		if(!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod")){
@@ -696,11 +736,22 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		                    balance.setYtdInterestPaid(new BigDecimal("0.00"));
 		                    balance.setYtdPrincipalPaid(new BigDecimal("0.00"));
 		                    balance.setAccount(nibblerAccount);
-		                    
+		                    Random randomGenerator = new Random();
+		                    nibblerAccount.setNumber("2121210"+randomGenerator.nextInt(100));
+		                    nibblerAccount.setExternalId("000"+randomGenerator.nextInt(100));
 		                    setCreated(balance, nibblerData.getEmail());
 		                    nibblerAccount.getBalances().add(balance);
 				            nibbler.addAccount(nibblerAccount);
 				            nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_ROUNDUP.name());
+				            if(locationHeader==null)
+				            try {
+								locationHeader=nibbler.getNibblerDir().getLocationHeader();
+								String dwollaLoanId=dwollaClient.createAccount(nibblerAccount, locationHeader);
+								nibblerAccount.setDwollaLoanId(dwollaLoanId);
+							} catch (ApiException e) {
+								e.printStackTrace();
+								throw new ProcessingException("Error while adding dwolla account.");
+							}
 		                    
 	                    }
 			    	}else{
@@ -716,6 +767,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
             if(!forRoundUp){
             	nibbler.setReferral(nibbler.getExtAccessToken());
             }
+            
 	    	nibblerDao.saveOrUpdate(nibbler);
     	} catch (ParseException e) {
     		e.printStackTrace();

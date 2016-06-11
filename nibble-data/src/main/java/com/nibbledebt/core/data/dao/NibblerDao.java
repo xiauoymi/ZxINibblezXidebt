@@ -100,4 +100,15 @@ public class NibblerDao extends AbstractHibernateDao<Nibbler> implements INibble
 		}
 	}
 
+	@Override
+	public List<Nibbler> findByStatus(String status) throws RepositoryException {
+		try {
+			Query query = this.getCurrentSession().getNamedQuery("findByStatus");
+			query.setString("status", status);
+			return (List<Nibbler>)query.list();
+		} catch (Exception e) {
+			  throw new RepositoryException(e);
+		}
+	}
+
 }

@@ -23,6 +23,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
+
 /**
  * @author ralam1
  *
@@ -32,9 +35,11 @@ import javax.persistence.TemporalType;
 		@NamedQuery(name = "findNibblerByInvitationCode", query = "from Nibbler n where n.invitationCode = :invitation_code"),
 		@NamedQuery(name = "findNibblerByReferralCode", query = "from Nibbler n where n.referral = :referral"),
 		@NamedQuery(name = "findContributorsByReceiver", query = "from Nibbler n where n.receiver.id = :receiver_id"),
-		@NamedQuery(name = "findReceiverByUsername", query = "from Nibbler n where n.nibblerDir.username = :username")
+		@NamedQuery(name = "findReceiverByUsername", query = "from Nibbler n where n.nibblerDir.username = :username"),
+		@NamedQuery(name = "findByStatus", query = "from Nibbler n where n.nibblerDir.status = :status")
 
 })
+
 @Entity()
 @Table(name = "nibbler"
 // uniqueConstraints = {
@@ -101,8 +106,7 @@ public class Nibbler extends AbstractModel {
 	@Column(name = "referral_code", nullable = true, unique = true, length = 10)
 	private String referral;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateOfBirth;
+	private String dateOfBirth;
 	private String ssn;
 
 	/**
@@ -395,12 +399,16 @@ public class Nibbler extends AbstractModel {
 
 	}
 
-	public Date getDateOfBirth() {
+	public String getDateOfBirth() {
 		return dateOfBirth;
 	}
 
-	public void setDateOfBirth(Date dateOfBirth) {
+	public void setDateOfBirth(String dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
+	}
+	
+	public void setDateOfBirth(Date dateOfBirth) {
+		this.dateOfBirth = DateFormatUtils.format(dateOfBirth, "YYYY-MM-DD");
 	}
 
 	public String getSsn() {

@@ -1,6 +1,6 @@
 'use strict';
 app.controller('RegisterCtrl',
-        function RegisterCtrl($scope, $state, $stateParams, $modal, pwdstrength, accountFactory, userFactory) {
+        function RegisterCtrl($scope, $state, $filter,$stateParams, $modal, pwdstrength, accountFactory, userFactory) {
 
             /**
              * init data and watchers
@@ -400,6 +400,8 @@ app.controller('RegisterCtrl',
                 nibbler.email = user.email;
                 nibbler.phone = user.phone;
                 nibbler.url = NibbleUtils.getBaseUrl();
+                nibbler.ssn=user.ssn;
+                nibbler.dateOfBirth=$filter('date')(user.dateOfBirth, 'yyyy-MM-dd');
                 if ($scope.selected != undefined) {
                     nibbler.bank = {
                         institution : {},

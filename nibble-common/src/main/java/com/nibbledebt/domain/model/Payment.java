@@ -20,7 +20,8 @@ public class Payment {
 	private Date completedTs;
 	
 	private String authorization;
-
+	
+	
 	
 	public Payment(BigDecimal amount, Date initiatedTs, Date completedTs,
 			String authorization) {
