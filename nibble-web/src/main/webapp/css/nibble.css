@@ -152,19 +152,16 @@ body,
   margin: 0 0 0 0;
   padding-bottom: 0 0 0 0;
   text-align: center;
-  background: rgba(250, 142, 9, 0.1);
 }
 .modal-header {
-  font-family: 'Poiret One', cursive;
   font-size: 2em;
   font-weight: 500;
   margin: 0 0 0 0;
   padding-bottom: 0 0 0 0;
   text-align: center;
-  background: rgba(250, 142, 9, 0.1);
+  background: #a1c6ea;
 }
 .form-section-header {
-  font-family: 'Ubuntu', sans-serif;
   font-size: 1.1em;
   font-weight: 500;
   margin-bottom: 10px;
@@ -172,7 +169,7 @@ body,
   width: auto;
   padding: 5px 5px 5px 5px;
   text-align: left;
-  color: #ffffff;
+  color: white;
   background: rgba(250, 142, 9, 0.6);
   border-radius: 5px;
 }

@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.nibbledebt.common.error.ServiceException;
@@ -23,7 +24,11 @@ import com.nibbledebt.domain.model.LoginForm;
 import com.nibbledebt.domain.model.Transaction;
 import com.nibbledebt.domain.model.account.AddAccountsResponse;
 import com.nibbledebt.integration.finicity.FinicityClient;
+import com.nibbledebt.integration.finicity.error.FinicityAccessException;
+import com.nibbledebt.integration.finicity.model.Customers;
 import com.nibbledebt.integration.finicity.model.LoginField;
+import com.nibbledebt.integration.finicity.model.TransactionTest;
+import com.nibbledebt.integration.finicity.model.accounts.QuestionRequest;
 import com.nibbledebt.integration.finicity.model.trxs.Transactions;
 import com.nibbledebt.integration.sao.IIntegrationSao;
 
@@ -63,7 +68,8 @@ public class FinicitySao implements IIntegrationSao{
 			}
 			return institutions;
 		} catch (Exception e) {
-			throw new ServiceException("Error while retrieving the supported institutions from Finicity.", e);
+			e.printStackTrace();
+			throw new ServiceException("Error while retrieving the supported institutions from Finicity.");
 		}
 	}
 	
@@ -115,6 +121,7 @@ public class FinicitySao implements IIntegrationSao{
         try {
             return !StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod") ? finicityClient.addTestCustomer(userName, firstName, lastName).getId() : finicityClient.addCustomer(userName, firstName, lastName).getId();
         } catch (Exception e) {
+        	e.printStackTrace();
             throw new ServiceException("Error while creating customer for Finicity", e);
         }
     }
@@ -139,6 +146,34 @@ public class FinicitySao implements IIntegrationSao{
 			 return trxs;
 		 } catch (Exception e) {
             throw new ServiceException("Error while retrieving transactions for customer with customerId["+customerId+"] and accountId["+accountId+"].", e);
+        }
+	}
+
+	@Override
+	public TransactionTest addTestTx(String customerId, String accountId) throws ServiceException {
+	       try {
+	            return finicityClient.addTestTx(customerId, accountId);
+	        } catch (Exception e) {
+	            throw new ServiceException("Error while creating TransactionTest for Finicity", e);
+	        }
+	}
+
+	@Override
+	public ResponseEntity<String> addCustomerAccountsMfaString(String customerId, String institutionId,
+			QuestionRequest[] questions) throws  ServiceException {
+		 try {
+	            return finicityClient.addCustomerAccountsMfaString(customerId, institutionId, questions);
+	        } catch (Exception e) {
+	            throw new ServiceException("Error while creating customer for Finicity", e);
+	        }
+	}
+
+	@Override
+	public Customers getCustomers() throws ServiceException {
+		try {
+			return finicityClient.getCustomers();
+		} catch (Exception e) {
+            throw new ServiceException("Error getCustomers form Finicity");
         }
 	}
 	

@@ -36,7 +36,7 @@ import org.apache.commons.lang.time.DateUtils;
 		@NamedQuery(name = "findNibblerByReferralCode", query = "from Nibbler n where n.referral = :referral"),
 		@NamedQuery(name = "findContributorsByReceiver", query = "from Nibbler n where n.receiver.id = :receiver_id"),
 		@NamedQuery(name = "findReceiverByUsername", query = "from Nibbler n where n.nibblerDir.username = :username"),
-		@NamedQuery(name = "findByStatus", query = "from Nibbler n where n.nibblerDir.status = :status")
+		@NamedQuery(name = "findByStatus", query = "from Nibbler n where n.nibblerDir.status in :status")
 
 })
 
@@ -405,10 +405,6 @@ public class Nibbler extends AbstractModel {
 
 	public void setDateOfBirth(String dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
-	}
-	
-	public void setDateOfBirth(Date dateOfBirth) {
-		this.dateOfBirth = DateFormatUtils.format(dateOfBirth, "YYYY-MM-DD");
 	}
 
 	public String getSsn() {

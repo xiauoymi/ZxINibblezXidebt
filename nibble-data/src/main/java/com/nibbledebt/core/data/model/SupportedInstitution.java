@@ -63,8 +63,8 @@ public class SupportedInstitution extends AbstractModel {
 	@Column(name="priority", nullable=false)
 	private Short priority;
 	
-	@Column(name="logo_code", nullable=false, length=20)
-	private String logoCode;
+	@Column(name="logo_code", nullable=true, length=20)
+	private String logoCode="";
 		
 	@Column(name="type", nullable=false, length=256)
 	private String type;

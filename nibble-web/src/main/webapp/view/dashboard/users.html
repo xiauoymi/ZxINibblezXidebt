@@ -1,7 +1,7 @@
 <div ng-controller="UsersCtrl" ng-init="initCtrl()">
     <script type="text/ng-template" id="messageModalContent.html">
         <div class="modal-header">
-            <h3 class="modal-title">{{title}}</h3>
+            <h3 style="color: white;">{{title}}</h3>
         </div>
         <div class="modal-body">
             {{message}}
@@ -74,7 +74,7 @@
           <col width="10%" />
           <col width="5%" />
         </colgroup>
-        <tr ng-repeat="row in users" ng-form="rowForm" demo-tracked-table-row="row" xt-form strategy="focusedAndDirtyOrSubmitted"
+        <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row" xt-form strategy="focusedAndDirtyOrSubmitted"
           focus-error="true" role="form">
           <td title="'First Name'" sortable="'firstName'" ng-switch="row.isEditing" ng-class="firstName.$dirty ? 'bg-warning' : ''" ng-form="firstName" demo-tracked-table-cell>
             <span ng-switch-default class="editable-text">{{row.firstName}}</span>

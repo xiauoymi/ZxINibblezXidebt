@@ -1,6 +1,6 @@
 'use strict';
 app.controller('RegisterCtrl',
-        function RegisterCtrl($scope, $state, $filter,$stateParams, $modal, pwdstrength, accountFactory, userFactory) {
+        function RegisterCtrl($scope, $state,$timeout, $interval, $filter,$stateParams, $modal, pwdstrength, accountFactory, userFactory,dwollaFactory) {
 
             /**
              * init data and watchers
@@ -8,6 +8,7 @@ app.controller('RegisterCtrl',
             $scope.initData = function() {
             	$scope.isEditing=false;
                 $scope.registration = {};
+                $scope.linkaccount={};
                 $scope.newuser = {
                     email: "",
                     password: "",
@@ -111,7 +112,8 @@ app.controller('RegisterCtrl',
                 });
             if($stateParams.activate){
            		$scope.activate=$stateParams.activate;
-           		$scope.initLinkAccount("linkAccount");
+           		 $scope.initLinkAccount("linkAccount");
+           		//$scope.initLinkAccount('loanAccount');
            	}
            	if($stateParams.user)
            	$scope.user=$stateParams.user;
@@ -216,46 +218,89 @@ app.controller('RegisterCtrl',
              * Show form for link account
              */
             $scope.initLinkAccount = function(step) {
-            	$scope.linkaccount = {};
-            	$scope.linkaccount.search ="";
-                $scope.linkaccount.referral="";
             	$scope.registration.condition = step;
-                accountFactory.getInstitutions().then(function(data) {
-                    let items = data.data;
-                    let length=items.length<6?items.length:6;
-                    for (let i=0; i<length; i++) {
-                    	if(items[i].institution.logoCode){
-                            if(items[i].institution.logoCode.match('genericbank')){
-                                items[i].institution.defaultLogo=true;
-                            }
-                    		items[i].institution.logoUrl = NibbleUtils.getServicesUrl() + "/rest/logo/" +
-                            window.encodeURIComponent(items[i].institution.logoCode);	
-                    	}
-                    }
-                    $scope.banks = items;
-                },function (data, status) {
-                		NibbleUtils.errorCallback($scope, $state, data, status);
-                });
-
             };
 
-            $scope.addRoundupAccount=function(bank,email){
-                accountFactory.updateRoundupAccount({roundupAccountBank:bank,email:email}).then(function(data){
+            $scope.fundingIAVLoading=false;
+            $scope.fundingIAVStep=0;
+            $scope.finicityBank={};  
+            $scope.showNext2Loan=false;
+            $scope.loadIAV=function(fn){
+                dwollaFactory.newToken($scope.user).then(function(data){
+                    $scope.user.iavToken=data.data.iavToken;
+                    dwollaFactory.startIavFunding($scope.user.iavToken,$scope[fn],$scope);
+                    $scope.promiseOfWatching=$interval($scope.startWatchingIAV, 100);
+                });
+            };
+            
+            $scope.startWatchingIAV=function(){
+            if($scope.fundingIAVStep==0){
+                if(angular.element('iframe').contents().find('#BankName').length>0){                    
+                            angular.element('iframe').contents().find( 'button[type=submit]' )[0].addEventListener('click', function(){
+                            let institution={};
+                            institution.name=angular.element('iframe').contents().find('#BankName')[0].value;
+                            //bank -> loginForm ->[loginField {value,description}]
+                            let loginField=[];
+                            angular.element('iframe').contents().find('label').each(function(k,e) {
+                                loginField.push({description:e.innerHTML,value:angular.element("iframe").contents().find("#"+e.htmlFor).val()});
+                            });
+                            $scope.finicityBank.loginForm={loginField:loginField};
+                            $scope.finicityBank.institution=institution;
+                            $scope.fundingIAVLoading=false;
+                        });                 
+                    $scope.fundingIAVStep=1;                        
+                }
+            }
+            if($scope.fundingIAVStep==1){
+                    if(angular.element('iframe').contents().find('#QUESTION_1').length>0){
+                      angular.element('iframe').contents().find( 'button[type=submit]' )[0].addEventListener('click', function(){
+                            let questionRequests=[];
+                             angular.element('iframe').contents().find('label').each(function(k,e) {
+                                questionRequests.push({text:e.innerHTML,answer:angular.element("iframe").contents().find("#"+e.htmlFor).val()});
+                            });
+                            $scope.finicityBank.questionRequests=questionRequests;
+                            //$scope.addRoundupAccount($scope.finicityBank,$scope.user.email);
+                            $scope.fundingIAVLoading=false;     
+                            $scope.fundingIAVStep=3;
+                        });      
+                          
+                    }        
+            }
+            if($scope.fundingIAVStep==3){
+            	if(angular.element("iframe").contents().find("input:checked").length>0){
+            		angular.element('iframe').contents().find( 'button[type=submit]' )[0].addEventListener('click', function(){
+            			if(angular.element("iframe").contents().find("input[name=AccountNumberInput]").val()){
+                    		$scope.finicityBank.accountNumber =angular.element("iframe").contents().find("input[name=AccountNumberInput]").val();
+                    	}else{
+                    		$scope.finicityBank.accountNumber =angular.element("iframe").contents().find( "input:checked" ).val();
+                    	}  
+                    	$interval.cancel($scope.promiseOfWatching);
+                    });      
+                    $scope.fundingIAVStep=0;
+            	}
+            }
+            };
+
+            $scope.isFundingIAV=function(){return true;};
+            
+            $scope.addRoundupAccount=function(bank,email,fundingSource){
+                accountFactory.updateRoundupAccount({roundupAccountBank:bank,email:email,fundingSourceToken:fundingSource,accountNumber:bank.accountNumber}).then(function(data){
                    $scope.roundupAccount=data; 
+                   $scope.finicityBank={}; 
                     $modal.open({
                         animation: true,
                         templateUrl: 'accountLinked.html',
                         controller: 'ConfirmModalInstanceCtrl',
                         backdrop: 'static'
                     });
-                   $scope.initLinkAccount("loanAccount");
+                   $scope.showNext2Loan=true;
                 },function (data, status) {
                         NibbleUtils.errorCallback($scope, $state, data, status);
                 });
             };
 
-            $scope.addLoanAccount=function(bank,email){
-                accountFactory.updateLoanAccount({loanAccountBank:bank,email:email}).then(function(data){
+            $scope.addLoanAccount=function(bank,email,fundingSource){
+                accountFactory.updateLoanAccount({loanAccountBank:bank,email:email,loanToken:fundingSource,accountNumber:bank.accountNumber}).then(function(data){
                      $scope.loanAccount=data; 
                    $scope.registration.condition ="registrationConfirm";
                 },function (data, status) {

@@ -87,7 +87,8 @@ app.factory('userFactory', function($http){
         var config = {
             headers : {
                 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
-            }
+            },
+        timeout : 5000
         };
         return $http.post(NibbleUtils.getServicesUrl() + "/sslogin", requestForm, config);
     };

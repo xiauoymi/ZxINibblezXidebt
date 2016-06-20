@@ -25,13 +25,21 @@ app.controller('LoginCtrl',
                             }
                             $state.go('dashboard.users');
                         })
-                        .error(function(dataProfile) {
-                            dataProfile="Nibble's web app is coming soon. Please check your email for weekly updates or contact us at info@nibbledebt.com";
-                            NibbleUtils.errorCallback($scope, $state, dataProfile, status);
+                        .error(function(dataProfile,status) {
+                            //dataProfile="Nibble's web app is coming soon. Please check your email for weekly updates or contact us at info@nibbledebt.com";
+                        	if(status==0){
+                            	NibbleUtils.errorCallback($scope, $state, "Oops. Something went wrong, please reload the page and try again. If the problem persist, please contact Customer Care at info@nibbledebt.com.", status);
+                            }else{
+                            	NibbleUtils.errorCallback($scope, $state, dataProfile.error, status);
+                            }
                         });
                 })
-                .error(function(data) {
-                    NibbleUtils.errorCallback($scope, $state, data, status);
+                .error(function(data,status) {
+                	if(status==0){
+                    	NibbleUtils.errorCallback($scope, $state, "Oops. Something went wrong, please reload the page and try again. If the problem persist, please contact Customer Care at info@nibbledebt.com.", status);
+                    }else{
+                    	NibbleUtils.errorCallback($scope, $state, data.error, status);
+                    }
                 })
         }
 

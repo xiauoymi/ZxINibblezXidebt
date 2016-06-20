@@ -16,6 +16,7 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.nibbledebt.common.error.ServiceException;
@@ -23,8 +24,10 @@ import com.nibbledebt.domain.model.Institution;
 import com.nibbledebt.domain.model.LoginField;
 import com.nibbledebt.domain.model.LoginForm;
 import com.nibbledebt.domain.model.Transaction;
-import com.nibbledebt.domain.model.account.Accounts;
 import com.nibbledebt.domain.model.account.AddAccountsResponse;
+import com.nibbledebt.integration.finicity.model.Customers;
+import com.nibbledebt.integration.finicity.model.TransactionTest;
+import com.nibbledebt.integration.finicity.model.accounts.QuestionRequest;
 import com.nibbledebt.integration.sao.IIntegrationSao;
 import com.nibbledebt.intuit.cad.data.BankingTransaction;
 import com.nibbledebt.intuit.cad.data.ChallengeResponses;
@@ -216,6 +219,25 @@ public class IntuitCADSao implements IIntegrationSao {
 
 	@Override
 	public List<Institution> getInstitutions(String search, Integer start, Integer limit) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TransactionTest addTestTx(String customerId, String accountId) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ResponseEntity<String> addCustomerAccountsMfaString(String customerId, String institutionId,
+			QuestionRequest[] questions) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Customers getCustomers() throws ServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}

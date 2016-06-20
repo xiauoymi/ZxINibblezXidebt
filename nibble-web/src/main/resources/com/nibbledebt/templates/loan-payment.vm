@@ -312,18 +312,16 @@
 										A payment has been made to your student loan!
 									</td>
 								</tr>								
-								#foreach( $key in $payments.keySet() )
 								<tr style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;">
 									<td class="content-block" style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;vertical-align: top;padding: 0 0 20px;">
-										Payment Date: ${date}</br>
-										Payment amount: $ $payments.get($key)</br>
-										Loan Account: $key.getInstitution().getSupportedInstitution().getName() + $key.getNumberMask()</br>
-										#if ($fees.get($key) != null)
-										Payment Fee: $ $fees.get($key)</br>
-										#end
+										${payments}
 									</td>
 								</tr>
-								#end
+								<tr style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;">
+									<td class="content-block" style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;vertical-align: top;padding: 0 0 20px;">
+										${fees}
+									</td>
+								</tr>
 								<tr style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;">
 									<td class="content-block" style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;vertical-align: top;padding: 0 0 20px;">
 										Keep on Nibbling!

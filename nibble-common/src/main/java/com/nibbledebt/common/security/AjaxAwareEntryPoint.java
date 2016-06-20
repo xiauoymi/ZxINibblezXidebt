@@ -28,9 +28,11 @@ public class AjaxAwareEntryPoint extends LoginUrlAuthenticationEntryPoint {
 			throws IOException, ServletException {
 
 		boolean isAjax = request.getRequestURI().startsWith("/services");
-
+		authException.printStackTrace();
 		if (isAjax) {
-			response.sendError(403, "Forbidden");
+			 response.setContentType("application/json");
+			    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			    response.getOutputStream().println("{ \"error\": \"" + authException.getMessage() + "\" }");
 		} else {
 			super.commence(request, response, authException);
 		}

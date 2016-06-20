@@ -1,8 +1,8 @@
 <div id="register_panel" ng-controller="RegisterCtrl">
-    <!-- Modal -->
-    <script type="text/ng-template" id="myModalContent.html">
+	<!-- Modal -->
+	<script type="text/ng-template" id="myModalContent.html">
         <div class="modal-header">
-            <h3 class="modal-title">Thank you</h3>
+            <h3 style="color: white;" >Thank you</h3>
         </div>
         <div class="modal-body">
             We’re almost there! Check your email for a confirmation Message!
@@ -11,9 +11,9 @@
             <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
         </div>
     </script>
-    <script type="text/ng-template" id="accountLinked.html">
+	<script type="text/ng-template" id="accountLinked.html">
         <div class="modal-header">
-            <h3 class="modal-title">Account linked</h3>
+            <h3 style="color: white;">Account linked</h3>
         </div>
         <div class="modal-body">
             Your account has been successfully linked.
@@ -22,704 +22,632 @@
             <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
         </div>
     </script>
-    <form name="registration.form" class="form-primary" novalidate
-          ng-switch="registration.condition"
-          xt-form strategy="focusedAndDirtyOrSubmitted"
-          focus-error="true" role="form">
-        <div class="form-group">
-            <h3 class="form-primary-heading text-center">Create a New Account</h3>
-        </div>
-        <alert class="text-center" ng-repeat="alert in msg_alerts" type="{{alert.type}}" close="closeAlert($index)">
-            {{alert.msg}}
-        </alert>
-		
-        <div ng-switch-default>
-            <br/>
-        	<div class="line">
-	        	<span class="step1 badge badge-info">1</span>
-	        	<span class="step2 badge">2</span>
-	        	<span class="step3 badge">3</span>
-				<span class="step4 badge">4</span>
-			</div>
-			<br/>
-            <div class="form-group">
-                <h4 class="form-primary-heading">Enter your information :</h4>
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf05a;    First Name"
-                        name="firstname" required
-                        ng-model="newuser.firstName"
-                        xt-validation-tooltip>
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf05a;    Last Name"
-                        name="lastname" required
-                        ng-model="newuser.lastName"
-                        xt-validation-tooltip>
-            </div>
-            <div class="form-group">
-                <input
-                        type="email" class="form-control empty"
-                        placeholder="&#xf0e0;    Email"
-                        name="email" required
-                        ng-model="newuser.email"
-                        unique-name msg-uniquename="user already exist"
-                        autofocus xt-validation-tooltip>
-            </div>
-            <div class="form-group">
-                <input
-                        type="password" class="form-control empty"
-                        placeholder="&#xf023;    Password" name="password"
-                        required ng-model="newuser.password"
-                        msg-strength="Password requires 8 characters, one capital and one number."
-                        xt-validation-tooltip
-                        title="Passwod must include" data-toggle="tooltip">
+	<form name="registration.form" class="form-primary" novalidate
+		ng-switch="registration.condition" xt-form
+		strategy="focusedAndDirtyOrSubmitted" focus-error="true" role="form">
+		<div class="form-group">
+			<h3 class="form-primary-heading text-center">Create a New
+				Account</h3>
+		</div>
+		<alert class="text-center" ng-repeat="alert in msg_alerts"
+			type="{{alert.type}}" close="closeAlert($index)">
+		{{alert.msg}} </alert>
 
-                <div class="progress">
-                    <div class="progress-bar"
-                         ng-class="{'progress-bar-success': isPasswordStrong(), 'progress-bar-warning': isPasswordOk(),
+		<div ng-switch-default>
+			<br />
+			<div class="line">
+				<span class="step1 badge badge-info">1</span> <span
+					class="step2 badge">2</span> <span class="step3 badge">3</span> <span
+					class="step4 badge">4</span>
+			</div>
+			<br />
+			<div class="form-group">
+				<h4 class="form-primary-heading">Enter your information :</h4>
+			</div>
+			<alert class="text-center" ng-repeat="alert in msg_alerts"
+				type="{{alert.type}}" close="closeAlert($index)">
+			{{alert.msg}} </alert>
+			<div class="form-group">
+				<input type="text" class="form-control empty"
+					placeholder="&#xf05a;    First Name" name="firstname" required
+					ng-model="newuser.firstName" xt-validation-tooltip>
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control empty"
+					placeholder="&#xf05a;    Last Name" name="lastname" required
+					ng-model="newuser.lastName" xt-validation-tooltip>
+			</div>
+			<div class="form-group">
+				<input type="email" class="form-control empty"
+					placeholder="&#xf0e0;    Email" name="email" required
+					ng-model="newuser.email" unique-name
+					msg-uniquename="user already exist" autofocus xt-validation-tooltip>
+			</div>
+			<div class="form-group">
+				<input type="password" class="form-control empty"
+					placeholder="&#xf023;    Password" name="password" required
+					ng-model="newuser.password"
+					msg-strength="Password requires 8 characters, one capital and one number."
+					xt-validation-tooltip title="Passwod must include"
+					data-toggle="tooltip">
+
+				<div class="progress">
+					<div class="progress-bar"
+						ng-class="{'progress-bar-success': isPasswordStrong(), 'progress-bar-warning': isPasswordOk(),
                          'progress-bar-danger': isPasswordWeak()}"
-                         aria-valuenow="{{registration.passwordStrenth}}"
-                         aria-valuemin="0"
-                         aria-valuemax="100"
-                         style="width: {{registration.passwordStrenth}}%">
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <input
-                        type="password" class="form-control empty"
-                        placeholder="&#xf023;    Re-enter Password"
-                        name="repassword" required
-                        ng-model="newuser.repassword"
-                        msg-equalto="The password you have entered does not match"
-                        xt-validation-tooltip>
-
-            </div>
-            <div class="form-group text-center">
-                <button class="btn btn-sm-cus btn-nibble-primary"
-                        ng-click="goToLogin()">
-                    Cancel <i class="fa fa-md font-color-white"></i>
-                </button>
-                <button class="btn btn-sm-cus btn-nibble-primary"
-                        ng-click="registerForm2()"
-                        ng-disabled="invalidRegisterForm1()">
-                    Continue <i class="fa fa-md font-color-white"></i>
-                </button>
-            </div>
-        </div>
-        <div ng-switch-when="registrationForm2">
-        	<br/>
-        	<div class="line">
-	        	<span class="step1 badge">1</span>
-	        	<span class="step2 badge badge-info">2</span>
-	        	<span class="step3 badge">3</span>
-				<span class="step4 badge">4</span>
+						aria-valuenow="{{registration.passwordStrenth}}" aria-valuemin="0"
+						aria-valuemax="100" style="width: {{registration.passwordStrenth">
+					</div>
+				</div>
 			</div>
-			<br/>
-            <div class="form-group">
-                <h4 class="form-primary-heading">Fill out your contact
-                    information:</h4>
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf015;    Address Line 1"
-                        name="address1" required
-                        ng-model="newuser.address1"
-                        xt-validation-tooltip>
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf015;    Address Line 2"
-                        name="address2"
-                        ng-model="newuser.address2">
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf015;    City"
-                        name="city" required
-                        ng-model="newuser.city"
-                        xt-validation-tooltip>
-            </div>
-            <div class="form-group">
-                <select ng-model="newuser.state" placeholder="&#xf015; State" xt-validation-tooltip class="form-control empty"
-                        name="regstate" required>
-                    <option value="">Choose State</option>
-                	<option ng-repeat="x in states">{{x}}</option>
-				</select>
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty" maxlength="5"
-                        placeholder="&#xf015;    Zipcode"
-                        name="zipcode" required onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-                        ng-model="newuser.zip"
-                        xt-validation-tooltip zip-code msg-zip-code="Zipcode must be 5 characters long, all numbers">
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty" maxlength="10"
-                        placeholder="&#xf095;    Phone"
-                        name="phone" required onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-                        ng-model="newuser.phone"
-                        xt-validation-tooltip phone-number msg-phone-number="Phone Numbers must be ten digits long">
-            </div>
-            <div class="form-group">
-                <input
-                        type="date" class="form-control empty"
-                        placeholder="&#xf095;    Date of Birth"
-                        name="dateOfBirth" required
-                        ng-model="newuser.dateOfBirth">
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty" maxlength="4" minlength="4"
-                        placeholder="&#xf095;    Last 4 of SSN"
-                        name="ssn" required onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-                        ng-model="newuser.ssn"
-                        xt-validation-tooltip ssn-number msg-ssn-number="SSN Numbers must be four digits long">
-            </div>
+			<div class="form-group">
+				<input type="password" class="form-control empty"
+					placeholder="&#xf023;    Re-enter Password" name="repassword"
+					required ng-model="newuser.repassword"
+					msg-equalto="The password you have entered does not match"
+					xt-validation-tooltip>
 
-
-            <div class="form-group text-center">
-                <button class="btn btn-sm-cus btn-nibble-primary"
-                        ng-click="backToForm1()">
-                    Back <i class="fa fa-md font-color-white"></i>
-                </button>
-                <button class="btn btn-sm-cus btn-nibble-primary"
-                        ng-click="confirmRegistration()"
-                        ng-disabled="invalidRegisterForm2()">
-                    Confirm <i class="fa fa-md font-color-white"></i>
-                </button>
-            </div>
-            <hr/>
-            <div class="row">
-                <div class="col-md-offset-1">
-                    <small><a href="" ng-click="goToLogin()"><i
-                            class="fa fa-arrow-left"></i> Back to login</a></small>
-                </div>
-            </div>
-        </div>
-        <div id="registration_form3" ng-switch-when="linkAccount">
-        	<br/>
-        	<div class="line">
-	        	<span class="step1 badge">1</span>
-	        	<span class="step2 badge">2</span>
-	        	<span class="step3 badge badge-info">3</span>
-				<span class="step4 badge">4</span>
 			</div>
-			<br/>
-            <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block"
-                        ng-click="registerForm2()">
-                    <i class="fa fa-md fa-arrow-left font-color-white"></i> Back
-                </button>
-            </div>
-            <div class="form-group">
-                <h4 class="form-primary-heading text-center">Choose Your Bank</h4>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-4 banks"
-                         ng-repeat="bank in banks" >
-                        <img ng-src="{{bank.institution.logoUrl}}" title="{{bank.institution.name}}" class="img-responsive nibble-institution-logo"
-                             ng-click="clickModal($index,addRoundupAccount)">
-                              <div ng-show="::bank.institution.defaultLogo" class="caption post-content">
-                             <p align="center">{{bank.institution.name}}</p>
-                             </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf015;    Search"
-                        name="search" required
-                        ng-model="linkaccount.search" 
-                        ng-blur="autoCompletSearch()"
-                        ng-keypress="$event.which === 32 && autoCompletSearch()"
-                        xt-validation-tooltip>
-            </div>
-            <div class="form-group text-center">
-                <button class="btn btn-sm-cus btn-nibble-primary"
-                        ng-click="backToForm1()">
-                    <i class="fa fa-md font-color-white"></i> Cancel
-                </button>
-                <button class="btn btn-sm-cus btn-nibble-primary"
-                        ng-click="searchInstitutions()"
-                        ng-disabled="linkaccount.search.length>0">
-                    Submit <i
-                        class="fa fa-md pull-right font-color-white"></i>
-                </button>
-            </div>
-            <hr/>
-            <div class="row">
-                <div class="col-md-offset-1">
-                    <small><a href="" ng-click="goToLogin()"><i class="fa fa-arrow-left"></i> Back to login</a></small>
-                </div>
-            </div>
-        </div>
-        <div id="registration_form3" ng-switch-when="loanAccount">
-        	<br/>
-        	<div class="line">
-	        	<span class="step1 badge">1</span>
-	        	<span class="step2 badge">2</span>
-	        	<span class="step3 badge">3</span>
-				<span class="step4 badge badge-info">4</span>
-			</div>
-			<br/>
-            <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block"
-                        ng-click="registration.condition='linkAccount'">
-                    <i class="fa fa-md fa-arrow-left font-color-white"></i> Back
-                </button>
-            </div>
-            <div class="form-group">
-                <h4 class="form-primary-heading text-center">Choose your loan provider Or Enter your referral code </h4>
-            </div>
-            <div class="form-group">
-                <div class="form-group">
-                    <input
-                            type="text" class="form-control empty"
-                            placeholder="Referral #"
-                            name="city" required
-                            ng-model="linkaccount.referral"
-                            xt-validation-tooltip>
-                </div>
-                <div class="row">
-                    <div class="col-md-4 banks"
-                         ng-repeat="bank in banks" >
-                        <img ng-src="{{bank.institution.logoUrl}}" title="{{bank.institution.name}}" class="img-responsive nibble-institution-logo"
-                             ng-click="clickModal($index,addLoanAccount)">
-                              <div ng-show="::bank.institution.defaultLogo" class="caption post-content">
-                             <p align="center">{{bank.institution.name}}</p>
-                             </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf015;    Search" 
-                        ng-blur="autoCompletSearch()"
-                        ng-keypress="$event.which === 32 && autoCompletSearch()"
-                        ng-model="linkaccount.search"
-                        >
-            </div>
-            <div class="form-group text-center">
-                <button class="btn btn-sm-cus btn-nibble-primary"
-                        ng-click="initLoanAccount()">
-                    <i class="fa fa-md font-color-white"></i> Cancel
-                </button>
-                <button class="btn btn-lg-cus btn-nibble-primary "
-                        ng-click="addLoanAccountByReferral()"
-                        ng-disabled="linkaccount.referral.length==0">
-                    Submit <i
-                        class="fa fa-md pull-right font-color-white"></i>
-                </button>
-            </div>
-            <hr/>
-            <div class="row">
-                <div class="col-md-offset-1">
-                    <small><a href="" ng-click="goToLogin()"><i class="fa fa-arrow-left"></i> Back to login</a></small>
-                </div>
-            </div>
-        </div>
-        <div ng-switch-when="registrationConfirm">
-			<br/>
 			<div class="form-group text-center">
-                <h4 class="form-primary-heading">Review your info</h4>
-            </div>
-            <div class="row" ng-show="isEditing">
-                            <div class="form-group">
-                <h4 class="form-primary-heading">Enter your information :</h4>
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf05a;    First Name"
-                        name="firstname" required
-                        ng-model="user.firstName"
-                        xt-validation-tooltip>
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf05a;    Last Name"
-                        name="lastname" required
-                        ng-model="user.lastName"
-                        xt-validation-tooltip>
-            </div>
-            <div class="form-group" >
-                <input
-                        type="email" class="form-control empty"
-                        placeholder="&#xf0e0;    Email"
-                        name="email" required
-                        ng-model="user.email"
-                        unique-name msg-uniquename="user already exist"
-                        autofocus xt-validation-tooltip>
-            </div>
-            <div class="form-group">
-                <input
-                        type="password" class="form-control empty"
-                        placeholder="&#xf023;    Password" name="password"
-                        required ng-model="user.password"
-                        msg-strength="Password requires 8 characters, one capital and one number."
-                        xt-validation-tooltip
-                        title="Passwod must include" data-toggle="tooltip">
+				<button class="btn btn-sm-cus btn-nibble-primary"
+					ng-click="goToLogin()">
+					Cancel <i class="fa fa-md font-color-white"></i>
+				</button>
+				<button class="btn btn-sm-cus btn-nibble-primary"
+					ng-click="registerForm2()" ng-disabled="invalidRegisterForm1()">
+					Continue <i class="fa fa-md font-color-white"></i>
+				</button>
+			</div>
+		</div>
+		<div ng-switch-when="registrationForm2">
+			<br />
+			<div class="line">
+				<span class="step1 badge">1</span> <span
+					class="step2 badge badge-info">2</span> <span class="step3 badge">3</span>
+				<span class="step4 badge">4</span>
+			</div>
+			<br />
+			<div class="form-group">
+				<h4 class="form-primary-heading">Fill out your contact
+					information:</h4>
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control empty"
+					placeholder="&#xf015;    Address Line 1" name="address1" required
+					ng-model="newuser.address1" xt-validation-tooltip>
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control empty"
+					placeholder="&#xf015;    Address Line 2" name="address2"
+					ng-model="newuser.address2">
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control empty"
+					placeholder="&#xf015;    City" name="city" required
+					ng-model="newuser.city" xt-validation-tooltip>
+			</div>
+			<div class="form-group">
+				<select ng-model="newuser.state" placeholder="&#xf015; State"
+					xt-validation-tooltip class="form-control empty" name="regstate"
+					required>
+					<option value="">Choose State</option>
+					<option ng-repeat="x in states">{{x}}</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control empty" maxlength="5"
+					placeholder="&#xf015;    Zipcode" name="zipcode" required
+					onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+					ng-model="newuser.zip" xt-validation-tooltip zip-code
+					msg-zip-code="Zipcode must be 5 characters long, all numbers">
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control empty" maxlength="10"
+					placeholder="&#xf095;    Phone" name="phone" required
+					onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+					ng-model="newuser.phone" xt-validation-tooltip phone-number
+					msg-phone-number="Phone Numbers must be ten digits long">
+			</div>
+			<div class="form-group">
+				<input type="date" class="form-control empty"
+					placeholder="&#xf095;    Date of Birth" name="dateOfBirth" required
+					ng-model="newuser.dateOfBirth">
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control empty" maxlength="4"
+					minlength="4" placeholder="&#xf095;    Last 4 of SSN" name="ssn"
+					required
+					onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+					ng-model="newuser.ssn" xt-validation-tooltip ssn-number
+					msg-ssn-number="SSN Numbers must be four digits long">
+			</div>
 
-                <div class="progress">
-                    <div class="progress-bar"
-                         ng-class="{'progress-bar-success': isPasswordStrong(), 'progress-bar-warning': isPasswordOk(),
+
+			<div class="form-group text-center">
+				<button class="btn btn-sm-cus btn-nibble-primary"
+					ng-click="backToForm1()">
+					Back <i class="fa fa-md font-color-white"></i>
+				</button>
+				<button class="btn btn-sm-cus btn-nibble-primary"
+					ng-click="confirmRegistration()"
+					ng-disabled="invalidRegisterForm2()">
+					Confirm <i class="fa fa-md font-color-white"></i>
+				</button>
+			</div>
+			<hr />
+			<div class="row">
+				<div class="col-md-offset-1">
+					<small><a href="" ng-click="goToLogin()"><i
+							class="fa fa-arrow-left"></i> Back to login</a></small>
+				</div>
+			</div>
+		</div>
+		<div id="registration_form3" ng-switch-when="linkAccount">
+			<br />
+			<div class="line">
+				<span class="step1 badge">1</span> <span class="step2 badge">2</span>
+				<span class="step3 badge badge-info">3</span> <span
+					class="step4 badge">4</span>
+			</div>
+			<br />
+<!-- 			<div class="form-group"> -->
+<!-- 				<button class="btn btn-lg btn-nibble-primary btn-block" -->
+<!-- 					ng-click="registerForm2()"> -->
+<!-- 					<i class="fa fa-md fa-arrow-left font-color-white"></i> Back -->
+<!-- 				</button> -->
+<!-- 			</div> -->
+			<div class="form-group">
+				<h4 class="form-primary-heading text-center">Choose your
+					Funding Source</h4>
+			</div>
+			<div ng-init="loadIAV('addRoundupAccount')"></div>
+			<div class="island__section animation-frame" ng-show="isFundingIAV()"></div>
+			<div id="fundingIAV"></div>
+			<br>
+			<div class="form-group text-center" ng-show="showNext2Loan">
+				<button class="btn btn-sm-cus btn-nibble-primary"
+					ng-click="initLinkAccount('loanAccount')">
+					Continue <i class="fa fa-md font-color-white"></i>
+				</button>
+			</div>
+			<hr />
+			<div class="row">
+				<div class="col-md-offset-1">
+					<small><a href="" ng-click="goToLogin()"><i
+							class="fa fa-arrow-left"></i> Back to login</a></small>
+				</div>
+			</div>
+		</div>
+		<div id="registration_form3" ng-switch-when="loanAccount">
+			<br />
+			<div class="line">
+				<span class="step1 badge">1</span> <span class="step2 badge">2</span>
+				<span class="step3 badge">3</span> <span
+					class="step4 badge badge-info">4</span>
+			</div>
+			<br />
+			<div class="form-group">
+				<button class="btn btn-lg btn-nibble-primary btn-block"
+					ng-click="registration.condition='linkAccount'">
+					<i class="fa fa-md fa-arrow-left font-color-white"></i> Back
+				</button>
+			</div>
+			<div class="form-group">
+				<h4 class="form-primary-heading text-center">Choose your loan
+					provider Or Enter your referral code</h4>
+			</div>
+			<div class="form-group">
+				<div class="form-group">
+					<input type="text" class="form-control empty"
+						placeholder="Referral #" name="city" required
+						ng-model="linkaccount.referral" xt-validation-tooltip>
+				</div>
+				<div ng-init="loadIAV('addLoanAccount')"></div>
+				<div class="island__section animation-frame"
+					ng-show="isFundingIAV()"></div>
+				<div id="fundingIAV"></div>
+
+			</div>
+			<div class="form-group text-center">
+				<button class="btn btn-sm-cus btn-nibble-primary"
+					ng-click="initLoanAccount()">
+					<i class="fa fa-md font-color-white"></i> Cancel
+				</button>
+				<button class="btn btn-lg-cus btn-nibble-primary"
+					ng-click="addLoanAccountByReferral()"
+					ng-disabled="linkaccount.referral.length==0">
+					Submit <i class="fa fa-md pull-right font-color-white"></i>
+				</button>
+			</div>
+			<hr />
+			<div class="row">
+				<div class="col-md-offset-1">
+					<small><a href="" ng-click="goToLogin()"><i
+							class="fa fa-arrow-left"></i> Back to login</a></small>
+				</div>
+			</div>
+		</div>
+		<div ng-switch-when="registrationConfirm">
+			<br />
+			<div class="form-group text-center">
+				<h4 class="form-primary-heading">Review your info</h4>
+			</div>
+			<div class="row" ng-show="isEditing">
+				<div class="form-group">
+					<h4 class="form-primary-heading">Enter your information :</h4>
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control empty"
+						placeholder="&#xf05a;    First Name" name="firstname" required
+						ng-model="user.firstName" xt-validation-tooltip>
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control empty"
+						placeholder="&#xf05a;    Last Name" name="lastname" required
+						ng-model="user.lastName" xt-validation-tooltip>
+				</div>
+				<div class="form-group">
+					<input type="email" class="form-control empty"
+						placeholder="&#xf0e0;    Email" name="email" required
+						ng-model="user.email" unique-name
+						msg-uniquename="user already exist" autofocus
+						xt-validation-tooltip>
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control empty"
+						placeholder="&#xf023;    Password" name="password" required
+						ng-model="user.password"
+						msg-strength="Password requires 8 characters, one capital and one number."
+						xt-validation-tooltip title="Passwod must include"
+						data-toggle="tooltip">
+
+					<div class="progress">
+						<div class="progress-bar"
+							ng-class="{'progress-bar-success': isPasswordStrong(), 'progress-bar-warning': isPasswordOk(),
                          'progress-bar-danger': isPasswordWeak()}"
-                         aria-valuenow="{{registration.passwordStrenth}}"
-                         aria-valuemin="0"
-                         aria-valuemax="100"
-                         style="width: {{registration.passwordStrenth}}%">
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <input
-                        type="password" class="form-control empty"
-                        placeholder="&#xf023;    Re-enter Password"
-                        name="repassword" required
-                        ng-model="user.repassword"
-                        msg-equalto="The password you have entered does not match"
-                        xt-validation-tooltip>
+							aria-valuenow="{{registration.passwordStrenth}}"
+							aria-valuemin="0" aria-valuemax="100"
+							style="width: {{registration.passwordStrenth"></div>
+					</div>
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control empty"
+						placeholder="&#xf023;    Re-enter Password" name="repassword"
+						required ng-model="user.repassword"
+						msg-equalto="The password you have entered does not match"
+						xt-validation-tooltip>
 
-            </div>
-                        <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf015;    Address Line 1"
-                        name="address1" required
-                        ng-model="user.address1"
-                        xt-validation-tooltip>
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf015;    Address Line 2"
-                        name="address2"
-                        ng-model="user.address2">
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="&#xf015;    City"
-                        name="city" required
-                        ng-model="user.city"
-                        xt-validation-tooltip>
-            </div>
-            <div class="form-group">
-                <select ng-model="user.state" placeholder="&#xf015; State" xt-validation-tooltip class="form-control empty"
-                        name="regstate" required>
-                    <option value="">Choose State</option>
-                    <option ng-repeat="x in states">{{x}}</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty" maxlength="5"
-                        placeholder="&#xf015;    Zipcode"
-                        name="zipcode" required onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-                        ng-model="user.zip"
-                        xt-validation-tooltip zip-code msg-zip-code="Zipcode must be 5 characters long, all numbers">
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty" maxlength="10"
-                        placeholder="&#xf095;    Phone"
-                        name="phone" required onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-                        ng-model="user.phone"
-                        xt-validation-tooltip phone-number msg-phone-number="Phone Numbers must be ten digits long">
-            </div>
-            <div class="form-group">
-                <input
-                        type="date" class="form-control empty"
-                        placeholder="&#xf095;    Date of Birth"
-                        name="dateOfBirth" required
-                        ng-model="user.dateOfBirth">
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty" maxlength="4"
-                        placeholder="&#xf095;    Last 4 of SSN"
-                        name="ssn" required onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-                        ng-model="user.ssn"
-                        xt-validation-tooltip ssn-number msg-ssn-number="SSN Numbers must be four digits long">
-            </div>
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control empty"
+						placeholder="&#xf015;    Address Line 1" name="address1" required
+						ng-model="user.address1" xt-validation-tooltip>
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control empty"
+						placeholder="&#xf015;    Address Line 2" name="address2"
+						ng-model="user.address2">
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control empty"
+						placeholder="&#xf015;    City" name="city" required
+						ng-model="user.city" xt-validation-tooltip>
+				</div>
+				<div class="form-group">
+					<select ng-model="user.state" placeholder="&#xf015; State"
+						xt-validation-tooltip class="form-control empty" name="regstate"
+						required>
+						<option value="">Choose State</option>
+						<option ng-repeat="x in states">{{x}}</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control empty" maxlength="5"
+						placeholder="&#xf015;    Zipcode" name="zipcode" required
+						onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+						ng-model="user.zip" xt-validation-tooltip zip-code
+						msg-zip-code="Zipcode must be 5 characters long, all numbers">
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control empty" maxlength="10"
+						placeholder="&#xf095;    Phone" name="phone" required
+						onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+						ng-model="user.phone" xt-validation-tooltip phone-number
+						msg-phone-number="Phone Numbers must be ten digits long">
+				</div>
+				<div class="form-group">
+					<input type="date" class="form-control empty"
+						placeholder="&#xf095;    Date of Birth" name="dateOfBirth"
+						required value="{{user.dateOfBirth|date:'yyyy-MM-dd'}}"
+						ng-model="user.dateOfBirth">
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control empty" maxlength="4"
+						placeholder="&#xf095;    Last 4 of SSN" name="ssn" required
+						onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+						ng-model="user.ssn" xt-validation-tooltip ssn-number
+						msg-ssn-number="SSN Numbers must be four digits long">
+				</div>
 
-            <div class="form-group text-center">
-                <button class="btn btn-sm-cus btn-nibble-primary"
-                        ng-click="cancelEditUser()">
-                    Cancel <i class="fa fa-md font-color-white"></i>
-                </button>
-                <button class="btn btn-sm-cus btn-nibble-primary"
-                        ng-click="updateRegister(user)"
-                        ng-disabled="invalidRegisterForm1()">
-                    Submit <i class="fa fa-md font-color-white"></i>
-                </button>
-            </div>
+				<div class="form-group text-center">
+					<button class="btn btn-sm-cus btn-nibble-primary"
+						ng-click="cancelEditUser()">
+						Cancel <i class="fa fa-md font-color-white"></i>
+					</button>
+					<button class="btn btn-sm-cus btn-nibble-primary"
+						ng-click="updateRegister(user)"
+						ng-disabled="invalidRegisterForm1()">
+						Submit <i class="fa fa-md font-color-white"></i>
+					</button>
+				</div>
 
-            </div>
-            <div class="row" ng-hide="isEditing">
-            <div class="row text-center"  style="border-radius: 25px;border: 2px solid #89C4F4;">
-                <div class="col-md-12">
-                    <p>First Name:{{user.firstName}}</p>
-                </div>
-                <div class="col-md-12">
-                    <p>Last Name:{{user.lastName}}</p>
-                </div>
-                <div class="col-md-12">
-                    <p>Email Address:{{user.email}}</p>
-                </div>
-                <div class="col-md-12">
-                    <p>Password:Confirmed Match</p>
-                </div>
-                <div class="col-md-12">
-                    <p>Address:{{user.address1}}</p>
-                </div>
-                <div class="col-md-12">
-                    <p>City:{{user.city}}</p>
-                </div>
-                <div class="col-md-12">
-                    <p>States:{{user.state}}</p>
-                </div>
-                <div class="col-md-12">
-                    <p>Zip Code:{{user.zip}}</p>
-                </div>
-                <div class="col-md-12">
-                    <p>Phone #:{{user.phone}}</p>
-                </div>
-                <div ng-repeat="funding in roundupAccount.data.accounts.account" class="col-md-12">
-                    <p>Funding Account :********{{showAccountNumber(funding.accountNumber)}}</p>
-                </div>
-                <div ng-repeat="loan in loanAccount.data.accounts.account" class="col-md-12">
-                    <p>Funding Account :********{{showAccountNumber(loan.accountNumber)}}</p>
-                </div> 
-                <div class="col-md-12">
-                    <p>Referral Code :{{loanAccount.data.referral}}</p>
-                </div>                           
-            </div>
-                <br>
-                <div class="form-group text-center">
-                    <button class="btn btn-sm-cus btn-nibble-primary"
-                            ng-click="editUser(user)">
-                        Edit <i class="fa fa-md font-color-white"></i>
-                    </button>
-                    <button class="btn btn-sm-cus btn-nibble-primary"
-                            ng-click="registration.condition='registrationFinish'">
-                        Continue <i class="fa fa-md font-color-white"></i>
-                    </button>
-                </div>                 
-            </div>
-            <div class="row">
-                <div class="col-md-offset-1 col-md-10">
-                    <small><a href="" ng-click="goToLogin()"><i class="fa fa-arrow-left"></i> Back to login</a></small>
-                </div>
-            </div>
-        </div>
-        <div ng-switch-when="registrationFinish">
-            <div class="row">
-                <div class="col-md-12" style="border-radius: 25px;border: 2px solid #89C4F4;">
-                    <h1 class="form-primary-heading text-center">Congratulations!</h1>
-                    <p>You have successfully signed up for Nibble. Check your email for your referral code. A weekly update will be sent to show your progress. Our web app will be released soon. Visit www.Nibbledebt.com for the latest updates.</p>
-                </div>
-            </div>
-            <hr/>
-            <div class="row">
-                <div class="col-md-offset-1 col-md-10">
-                    <small><a href="" ng-click="goToLogin()"><i class="fa fa-arrow-left"></i> Back to login</a></small>
-                </div>
-            </div>
-        </div>
-
-
-        <div ng-switch-when="mfaText">
-            <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block"
-                        ng-click="backToLinkAccount()">
-                    <i class="fa fa-md fa-arrow-left font-color-white"></i> Back
-                </button>
-            </div>
-            <div class="form-group">
-                <h4 class="form-primary-heading text-center">Question:</h4>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <p>{{registration.mfa.mfaQuestion}}</p>
-                </div>
-            </div>
-            <div class="form-group">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="Mfa Answer"
-                        name="mfaTextAnswer" required
-                        ng-model="registration.mfa.mfaAnswer">
-            </div>
-            <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block"
-                        ng-click="finishRegistrationWithMfa()"
-                        ng-disabled="invalidMfaText()">
-                    Finish Registration
-                    <i class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
-                </button>
-            </div>
-            <hr/>
-            <div class="row">
-                <div class="col-md-offset-1">
-                    <small><a href="" ng-click="goToLogin()"><i
-                            class="fa fa-arrow-left"></i> Back to login</a></small>
-                </div>
-            </div>
-        </div>
-
-        <div ng-switch-when="mfaImage">
-            <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block"
-                        ng-click="backToLinkAccount()">
-                    <i class="fa fa-md fa-arrow-left font-color-white"></i> Back
-                </button>
-            </div>
-            <div class="form-group">
-                <h4 class="form-primary-heading text-center">Question:</h4>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <p>{{registration.mfa.mfaQuestion}}</p>
-                </div>
-            </div>
-            <div class="form-group text-center">
-                <img ng-src="{{registration.mfa.mfaImage}}" class="img-mfa">
-                <input
-                        type="text" class="form-control empty"
-                        placeholder="Mfa Answer"
-                        name="mfaImageAnswer" required
-                        ng-model="registration.mfa.mfaAnswer">
-            </div>
-            <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block"
-                        ng-click="finishRegistrationWithMfa()"
-                        ng-disabled="invalidMfaImage()">
-                    Finish Registration
-                    <i class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
-                </button>
-            </div>
-            <hr/>
-            <div class="row">
-                <div class="col-md-offset-1">
-                    <small><a href="" ng-click="goToLogin()"><i
-                            class="fa fa-arrow-left"></i> Back to login</a></small>
-                </div>
-            </div>
-        </div>
-
-        <div ng-switch-when="mfaTextChoice">
-            <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block"
-                        ng-click="backToLinkAccount()">
-                    <i class="fa fa-md fa-arrow-left font-color-white"></i> Back
-                </button>
-            </div>
-            <div class="form-group">
-                <h4 class="form-primary-heading text-center">Question:</h4>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <p>{{registration.mfa.mfaQuestion}}</p>
-                </div>
-            </div>
-
-            <div class="row" ng-repeat="choose in registration.mfa.choose">
-                <div class="col-md-12">
-                    <input type="radio" required ng-model="registration.mfa.mfaAnswer" name="radioAnswer" ng-value="choose.value" ng-init="$index==0?(registration.mfa.mfaAnswer=choose.value):''"/>&nbsp;
-                    {{choose.body}}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <p></p>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block"
-                        ng-click="finishRegistrationWithMfa()"
-                        ng-disabled="invalidMfaTextChoice()">
-                    Finish Registration
-                    <i class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
-                </button>
-            </div>
-            <hr/>
-            <div class="row">
-                <div class="col-md-offset-1">
-                    <small><a href="" ng-click="goToLogin()"><i
-                            class="fa fa-arrow-left"></i> Back to login</a></small>
-                </div>
-            </div>
-        </div>
+			</div>
+			<div class="row" ng-hide="isEditing">
+				<div class="row text-center"
+					style="border-radius: 25px; border: 2px solid #89C4F4;">
+					<div class="col-md-12">
+						<p>First Name:{{user.firstName}}</p>
+					</div>
+					<div class="col-md-12">
+						<p>Last Name:{{user.lastName}}</p>
+					</div>
+					<div class="col-md-12">
+						<p>Email Address:{{user.email}}</p>
+					</div>
+					<div class="col-md-12">
+						<p>Date Of Birth:{{user.dateOfBirth|date:'yyyy-MM-dd'}}</p>
+					</div>
+					<div class="col-md-12">
+						<p>SSN :{{user.ssn}}</p>
+					</div>
+					<div class="col-md-12">
+						<p>Password:Confirmed Match</p>
+					</div>
+					<div class="col-md-12">
+						<p>Address:{{user.address1}}</p>
+					</div>
+					<div class="col-md-12">
+						<p>City:{{user.city}}</p>
+					</div>
+					<div class="col-md-12">
+						<p>States:{{user.state}}</p>
+					</div>
+					<div class="col-md-12">
+						<p>Zip Code:{{user.zip}}</p>
+					</div>
+					<div class="col-md-12">
+						<p>Phone #:{{user.phone}}</p>
+					</div>
+					<div ng-repeat="funding in roundupAccount.data.accounts.account"
+						class="col-md-12">
+						<p>Funding Account
+							:********{{showAccountNumber(funding.accountNumber)}}</p>
+					</div>
+					<div ng-repeat="loan in loanAccount.data.accounts.account"
+						class="col-md-12">
+						<p>Loan Account
+							:********{{showAccountNumber(loan.accountNumber)}}</p>
+					</div>
+					<div class="col-md-12">
+						<p>Referral Code :{{loanAccount.data.referral}}</p>
+					</div>
+				</div>
+				<br>
+				<div class="form-group text-center">
+					<button class="btn btn-sm-cus btn-nibble-primary"
+						ng-click="editUser(user)">
+						Edit <i class="fa fa-md font-color-white"></i>
+					</button>
+					<button class="btn btn-sm-cus btn-nibble-primary"
+						ng-click="registration.condition='registrationFinish'">
+						Continue <i class="fa fa-md font-color-white"></i>
+					</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-offset-1 col-md-10">
+					<small><a href="" ng-click="goToLogin()"><i
+							class="fa fa-arrow-left"></i> Back to login</a></small>
+				</div>
+			</div>
+		</div>
+		<div ng-switch-when="registrationFinish">
+			<div class="row">
+				<div class="col-md-12"
+					style="border-radius: 25px; border: 2px solid #89C4F4;">
+					<h1 class="form-primary-heading text-center">Congratulations!</h1>
+					<p>You have successfully signed up for Nibble. Check your email
+						for your referral code. A weekly update will be sent to show your
+						progress. Our web app will be released soon. Visit
+						www.Nibbledebt.com for the latest updates.</p>
+				</div>
+			</div>
+			<hr />
+			<div class="row">
+				<div class="col-md-offset-1 col-md-10">
+					<small><a href="" ng-click="goToLogin()"><i
+							class="fa fa-arrow-left"></i> Back to login</a></small>
+				</div>
+			</div>
+		</div>
 
 
-        <div ng-switch-when="mfaImageChoice">
-            <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block"
-                        ng-click="backToLinkAccount()">
-                    <i class="fa fa-md fa-arrow-left font-color-white"></i> Back
-                </button>
-            </div>
-            <div class="form-group">
-                <h4 class="form-primary-heading text-center">Question:</h4>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <p>{{registration.mfa.mfaQuestion}}</p>
-                </div>
-            </div>
+		<div ng-switch-when="mfaText">
+			<div class="form-group">
+				<button class="btn btn-lg btn-nibble-primary btn-block"
+					ng-click="backToLinkAccount()">
+					<i class="fa fa-md fa-arrow-left font-color-white"></i> Back
+				</button>
+			</div>
+			<div class="form-group">
+				<h4 class="form-primary-heading text-center">Question:</h4>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<p>{{registration.mfa.mfaQuestion}}</p>
+				</div>
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control empty"
+					placeholder="Mfa Answer" name="mfaTextAnswer" required
+					ng-model="registration.mfa.mfaAnswer">
+			</div>
+			<div class="form-group">
+				<button class="btn btn-lg btn-nibble-primary btn-block"
+					ng-click="finishRegistrationWithMfa()"
+					ng-disabled="invalidMfaText()">
+					Finish Registration <i
+						class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+				</button>
+			</div>
+			<hr />
+			<div class="row">
+				<div class="col-md-offset-1">
+					<small><a href="" ng-click="goToLogin()"><i
+							class="fa fa-arrow-left"></i> Back to login</a></small>
+				</div>
+			</div>
+		</div>
 
-            <div class="row" ng-repeat="choose in registration.mfa.imageChoose">
-                <div class="col-md-12">
-                    <input type="radio" required ng-model="registration.mfa.mfaAnswer" name="radioImageAnswer" ng-value="choose.value" ng-init="$index==0?(registration.mfa.mfaAnswer=choose.value):''"/>&nbsp;
-                    <img ng-src="{{choose.body}}" class="img-mfa">
-                </div>
-            </div>
+		<div ng-switch-when="mfaImage">
+			<div class="form-group">
+				<button class="btn btn-lg btn-nibble-primary btn-block"
+					ng-click="backToLinkAccount()">
+					<i class="fa fa-md fa-arrow-left font-color-white"></i> Back
+				</button>
+			</div>
+			<div class="form-group">
+				<h4 class="form-primary-heading text-center">Question:</h4>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<p>{{registration.mfa.mfaQuestion}}</p>
+				</div>
+			</div>
+			<div class="form-group text-center">
+				<img ng-src="{{registration.mfa.mfaImage}}" class="img-mfa"> <input
+					type="text" class="form-control empty" placeholder="Mfa Answer"
+					name="mfaImageAnswer" required
+					ng-model="registration.mfa.mfaAnswer">
+			</div>
+			<div class="form-group">
+				<button class="btn btn-lg btn-nibble-primary btn-block"
+					ng-click="finishRegistrationWithMfa()"
+					ng-disabled="invalidMfaImage()">
+					Finish Registration <i
+						class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+				</button>
+			</div>
+			<hr />
+			<div class="row">
+				<div class="col-md-offset-1">
+					<small><a href="" ng-click="goToLogin()"><i
+							class="fa fa-arrow-left"></i> Back to login</a></small>
+				</div>
+			</div>
+		</div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <p></p>
-                </div>
-            </div>
+		<div ng-switch-when="mfaTextChoice">
+			<div class="form-group">
+				<button class="btn btn-lg btn-nibble-primary btn-block"
+					ng-click="backToLinkAccount()">
+					<i class="fa fa-md fa-arrow-left font-color-white"></i> Back
+				</button>
+			</div>
+			<div class="form-group">
+				<h4 class="form-primary-heading text-center">Question:</h4>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<p>{{registration.mfa.mfaQuestion}}</p>
+				</div>
+			</div>
 
-            <div class="form-group">
-                <button class="btn btn-lg btn-nibble-primary btn-block"
-                        ng-click="finishRegistrationWithMfa()"
-                        ng-disabled="invalidMfaImageChoice()">
-                    Finish Registration
-                    <i class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
-                </button>
-            </div>
-            <hr/>
-            <div class="row">
-                <div class="col-md-offset-1">
-                    <small><a href="" ng-click="goToLogin()"><i
-                            class="fa fa-arrow-left"></i> Back to login</a></small>
-                </div>
-            </div>
-        </div>
+			<div class="row" ng-repeat="choose in registration.mfa.choose">
+				<div class="col-md-12">
+					<input type="radio" required ng-model="registration.mfa.mfaAnswer"
+						name="radioAnswer" ng-value="choose.value"
+						ng-init="$index==0?(registration.mfa.mfaAnswer=choose.value):''" />&nbsp;
+					{{choose.body}}
+				</div>
+			</div>
 
-    </form>
+			<div class="row">
+				<div class="col-md-12">
+					<p></p>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<button class="btn btn-lg btn-nibble-primary btn-block"
+					ng-click="finishRegistrationWithMfa()"
+					ng-disabled="invalidMfaTextChoice()">
+					Finish Registration <i
+						class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+				</button>
+			</div>
+			<hr />
+			<div class="row">
+				<div class="col-md-offset-1">
+					<small><a href="" ng-click="goToLogin()"><i
+							class="fa fa-arrow-left"></i> Back to login</a></small>
+				</div>
+			</div>
+		</div>
 
 
-    <script type="text/ng-template" id="registermodal.html">
+		<div ng-switch-when="mfaImageChoice">
+			<div class="form-group">
+				<button class="btn btn-lg btn-nibble-primary btn-block"
+					ng-click="backToLinkAccount()">
+					<i class="fa fa-md fa-arrow-left font-color-white"></i> Back
+				</button>
+			</div>
+			<div class="form-group">
+				<h4 class="form-primary-heading text-center">Question:</h4>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<p>{{registration.mfa.mfaQuestion}}</p>
+				</div>
+			</div>
+
+			<div class="row" ng-repeat="choose in registration.mfa.imageChoose">
+				<div class="col-md-12">
+					<input type="radio" required ng-model="registration.mfa.mfaAnswer"
+						name="radioImageAnswer" ng-value="choose.value"
+						ng-init="$index==0?(registration.mfa.mfaAnswer=choose.value):''" />&nbsp;
+					<img ng-src="{{choose.body}}" class="img-mfa">
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<p></p>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<button class="btn btn-lg btn-nibble-primary btn-block"
+					ng-click="finishRegistrationWithMfa()"
+					ng-disabled="invalidMfaImageChoice()">
+					Finish Registration <i
+						class="fa fa-md fa-arrow-right pull-right font-color-white"></i>
+				</button>
+			</div>
+			<hr />
+			<div class="row">
+				<div class="col-md-offset-1">
+					<small><a href="" ng-click="goToLogin()"><i
+							class="fa fa-arrow-left"></i> Back to login</a></small>
+				</div>
+			</div>
+		</div>
+
+	</form>
+
+
+	<script type="text/ng-template" id="registermodal.html">
 
         <div class="modal-body">
         <div class="row">

@@ -5,10 +5,8 @@ package com.nibbledebt.integration.finicity;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.Date;
 
-import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +27,7 @@ import com.nibbledebt.integration.finicity.model.Institution;
 import com.nibbledebt.integration.finicity.model.Institutions;
 import com.nibbledebt.integration.finicity.model.LoginField;
 import com.nibbledebt.integration.finicity.model.LoginForm;
+import com.nibbledebt.integration.finicity.model.TransactionTest;
 import com.nibbledebt.integration.finicity.model.accounts.Accounts;
 import com.nibbledebt.integration.finicity.model.accounts.AddAccountsResponse;
 import com.nibbledebt.integration.finicity.model.accounts.ChallengesRequest;
@@ -146,6 +145,14 @@ public class FinicityClient {
 		return entity;
 	}
 
+	@NeedsToken
+	public TransactionTest addTestTx(String customerId, String accountId)
+			throws FinicityAccessException {
+		String description = "customerId = "+customerId+" accountId="+accountId+" "+new Date();
+		return restClient.postForObject(finicityCustUrl +customerId+ "/accounts/"+accountId+"/transactions", new TransactionTest(description),
+				TransactionTest.class);
+	}
+	
 	/**
 	 *
 	 * @param customerId
@@ -167,6 +174,28 @@ public class FinicityClient {
 		question.setAnswer(answer);
 
 		challenges.setQuestion(new QuestionRequest[] { question });
+
+		request.setMfaChallenges(challenges);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(MFA_SESSION_HEADER, securityContext.getMfaToken());
+		HttpEntity<CustomerAccountMfaRequest> requestEntity = new HttpEntity<CustomerAccountMfaRequest>(request,
+				headers);
+
+		ResponseEntity<String> entity = restClient.exchange(
+				finicityCustUrl + customerId + "/institutions/" + institutionId + "/accounts/addall/mfa",
+				HttpMethod.POST, requestEntity, String.class);
+		return entity;
+	}
+	
+	
+	@NeedsToken
+	public ResponseEntity<String> addCustomerAccountsMfaString(String customerId, String institutionId, QuestionRequest[] questions) throws FinicityAccessException {
+
+		CustomerAccountMfaRequest request = new CustomerAccountMfaRequest();
+		ChallengesRequest challenges = new ChallengesRequest();
+
+		challenges.setQuestion(questions);
 
 		request.setMfaChallenges(challenges);
 

@@ -10,6 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.nibbledebt.core.data.model.NibblerDirectoryStatus;
 import com.nibbledebt.domain.model.account.Account;
+import com.nibbledebt.domain.model.account.QuestionRequest;
 
 /**
  * @author ralam1
@@ -41,6 +42,11 @@ public class NibblerData {
 	private String ssn;
     private String mfaQuestion;
     private String mfaAnswer;
+    private String iavToken;
+    private List<QuestionRequest> questionRequests;
+    private String fundingSourceToken;
+    private String loanToken;
+    private String accountNumber;
     
     private Double weeklyTargetAmount;
     
@@ -524,6 +530,61 @@ public class NibblerData {
 	public void setSsn(String ssn) {
 		this.ssn = ssn;
 	}
+
+
+	public String getIavToken() {
+		return iavToken;
+	}
+
+
+	public void setIavToken(String iavToken) {
+		this.iavToken = iavToken;
+	}
+
+
+	public List<QuestionRequest> getQuestionRequests() {
+		return questionRequests;
+	}
+
+
+	public void setQuestionRequests(List<QuestionRequest> questionRequests) {
+		this.questionRequests = questionRequests;
+	}
+
+
+	public String getFundingSourceToken() {
+		return fundingSourceToken;
+	}
+
+
+	public void setFundingSourceToken(String fundingSourceToken) {
+		this.fundingSourceToken = fundingSourceToken;
+	}
+
+
+	public String getLoanToken() {
+		return loanToken;
+	}
+
+
+	public void setLoanToken(String loanToken) {
+		this.loanToken = loanToken;
+	}
+
+
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
+
+	
+	
+	
 	
 	
 }

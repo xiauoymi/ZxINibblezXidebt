@@ -22,5 +22,5 @@ public interface INibblerDao extends IDao<Nibbler> {
 	
 	 Nibbler findByReferral(String referralCode) throws RepositoryException;
 	 
-	 List<Nibbler> findByStatus(String status) throws RepositoryException;
+	 List<Nibbler> findByStatus(String... status) throws RepositoryException;
 }

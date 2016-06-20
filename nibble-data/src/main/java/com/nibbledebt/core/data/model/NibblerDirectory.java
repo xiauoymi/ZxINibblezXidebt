@@ -73,6 +73,8 @@ public class NibblerDirectory  extends AbstractModel{
 	
 	private String locationHeader;
 	
+	private String iavToken;
+	
 	@OneToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 	private Nibbler nibbler;
 
@@ -206,6 +208,14 @@ public class NibblerDirectory  extends AbstractModel{
 
 	public void setLocationHeader(String locationHeader) {
 		this.locationHeader = locationHeader;
+	}
+
+	public String getIavToken() {
+		return iavToken;
+	}
+
+	public void setIavToken(String iavToken) {
+		this.iavToken = iavToken;
 	}
 	
 	

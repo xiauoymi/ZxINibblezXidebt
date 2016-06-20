@@ -8,7 +8,10 @@ import java.util.List;
 
 import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.security.core.Authentication;
@@ -39,22 +42,23 @@ public class MemberAuthenticationProvider implements AuthenticationProvider {
 	@Override
 	@Loggable(logLevel=LogLevel.INFO)
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+		
 		try {
 			NibblerData nibbler = usersDataProcessor.retrieveNibbler(String
 					.valueOf(authentication.getPrincipal()));
 			if (nibbler == null) {
-				throw new AuthenticationException(
-						"The username you have entered is incorrect.") {
-					private static final long serialVersionUID = 98475983755L;
-				};
+				throw new BadCredentialsException(
+						"The username you have entered is incorrect.") ;
 			} else {
+				if(!nibbler.getRoles().contains("nibbler_level_1")){
+					throw new BadCredentialsException(
+							"Nibble's web app is coming soon. Please check your email for weekly updates or contact us at info@nibbledebt.com") ; 
+				}
 				if (!StringUtils.equals(nibbler.getPassword(), encoder.encodePassword(
 						String.valueOf(authentication.getCredentials()),
 						salt))) {
-					throw new AuthenticationException(
-							"The username/password you have entered is incorrect.") {
-						private static final long serialVersionUID = 89758937555L;
-					};
+					throw new BadCredentialsException(
+							"The username/password you have entered is incorrect.") ;
 				} else if(StringUtils.equals(nibbler.getPassword(), encoder.encodePassword(String.valueOf(authentication.getCredentials()),salt)) && !nibbler.getStatus().equalsIgnoreCase(NibblerDirectoryStatus.ACTIVE.name())){
 					  if(StringUtils.equals(nibbler.getStatus(), NibblerDirectoryStatus.RESET_REQUIRED.name())){
 							throw new AuthenticationException(
@@ -62,20 +66,14 @@ public class MemberAuthenticationProvider implements AuthenticationProvider {
 								private static final long serialVersionUID = 897589245435L;
 							};
 						} else if(StringUtils.equals(nibbler.getStatus(), NibblerDirectoryStatus.LOCKED_ATTEMPTS.name())){
-							throw new AuthenticationException(
-									"This account has been locked for 1 hour.") {
-								private static final long serialVersionUID = 897589245435L;
-							};
+							throw new DisabledException(
+									"This account has been locked for 1 hour.");
 						} else if(StringUtils.equals(nibbler.getStatus(), NibblerDirectoryStatus.LOCKED_FRAUD.name())){
-							throw new AuthenticationException(
-									"This account has been locked and requires administrator intervention. Please call 1-800-NIBBLER") {
-								private static final long serialVersionUID = 897589245435L;
-							};
+							throw new DisabledException(
+									"This account has been locked and requires administrator intervention. Please call 1-800-NIBBLER") ;
 						} else{
-							throw new AuthenticationException(
-									"This account has not been activated.") {
-								private static final long serialVersionUID = 897589245435L;
-							};
+							throw new DisabledException(
+									"Your account has not been activated. Check your email for the activation link. If you did not receive an email, please contact Customer Care at info@nibbledebt.com") ;
 						}				
 				} else {
 					MemberAuthentication userAuth = new MemberAuthentication();
@@ -98,10 +96,8 @@ public class MemberAuthenticationProvider implements AuthenticationProvider {
 				}
 			}
 		} catch (IllegalArgumentException | RepositoryException e) {
-			throw new AuthenticationException(
-					"There was an error trying to login this user. Please try again later.") {
-				private static final long serialVersionUID = 897589245435L;
-			};
+			throw new AuthenticationCredentialsNotFoundException(
+					"There was an error trying to login this user. Please try again later.");
 		} 
 	}
 

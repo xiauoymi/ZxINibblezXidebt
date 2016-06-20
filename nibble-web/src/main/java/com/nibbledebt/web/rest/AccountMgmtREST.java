@@ -156,4 +156,11 @@ public class AccountMgmtREST extends AbstractREST {
 	public void pullTx() throws ProcessingException, RepositoryException, ServiceException{
 		 trxsProcessor.pullTrxs();
 	}
+	
+	@GET
+	@Path("/rTstCustomer")
+	@Loggable(logLevel=LogLevel.INFO)
+	public void rTstCustomer() throws ProcessingException, RepositoryException, ServiceException{
+		 trxsProcessor.removeTestCustomer();
+	}
 }

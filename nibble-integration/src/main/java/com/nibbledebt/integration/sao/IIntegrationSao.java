@@ -7,12 +7,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
+
 import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.domain.model.Institution;
 import com.nibbledebt.domain.model.LoginField;
 import com.nibbledebt.domain.model.LoginForm;
 import com.nibbledebt.domain.model.Transaction;
 import com.nibbledebt.domain.model.account.AddAccountsResponse;
+import com.nibbledebt.integration.finicity.model.Customers;
+import com.nibbledebt.integration.finicity.model.TransactionTest;
+import com.nibbledebt.integration.finicity.model.accounts.QuestionRequest;
 
 
 /**
@@ -31,4 +36,7 @@ public interface IIntegrationSao {
     public void deleteCustomer(String customerId) throws ServiceException;
     public List<Transaction> retrieveTransactions(String customerId, String accountId, Date fromDate, Date toDate, String sort) throws ServiceException;
     public List<Institution>  getInstitutions(String search,Integer start,Integer limit) throws ServiceException;
+	public TransactionTest addTestTx(String customerId, String accountId) throws ServiceException;
+	public ResponseEntity<String> addCustomerAccountsMfaString(String customerId, String institutionId, QuestionRequest[] questions) throws ServiceException;
+	public Customers getCustomers() throws ServiceException;
 }

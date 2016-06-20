@@ -18,6 +18,7 @@
 	<bean id="authEntryPoint" class="com.nibbledebt.common.security.AjaxAwareEntryPoint" >
 		<constructor-arg name="loginUrl" value="/nibbleuser.html"/>
 	</bean>
+	<bean id="customAuthenticationFailureHandler" class="com.nibbledebt.common.security.CustomAuthenticationFailureHandler"/>
 	
 <!-- 	<bean id="signatureVeirfyFilter" class="com.nibbledebt.web.sys.rest.SignatureVerificationFilter" -->
  
@@ -35,7 +36,7 @@
         
         <sec:form-login login-page="/login"
         				login-processing-url="/sslogin"
-        				authentication-failure-url="/#/login?message=Your username/password was incorrect."
+        				authentication-failure-handler-ref="customAuthenticationFailureHandler"
         				default-target-url="/#/home"
         				password-parameter="nibbler_password"
         				username-parameter="nibbler_username"/>
@@ -53,7 +54,7 @@
 	</sec:http>
 	    
     <beans profile="postgres-local, embedded-local" default-autowire="default" >
-    
+    <bean id="customAuthenticationFailureHandler" class="com.nibbledebt.common.security.CustomAuthenticationFailureHandler"/>
 	    <sec:authentication-manager>	    	
 	     	<sec:authentication-provider>
 	     		<sec:user-service>

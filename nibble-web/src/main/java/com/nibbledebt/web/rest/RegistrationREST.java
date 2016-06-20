@@ -82,6 +82,19 @@ public class RegistrationREST extends AbstractREST {
 	}
 	
 	@POST
+	@Path("/customerToken")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Loggable(logLevel=LogLevel.INFO)
+	@Validatable() //TODO - write custom validator
+	public NibblerData customeToken(NibblerData nibblerData) throws ProcessingException, ServiceException,
+            RepositoryException, ValidationException{
+		regService.getIavToken(nibblerData);
+		return nibblerData;
+	}
+	
+	
+	@POST
 	@Path("/register/loanaccount")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

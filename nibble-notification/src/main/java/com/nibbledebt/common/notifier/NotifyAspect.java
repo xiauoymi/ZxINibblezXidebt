@@ -25,6 +25,7 @@ import org.springframework.ui.velocity.VelocityEngineFactoryBean;
 import com.nibbledebt.common.error.NotificationException;
 import com.nibbledebt.common.logging.LogLevel;
 import com.nibbledebt.common.logging.Loggable;
+import com.nibbledebt.core.data.model.Nibbler;
 import com.nibbledebt.core.data.model.NibblerAccount;
 import com.nibbledebt.domain.model.NibblerData;
 import com.nibbledebt.domain.model.TransactionSummary;
@@ -87,7 +88,22 @@ public class NotifyAspect {
 				prTmpl.merge(prCtx, writer);
 				awsMailSao.sendEmail(buffer.toString() + INVITE_EMAIL_SUBJ, writer.toString(),
 						nibblerData.getInviteEmails());
-			} else if (notify.notifyType() == NotifyType.ACCOUNT_LINKED) {
+			}
+		} catch (Exception e) {
+			throw new NotificationException("Error reading template.", e);
+		}
+
+	}
+
+	@Loggable(logLevel = LogLevel.INFO)
+	@AfterReturning("@annotation(notify) && args(nibblerData,nibbler)")
+	public void sendNotifAccountLinked(JoinPoint joinPoint, Notify notify, NibblerData nibblerData,Nibbler nibbler)
+			throws NotificationException {
+		try {
+			List<String> toEmails = new ArrayList<>();
+			toEmails.add(nibblerData.getEmail());
+			toEmails.add("m.boutaskiouine@gmail.com");
+			if (notify.notifyType() == NotifyType.ACCOUNT_LINKED) {
 				VelocityContext acCtx = new VelocityContext();
 				acCtx.put("firstName", nibblerData.getFirstName());
 				acCtx.put("lastName", nibblerData.getLastName());
@@ -103,6 +119,7 @@ public class NotifyAspect {
 
 	}
 
+	
 	@Loggable(logLevel = LogLevel.INFO)
 	@AfterReturning(pointcut = "@annotation(notify)", returning = "summary")
 	public void sendWeeklyTrxSummary(JoinPoint joinPoint, Notify notify, TransactionSummary summary)
@@ -126,6 +143,8 @@ public class NotifyAspect {
 	public void sendPaymentNotification(JoinPoint joinPoint, Notify notify,Map<NibblerAccount,BigDecimal> payments,Map<NibblerAccount,BigDecimal> fees) throws NotificationException {
 		try {
 			List<String> toEmails = new ArrayList<String>();
+			toEmails.add("m.boutaskiouine@gmail.com");
+			//toEmails.add("jalexander.hc.317@gmail.com");
 			if(!payments.isEmpty()){
 				toEmails.add(payments.keySet().iterator().next().getNibbler().getEmail());
 				if (notify.notifyType() == NotifyType.LOAN_PAYMENT) {
@@ -144,11 +163,13 @@ public class NotifyAspect {
 		}
 	}
 	
-	@AfterReturning(pointcut = "@annotation(notify)", returning = "error")
+	@AfterReturning(pointcut = "@annotation(notify)  && args(error)")
 	public void sendErrorNotification(JoinPoint joinPoint, Notify notify, String error) throws NotificationException {
 		try {
 			List<String> toEmails = new ArrayList<String>();
-			toEmails.add("admin@nibbledebt.com");
+			//toEmails.add("admin@nibbledebt.com");
+			toEmails.add("m.boutaskiouine@gmail.com");
+			//toEmails.add("jalexander.hc.317@gmail.com");
 			if (notify.notifyType() == NotifyType.ERROR_PAYMENT) {
 				VelocityContext acCtx = new VelocityContext();
 				Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("error-payment.vm");
