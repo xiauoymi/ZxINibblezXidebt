@@ -26,13 +26,11 @@
                         required ng-model="user.password"
                         xt-validation-tooltip>
             </div>
-            <div class="form-group">
-                <input
-                        type="password" class="form-control empty" ng-disabled="true"
+            <input
+                        type="hidden" class="form-control empty" ng-disabled="true"
                         placeholder="&#xf005;    Activation Code" name="code"
                         required ng-model="user.activationCode" 
                         xt-validation-tooltip>
-            </div>
             <div class="form-group">
                 <button ng-click="activateAccount()" ng-disabled="invalidActivateForm()"
                         class="btn btn-lg btn-nibble-primary btn-block">Activate

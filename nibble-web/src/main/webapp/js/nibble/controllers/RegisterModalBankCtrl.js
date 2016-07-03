@@ -1,6 +1,6 @@
 'use strict';
 app.controller('RegisterModalBankCtrl',
-    function RegisterModalBankCtrl($scope, $modalInstance, clickedBank,user,submitFunction) {
+    function RegisterModalBankCtrl($scope, $uibModalInstance, clickedBank,user,submitFunction) {
         $scope.bank = clickedBank;
         $scope.institutionParams = [];
         $scope.user=user;
@@ -40,11 +40,11 @@ app.controller('RegisterModalBankCtrl',
 
         $scope.ok = function () {
              $scope.submitFunction($scope.bank,$scope.user.email);
-             $modalInstance.close();
+             $uibModalInstance.close();
         };
 
         $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
+            $uibModalInstance.dismiss('cancel');
         };
 
         $scope.fieldType = function (key) {

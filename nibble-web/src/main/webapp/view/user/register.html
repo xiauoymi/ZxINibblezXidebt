@@ -76,7 +76,7 @@
 						ng-class="{'progress-bar-success': isPasswordStrong(), 'progress-bar-warning': isPasswordOk(),
                          'progress-bar-danger': isPasswordWeak()}"
 						aria-valuenow="{{registration.passwordStrenth}}" aria-valuemin="0"
-						aria-valuemax="100" style="width: {{registration.passwordStrenth">
+						aria-valuemax="100" style="width: {{registration.passwordStrenth}}%">
 					</div>
 				</div>
 			</div>
@@ -149,17 +149,27 @@
 					msg-phone-number="Phone Numbers must be ten digits long">
 			</div>
 			<div class="form-group">
-				<input type="date" class="form-control empty"
-					placeholder="&#xf095;    Date of Birth" name="dateOfBirth" required
-					ng-model="newuser.dateOfBirth">
+				<p class="input-group">
+					<input type="text" class="form-control"
+						uib-datepicker-popup="{{format}}" ng-model="newuser.dateOfBirth" name="dateOfBirth"
+						is-open="popup1.opened" datepicker-options="dateOptions" required required placeholder="Date of birth"
+						close-text="Close" alt-input-formats="altInputFormats"
+						xt-validation-tooltip date msg-date='Must be a valid date' /> <span
+						class="input-group-btn">
+						<button type="button" class="btn btn-default"
+							style="padding: 14px;" ng-click="open1()">
+							<i class="glyphicon glyphicon-calendar"></i>
+						</button>
+					</span>
+				</p>
 			</div>
 			<div class="form-group">
-				<input type="text" class="form-control empty" maxlength="4"
-					minlength="4" placeholder="&#xf095;    Last 4 of SSN" name="ssn"
+				<input type="text" class="form-control empty" minlength="4"
+					maxlength="4" placeholder="&#xf05a;    Last 4 of SSN" name="ssn"
 					required
 					onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-					ng-model="newuser.ssn" xt-validation-tooltip ssn-number
-					msg-ssn-number="SSN Numbers must be four digits long">
+					ng-model="newuser.ssn" xt-validation-tooltip minlength
+					msg-minlength="Must be 4 Characters Long.">
 			</div>
 
 
@@ -190,12 +200,12 @@
 					class="step4 badge">4</span>
 			</div>
 			<br />
-<!-- 			<div class="form-group"> -->
-<!-- 				<button class="btn btn-lg btn-nibble-primary btn-block" -->
-<!-- 					ng-click="registerForm2()"> -->
-<!-- 					<i class="fa fa-md fa-arrow-left font-color-white"></i> Back -->
-<!-- 				</button> -->
-<!-- 			</div> -->
+			<!-- 			<div class="form-group"> -->
+			<!-- 				<button class="btn btn-lg btn-nibble-primary btn-block" -->
+			<!-- 					ng-click="registerForm2()"> -->
+			<!-- 					<i class="fa fa-md fa-arrow-left font-color-white"></i> Back -->
+			<!-- 				</button> -->
+			<!-- 			</div> -->
 			<div class="form-group">
 				<h4 class="form-primary-heading text-center">Choose your
 					Funding Source</h4>
@@ -249,10 +259,6 @@
 
 			</div>
 			<div class="form-group text-center">
-				<button class="btn btn-sm-cus btn-nibble-primary"
-					ng-click="initLoanAccount()">
-					<i class="fa fa-md font-color-white"></i> Cancel
-				</button>
 				<button class="btn btn-lg-cus btn-nibble-primary"
 					ng-click="addLoanAccountByReferral()"
 					ng-disabled="linkaccount.referral.length==0">
@@ -287,11 +293,9 @@
 						ng-model="user.lastName" xt-validation-tooltip>
 				</div>
 				<div class="form-group">
-					<input type="email" class="form-control empty"
-						placeholder="&#xf0e0;    Email" name="email" required
-						ng-model="user.email" unique-name
-						msg-uniquename="user already exist" autofocus
-						xt-validation-tooltip>
+					<div class="col-md-12">
+						<p>Email Address:{{user.email}}</p>
+					</div>
 				</div>
 				<div class="form-group">
 					<input type="password" class="form-control empty"
@@ -307,7 +311,7 @@
                          'progress-bar-danger': isPasswordWeak()}"
 							aria-valuenow="{{registration.passwordStrenth}}"
 							aria-valuemin="0" aria-valuemax="100"
-							style="width: {{registration.passwordStrenth"></div>
+							style="width: {{registration.passwordStrenth}}%"></div>
 					</div>
 				</div>
 				<div class="form-group">
@@ -356,17 +360,27 @@
 						msg-phone-number="Phone Numbers must be ten digits long">
 				</div>
 				<div class="form-group">
-					<input type="date" class="form-control empty"
-						placeholder="&#xf095;    Date of Birth" name="dateOfBirth"
-						required value="{{user.dateOfBirth|date:'yyyy-MM-dd'}}"
-						ng-model="user.dateOfBirth">
+					<p class="input-group">
+						<input type="text" class="form-control empty"
+							uib-datepicker-popup="{{format}}" ng-model="user.dateOfBirth" name="dateOfBirth"
+							is-open="popup1.opened" datepicker-options="dateOptions" required placeholder="Date of birth"
+							close-text="Close" alt-input-formats="altInputFormats"
+							xt-validation-tooltip date msg-date='Must be a valid date' /> <span
+							class="input-group-btn">
+							<button type="button" class="btn btn-default"
+								style="padding: 14px;" ng-click="open1()">
+								<i class="glyphicon glyphicon-calendar"></i>
+							</button>
+						</span>
+					</p>
 				</div>
 				<div class="form-group">
-					<input type="text" class="form-control empty" maxlength="4"
-						placeholder="&#xf095;    Last 4 of SSN" name="ssn" required
+					<input type="text" class="form-control empty" minlength="4"
+						maxlength="4" placeholder="&#xf05a;    Last 4 of SSN" name="ssn"
+						required
 						onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-						ng-model="user.ssn" xt-validation-tooltip ssn-number
-						msg-ssn-number="SSN Numbers must be four digits long">
+						ng-model="user.ssn" xt-validation-tooltip minlength
+						msg-minlength="Must be 4 Characters Long.">
 				</div>
 
 				<div class="form-group text-center">
@@ -395,7 +409,7 @@
 						<p>Email Address:{{user.email}}</p>
 					</div>
 					<div class="col-md-12">
-						<p>Date Of Birth:{{user.dateOfBirth|date:'yyyy-MM-dd'}}</p>
+						<p>Date Of Birth:{{user.dateOfBirth}}</p>
 					</div>
 					<div class="col-md-12">
 						<p>SSN :{{user.ssn}}</p>

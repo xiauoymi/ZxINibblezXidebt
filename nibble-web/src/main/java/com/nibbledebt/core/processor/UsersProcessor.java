@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import org.h2.util.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -34,8 +36,10 @@ import com.nibbledebt.common.security.MemberDetails;
 import com.nibbledebt.core.data.dao.INibblerDao;
 import com.nibbledebt.core.data.dao.INibblerDirectoryDao;
 import com.nibbledebt.core.data.dao.INibblerRoleDao;
+import com.nibbledebt.core.data.dao.NibblerAccountDao;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.data.model.Nibbler;
+import com.nibbledebt.core.data.model.NibblerAccount;
 import com.nibbledebt.core.data.model.NibblerDirectory;
 import com.nibbledebt.core.data.model.NibblerDirectoryStatus;
 import com.nibbledebt.core.data.model.NibblerRole;
@@ -218,10 +222,11 @@ public class UsersProcessor extends AbstractProcessor {
 				mData.setReferral(nibbler.getReferral());
 				mData.setFeeAmount(nibbler.getNibblerPreferences().getFeeAmount().doubleValue());
 				mData.setWeeklyTargetAmount(nibbler.getNibblerPreferences().getWeeklyTargetAmount().doubleValue());
+				mData.setContributor(nibbler.getReceiver()!=null);
 				mData.setFundingConnected(nibbler.getAccounts().stream().anyMatch(a -> {
 					return a.getUseForRounding();
 				}));
-				mData.setLoanConnected(nibbler.getAccounts().stream().anyMatch(a->{
+				mData.setLoanConnected(nibbler.getAccounts().stream().anyMatch(a -> {
 					return a.getUseForpayoff();
 				}));
 				if (nibbler.getNibblerDir().getLastUpdateStatus() != null) {
@@ -235,10 +240,41 @@ public class UsersProcessor extends AbstractProcessor {
 		return nibblerDatas;
 	}
 
+	@Transactional(readOnly = true)
+	public NibblerData loadUser(String username) throws ProcessingException {
+		try {
+			Nibbler nibbler = nibblerDao.find(username);
+			NibblerData mData = new NibblerData();
+			if (nibbler != null) {
+				mData.setInternalUserId(nibbler.getId());
+				mData.setFirstName(nibbler.getFirstName());
+				mData.setLastName(nibbler.getLastName());
+				mData.setEmail(nibbler.getEmail());
+				mData.setPassword(nibbler.getNibblerDir().getPassword());
+				mData.setStatus(nibbler.getNibblerDir().getStatus());
+				mData.setAddress1(nibbler.getAddressLine1());
+				mData.setAddress2(nibbler.getAddressLine2());
+				mData.setCity(nibbler.getCity());
+				mData.setZip(nibbler.getZip());
+				mData.setState(nibbler.getState());
+				mData.setPhone(nibbler.getPhone());
+				mData.setStatus(nibbler.getNibblerDir().getStatus());
+			}
+			return mData;
+		} catch (RepositoryException e) {
+			throw new ProcessingException("Error while loading user");
+		}
+	}
+
 	@Transactional(isolation = Isolation.READ_COMMITTED)
 	@CacheEvict(value = "nibblerCache")
-	public void update(NibblerData nibblerData) throws DefaultException, RepositoryException {
-		Nibbler entity = nibblerDao.findOne(nibblerData.getInternalUserId());
+	public void update(NibblerData nibblerData) throws DefaultException, ProcessingException {
+		Nibbler entity;
+		try {
+			entity = nibblerDao.findOne(nibblerData.getInternalUserId());
+		} catch (RepositoryException e) {
+			throw new ProcessingException("Error occur while loading user "+nibblerData.getEmail());
+		}
 		if (!StringUtils.equals(entity.getNibblerDir().getPassword(), nibblerData.getPassword())) {
 			entity.getNibblerDir().setPassword(encoder.encodePassword(String.valueOf(nibblerData.getPassword()), salt));
 		}
@@ -273,13 +309,48 @@ public class UsersProcessor extends AbstractProcessor {
 				nibblerData.getWeeklyTargetAmount().toString())) {
 			entity.getNibblerPreferences().setWeeklyTargetAmount(new BigDecimal(nibblerData.getWeeklyTargetAmount()));
 		}
-		if (!StringUtils.equals(entity.getNibblerPreferences().getFeeAmount().toString(), nibblerData.getFeeAmount().toString())) {
+		if (!StringUtils.equals(entity.getNibblerPreferences().getFeeAmount().toString(),
+				nibblerData.getFeeAmount().toString())) {
 			entity.getNibblerPreferences().setFeeAmount(new BigDecimal(nibblerData.getFeeAmount().toString()));
 		}
 		if (!StringUtils.equals(entity.getReferral(), nibblerData.getReferral())) {
 			entity.setReferral(nibblerData.getReferral());
+			Nibbler referralNibbler;
+			try {
+				referralNibbler = nibblerDao.findByReferral(nibblerData.getReferral());
+			} catch (RepositoryException e) {
+				throw new ProcessingException("Error while loading user by referral "+nibblerData.getReferral());
+			}
+			
+			Nibbler contributor=entity;
+			Optional<NibblerAccount> optional=referralNibbler.getAccounts().stream().filter(a->a.getUseForpayoff()).findAny();
+			if(optional.isPresent()){
+				NibblerAccount loanAccount=optional.get();
+				NibblerAccount nibblerAccount = new NibblerAccount();
+				nibblerAccount.getBalances().addAll(loanAccount.getBalances());
+				nibblerAccount.getCreditActivity().addAll(loanAccount.getCreditActivity());
+				nibblerAccount.getDebitActivity().addAll(loanAccount.getDebitActivity());
+				nibblerAccount.getTransactions().addAll(loanAccount.getTransactions());
+				nibblerAccount.getLimits().addAll(loanAccount.getLimits());
+				BeanUtils.copyProperties(loanAccount, nibblerAccount, "id", "nibbler", "balances",
+						"creditActivity", "debitActivity", "transactions", "limits");
+				setUpdated(contributor, nibblerData.getEmail());
+				contributor.setReferral(nibblerData.getReferral());
+				contributor.addAccount(nibblerAccount);
+				nibblerAccount.setNibbler(contributor);
+				referralNibbler.getContributors().add(contributor);
+				try {
+					nibblerDao.update(referralNibbler);
+				} catch (RepositoryException e) {
+					throw new ProcessingException("Error while saving user "+referralNibbler.getEmail());
+				}
+			}
 		}
-		nibblerDao.update(entity);
+		try {
+			nibblerDao.update(entity);
+		} catch (RepositoryException e) {
+			throw new ProcessingException("Error while saving user "+nibblerData.getEmail());
+		}
 	}
 
 	@Transactional(isolation = Isolation.READ_COMMITTED)

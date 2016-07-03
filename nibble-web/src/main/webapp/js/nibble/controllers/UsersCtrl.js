@@ -1,6 +1,6 @@
 'use strict';
 app.controller('UsersCtrl',
-    function AccountsCtrl($scope, $rootScope, $state, $stateParams, NgTableParams,$modal, userFactory) {
+    function AccountsCtrl($scope, $rootScope, $state, $stateParams, NgTableParams,$uibModal, userFactory) {
 	
 
 	
@@ -83,12 +83,12 @@ app.controller('UsersCtrl',
 		/* init alerts */
         NibbleUtils.initAlerts($scope, $stateParams.message);
 	    
-	    $scope.cancel =  function (idx) {
-	    	$scope.users[idx]=angular.copy($scope.originalUser);
+	    $scope.cancel =  function (user) {
+	    	angular.copy($scope.originalUser[user.internalUserId],user);
 		}
 
 		$scope.editUser = function (user) {
-			$scope.originalUser=angular.copy(user);
+			$scope.originalUser[user.internalUserId]=angular.copy(user);
 			user.isEditing= true;
 	    };
 	
@@ -104,7 +104,7 @@ app.controller('UsersCtrl',
 	    };
 	    
 	    $scope.popupError=function(){
-	    	 $modal.open({
+	    	 $uibModal.open({
                  animation: true,
                  templateUrl: 'myModalContent.html',
                  controller: 'ModalInstanceCtrl',
@@ -155,7 +155,7 @@ app.controller('UsersCtrl',
 	   	$scope.sendWeeklyEmail = function (user) {
 	    	userFactory.sendWeeklyEmail(user)
             .success( function (data) {
-                   $modal.open({
+                   $uibModal.open({
                         animation: true,
                         templateUrl: 'messageModalContent.html',
                         controller: 'MessageModalInstanceCtrl',
@@ -173,24 +173,31 @@ app.controller('UsersCtrl',
             .error( function (data, status) {
                 NibbleUtils.pushErrorCallback($scope,'saveUserErrors', $state, data, status);
                 $scope.popupError();
-            })
+            });
 	    };
 
-	    $scope.refund=function(){
-	    	                   $modal.open({
-                        animation: true,
-                        templateUrl: 'messageModalContent.html',
-                        controller: 'MessageModalInstanceCtrl',
-                        backdrop: 'static',
-                        resolve: {
-                        	title:function(){
-                        		return "Information";
-                        	},
-                        	message:function(){
-                        		return "Refund has been sent! This is just a dummy message because we have not yet finished requirement 6";
-                        	}
-                        }
-                    });   
+	    $scope.refund=function(user){
+	    	userFactory.refund(user)
+            .success( function (data) {
+                $uibModal.open({
+                    animation: true,
+                    templateUrl: 'messageModalContent.html',
+                    controller: 'MessageModalInstanceCtrl',
+                    backdrop: 'static',
+                    resolve: {
+                    	title:function(){
+                    		return "Information";
+                    	},
+                    	message:function(){
+                    		return "Refund has been sent! total "+data.feeAmount;
+                    	}
+                    }
+                });         	
+            })
+            .error( function (data, status) {
+                NibbleUtils.pushErrorCallback($scope,'Refund', $state, data, status);
+                $scope.popupError();
+            });          
 	    };
 
         $scope.initCtrl = function () {
@@ -236,28 +243,28 @@ app.controller('UsersCtrl',
 //Please note that $uibModalInstance represents a modal window (instance) dependency.
 //It is not the same as the $uibModal service used above.
 
-app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, saveUserErrors) {
+app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, saveUserErrors) {
 
 $scope.saveUserErrors = saveUserErrors;
 
 
 $scope.ok = function () {
 	$scope.msg_alerts=[];
-	$modalInstance.close();
+	$uibModalInstance.close();
 };
 
 $scope.cancel = function () {
 	$scope.msg_alerts=[];
-	$modalInstance.dismiss('cancel');
+	$uibModalInstance.dismiss('cancel');
 };
 });
 
 
 
-app.controller('MessageModalInstanceCtrl', function ($scope, $modalInstance,title,message) {
+app.controller('MessageModalInstanceCtrl', function ($scope, $uibModalInstance,title,message) {
 	$scope.message=message;
 	$scope.title=title;
     $scope.ok = function () {
-        $modalInstance.close();
+        $uibModalInstance.close();
     };
 });

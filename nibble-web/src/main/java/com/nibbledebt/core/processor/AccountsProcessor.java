@@ -177,6 +177,11 @@ public class AccountsProcessor extends AbstractProcessor {
 			loan.setCurrentPayoffDuration(loan.getCurrentProjectedAmortization().size());
 			loan.setProjectedPayoffDuration(loan.getProjectedAmortization().size());
 			loan.setWeeklyAverage(BigDecimal.valueOf(weeklyAveragePayment));
+			summary.getOriginalCumulativeInterest().add(loan.getOriginalCumulativeInterest());
+			summary.getCurrentCumulativeInterest().add(loan.getCurrentCumulativeInterest());
+			summary.getProjectedCumulativeInterest().add(loan.getProjectedCumulativeInterest());
+			summary.setCurrentPayoffDuration(summary.getCurrentPayoffDuration()+loan.getCurrentPayoffDuration());
+			summary.setOriginalPayoffDuration(summary.getOriginalPayoffDuration()+loan.getOriginalPayoffDuration());
 		}
 		
 		return summary;

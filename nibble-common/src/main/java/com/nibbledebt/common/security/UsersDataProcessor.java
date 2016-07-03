@@ -48,6 +48,13 @@ public class UsersDataProcessor extends AbstractProcessor {
 			mData.setPassword(nibbler.getNibblerDir().getPassword());
 			mData.setStatus(nibbler.getNibblerDir().getStatus());
 			mData.setResetCode(nibbler.getNibblerDir().getResetCode());
+			nibbler.getAccounts().forEach(a->{
+				if(a.getUseForRounding()){
+					mData.setFundingConnected(true);
+				}else{
+					mData.setLoanConnected(true);
+				}
+			});
 			mData.setIsFirstLogin(nibbler.getNibblerDir().getLastLoginTs()==null);
 			for(NibblerRole role : nibbler.getNibblerDir().getRoles()){
 				mData.getRoles().add(role.getName());

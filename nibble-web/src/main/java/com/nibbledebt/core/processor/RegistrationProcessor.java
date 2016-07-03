@@ -92,9 +92,6 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 	private INibblerDao nibblerDao;
 
 	@Autowired
-	private INibblerDirectoryDao nibblerDirDao;
-
-	@Autowired
 	private IAccountTypeDao accountTypeDao;
 
 	@Autowired
@@ -179,6 +176,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 								nibbler.getLastName());
 						dwollaClient.createCustomer(nibbler);
 					} catch (ServiceException e) {
+						if(customerId!=null)
+						integrationSao.deleteCustomer(customerId);
 						throw new ProcessingException("Error while adding finicity customer.");
 					} catch (UnknownHostException | ApiException e) {
 						throw new ProcessingException("Error while adding dwolla customer.");
@@ -187,7 +186,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 						if (nibblerData.isContributor()) {
 							Nibbler receiver = (Nibbler) nibblerDao
 									.findByInvitationCode(nibblerData.getInvitationCode());
-							nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_LOAN_ACCT.name());
+							nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
 							nibbler.getNibblerDir().setActivationCode("");
 
 							Set<NibblerRole> nibblerRoles = new HashSet<>();
@@ -199,7 +198,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 							contributor.setReceiver(receiver);
 
 							nibbler.getNibblerDir().setActivationCode("");
-							nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_ROUNDUP.name());
+							nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
 
 							nibbler.getNibblerDir().setRoles(nibblerRoles);
 							setUpdated(nibbler.getNibblerDir(), nibblerData.getEmail());
@@ -217,7 +216,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 							nibblerRoles.add(getRole(NibblerRoleType.receiver));
 
 							nibbler.getNibblerDir().setActivationCode("");
-							nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_LOAN_ACCT.name());
+							nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
 
 							nibblerData.setInvitationCode(inviteCode);
 
@@ -269,6 +268,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		nibblerData.setIavToken(nibbler.getNibblerDir().getIavToken());
 	}
 
+	@Transactional
 	@Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_LINKED)
 	public AddAccountsResponse addLoanAccountByReferral(NibblerData nibblerData, Nibbler nibbler)
 			throws ProcessingException, ServiceException, RepositoryException, ValidationException {
@@ -281,9 +281,12 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 				List<String> types = Arrays.asList("student_loan", "loan", "student_loan");
 				List<NibblerAccount> nibblerAccounts = nibblerAccountDao
 						.findNibblerAccountByAccountType(referralNibbler.getNibblerDir().getUsername(), types);
-				List<Account> accounts = saveLoanAccounts(nibblerData, nibblerAccounts);
+				Nibbler contributor = nibblerDao.find(nibblerData.getEmail());
+				referralNibbler.getContributors().add(contributor);
+				List<Account> accounts = saveLoanAccounts(nibblerData,
+						nibblerAccounts.stream().filter(a -> a.getUseForpayoff()).collect(Collectors.toList()));
 				AddAccountsResponse overallResponse = new AddAccountsResponse();
-				overallResponse.getAccounts().getAccount().addAll(accounts);
+				overallResponse.getAccounts().setAccount(accounts);
 				overallResponse.setReferral(nibbler.getReferral());
 				nibblerData.setReferral(nibbler.getReferral());
 				sendNotifAccountLinked(nibblerData);
@@ -504,7 +507,6 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 					nibblerData.setInternalUserId(nibbler.getId());
 					if (nibbler != null) {
 						return addRoundupAccount(nibblerData, nibbler);
-
 					} else {
 						throw new ValidationException(
 								"Financial institution requires fields that have failed validation.");
@@ -648,7 +650,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 
 				NibblerPreference prefs = new NibblerPreference();
 				prefs.setNibbler(nibbler);
-				prefs.setWeeklyTargetAmount(new BigDecimal("9.99"));
+				prefs.setWeeklyTargetAmount(new BigDecimal("5"));
+				prefs.setFeeAmount(new BigDecimal("2"));
 				setCreated(prefs, nibblerData.getEmail());
 				nibbler.setNibblerPreferences(prefs);
 
@@ -843,7 +846,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 								nibblerAccount.getBalances().add(balance);
 								nibbler.addAccount(nibblerAccount);
 								result.add(account);
-								nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_ROUNDUP.name());
+								nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
 							}
 							nibblerAccount.setDwollaLoanId(nibblerData.getLoanToken());
 						} else if (!forRoundUp/**
@@ -872,7 +875,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 								nibblerAccount.getBalances().add(balance);
 								nibbler.addAccount(nibblerAccount);
 								result.add(account);
-								nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_ROUNDUP.name());
+								nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
 								nibblerAccount.setDwollaLoanId(nibblerData.getLoanToken());
 							}
 						} else {
@@ -881,7 +884,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 
 					}
 				}
-				if(result.size()>0){
+				if (result.size() > 0) {
 					break;
 				}
 			}
@@ -891,7 +894,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 			if (!forRoundUp) {
 				nibbler.setReferral(nibbler.getExtAccessToken());
 			}
-
+			accounts.setAccount(result);
 			nibblerDao.saveOrUpdate(nibbler);
 			return result;
 		} catch (ParseException e) {
@@ -909,7 +912,13 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 			List<Account> result = new ArrayList<Account>();
 			for (NibblerAccount nibblerAccountOld : nibblerAccounts) {
 				NibblerAccount nibblerAccount = new NibblerAccount();
-				BeanUtils.copyProperties(nibblerAccountOld, nibblerAccount, "id", "nibbler");
+				nibblerAccount.getBalances().addAll(nibblerAccountOld.getBalances());
+				nibblerAccount.getCreditActivity().addAll(nibblerAccountOld.getCreditActivity());
+				nibblerAccount.getDebitActivity().addAll(nibblerAccountOld.getDebitActivity());
+				nibblerAccount.getTransactions().addAll(nibblerAccountOld.getTransactions());
+				nibblerAccount.getLimits().addAll(nibblerAccountOld.getLimits());
+				BeanUtils.copyProperties(nibblerAccountOld, nibblerAccount, "id", "nibbler", "balances",
+						"creditActivity", "debitActivity", "transactions", "limits");
 				if (StringUtils.equalsIgnoreCase(nibblerAccount.getAccountType().getCode(), "checking")
 						|| StringUtils.equalsIgnoreCase(nibblerAccount.getAccountType().getCode(), "creditCard")
 						|| StringUtils.equalsIgnoreCase(nibblerAccount.getAccountType().getCode(), "student-loan")
@@ -927,8 +936,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 						nibblerAccount.setUseForpayoff(true);
 						nibblerAccount.getBalances().forEach(balance -> {
 							setCreated(balance, nibblerData.getEmail());
-							nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_ROUNDUP.name());
 						});
+						nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
 					} else if (StringUtils.equalsIgnoreCase(nibblerAccount.getAccountType().getCode(), "loan")) {
 						if (!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod")) {
 							nibblerAccount.setUseForpayoff(true);
@@ -944,7 +953,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 							nibblerAccount.getBalances().add(balance);
 							nibbler.addAccount(nibblerAccount);
 							result.add(account);
-							nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE_NO_ROUNDUP.name());
+							nibbler.getNibblerDir().setStatus(NibblerDirectoryStatus.ACTIVE.name());
 						}
 					} else {
 						nibblerAccount.setUseForRounding(false);
@@ -954,7 +963,7 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 			}
 			setUpdated(nibbler, nibblerData.getEmail());
 			nibblerData.setActivationCode(nibbler.getNibblerDir().getActivationCode());
-			nibbler.setReferral(nibbler.getExtAccessToken());
+			nibbler.setReferral(nibblerData.getReferral());
 			nibblerDao.update(nibbler);
 			return accounts;
 		} catch (Exception e) {

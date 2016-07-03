@@ -25,7 +25,7 @@ public class TransactionTest {
 	public TransactionTest(String description) {
 		super();
 		Random randomGenerator = new Random();
-		this.amount =(randomGenerator.nextInt(100)+ randomGenerator.nextDouble())+"";
+		this.amount =(randomGenerator.nextInt(100)+ 0.01)+"";
 		this.description = description;
 		this.posted_date = new Date().getTime()+"";
 		this.transaction_date = this.posted_date;

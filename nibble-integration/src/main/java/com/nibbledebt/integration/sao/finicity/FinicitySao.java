@@ -173,6 +173,7 @@ public class FinicitySao implements IIntegrationSao{
 		try {
 			return finicityClient.getCustomers();
 		} catch (Exception e) {
+			e.printStackTrace();
             throw new ServiceException("Error getCustomers form Finicity");
         }
 	}

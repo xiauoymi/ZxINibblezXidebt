@@ -36,5 +36,17 @@ public class PaymentActivityDao extends AbstractHibernateDao<PaymentActivity> im
 			  throw new RepositoryException(e);
 		}
 	}
-
+	
+	public List<PaymentActivity> getByType(String username,String type) throws RepositoryException {
+		try {
+			Query query = this.getCurrentSession().getNamedQuery("getByType");
+			query.setString("type", type);
+			query.setString("username", username);
+			return query.list();
+		} catch (Exception e) {
+			  throw new RepositoryException(e);
+		}
+	}
+	
+	
 }

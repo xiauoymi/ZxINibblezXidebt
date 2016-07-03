@@ -50,10 +50,6 @@ public class MemberAuthenticationProvider implements AuthenticationProvider {
 				throw new BadCredentialsException(
 						"The username you have entered is incorrect.") ;
 			} else {
-				if(!nibbler.getRoles().contains("nibbler_level_1")){
-					throw new BadCredentialsException(
-							"Nibble's web app is coming soon. Please check your email for weekly updates or contact us at info@nibbledebt.com") ; 
-				}
 				if (!StringUtils.equals(nibbler.getPassword(), encoder.encodePassword(
 						String.valueOf(authentication.getCredentials()),
 						salt))) {
@@ -61,21 +57,28 @@ public class MemberAuthenticationProvider implements AuthenticationProvider {
 							"The username/password you have entered is incorrect.") ;
 				} else if(StringUtils.equals(nibbler.getPassword(), encoder.encodePassword(String.valueOf(authentication.getCredentials()),salt)) && !nibbler.getStatus().equalsIgnoreCase(NibblerDirectoryStatus.ACTIVE.name())){
 					  if(StringUtils.equals(nibbler.getStatus(), NibblerDirectoryStatus.RESET_REQUIRED.name())){
-							throw new AuthenticationException(
-									"This password on this account needs to be reset.") {
-								private static final long serialVersionUID = 897589245435L;
-							};
+							throw new BadCredentialsException(
+									"This password on this account needs to be reset.");
 						} else if(StringUtils.equals(nibbler.getStatus(), NibblerDirectoryStatus.LOCKED_ATTEMPTS.name())){
-							throw new DisabledException(
+							throw new BadCredentialsException(
 									"This account has been locked for 1 hour.");
 						} else if(StringUtils.equals(nibbler.getStatus(), NibblerDirectoryStatus.LOCKED_FRAUD.name())){
-							throw new DisabledException(
+							throw new BadCredentialsException(
 									"This account has been locked and requires administrator intervention. Please call 1-800-NIBBLER") ;
 						} else{
-							throw new DisabledException(
+							throw new BadCredentialsException(
 									"Your account has not been activated. Check your email for the activation link. If you did not receive an email, please contact Customer Care at info@nibbledebt.com") ;
 						}				
-				} else {
+				} else if(!nibbler.getRoles().contains("nibbler_level_1")){
+					if(nibbler.isFundingConnected() && nibbler.isLoanConnected()){
+						throw new BadCredentialsException(
+								"Nibble's web app is coming soon. Please check your email for weekly updates or contact us at info@nibbledebt.com") ;	
+					}else{
+						throw new BadCredentialsException(
+								"ACCOUNT_NOT_LINKED") ;
+					}
+					 
+				}else {
 					MemberAuthentication userAuth = new MemberAuthentication();
 					MemberDetails userDetails = new MemberDetails();
 					userDetails.setFirstName(nibbler.getFirstName());

@@ -1,7 +1,7 @@
 'use strict';
 app.factory('dwollaFactory', function($http){
-    let urlBase = NibbleUtils.getServicesUrl() +'/rest';
-    let dwollaFactory={};
+    var urlBase = NibbleUtils.getServicesUrl() +'/rest';
+    var dwollaFactory={};
     
     // Sandbox (UAT)
     dwolla.configure('sandbox');

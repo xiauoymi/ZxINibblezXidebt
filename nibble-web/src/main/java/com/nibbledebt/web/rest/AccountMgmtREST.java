@@ -3,6 +3,7 @@
  */
 package com.nibbledebt.web.rest;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -25,6 +26,7 @@ import com.nibbledebt.common.logging.Loggable;
 import com.nibbledebt.common.security.MemberDetails;
 import com.nibbledebt.core.data.error.RepositoryException;
 import com.nibbledebt.core.processor.AccountsProcessor;
+import com.nibbledebt.core.processor.BillingProcessor;
 import com.nibbledebt.core.processor.TransactionProcessor;
 import com.nibbledebt.core.processor.UsersProcessor;
 import com.nibbledebt.domain.model.Contributor;
@@ -51,14 +53,17 @@ public class AccountMgmtREST extends AbstractREST {
 	@Autowired
 	private TransactionProcessor trxsProcessor;
 	
+	@Autowired
+	private BillingProcessor billingProcessor;
+	
 	@GET
 	@Path("/contributors")
 	@Loggable(logLevel=LogLevel.INFO)
 	@PreAuthorize("hasRole('receiver')")
-	public List<Contributor> getContributors() throws ProcessingException, RepositoryException{
+	public List<Contributor> getContributors() throws ProcessingException, RepositoryException, IOException{
 		List<Contributor> contributors = usersProcessor.retrieveContributors(getCurrentUser());
 		for(Contributor contr : contributors){
-			contr.setSummary(trxsProcessor.getWeeklyTrxSummary(contr.getUsername()));
+			contr.setSummary(trxsProcessor.getWeeklyTrxSummary(contr.getUsername(),false));
 		}
 		return contributors;
 	}
@@ -67,11 +72,18 @@ public class AccountMgmtREST extends AbstractREST {
 	@Path("/emailUpdate")
 	@Loggable(logLevel=LogLevel.INFO)
 	@PreAuthorize("hasRole('nibbler_level_1')")
-	public void emailUpdate(NibblerData nibblerData) throws ProcessingException, RepositoryException{
-		trxsProcessor.getWeeklyTrxSummary(nibblerData.getEmail());
+	public void emailUpdate(NibblerData nibblerData) throws ProcessingException, RepositoryException, IOException{
+		trxsProcessor.buildWeeklyReport(nibblerData.getEmail());
 	}
 	
-	
+	@POST
+	@Path("/refund")
+	@Loggable(logLevel=LogLevel.INFO)
+	@PreAuthorize("hasRole('nibbler_level_1')")
+	public NibblerData refundFee(NibblerData nibblerData) throws ProcessingException, RepositoryException, IOException{
+		nibblerData.setFeeAmount(billingProcessor.refundFee(nibblerData.getEmail()).doubleValue());
+		return nibblerData;
+	}	
 	
 	
 	@GET
@@ -111,8 +123,8 @@ public class AccountMgmtREST extends AbstractREST {
 	@Path("/weeksummary")
 	@Loggable(logLevel=LogLevel.INFO)
 	@PreAuthorize("hasRole('nibbler_level_1')")
-	public TransactionSummary getWeeklySummary() throws ProcessingException, RepositoryException{
-		return trxsProcessor.getWeeklyTrxSummary(getCurrentUser());
+	public TransactionSummary getWeeklySummary() throws ProcessingException, RepositoryException, IOException{
+		return trxsProcessor.getWeeklyTrxSummary(getCurrentUser(),false);
 	}
 	
 	@GET
@@ -155,6 +167,7 @@ public class AccountMgmtREST extends AbstractREST {
 	@Loggable(logLevel=LogLevel.INFO)
 	public void pullTx() throws ProcessingException, RepositoryException, ServiceException{
 		 trxsProcessor.pullTrxs();
+		 //billingProcessor.processPayment();
 	}
 	
 	@GET

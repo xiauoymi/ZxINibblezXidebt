@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -29,24 +30,20 @@ import io.swagger.client.model.CreateCustomer;
 import io.swagger.client.model.CreateFundingSourceRequest;
 import io.swagger.client.model.FundingSource;
 import io.swagger.client.model.HalLink;
+import io.swagger.client.model.Transfer;
+import io.swagger.client.model.TransferListResponse;
 import io.swagger.client.model.TransferRequestBody;
 import io.swagger.client.model.Unit$;
 
 @Component
 public class DwollaClient implements IDwollaClient {
-	public final static String SCOPES = "Send|AccountInfoFull|Funding";
-	public final static String REDIRECT_URI = "http://localhost:4567/callback";
-	public final static String CLIENT_ID = "vWy5Jd5MG9taM6mQ5p6pOMfXSsoMJUU4IweFeoBbZIICp8rlaU";
-	public final static String CLIENT_SECRET = "Fzo8i4fFtRueFZB8t3YN1Vdr74VdeRGZm6zozHVmBPOixGCesS";
-	public final static String SENDER_PIN = "1234";
-	public final static String TOKEN = "QNNHiXEGqMUaPuS4MW9GptUCKcIVFinHxHx1gstOYvkZYdkxvb";
-	private static String FUNDING_SOURCE="https://api-uat.dwolla.com/funding-sources/3f715bae-d7c7-43d8-be65-ecb16d288417";
-	public final static String ACCOUNT_ID = "812-743-0452";
+	@Value("${dwolla.fundingSource}")
+	private String fundingSource;
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private static ApiClient client;
 	@Resource
 	private Environment env;
-
+	
 	public String createCustomer(NibblerAccount nibblerAccount) throws UnknownHostException, ApiException {
 		CustomersApi api = new CustomersApi(getApiClient());
 		CreateCustomer customer = new CreateCustomer();
@@ -123,16 +120,22 @@ public class DwollaClient implements IDwollaClient {
 
 	public static void main(String[] a) throws ApiException {
 		DwollaClient dw=new DwollaClient();
-		FundingsourcesApi api=new FundingsourcesApi(getApiClient());
-		FundingSource fs= api.id("e795beea-ce5a-40e6-a0a2-cf9e48075070");
-		System.out.println(fs.getEmbedded());
+		TransfersApi api=new TransfersApi(getApiClient());
+//		Transfer transfer=api.byId("9f33f3b6-193f-e611-80e4-0aa34a9b2388");
+//		System.err.println(transfer);
+//		FundingSource fs= api.id("e795beea-ce5a-40e6-a0a2-cf9e48075070");
+//		System.out.println(fs.getEmbedded());
+		//"https://api-uat.dwolla.com/funding-sources/1c2245e2-a1fc-41d7-b668-a7a22e5d9361"
+		//"https://api-uat.dwolla.com/funding-sources/560bb6e3-49fd-4b2b-a66f-ff838c529dfd"
+		//dw.transfer("https://api-uat.dwolla.com/funding-sources/1c2245e2-a1fc-41d7-b668-a7a22e5d9361", "https://api-uat.dwolla.com/funding-sources/560bb6e3-49fd-4b2b-a66f-ff838c529dfd", "1000", null);
+		dw.statusTransfer("1a810d90-47eb-4039-8277-4f0d501aeac3");
 		//dw.payFee("https://api-uat.dwolla.com/funding-sources/e795beea-ce5a-40e6-a0a2-cf9e48075070", "10", null);
 		//System.out.println(fundingSource);
 	}
 
-	public boolean transfer(String from, String to, String value, NibblerAccount nibblerAccount) throws ApiException {
-		logger.info("transfer ==> from " + from + " to =>" + to + " value =>" + value + " person=>"
-				+ nibblerAccount.getNibbler().getLastName());
+	public String transfer(String from, String to, String value, NibblerAccount nibblerAccount) throws ApiException {
+//		logger.info("transfer ==> from " + from + " to =>" + to + " value =>" + value + " person=>"
+//				+ nibblerAccount.getNibbler().getLastName());
 		TransfersApi api = new TransfersApi(getApiClient());
 		TransferRequestBody transfertRequestBody = new TransferRequestBody();
 		Amount amount = new Amount();
@@ -150,38 +153,56 @@ public class DwollaClient implements IDwollaClient {
 		links.put("source", source);
 		transfertRequestBody.setLinks(links);
 		Unit$ r=api.create(transfertRequestBody);
-		logger.info(r.getLocationHeader());
-		return true;
+		logger.info("transfer success ==> "+r.getLocationHeader());
+		return r.getLocationHeader();
+	}
+	
+	public TransferListResponse statusTransfer(String id) throws ApiException {
+//		logger.info("transfer ==> from " + from + " to =>" + to + " value =>" + value + " person=>"
+//				+ nibblerAccount.getNibbler().getLastName());
+		TransfersApi api = new TransfersApi(getApiClient());
+		TransferListResponse list =api.getCustomerTransfers(id, 10, 0);
+		System.out.println("detail transfer "+list);
+		return list;
+		//list.fo
+		//logger.info("transfer success ==> "+transfer.getStatus()+" "+transfer.getAmount()+" "+transfer.getCreated());
+		
 	}
 
-	public boolean payFee(String from, String value, NibblerAccount nibblerAccount) throws ApiException {
-		logger.info("transfer ==> from " + from + " value =>" + value + " person=>"
-				+ nibblerAccount.getNibbler().getLastName());
-		TransfersApi api = new TransfersApi(getApiClient());
-		TransferRequestBody transfertRequestBody = new TransferRequestBody();
-		Amount amount = new Amount();
-		amount.setCurrency("USD");
-		amount.setValue(value);
-		transfertRequestBody.setAmount(amount);
-		Map<String, HalLink> links = new HashMap<String, HalLink>();
-		HalLink destination = new HalLink();
-		FundingsourcesApi fundingsourcesApi=new FundingsourcesApi(getApiClient());
-		FundingSource fs=fundingsourcesApi.id(FUNDING_SOURCE);
-		destination.setHref(fs.getLinks().get("account").getHref());
-		HalLink source = new HalLink();
-		source.setHref(from);
-		links.put("destination", destination);
-		links.put("source", source);
-		transfertRequestBody.setLinks(links);
-		Unit$ r=api.create(transfertRequestBody);
-		logger.info(r.getLocationHeader());
-		return true;
-	}
+//	public String payFee(String from, String value, NibblerAccount nibblerAccount) throws ApiException {
+//		logger.info("transfer ==> from " + from + " value =>" + value + " person=>"
+//				+ nibblerAccount.getNibbler().getLastName());
+//		TransfersApi api = new TransfersApi(getApiClient());
+//		TransferRequestBody transfertRequestBody = new TransferRequestBody();
+//		Amount amount = new Amount();
+//		amount.setCurrency("USD");
+//		amount.setValue(value);
+//		transfertRequestBody.setAmount(amount);
+//		Map<String, HalLink> links = new HashMap<String, HalLink>();
+//		HalLink destination = new HalLink();
+//		FundingsourcesApi fundingsourcesApi=new FundingsourcesApi(getApiClient());
+//		FundingSource fs=fundingsourcesApi.id(FUNDING_SOURCE);
+//		destination.setHref(fs.getLinks().get("account").getHref());
+//		HalLink source = new HalLink();
+//		source.setHref(from);
+//		links.put("destination", destination);
+//		links.put("source", source);
+//		transfertRequestBody.setLinks(links);
+//		Unit$ r=api.create(transfertRequestBody);
+//		logger.info(r.getLocationHeader());
+//		return r.getLocationHeader();
+//	}
 
 	public BigDecimal getBalance(String id) throws ApiException {
 		FundingsourcesApi fundingsourcesApi = new FundingsourcesApi(getApiClient());
 		FundingSource fundingSource = fundingsourcesApi.id(id);
 		return fundingSource.getBalance();
 	}
+
+	public String getFundingSource() {
+		return fundingSource;
+	}
+	
+	
 
 }

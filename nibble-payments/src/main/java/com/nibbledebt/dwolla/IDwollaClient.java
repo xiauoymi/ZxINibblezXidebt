@@ -7,6 +7,7 @@ import com.nibbledebt.core.data.model.Nibbler;
 import com.nibbledebt.core.data.model.NibblerAccount;
 
 import io.swagger.client.ApiException;
+import io.swagger.client.model.TransferListResponse;
 
 public interface IDwollaClient {
 	public void createCustomer(Nibbler nibbler) throws UnknownHostException, ApiException;
@@ -15,11 +16,14 @@ public interface IDwollaClient {
 
 	public String createAccount(NibblerAccount nibblerAccount, String id) throws ApiException;
 	
-	public boolean transfer(String from,String to,String value,NibblerAccount nibblerAccount) throws ApiException;
+	public String transfer(String from,String to,String value,NibblerAccount nibblerAccount) throws ApiException;
 	
 	public BigDecimal getBalance(String id) throws ApiException;
 	
-	public boolean payFee(String from,String value,NibblerAccount nibblerAccount) throws ApiException;
+//	public String payFee(String from,String value,NibblerAccount nibblerAccount) throws ApiException;
 	
 	public String getIAVToken(String id) throws ApiException;
+	
+	String getFundingSource();
+	TransferListResponse statusTransfer(String id) throws ApiException;
 }

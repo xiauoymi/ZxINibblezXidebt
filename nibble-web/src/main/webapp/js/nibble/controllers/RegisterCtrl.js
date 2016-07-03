@@ -1,21 +1,75 @@
 'use strict';
 app.controller('RegisterCtrl',
-        function RegisterCtrl($scope, $state,$timeout, $interval, $filter,$stateParams, $modal, pwdstrength, accountFactory, userFactory,dwollaFactory) {
+        function RegisterCtrl($scope, $state,$timeout, $interval, $filter,$stateParams, $uibModal, pwdstrength, accountFactory, userFactory,dwollaFactory) {
 
-            /**
-             * init data and watchers
-             */
-            $scope.initData = function() {
-            	$scope.isEditing=false;
-                $scope.registration = {};
-                $scope.linkaccount={};
-                $scope.newuser = {
-                    email: "",
-                    password: "",
-                    repassword: "",
-                    firstName: "",
-                    lastName: ""
-                };
+              $scope.initDate=function(){
+                  $scope.inlineOptions = {
+                          customClass: getDayClass,
+                          minDate: new Date(),
+                          showWeeks: true
+                        };
+
+                        $scope.dateOptions = {
+                          formatYear: 'yy',
+                          startingDay: 1
+                        };
+
+                        $scope.toggleMin = function() {
+                          $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
+                          $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
+                        };
+
+                        $scope.toggleMin();
+
+                        $scope.open1 = function() {
+                          $scope.popup1.opened = true;
+                        };
+
+                        $scope.format = 'yyyy/dd/MM';
+                        $scope.altInputFormats = ['M!/d!/yyyy'];
+
+                        $scope.popup1 = {
+                          opened: false
+                        };
+
+                        $scope.popup2 = {
+                          opened: false
+                        };
+
+                        function getDayClass(data) {
+                          var date = data.date,
+                            mode = data.mode;
+                          if (mode === 'day') {
+                            var dayToCheck = new Date(date).setHours(0,0,0,0);
+
+                            for (var i = 0; i < $scope.events.length; i++) {
+                              var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
+
+                              if (dayToCheck === currentDay) {
+                                return $scope.events[i].status;
+                              }
+                            }
+                          }
+
+                          return '';
+                        };
+              };  
+              /**
+               * init data and watchers
+               */
+              $scope.initData = function() {
+              	$scope.initDate();
+              	$scope.isEditing=false;
+                  $scope.registration = {};
+                  $scope.linkaccount={};
+                  $scope.newuser = {
+                      email: "",
+                      password: "",
+                      repassword: "",
+                      firstName: "",
+                      lastName: ""
+                  };
+                  
                 $scope.states = [
 							'Alabama',
 							'Alaska',
@@ -166,7 +220,9 @@ app.controller('RegisterCtrl',
                         $scope.registration.form.city.$invalid ||
                         $scope.registration.form.regstate.$invalid ||
                         $scope.registration.form.zipcode.$invalid ||
-                        $scope.registration.form.phone.$invalid;
+                        $scope.registration.form.phone.$invalid ||
+                        $scope.registration.form.dateOfBirth.$invalid ||
+                        $scope.registration.form.ssn.$invalid;
 
             };
 
@@ -237,10 +293,10 @@ app.controller('RegisterCtrl',
             if($scope.fundingIAVStep==0){
                 if(angular.element('iframe').contents().find('#BankName').length>0){                    
                             angular.element('iframe').contents().find( 'button[type=submit]' )[0].addEventListener('click', function(){
-                            let institution={};
+                            var institution={};
                             institution.name=angular.element('iframe').contents().find('#BankName')[0].value;
                             //bank -> loginForm ->[loginField {value,description}]
-                            let loginField=[];
+                            var loginField=[];
                             angular.element('iframe').contents().find('label').each(function(k,e) {
                                 loginField.push({description:e.innerHTML,value:angular.element("iframe").contents().find("#"+e.htmlFor).val()});
                             });
@@ -254,7 +310,7 @@ app.controller('RegisterCtrl',
             if($scope.fundingIAVStep==1){
                     if(angular.element('iframe').contents().find('#QUESTION_1').length>0){
                       angular.element('iframe').contents().find( 'button[type=submit]' )[0].addEventListener('click', function(){
-                            let questionRequests=[];
+                            var questionRequests=[];
                              angular.element('iframe').contents().find('label').each(function(k,e) {
                                 questionRequests.push({text:e.innerHTML,answer:angular.element("iframe").contents().find("#"+e.htmlFor).val()});
                             });
@@ -287,7 +343,7 @@ app.controller('RegisterCtrl',
                 accountFactory.updateRoundupAccount({roundupAccountBank:bank,email:email,fundingSourceToken:fundingSource,accountNumber:bank.accountNumber}).then(function(data){
                    $scope.roundupAccount=data; 
                    $scope.finicityBank={}; 
-                    $modal.open({
+                    $uibModal.open({
                         animation: true,
                         templateUrl: 'accountLinked.html',
                         controller: 'ConfirmModalInstanceCtrl',
@@ -319,9 +375,9 @@ app.controller('RegisterCtrl',
 
             $scope.searchInstitutions = function() {
                 accountFactory.searchInstitutions($scope.linkaccount.search).then(function(data) {
-                    let items = data.data;
-                    let length=items.length<10?items.length:10;
-                    for (let i=0; i<length; i++) {
+                    var items = data.data;
+                    var length=items.length<10?items.length:10;
+                    for (var i=0; i<length; i++) {
                         if(items[i].institution.logoCode){
                             if(items[i].institution.logoCode.match('genericbank')){
                                 items[i].institution.defaultLogo=true;
@@ -375,8 +431,8 @@ app.controller('RegisterCtrl',
                         console.log("Register Nibbler response data : ", data);
                     }
                     $scope.parseRegisterResponse(data);
-
-                    $modal.open({
+                    $state.go('user.login');
+                    $uibModal.open({
                         animation: true,
                         templateUrl: 'myModalContent.html',
                         controller: 'ConfirmModalInstanceCtrl',
@@ -446,7 +502,7 @@ app.controller('RegisterCtrl',
                 nibbler.phone = user.phone;
                 nibbler.url = NibbleUtils.getBaseUrl();
                 nibbler.ssn=user.ssn;
-                nibbler.dateOfBirth=$filter('date')(user.dateOfBirth, 'yyyy-MM-dd');
+                nibbler.dateOfBirth=$filter('date')(user.dateOfBirth, $scope.format);
                 if ($scope.selected != undefined) {
                     nibbler.bank = {
                         institution : {},
@@ -514,7 +570,7 @@ app.controller('RegisterCtrl',
                 var bank = $scope.banks[bankIndex];
                 if (bank) {
                     if (bank.loginForm.loginField != null && bank.loginForm.loginField.length > 0) {
-                        var modalInstance = $modal.open({
+                        var modalInstance = $uibModal.open({
                             animation: true,
                             templateUrl: 'registermodal.html',
                             controller: 'RegisterModalBankCtrl',
@@ -580,8 +636,8 @@ app.controller('RegisterCtrl',
             $scope.initData();
         });
 
-app.controller('ConfirmModalInstanceCtrl', function ($scope, $modalInstance) {
+app.controller('ConfirmModalInstanceCtrl', function ($scope, $uibModalInstance) {
     $scope.ok = function () {
-        $modalInstance.close();
+        $uibModalInstance.close();
     };
 });

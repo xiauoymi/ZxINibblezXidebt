@@ -22,5 +22,7 @@ public interface INibblerAccountDao extends IDao<NibblerAccount> {
     NibblerAccount findByUseForPayoff(String username) throws RepositoryException;
 
     NibblerAccount findByUserNameAndId(String username, Long accountId) throws RepositoryException;
+    
+    public NibblerAccount findByFundingSourceId(String fundingSourceId) throws RepositoryException;
 
 }

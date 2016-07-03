@@ -14,4 +14,5 @@ import com.nibbledebt.core.data.model.PaymentActivity;
  */
 public interface IPaymentActivityDao extends IDao<PaymentActivity> {
 	List<PaymentActivity> getByToAccountId (final Long toAccountId) throws RepositoryException;
+	public List<PaymentActivity> getByType(String username,String type) throws RepositoryException;
 }

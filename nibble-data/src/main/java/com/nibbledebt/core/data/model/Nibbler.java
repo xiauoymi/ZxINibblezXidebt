@@ -33,7 +33,7 @@ import org.apache.commons.lang.time.DateUtils;
 @NamedQueries({
 		@NamedQuery(name = "findNibblerByUsername", query = "from Nibbler n where n.nibblerDir.username = :username"),
 		@NamedQuery(name = "findNibblerByInvitationCode", query = "from Nibbler n where n.invitationCode = :invitation_code"),
-		@NamedQuery(name = "findNibblerByReferralCode", query = "from Nibbler n where n.referral = :referral"),
+		@NamedQuery(name = "findNibblerByReferralCode", query = "from Nibbler n where n.referral = :referral and n.receiver is null"),
 		@NamedQuery(name = "findContributorsByReceiver", query = "from Nibbler n where n.receiver.id = :receiver_id"),
 		@NamedQuery(name = "findReceiverByUsername", query = "from Nibbler n where n.nibblerDir.username = :username"),
 		@NamedQuery(name = "findByStatus", query = "from Nibbler n where n.nibblerDir.status in :status")
@@ -103,7 +103,7 @@ public class Nibbler extends AbstractModel {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "receiver", orphanRemoval = true)
 	private List<Nibbler> contributors;
 
-	@Column(name = "referral_code", nullable = true, unique = true, length = 10)
+	@Column(name = "referral_code", nullable = true, unique = false, length = 10)
 	private String referral;
 	
 	private String dateOfBirth;
@@ -128,6 +128,9 @@ public class Nibbler extends AbstractModel {
 	 * @return the contributors
 	 */
 	public List<Nibbler> getContributors() {
+		if(contributors==null){
+			contributors=new ArrayList<Nibbler>();
+		}
 		return contributors;
 	}
 

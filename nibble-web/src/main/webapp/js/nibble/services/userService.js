@@ -130,6 +130,15 @@ app.factory('userFactory', function($http){
         return $http.post(urlBase + '/activate',user);
     };
     
+    /**
+     * load user
+     * @param User - user form
+     * @returns {HttpPromise}
+     */
+    userFactory.load = function(user) {
+        return $http.post(urlBase + '/loadUser',user);
+    };
+    
     
     /**
      * Suspend user
@@ -159,6 +168,15 @@ app.factory('userFactory', function($http){
      */
     userFactory.sendWeeklyEmail = function(user) {
         return $http.post(urlBase + '/emailUpdate',user);
+    };
+    
+    /**
+     * send refund
+     * @param User - user form
+     * @returns {HttpPromise}
+     */
+    userFactory.refund = function(user) {
+        return $http.post(urlBase + '/refund',user);
     };
 
     return userFactory;

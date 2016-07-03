@@ -25,7 +25,8 @@ import javax.persistence.TemporalType;
  *
  */
 @NamedQueries({
-	@NamedQuery(name="getActivityForToAccount", query="from PaymentActivity pa where pa.toAccount.id = :toAccountId and completedTs is not null order by completedTs asc")	
+	@NamedQuery(name="getActivityForToAccount", query="from PaymentActivity pa where pa.toAccount.id = :toAccountId and completedTs is not null order by completedTs asc"),
+	@NamedQuery(name="getByType", query="from PaymentActivity pa where pa.fromAccount.nibbler.nibblerDir.username=:username and pa.type=:type")
 })
 @Entity()
 @Table(	name="payment_activity"	)
@@ -54,6 +55,8 @@ public class PaymentActivity extends AbstractModel {
 	
 	@Column(name="authorization_code")
 	private String authorizationCode;
+	
+	private String type;
 
 	/**
 	 * @return the fromAccount
@@ -138,5 +141,14 @@ public class PaymentActivity extends AbstractModel {
 	public void setAuthorizationCode(String authorizationCode) {
 		this.authorizationCode = authorizationCode;
 	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	
 	
 }

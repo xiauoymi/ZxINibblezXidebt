@@ -55,6 +55,17 @@ public class NibblerAccountDao extends AbstractHibernateDao<NibblerAccount> impl
 			  throw new RepositoryException(e);
 		}
 	}
+	
+	@Override
+	public NibblerAccount findByFundingSourceId(String fundingSourceId) throws RepositoryException {
+		try {
+			Query query = this.getCurrentSession().getNamedQuery("findByFundingSourceId");
+			query.setString("fundingSourceId", fundingSourceId);
+			return (NibblerAccount)query.uniqueResult();
+		} catch (Exception e) {
+			  throw new RepositoryException(e);
+		}
+	}
 
     @Override
     public NibblerAccount findByUserNameAndId(String username, Long accountId) throws RepositoryException {

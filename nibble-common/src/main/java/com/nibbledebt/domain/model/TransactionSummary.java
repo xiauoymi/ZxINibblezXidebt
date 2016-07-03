@@ -4,8 +4,10 @@
 package com.nibbledebt.domain.model;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Rocky Alam
@@ -29,7 +31,15 @@ public class TransactionSummary {
 	private Integer currentTargetPercent;
 	private BigDecimal totalAmountPaid = BigDecimal.ZERO;
 	private BigDecimal totalAmountSaved = BigDecimal.ZERO;
+	private BigDecimal totalAmountContributors=BigDecimal.ZERO;
+	private Long barChartId;
+	private Long pieChartId;
+	private LoanSummary loanSummary;
+	private String referral;
 	
+	public boolean isShowPieChart() {
+		return pieChartId!=null;
+	}
 	private List<TransactionSummary> contributorSummaries;
 	
 	/**
@@ -243,6 +253,48 @@ public class TransactionSummary {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
+	public BigDecimal getTotalAmountContributors() {
+		return totalAmountContributors;
+	}
+	public void setTotalAmountContributors(BigDecimal totalAmountContributors) {
+		this.totalAmountContributors = totalAmountContributors;
+	}
+	public Long getBarChartId() {
+		return barChartId;
+	}
+	public void setBarChartId(Long barChartId) {
+		this.barChartId = barChartId;
+	}
+	public Long getPieChartId() {
+		return pieChartId;
+	}
+	public void setPieChartId(Long pieChartId) {
+		this.pieChartId = pieChartId;
+	}
+	public LoanSummary getLoanSummary() {
+		return loanSummary;
+	}
+	public void setLoanSummary(LoanSummary loanSummary) {
+		this.loanSummary = loanSummary;
+	}
+	public String getReferral() {
+		return referral;
+	}
+	public void setReferral(String referral) {
+		this.referral = referral;
+	}
+	private static  DecimalFormat myFormatter =(DecimalFormat) DecimalFormat.getInstance(Locale.US);
+	public static String formatNumber4Email(BigDecimal x){
+		if(x==null)
+			return "0";
+		String r=myFormatter.format(x);
+		if(r.contains(".")){
+			r=r.replace(".", "<span style='font-size: 20px;'>.");
+			r=r+"</span>";
+		}else{
+			r=r+"<span style='font-size: 20px;'>.00</span>";
+		}
+		return r;
+	}
 	
 }

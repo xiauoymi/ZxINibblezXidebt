@@ -35,7 +35,8 @@ import javax.persistence.UniqueConstraint;
 	@NamedQuery(name="findAcctByExtId", query="from NibblerAccount na where na.externalId = :externalId"),
 	@NamedQuery(name="findAcctByUseForPayoff", query="from NibblerAccount na where na.useForpayoff = true and na.nibbler.nibblerDir.username = :username"),
     @NamedQuery(name="findAcctByUserAndId", query="from NibblerAccount na where na.id = :id and na.nibbler.nibblerDir.username = :username"),
-	@NamedQuery(name="findNibblerAccountByAccountType", query="from NibblerAccount na where na.nibbler.nibblerDir.username = :username and accountType.code in :types")
+	@NamedQuery(name="findNibblerAccountByAccountType", query="from NibblerAccount na where na.nibbler.nibblerDir.username = :username and accountType.code in :types"),
+	@NamedQuery(name="findByFundingSourceId",query=" from NibblerAccount na where na.fundingSourceId = :fundingSourceId")
 })
 @Entity()
 @Table(	name="nibbler_account",
@@ -323,6 +324,8 @@ public class NibblerAccount extends AbstractModel{
 	 * @return the debitActivity
 	 */
 	public List<PaymentActivity> getDebitActivity() {
+		if(debitActivity==null)
+			debitActivity=new ArrayList<PaymentActivity>();
 		return debitActivity;
 	}
 
@@ -337,6 +340,8 @@ public class NibblerAccount extends AbstractModel{
 	 * @return the creditActivity
 	 */
 	public List<PaymentActivity> getCreditActivity() {
+		if(creditActivity==null)
+			creditActivity=new ArrayList<PaymentActivity>();
 		return creditActivity;
 	}
 

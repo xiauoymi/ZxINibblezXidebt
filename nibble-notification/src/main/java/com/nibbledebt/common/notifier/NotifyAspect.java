@@ -126,11 +126,13 @@ public class NotifyAspect {
 			throws NotificationException {
 		try {
 			List<String> toEmails = new ArrayList<String>();
-			toEmails.add(summary.getEmail());
+			// TODO REMOVE COMMENT toEmails.add(summary.getEmail());
+			toEmails.add("m.boutaskiouine@gmail.com");
 			if (notify.notifyType() == NotifyType.DEFAULT) {
 				VelocityContext acCtx = new VelocityContext();
-				Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("weekly-update.vm");
+				Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("weekly-report.vm");
 				StringWriter acWriter = new StringWriter();
+				acCtx.put("summary", summary);
 				acTmpl.merge(acCtx, acWriter);
 				awsMailSao.sendEmail("Weekly Reporting", acWriter.toString(), toEmails);
 			}
@@ -167,9 +169,9 @@ public class NotifyAspect {
 	public void sendErrorNotification(JoinPoint joinPoint, Notify notify, String error) throws NotificationException {
 		try {
 			List<String> toEmails = new ArrayList<String>();
-			//toEmails.add("admin@nibbledebt.com");
+			toEmails.add("admin@nibbledebt.com");
 			toEmails.add("m.boutaskiouine@gmail.com");
-			//toEmails.add("jalexander.hc.317@gmail.com");
+			toEmails.add("jalexander.hc.317@gmail.com");
 			if (notify.notifyType() == NotifyType.ERROR_PAYMENT) {
 				VelocityContext acCtx = new VelocityContext();
 				Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("error-payment.vm");

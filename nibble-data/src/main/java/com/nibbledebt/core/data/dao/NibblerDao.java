@@ -5,6 +5,8 @@ package com.nibbledebt.core.data.dao;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
@@ -20,6 +22,7 @@ import com.nibbledebt.core.data.model.Nibbler;
  *
  */
 @Repository
+@Transactional 
 public class NibblerDao extends AbstractHibernateDao<Nibbler> implements INibblerDao {
 
 	public NibblerDao() {
@@ -36,6 +39,7 @@ public class NibblerDao extends AbstractHibernateDao<Nibbler> implements INibble
 			  throw new RepositoryException(e);
 		}
 	}
+	
 	
 	@Override
 	public Nibbler findReceiver(String username)  throws RepositoryException{
@@ -73,19 +77,30 @@ public class NibblerDao extends AbstractHibernateDao<Nibbler> implements INibble
 	@Override
 	public List<Nibbler> find(Nibbler nibbler) throws RepositoryException {
 		Criteria cr = this.getCurrentSession().createCriteria(Nibbler.class);
+		boolean isSearch=false;
 		if(!StringUtils.isEmpty(nibbler.getFirstName())){
 			cr.add(Restrictions.ilike("firstName", nibbler.getFirstName()+"%"));
+			if(!isSearch) isSearch=true;
 		}
 		if(!StringUtils.isEmpty(nibbler.getLastName())){
 			cr.add(Restrictions.ilike("lastName", nibbler.getLastName()+"%"));
+			if(!isSearch) isSearch=true;
 		}
 		if(!StringUtils.isEmpty(nibbler.getEmail())){
 			cr.add(Restrictions.ilike("email", nibbler.getEmail()+"%"));
+			if(!isSearch) isSearch=true;
 		}
 		if(!StringUtils.isEmpty(nibbler.getPhone())){
 			cr.add(Restrictions.ilike("phone", nibbler.getPhone()+"%"));
+			if(!isSearch) isSearch=true;
+		}
+		if(!StringUtils.isEmpty(nibbler.getReferral())){
+			cr.add(Restrictions.ilike("referral", nibbler.getReferral()+"%"));
+			if(!isSearch) isSearch=true;
 		}
 		cr.addOrder(Order.asc("lastName"));
+		if(!isSearch)
+			cr.setMaxResults(25);
 		return cr.list();
 	}
 

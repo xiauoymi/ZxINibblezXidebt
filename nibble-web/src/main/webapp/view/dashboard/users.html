@@ -144,7 +144,7 @@
           <td title="'Referral#'" sortable="'referral'" ng-switch="row.isEditing" ng-class="referral.$dirty ? 'bg-warning' : ''" ng-form="referral" demo-tracked-table-cell>
             <span ng-switch-default class="editable-text">{{row.referral}}</span>
             <div class="controls" ng-class="referral.$invalid && referral.$dirty ? 'has-error' : ''" ng-switch-when="true">
-              <input type="text" name="referral"" ng-model="row.referral" class="editable-input form-control input-sm" />
+              <input type="text" name="referral" ng-disabled="!row.contributor"  ng-model="row.referral" class="editable-input form-control input-sm" />
             </div>
           </td>
 
@@ -170,7 +170,7 @@
           <div class="btn-group btn-group-xs">
             <!-- ng-disabled="rowForm.$pristine || rowForm.$invalid" -->
             <button class="btn btn-primary btn-xs" ng-disabled="rowForm.$pristine || rowForm.$invalid" ng-click="saveUser(row)" ng-if="row.isEditing" ><span class="glyphicon glyphicon-ok" ></span> Save</button>
-            <button class="btn btn-default btn-xs" ng-click="cancel($index)" ng-if="row.isEditing"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+            <button class="btn btn-default btn-xs" ng-click="cancel(row)" ng-if="row.isEditing"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
             <button class="btn btn-default btn-xs" ng-click="editUser(row)" ng-if="!row.isEditing"><span class="glyphicon glyphicon-pencil"></span> Edit</button>
             <!-- <button class="btn btn-danger btn-xs" ng-click="remove(row)" ng-if="!row.isEditing"><span class="glyphicon glyphicon-trash"></span></button> -->
             <button class="btn btn-default btn-xs" ng-click="loginAs(row)" ng-if="!row.isEditing"><span class="fa fa-sign-in"></span> Login</button>
