@@ -259,6 +259,8 @@ public class UsersProcessor extends AbstractProcessor {
 				mData.setState(nibbler.getState());
 				mData.setPhone(nibbler.getPhone());
 				mData.setStatus(nibbler.getNibblerDir().getStatus());
+				mData.setSsn(nibbler.getSsn());
+				mData.setDateOfBirth(nibbler.getDateOfBirth());
 			}
 			return mData;
 		} catch (RepositoryException e) {

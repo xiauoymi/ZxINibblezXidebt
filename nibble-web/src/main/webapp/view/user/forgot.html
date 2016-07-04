@@ -8,9 +8,9 @@
             <div class="form-group">
                 <h3 class="form-primary-heading">To retrieve your password, enter your email address below</h3>
             </div>
-            <alert class="text-center" ng-repeat="alert in msg_alerts" type="{{alert.type}}" close="closeAlert($index)">
+            <uib-alert class="text-center" ng-repeat="alert in msg_alerts" type="{{alert.type}}" close="closeAlert($index)">
                 {{alert.msg}}
-            </alert>
+            </uib-alert>
             <div class="form-group">
                 <input type="email" class="form-control empty"
                        placeholder="&#xf0e0;    Email address" name="email"

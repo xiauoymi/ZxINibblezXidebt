@@ -180,6 +180,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 						integrationSao.deleteCustomer(customerId);
 						throw new ProcessingException("Error while adding finicity customer.");
 					} catch (UnknownHostException | ApiException e) {
+						if(customerId!=null)
+						integrationSao.deleteCustomer(customerId);
 						throw new ProcessingException("Error while adding dwolla customer.");
 					}
 					try {

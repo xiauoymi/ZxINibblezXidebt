@@ -8,9 +8,9 @@
                 <h3 class="form-primary-heading text-center">Activate your account</h3>
             </div>
             <hr/>
-            <alert class="text-center" ng-repeat="alert in msg_alerts" type="{{alert.type}}" close="closeAlert($index)">
+            <uib-alert class="text-center" ng-repeat="alert in msg_alerts" type="{{alert.type}}" close="closeAlert($index)">
                 {{alert.msg}}
-            </alert>
+            </uib-alert>
 
             <div class="form-group">
                 <input

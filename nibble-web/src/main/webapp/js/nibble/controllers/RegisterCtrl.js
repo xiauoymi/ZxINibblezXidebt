@@ -25,7 +25,7 @@ app.controller('RegisterCtrl',
                           $scope.popup1.opened = true;
                         };
 
-                        $scope.format = 'yyyy/dd/MM';
+                        $scope.format = 'yyyy-MM-dd';
                         $scope.altInputFormats = ['M!/d!/yyyy'];
 
                         $scope.popup1 = {

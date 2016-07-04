@@ -29,9 +29,9 @@
 			<h3 class="form-primary-heading text-center">Create a New
 				Account</h3>
 		</div>
-		<alert class="text-center" ng-repeat="alert in msg_alerts"
+		<uib-alert class="text-center" ng-repeat="alert in msg_alerts"
 			type="{{alert.type}}" close="closeAlert($index)">
-		{{alert.msg}} </alert>
+		{{alert.msg}} </uib-alert>
 
 		<div ng-switch-default>
 			<br />
@@ -44,9 +44,9 @@
 			<div class="form-group">
 				<h4 class="form-primary-heading">Enter your information :</h4>
 			</div>
-			<alert class="text-center" ng-repeat="alert in msg_alerts"
+			<uib-alert class="text-center" ng-repeat="alert in msg_alerts"
 				type="{{alert.type}}" close="closeAlert($index)">
-			{{alert.msg}} </alert>
+			{{alert.msg}} </uib-alert>
 			<div class="form-group">
 				<input type="text" class="form-control empty"
 					placeholder="&#xf05a;    First Name" name="firstname" required

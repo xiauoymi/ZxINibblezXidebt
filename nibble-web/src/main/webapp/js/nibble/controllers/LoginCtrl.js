@@ -38,7 +38,7 @@ app.controller('LoginCtrl',
                 	if(status==0){
                     	NibbleUtils.errorCallback($scope, $state, "Oops. Something went wrong, please reload the page and try again. If the problem persist, please contact Customer Care at info@nibbledebt.com.", status);
                     }else{
-                    	if(data.error=="ACCOUNT_NOT_LINKED"){
+                    	if(data && data.error=="ACCOUNT_NOT_LINKED"){
                     		 userFactory.load({email:$scope.user.login}).success(function(data) {
                     			 $state.go('user.register',{user:data,activate:true});
                     		 }).error(function(data,status) {

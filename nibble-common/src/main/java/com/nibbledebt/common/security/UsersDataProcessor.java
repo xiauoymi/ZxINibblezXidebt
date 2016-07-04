@@ -37,7 +37,6 @@ public class UsersDataProcessor extends AbstractProcessor {
 	}
 
 	@Transactional(readOnly=true)
-	@Cacheable(value="nibblerCache")
 	public NibblerData retrieveNibbler(String username) throws RepositoryException{
 		Nibbler nibbler = nibblerDao.find(username);
 		if(nibbler!=null){

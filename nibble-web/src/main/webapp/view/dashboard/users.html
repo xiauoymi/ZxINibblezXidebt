@@ -12,9 +12,9 @@
     </script>    
 
      <script type="text/ng-template" id="myModalContent.html">
-        <alert class="text-center" ng-repeat="alert in saveUserErrors" type="{{alert.type}}" close="cancel()">
+        <uib-alert class="text-center" ng-repeat="alert in saveUserErrors" type="{{alert.type}}" close="cancel()">
                 {{alert.msg}}
-            </alert>
+            </uib-alert>
     </script>
     <div class="page-subheader">
         Users
@@ -53,9 +53,9 @@
             </div>
             </div>
             </form>
-            <alert class="text-center" ng-repeat="alert in searchFormErrors" type="{{alert.type}}" close="closeAlert($index)">
+            <uib-alert class="text-center" ng-repeat="alert in searchFormErrors" type="{{alert.type}}" close="closeAlert($index)">
                 {{alert.msg}}
-            </alert>
+            </uib-alert>
             <div class="col-md-3"></div>
         </div>
         </div>        
