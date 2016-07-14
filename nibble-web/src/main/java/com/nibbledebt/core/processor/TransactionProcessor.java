@@ -131,7 +131,7 @@ public class TransactionProcessor extends AbstractProcessor {
 		summary.setReferral(nibbler.getReferral());
 		summary.setLoanSummary(accountProcessor.getLoanSummary(username));
 		LocalDate now = LocalDate.now();
-		if (StringUtils.equalsIgnoreCase(nibbler.getType(), NibblerType.receiver.name())) {
+		if (nibbler.getContributors().size()>0) {
 			calculateSummary(summary, nibbler, now, false);
 			List<Nibbler> contributors = nibblerDao.findContributors(nibbler.getId());
 			for (Nibbler contributor : contributors) {
@@ -159,13 +159,12 @@ public class TransactionProcessor extends AbstractProcessor {
 		} else {
 			if(!summary.getContributorSummaries().isEmpty()){
 				Map<String, BigDecimal> map = summary.getContributorSummaries().stream()
-						.collect(Collectors.toMap(TransactionSummary::getEmail, TransactionSummary::getCurrentWeekAmount));
-				Long pie = saveChart(FactoryChart.createPieChart(map));	
+						.collect(Collectors.toMap(TransactionSummary::getFullName, TransactionSummary::getTotalPayment));
+				Long pie = saveChart(FactoryChart.createRingChart(map));	
 				summary.setPieChartId(pie);
 			}
 			Long bar = saveChart(
-					FactoryChart.createChart(summary.getTotalAmountPaid(), summary.getTotalAmountContributors()));
-			
+					FactoryChart.createChart(summary.getTotalPayment(), summary.getTotalPaymentContributors()));
 			summary.setBarChartId(bar);
 			return summary;
 		}
@@ -217,7 +216,7 @@ public class TransactionProcessor extends AbstractProcessor {
 	}
 	@Transactional
 	private TransactionSummary calculateSummary(TransactionSummary summary, Nibbler nibbler, LocalDate now,
-			Boolean asContributor) throws RepositoryException {
+			Boolean asContributor) throws RepositoryException, ProcessingException {
 		List<com.nibbledebt.domain.model.Transaction> wtrxs = new ArrayList<>();
 		BigDecimal weeklyTotal = BigDecimal.ZERO;
 		BigDecimal target = nibbler.getNibblerPreferences().getWeeklyTargetAmount();
@@ -281,11 +280,9 @@ public class TransactionProcessor extends AbstractProcessor {
 							contributorSummary.setDay5total(contributorSummary.getDay5total().add(dailyTotal));
 						else if (i == 7)
 							contributorSummary.setDay6total(contributorSummary.getDay6total().add(dailyTotal));
-
 					}
 				}
 				if (!asContributor) {
-
 					summary.setTotalAmountPaid(
 							summary.getTotalAmountPaid().add((nacct.getCumulativeRoundupsAmount() == null
 									? BigDecimal.ZERO : nacct.getCumulativeRoundupsAmount())));
@@ -294,9 +291,7 @@ public class TransactionProcessor extends AbstractProcessor {
 						contributorSummary.setTotalAmountPaid(
 								contributorSummary.getTotalAmountPaid().add((nacct.getCumulativeRoundupsAmount() == null
 										? BigDecimal.ZERO : nacct.getCumulativeRoundupsAmount())));
-
 				}
-
 			}
 		}
 		if (!asContributor) {
@@ -307,8 +302,11 @@ public class TransactionProcessor extends AbstractProcessor {
 			summary.setTrxs(wtrxs);
 		} else {
 			if (contributorSummary != null) {
+				contributorSummary.setEmail(nibbler.getEmail());
+				contributorSummary.setPersonFirstName(nibbler.getFirstName());
+				contributorSummary.setPersonLastName(nibbler.getLastName());
 				contributorSummary.setCurrentWeekAmount(weeklyTotal);
-				summary.getTotalAmountContributors().add(weeklyTotal);
+				summary.setTotalAmountContributors(summary.getTotalAmountContributors().add(contributorSummary.getTotalAmountPaid()));
 				contributorSummary.setCurrentTargetPercent(
 						weeklyTotal.divide(target, 2, RoundingMode.UP).multiply(new BigDecimal("100")).intValue());
 				contributorSummary.setWeeklyTarget(target);
@@ -316,6 +314,7 @@ public class TransactionProcessor extends AbstractProcessor {
 				contributorSummary.setPersonFirstName(nibbler.getFirstName());
 				contributorSummary.setPersonLastName(nibbler.getLastName());
 				contributorSummary.setPersonId(nibbler.getId());
+				contributorSummary.setLoanSummary(accountProcessor.getLoanSummary(nibbler.getEmail()));
 				summary.getContributorSummaries().add(contributorSummary);
 			}
 		}

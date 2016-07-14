@@ -38,7 +38,7 @@
 			<div class="line">
 				<span class="step1 badge badge-info">1</span> <span
 					class="step2 badge">2</span> <span class="step3 badge">3</span> <span
-					class="step4 badge">4</span>
+					 class="step4 badge">4</span>
 			</div>
 			<br />
 			<div class="form-group">
@@ -104,10 +104,10 @@
 			<div class="line">
 				<span class="step1 badge">1</span> <span
 					class="step2 badge badge-info">2</span> <span class="step3 badge">3</span>
-				<span class="step4 badge">4</span>
+				<span  class="step4 badge">4</span>
 			</div>
 			<br />
-			<div class="form-group">
+			<div class="form-group"> 
 				<h4 class="form-primary-heading">Fill out your contact
 					information:</h4>
 			</div>
@@ -150,11 +150,11 @@
 			</div>
 			<div class="form-group">
 				<p class="input-group">
-					<input type="text" class="form-control"
-						uib-datepicker-popup="{{format}}" ng-model="newuser.dateOfBirth" name="dateOfBirth"
-						is-open="popup1.opened" datepicker-options="dateOptions" required required placeholder="Date of birth"
+					<input type="text" class="form-control" max-date="maxDate"
+						uib-datepicker-popup="{{format}}" ng-model="newuser.dateOfBirth" name="dateOfBirth" ui-date-format
+						is-open="popup1.opened" datepicker-options="dateOptions" required required placeholder="Select Date of birth"
 						close-text="Close" alt-input-formats="altInputFormats"
-						xt-validation-tooltip date msg-date='Must be a valid date' /> <span
+						xt-validation-tooltip date msg-date='Must be a valid date' onkeydown="return false"/> <span
 						class="input-group-btn">
 						<button type="button" class="btn btn-default"
 							style="padding: 14px;" ng-click="open1()">
@@ -171,7 +171,12 @@
 					ng-model="newuser.ssn" xt-validation-tooltip minlength
 					msg-minlength="Must be 4 Characters Long.">
 			</div>
-
+			<div class="form-group">
+				<input type="text" class="form-control empty"
+					placeholder="Referral #" name="referral" 
+					ng-model="newuser.referral" >
+			</div>
+		
 
 			<div class="form-group text-center">
 				<button class="btn btn-sm-cus btn-nibble-primary"
@@ -197,7 +202,7 @@
 			<div class="line">
 				<span class="step1 badge">1</span> <span class="step2 badge">2</span>
 				<span class="step3 badge badge-info">3</span> <span
-					class="step4 badge">4</span>
+					 class="step4 badge">4</span>
 			</div>
 			<br />
 			<!-- 			<div class="form-group"> -->
@@ -206,10 +211,10 @@
 			<!-- 					<i class="fa fa-md fa-arrow-left font-color-white"></i> Back -->
 			<!-- 				</button> -->
 			<!-- 			</div> -->
-			<div class="form-group">
-				<h4 class="form-primary-heading text-center">Choose your
-					Funding Source</h4>
-			</div>
+<!-- 			<div class="form-group"> -->
+<!-- 				<h4 class="form-primary-heading text-center">Choose your -->
+<!-- 					Funding Source</h4> -->
+<!-- 			</div> -->
 			<div ng-init="loadIAV('addRoundupAccount')"></div>
 			<div class="island__section animation-frame" ng-show="isFundingIAV()"></div>
 			<div id="fundingIAV"></div>
@@ -232,7 +237,7 @@
 			<br />
 			<div class="line">
 				<span class="step1 badge">1</span> <span class="step2 badge">2</span>
-				<span class="step3 badge">3</span> <span
+				<span class="step3 badge">3</span> <span 
 					class="step4 badge badge-info">4</span>
 			</div>
 			<br />
@@ -244,27 +249,14 @@
 			</div>
 			<div class="form-group">
 				<h4 class="form-primary-heading text-center">Choose your loan
-					provider Or Enter your referral code</h4>
+					provider </h4>
 			</div>
 			<div class="form-group">
-				<div class="form-group">
-					<input type="text" class="form-control empty"
-						placeholder="Referral #" name="city" required
-						ng-model="linkaccount.referral" xt-validation-tooltip>
-				</div>
-				<div ng-init="loadIAV('addLoanAccount')"></div>
-				<div class="island__section animation-frame"
-					ng-show="isFundingIAV()"></div>
-				<div id="fundingIAV"></div>
-
-			</div>
-			<div class="form-group text-center">
-				<button class="btn btn-lg-cus btn-nibble-primary"
-					ng-click="addLoanAccountByReferral()"
-					ng-disabled="linkaccount.referral.length==0">
-					Submit <i class="fa fa-md pull-right font-color-white"></i>
-				</button>
-			</div>
+						<div ng-init="loadIAV('addLoanAccount')"></div>
+						<div class="island__section animation-frame"
+							ng-show="isFundingIAV()"></div>
+						<div id="fundingIAV"></div>
+			</div>			
 			<hr />
 			<div class="row">
 				<div class="col-md-offset-1">
@@ -361,11 +353,11 @@
 				</div>
 				<div class="form-group">
 					<p class="input-group">
-						<input type="text" class="form-control empty"
-							uib-datepicker-popup="{{format}}" ng-model="user.dateOfBirth" name="dateOfBirth"
-							is-open="popup1.opened" datepicker-options="dateOptions" required placeholder="Date of birth"
+						<input type="text" class="form-control empty" max-date="maxDate"
+							uib-datepicker-popup="{{format}}" ng-model="user.dateOfBirth" name="dateOfBirth" uib-date-format
+							is-open="popup1.opened" datepicker-options="dateOptions" required placeholder="Select Date of birth"
 							close-text="Close" alt-input-formats="altInputFormats"
-							xt-validation-tooltip date msg-date='Must be a valid date' /> <span
+							xt-validation-tooltip date msg-date='Must be a valid date' onkeydown="return false"/> <span
 							class="input-group-btn">
 							<button type="button" class="btn btn-default"
 								style="padding: 14px;" ng-click="open1()">
@@ -409,7 +401,7 @@
 						<p>Email Address:{{user.email}}</p>
 					</div>
 					<div class="col-md-12">
-						<p>Date Of Birth:{{user.dateOfBirth}}</p>
+						<p>Date Of Birth:{{user.dateOfBirth | date:'yyyy-MM-dd'}}</p>
 					</div>
 					<div class="col-md-12">
 						<p>SSN :{{user.ssn}}</p>

@@ -28,6 +28,7 @@ import com.nibbledebt.integration.finicity.error.FinicityAccessException;
 import com.nibbledebt.integration.finicity.model.Customers;
 import com.nibbledebt.integration.finicity.model.LoginField;
 import com.nibbledebt.integration.finicity.model.TransactionTest;
+import com.nibbledebt.integration.finicity.model.accounts.Accounts;
 import com.nibbledebt.integration.finicity.model.accounts.QuestionRequest;
 import com.nibbledebt.integration.finicity.model.trxs.Transactions;
 import com.nibbledebt.integration.sao.IIntegrationSao;
@@ -176,6 +177,16 @@ public class FinicitySao implements IIntegrationSao{
 			e.printStackTrace();
             throw new ServiceException("Error getCustomers form Finicity");
         }
+	}
+
+	@Override
+	public Accounts getAccounts(String customerId, String institutionId) throws ServiceException {
+		try {
+			return finicityClient.getAccounts(customerId, institutionId);
+		} catch (FinicityAccessException e) {
+			e.printStackTrace();
+			throw new ServiceException("Error getAccounts form Finicity");
+		}
 	}
 	
 }

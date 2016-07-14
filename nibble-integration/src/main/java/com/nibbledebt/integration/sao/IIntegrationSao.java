@@ -17,6 +17,7 @@ import com.nibbledebt.domain.model.Transaction;
 import com.nibbledebt.domain.model.account.AddAccountsResponse;
 import com.nibbledebt.integration.finicity.model.Customers;
 import com.nibbledebt.integration.finicity.model.TransactionTest;
+import com.nibbledebt.integration.finicity.model.accounts.Accounts;
 import com.nibbledebt.integration.finicity.model.accounts.QuestionRequest;
 
 
@@ -39,4 +40,5 @@ public interface IIntegrationSao {
 	public TransactionTest addTestTx(String customerId, String accountId) throws ServiceException;
 	public ResponseEntity<String> addCustomerAccountsMfaString(String customerId, String institutionId, QuestionRequest[] questions) throws ServiceException;
 	public Customers getCustomers() throws ServiceException;
+	public Accounts getAccounts(String customerId, String institutionId) throws ServiceException;
 }

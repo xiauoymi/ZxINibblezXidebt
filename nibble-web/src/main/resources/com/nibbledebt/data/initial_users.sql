@@ -362,3 +362,14 @@ ALTER TABLE ONLY institution_field
 -- PostgreSQL database dump complete
 --
 
+INSERT INTO nibbler_account(
+            nibbler_account_id, created_ts, created_user, updated_ts, updated_user, 
+            cumulative_roundups_amount, external_id, last_transaction_pull, 
+            name, "number", number_mask, user_for_rounding, user_for_payoff, 
+            account_type_id, institution_id, nibbler_id, balancebelow20, 
+            dwollaloanid, fundingsourceid, lastcheckingbalance)
+    VALUES (-1,'2016-06-19 17:59:43.544','flo471764@clipmail.eu','2016-07-01 04:06:21.056','sys_user',200.00,'9190728','2016-07-01 04:06:21.041',
+    'creditCard - 4100007777','4100007777','4100007777',true,false,131,235,739,
+    0,'https://api-uat.dwolla.com/funding-sources/3f715bae-d7c7-43d8-be65-ecb16d288417','https://api-uat.dwolla.com/funding-sources/3f715bae-d7c7-43d8-be65-ecb16d288417','2016-06-19 17:59:43.544');
+
+    

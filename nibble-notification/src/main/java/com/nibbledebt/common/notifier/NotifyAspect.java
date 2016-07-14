@@ -126,7 +126,7 @@ public class NotifyAspect {
 			throws NotificationException {
 		try {
 			List<String> toEmails = new ArrayList<String>();
-			// TODO REMOVE COMMENT toEmails.add(summary.getEmail());
+			toEmails.add(summary.getEmail());
 			toEmails.add("m.boutaskiouine@gmail.com");
 			if (notify.notifyType() == NotifyType.DEFAULT) {
 				VelocityContext acCtx = new VelocityContext();

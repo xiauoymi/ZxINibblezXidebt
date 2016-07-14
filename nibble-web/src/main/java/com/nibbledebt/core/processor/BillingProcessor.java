@@ -50,6 +50,7 @@ import com.nibbledebt.dwolla.IDwollaClient;
 import com.nibbledebt.dwolla.TypePayment;
 import com.nibbledebt.integration.sao.IIntegrationSao;
 import com.nibbledebt.integration.sao.mandrill.AWSMailSao;
+import com.nibbledebt.intuit.cad.data.PaymentType;
 
 import io.swagger.client.ApiException;
 
@@ -166,6 +167,7 @@ public class BillingProcessor extends AbstractProcessor {
 								paymentActivity.setInitiatedTs(new Date());
 								paymentActivity.setCreatedTs(new Date());
 								paymentActivity.setCreatedUser("sysuser");
+								paymentActivity.setType(TypePayment.DEFAULT.name());
 								paymentActivityDao.saveOrUpdate(paymentActivity);
 								v.setCumulativeRoundupsAmount(v.getCumulativeRoundupsAmount().subtract(triggerAmount));
 							}
@@ -347,9 +349,9 @@ public class BillingProcessor extends AbstractProcessor {
 		//TODO return false 
 	}
 	
-	private void payFee(NibblerAccount destination,BigDecimal triggerAmount) throws RepositoryException, ApiException{
-		NibblerAccount source=nibblerAccountDao.findByExternalId(dwollaClient.getFundingSource());
-		String authorizationCode=dwollaClient.transfer(source.getFundingSourceId(), destination.getFundingSourceId(), triggerAmount.toString(), source);
+	private void payFee(NibblerAccount source,BigDecimal triggerAmount) throws RepositoryException, ApiException{
+		NibblerAccount destination=nibblerAccountDao.findByFundingSourceId(dwollaClient.getFundingSource());
+		String authorizationCode=dwollaClient.transfer(destination.getFundingSourceId(), source.getFundingSourceId(), triggerAmount.toString(), source);
 		if(authorizationCode!=null){
 			PaymentActivity paymentActivity = new PaymentActivity();
 			paymentActivity.setAmount(triggerAmount);

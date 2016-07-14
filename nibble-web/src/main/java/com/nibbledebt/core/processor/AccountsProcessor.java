@@ -4,11 +4,11 @@
 package com.nibbledebt.core.processor;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +17,10 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -25,9 +28,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nibbledebt.common.error.ProcessingException;
+import com.nibbledebt.common.error.ServiceException;
 import com.nibbledebt.core.data.dao.INibblerAccountDao;
+import com.nibbledebt.core.data.dao.INibblerDao;
 import com.nibbledebt.core.data.dao.IPaymentActivityDao;
 import com.nibbledebt.core.data.error.RepositoryException;
+import com.nibbledebt.core.data.model.AccountBalance;
 import com.nibbledebt.core.data.model.NibblerAccount;
 import com.nibbledebt.core.data.model.PaymentActivity;
 import com.nibbledebt.domain.model.AmortizationRecord;
@@ -36,6 +42,8 @@ import com.nibbledebt.domain.model.LoanSummary;
 import com.nibbledebt.domain.model.Payment;
 import com.nibbledebt.domain.model.account.Account;
 import com.nibbledebt.domain.model.account.AccountDetail;
+import com.nibbledebt.integration.finicity.model.accounts.Accounts;
+import com.nibbledebt.integration.sao.IIntegrationSao;
 
 /**
  * @author ralam
@@ -43,6 +51,8 @@ import com.nibbledebt.domain.model.account.AccountDetail;
  */
 @Component
 public class AccountsProcessor extends AbstractProcessor {
+	
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 	@Resource
 	private Environment env;
 	
@@ -51,6 +61,13 @@ public class AccountsProcessor extends AbstractProcessor {
 	
 	@Autowired
 	private IPaymentActivityDao paymentActivityDao;
+	
+	@Autowired
+	@Qualifier("finicitySao")
+	private IIntegrationSao integrationSao;
+	
+	@Autowired
+	private INibblerDao nibblerDao;
 	
 	@Transactional(readOnly=true)
 	public LoanSummary getLoanSummary(String username) throws ProcessingException, RepositoryException{
@@ -80,6 +97,7 @@ public class AccountsProcessor extends AbstractProcessor {
 				}
 				
 			}
+			summary.setTotalPayment(summary.getTotalPayment().add(new BigDecimal(totalPayments)));
 			Double weeklyAveragePayment = 0d;
 			if(loan.getPayments().size() > 0) weeklyAveragePayment = totalPayments/(loan.getPayments().size());
 			
@@ -94,7 +112,6 @@ public class AccountsProcessor extends AbstractProcessor {
 			Double originalInterest = loan.getOriginalCumulativeInterest()!=null ? loan.getOriginalCumulativeInterest().doubleValue() : 0d;
 			Double currentInterest = loan.getCurrentCumulativeInterest()!=null ? loan.getCurrentCumulativeInterest().doubleValue() : 0d;
 			Double projectedInterest = loan.getProjectedCumulativeInterest()!=null ? loan.getProjectedCumulativeInterest().doubleValue() : 0d;
-			
 			Double originalMonthExtraPayment = 0d;
 			Double currentMonthExtraPayment = 0d;
 			Double projectedMonthExtraPayment = 0d;
@@ -177,11 +194,12 @@ public class AccountsProcessor extends AbstractProcessor {
 			loan.setCurrentPayoffDuration(loan.getCurrentProjectedAmortization().size());
 			loan.setProjectedPayoffDuration(loan.getProjectedAmortization().size());
 			loan.setWeeklyAverage(BigDecimal.valueOf(weeklyAveragePayment));
-			summary.getOriginalCumulativeInterest().add(loan.getOriginalCumulativeInterest());
-			summary.getCurrentCumulativeInterest().add(loan.getCurrentCumulativeInterest());
-			summary.getProjectedCumulativeInterest().add(loan.getProjectedCumulativeInterest());
+			summary.setOriginalCumulativeInterest(summary.getOriginalCumulativeInterest().add(loan.getOriginalCumulativeInterest()));
+			summary.setCurrentCumulativeInterest(summary.getCurrentCumulativeInterest().add(loan.getCurrentCumulativeInterest()));
+			summary.setProjectedCumulativeInterest(summary.getProjectedCumulativeInterest().add(loan.getProjectedCumulativeInterest()));;
 			summary.setCurrentPayoffDuration(summary.getCurrentPayoffDuration()+loan.getCurrentPayoffDuration());
 			summary.setOriginalPayoffDuration(summary.getOriginalPayoffDuration()+loan.getOriginalPayoffDuration());
+			summary.setRemainAmount(summary.getRemainAmount().add(new BigDecimal(currentPrincipalBalance)).add(new BigDecimal(currentInterest)));
 		}
 		
 		return summary;
@@ -213,12 +231,61 @@ public class AccountsProcessor extends AbstractProcessor {
 	}
 	
 	@Transactional(readOnly=true, isolation=Isolation.REPEATABLE_READ)
-	public List<Account> getLoanAccounts(String username) throws RepositoryException{
+	public List<Account> getLoanAccounts(String username) throws RepositoryException, ProcessingException{
 		List<NibblerAccount> accts = nibblerAcctDao.find(username);
 		List<Account> webAccts = new ArrayList<>();
 		for(NibblerAccount acct : accts){
 			if(!StringUtils.equalsIgnoreCase(env.getActiveProfiles()[0], "prod") ? (StringUtils.equalsIgnoreCase(acct.getAccountType().getCode(), "student_loan") || StringUtils.equalsIgnoreCase(acct.getAccountType().getCode(), "loan")) : StringUtils.equalsIgnoreCase(acct.getAccountType().getCode(), "student_loan")){
-				Account wacct = new Account();
+				com.nibbledebt.integration.finicity.model.accounts.Account account=null;
+				try {
+					Accounts accounts= integrationSao.getAccounts(acct.getNibbler().getExtAccessToken(), acct.getInstitution().getSupportedInstitution().getExternalId());
+					account=accounts.find(acct.getNumber());
+				} catch (Exception e) {
+					logger.warn(e.getMessage());
+				}
+				
+				if(account!=null){
+					if(acct.getBalances()!=null && !acct.getBalances().isEmpty()){
+						AccountBalance balance=acct.getBalances().get(0);
+						balance.setCurrent(
+								new BigDecimal(account.getBalance() != null ? account.getBalance() : "0.00"));
+						if (account.getDetail() != null) {
+							balance.setInterestRate(new BigDecimal(account.getDetail().getInterestRate() != null
+									? account.getDetail().getInterestRate() : "0.00"));
+							balance.setCashAdvanceInterestRate(
+									new BigDecimal(account.getDetail().getCashAdvanceInterestRate() != null
+											? account.getDetail().getCashAdvanceInterestRate() : "0.00"));
+							balance.setCreditMaxAmount(
+									new BigDecimal(account.getDetail().getCreditMaxAmount() != null
+											? account.getDetail().getCreditMaxAmount() : "0.00"));
+							balance.setPaymentMinAmount(
+									new BigDecimal(account.getDetail().getPaymentMinAmount() != null
+											? account.getDetail().getPaymentMinAmount() : "0.00"));
+							balance.setPaymentMinAmount(
+									new BigDecimal(account.getDetail().getPaymentMinAmount() != null
+											? account.getDetail().getPaymentMinAmount() : "0.00"));
+							balance.setLastPaymentAmount(
+									new BigDecimal(account.getDetail().getLastPaymentAmount() != null
+											? account.getDetail().getLastPaymentAmount() : "0.00"));
+							try {
+								balance.setPaymentDueDate(account.getDetail().getPaymentDueDate() != null
+										? new SimpleDateFormat().parse(account.getDetail().getPaymentDueDate())
+										: new Date());
+								balance.setLastPaymentDate(account.getDetail().getLastPaymentDate() != null
+										? new SimpleDateFormat().parse(account.getDetail().getLastPaymentDate())
+										: new Date());
+							} catch (ParseException e) {
+								throw new ProcessingException("Error while parsing date "+e.getMessage());
+							}
+							balance.setLastPaymentAmount(
+									new BigDecimal(account.getDetail().getLastPaymentAmount() != null
+											? account.getDetail().getLastPaymentAmount() : "0.00"));
+
+						}
+
+					}
+				}
+				Account wacct = new Account();				 
 				wacct.setAccountId(acct.getId());
 				wacct.setAccountNumber(acct.getNumberMask());
 				wacct.setAccountType(acct.getAccountType().getCode());

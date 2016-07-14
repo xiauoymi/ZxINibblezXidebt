@@ -27,6 +27,7 @@ import com.nibbledebt.domain.model.Transaction;
 import com.nibbledebt.domain.model.account.AddAccountsResponse;
 import com.nibbledebt.integration.finicity.model.Customers;
 import com.nibbledebt.integration.finicity.model.TransactionTest;
+import com.nibbledebt.integration.finicity.model.accounts.Accounts;
 import com.nibbledebt.integration.finicity.model.accounts.QuestionRequest;
 import com.nibbledebt.integration.sao.IIntegrationSao;
 import com.nibbledebt.intuit.cad.data.BankingTransaction;
@@ -238,6 +239,12 @@ public class IntuitCADSao implements IIntegrationSao {
 
 	@Override
 	public Customers getCustomers() throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Accounts getAccounts(String customerId, String institutionId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

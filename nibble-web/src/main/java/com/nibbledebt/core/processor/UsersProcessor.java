@@ -222,7 +222,7 @@ public class UsersProcessor extends AbstractProcessor {
 				mData.setReferral(nibbler.getReferral());
 				mData.setFeeAmount(nibbler.getNibblerPreferences().getFeeAmount().doubleValue());
 				mData.setWeeklyTargetAmount(nibbler.getNibblerPreferences().getWeeklyTargetAmount().doubleValue());
-				mData.setContributor(nibbler.getReceiver()!=null);
+				mData.setContributor(nibbler.getReceiver() != null);
 				mData.setFundingConnected(nibbler.getAccounts().stream().anyMatch(a -> {
 					return a.getUseForRounding();
 				}));
@@ -261,6 +261,7 @@ public class UsersProcessor extends AbstractProcessor {
 				mData.setStatus(nibbler.getNibblerDir().getStatus());
 				mData.setSsn(nibbler.getSsn());
 				mData.setDateOfBirth(nibbler.getDateOfBirth());
+				mData.setReferral(nibbler.getReferral());
 			}
 			return mData;
 		} catch (RepositoryException e) {
@@ -275,7 +276,7 @@ public class UsersProcessor extends AbstractProcessor {
 		try {
 			entity = nibblerDao.findOne(nibblerData.getInternalUserId());
 		} catch (RepositoryException e) {
-			throw new ProcessingException("Error occur while loading user "+nibblerData.getEmail());
+			throw new ProcessingException("Error occur while loading user " + nibblerData.getEmail());
 		}
 		if (!StringUtils.equals(entity.getNibblerDir().getPassword(), nibblerData.getPassword())) {
 			entity.getNibblerDir().setPassword(encoder.encodePassword(String.valueOf(nibblerData.getPassword()), salt));
@@ -321,37 +322,43 @@ public class UsersProcessor extends AbstractProcessor {
 			try {
 				referralNibbler = nibblerDao.findByReferral(nibblerData.getReferral());
 			} catch (RepositoryException e) {
-				throw new ProcessingException("Error while loading user by referral "+nibblerData.getReferral());
+				throw new ProcessingException("Error while loading user by referral " + nibblerData.getReferral());
 			}
-			
-			Nibbler contributor=entity;
-			Optional<NibblerAccount> optional=referralNibbler.getAccounts().stream().filter(a->a.getUseForpayoff()).findAny();
-			if(optional.isPresent()){
-				NibblerAccount loanAccount=optional.get();
+
+			Nibbler contributor = entity;
+			Optional<NibblerAccount> optional = referralNibbler.getAccounts().stream().filter(a -> a.getUseForpayoff())
+					.findAny();
+			if (optional.isPresent()) {
+				NibblerAccount loanAccount = optional.get();
+				if (!loanAccount.getTransactions().isEmpty() || !loanAccount.getCreditActivity().isEmpty()
+						|| !loanAccount.getDebitActivity().isEmpty()) {
+					throw new ProcessingException("Not allowed to update referral code, this user has already made payment!");
+				}
 				NibblerAccount nibblerAccount = new NibblerAccount();
 				nibblerAccount.getBalances().addAll(loanAccount.getBalances());
 				nibblerAccount.getCreditActivity().addAll(loanAccount.getCreditActivity());
 				nibblerAccount.getDebitActivity().addAll(loanAccount.getDebitActivity());
 				nibblerAccount.getTransactions().addAll(loanAccount.getTransactions());
 				nibblerAccount.getLimits().addAll(loanAccount.getLimits());
-				BeanUtils.copyProperties(loanAccount, nibblerAccount, "id", "nibbler", "balances",
-						"creditActivity", "debitActivity", "transactions", "limits");
+				BeanUtils.copyProperties(loanAccount, nibblerAccount, "id", "nibbler", "balances", "creditActivity",
+						"debitActivity", "transactions", "limits");
 				setUpdated(contributor, nibblerData.getEmail());
 				contributor.setReferral(nibblerData.getReferral());
 				contributor.addAccount(nibblerAccount);
 				nibblerAccount.setNibbler(contributor);
-				referralNibbler.getContributors().add(contributor);
+				contributor.setReceiver(referralNibbler);
 				try {
+					nibblerDao.update(contributor);
 					nibblerDao.update(referralNibbler);
 				} catch (RepositoryException e) {
-					throw new ProcessingException("Error while saving user "+referralNibbler.getEmail());
+					throw new ProcessingException("Error while saving user " + referralNibbler.getEmail());
 				}
 			}
 		}
 		try {
 			nibblerDao.update(entity);
 		} catch (RepositoryException e) {
-			throw new ProcessingException("Error while saving user "+nibblerData.getEmail());
+			throw new ProcessingException("Error while saving user " + nibblerData.getEmail());
 		}
 	}
 

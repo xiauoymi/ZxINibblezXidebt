@@ -19,10 +19,12 @@ public class LoanSummary {
 	private BigDecimal originalCumulativeInterest=BigDecimal.ZERO;
 	private BigDecimal currentCumulativeInterest=BigDecimal.ZERO;
 	private BigDecimal projectedCumulativeInterest=BigDecimal.ZERO;
+	private BigDecimal remainAmount=BigDecimal.ZERO;
 	private Integer originalPayoffDuration=new Integer(0);
 	private Integer currentPayoffDuration=new Integer(0);; 
 	private Integer projectedPayoffDuration=new Integer(0);; 
-
+	private BigDecimal totalPayment=BigDecimal.ZERO;
+	
 	/**
 	 * @return the loans
 	 */
@@ -60,7 +62,7 @@ public class LoanSummary {
 	}
 	
 	public BigDecimal getTotalIterestSaved(){
-		return originalCumulativeInterest.subtract(currentCumulativeInterest);
+		return originalCumulativeInterest.subtract(projectedCumulativeInterest);
 	}
 	public Integer getOriginalPayoffDuration() {
 		if(originalPayoffDuration==null){
@@ -93,5 +95,22 @@ public class LoanSummary {
 	public Integer getNumberMonthSaved(){
 		return originalPayoffDuration-currentPayoffDuration;
 	}
+	public BigDecimal getRemainAmount() {
+		return remainAmount;
+	}
+	public void setRemainAmount(BigDecimal remainAmount) {
+		this.remainAmount = remainAmount;
+	}
+	
+	public BigDecimal getProjectLifetimeSavings(){
+		return originalCumulativeInterest.subtract(projectedCumulativeInterest);
+	}
+	public BigDecimal getTotalPayment() {
+		return totalPayment;
+	}
+	public void setTotalPayment(BigDecimal totalPayment) {
+		this.totalPayment = totalPayment;
+	}
+	
 	
 }

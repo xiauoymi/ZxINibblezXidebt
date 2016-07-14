@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class UrlRewriteFilter implements Filter{
 
@@ -22,7 +23,12 @@ public class UrlRewriteFilter implements Filter{
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		String path = ((HttpServletRequest) request).getRequestURI();
-		if (path.startsWith("/Content") || path.startsWith("/distil_identify_cookie.html") || path.startsWith("/ga") || path.startsWith("/Fi") || path.startsWith("/public")) {
+		if(path.startsWith("/tos") ){
+			HttpServletResponse httpResponse = (HttpServletResponse) response;
+			httpResponse.sendRedirect("https://uat.dwolla.com"+path);
+			return;
+		}
+		if ( path.startsWith("/Content") || path.startsWith("/distil_identify_cookie.html") || path.startsWith("/ga") || path.startsWith("/Fi") || path.startsWith("/public")) {
 			request.getRequestDispatcher("/dwolla" + path).forward(request, response);
 		} else {
 			chain.doFilter(request, response); // Do your business stuff here for all paths other than /specialpath.

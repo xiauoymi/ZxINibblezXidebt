@@ -6,6 +6,7 @@ package com.nibbledebt.core.data.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -166,6 +167,31 @@ public class Nibbler extends AbstractModel {
 	 */
 	public String getFirstName() {
 		return firstName;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Nibbler other = (Nibbler) obj;
+		if (email == null) {
+			if (other.email != null)
+				return false;
+		} else if (!email.equals(other.email))
+			return false;
+		return true;
 	}
 
 	/**
@@ -388,6 +414,15 @@ public class Nibbler extends AbstractModel {
 
 	public void addAccount(NibblerAccount account) {
 		if (account != null && !getAccounts().contains(account)) {
+			Optional<NibblerAccount> old=getAccounts().stream().filter(a->{return a.getUseForpayoff().equals(account.getUseForpayoff());}).findFirst();
+			if(old.isPresent()){
+				System.out.println("old.get().getId()="+ old.get().getId());
+				System.out.println("b size="+ getAccounts().size());
+				NibblerAccount oldAccount=old.get();
+				oldAccount.setNibbler(null);
+				getAccounts().remove(old.get());
+				System.out.println("a size="+ getAccounts().size());
+			}
 			getAccounts().add(account);
 		}
 	}

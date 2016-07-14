@@ -153,6 +153,13 @@ public class FinicityClient {
 				TransactionTest.class);
 	}
 	
+	
+	@NeedsToken
+	public Accounts getAccounts(String customerId, String institutionId)
+			throws FinicityAccessException {
+		return restClient.getForObject(finicityCustUrl +customerId+ "/institutions/"+institutionId+"/accounts",Accounts.class);
+	}
+	
 	/**
 	 *
 	 * @param customerId

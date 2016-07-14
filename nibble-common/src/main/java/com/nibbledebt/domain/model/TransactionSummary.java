@@ -284,9 +284,12 @@ public class TransactionSummary {
 		this.referral = referral;
 	}
 	private static  DecimalFormat myFormatter =(DecimalFormat) DecimalFormat.getInstance(Locale.US);
+	static {
+		myFormatter.setMaximumFractionDigits(2);
+	}
 	public static String formatNumber4Email(BigDecimal x){
 		if(x==null)
-			return "0";
+			return "0"+"<span style='font-size: 20px;'>.00</span>";
 		String r=myFormatter.format(x);
 		if(r.contains(".")){
 			r=r.replace(".", "<span style='font-size: 20px;'>.");
@@ -297,4 +300,40 @@ public class TransactionSummary {
 		return r;
 	}
 	
+	public BigDecimal getTotalAmount(){
+		return totalAmountPaid.add(totalAmountContributors);
+	}
+	
+	public BigDecimal getRemainAmount(){
+		if(loanSummary !=null)
+		return loanSummary.getCurrentCumulativeInterest();
+		return BigDecimal.ZERO;
+	}
+	
+	public String getFullName(){
+		return personFirstName+" "+personLastName;
+	}
+	
+	public BigDecimal getTotalPayment(){
+		if(getLoanSummary()!=null){
+			return getLoanSummary().getTotalPayment();
+		}
+		return BigDecimal.ZERO;
+	}
+	
+	private BigDecimal totalContributors=BigDecimal.ZERO;
+	
+	public BigDecimal getTotalPaymentContributors(){
+		if(BigDecimal.ZERO.equals(totalContributors)){
+			List<TransactionSummary> contributors=getContributorSummaries();
+			for(TransactionSummary contributor:contributors){
+				totalContributors=totalContributors.add(contributor.getTotalPayment());
+			}
+		}		
+		return totalContributors;
+	}
+	
+	public BigDecimal getSumPayment(){
+		return getTotalPayment().add(getTotalPaymentContributors());
+	}
 }

@@ -27,7 +27,11 @@ app.controller('RegisterCtrl',
 
                         $scope.format = 'yyyy-MM-dd';
                         $scope.altInputFormats = ['M!/d!/yyyy'];
-
+                        var today = new Date();
+                        today.setFullYear(today.getFullYear()-18);
+                       
+                        
+                        $scope.maxDate = new Date(today.getFullYear(),today.getMonth() , today.getDate());
                         $scope.popup1 = {
                           opened: false
                         };
@@ -166,11 +170,14 @@ app.controller('RegisterCtrl',
                 });
             if($stateParams.activate){
            		$scope.activate=$stateParams.activate;
-           		 $scope.initLinkAccount("linkAccount");
-           		//$scope.initLinkAccount('loanAccount');
+           		$scope.initLinkAccount("linkAccount");
+           		//$scope.initLinkAccount('registrationConfirm');
            	}
-           	if($stateParams.user)
-           	$scope.user=$stateParams.user;
+           	if($stateParams.user){
+           		$scope.user=$stateParams.user;
+           		$scope.user.dateOfBirth=moment($scope.user.dateOfBirth,'YYYY-MM-DD').toDate();
+           	}
+           	
             };
             /* init alerts */
             NibbleUtils.initAlerts($scope, $stateParams.message);
@@ -202,11 +209,14 @@ app.controller('RegisterCtrl',
              * @returns {boolean|FormController.$invalid|*|ngModel.NgModelController.$invalid|context.ctrl.$invalid}
              */
             $scope.invalidRegisterForm1 = function() {
-                return $scope.registration.form.email.$invalid ||
-                        $scope.registration.form.password.$invalid ||
-                        $scope.registration.form.repassword.$invalid ||
-                        $scope.registration.form.firstname.$invalid ||
-                        $scope.registration.form.lastname.$invalid;
+                return $scope.registration.form.address1.$invalid ||
+                $scope.registration.form.address2.$invalid ||
+                $scope.registration.form.city.$invalid ||
+                $scope.registration.form.regstate.$invalid ||
+                $scope.registration.form.zipcode.$invalid ||
+                $scope.registration.form.phone.$invalid ||
+                $scope.registration.form.dateOfBirth.$invalid ||
+                $scope.registration.form.ssn.$invalid;
             };
 
             /**
@@ -342,14 +352,18 @@ app.controller('RegisterCtrl',
             $scope.addRoundupAccount=function(bank,email,fundingSource){
                 accountFactory.updateRoundupAccount({roundupAccountBank:bank,email:email,fundingSourceToken:fundingSource,accountNumber:bank.accountNumber}).then(function(data){
                    $scope.roundupAccount=data; 
-                   $scope.finicityBank={}; 
-                    $uibModal.open({
-                        animation: true,
-                        templateUrl: 'accountLinked.html',
-                        controller: 'ConfirmModalInstanceCtrl',
-                        backdrop: 'static'
-                    });
-                   $scope.showNext2Loan=true;
+//                    $uibModal.open({
+//                        animation: true,
+//                        templateUrl: 'accountLinked.html',
+//                        controller: 'ConfirmModalInstanceCtrl',
+//                        backdrop: 'static'
+//                    });
+                   if($scope.user.referral){
+                	   $scope.addLoanAccountByReferral();
+                   }else{
+                       $scope.showNext2Loan=true;                	   
+                       $scope.finicityBank={};
+                   }
                 },function (data, status) {
                         NibbleUtils.errorCallback($scope, $state, data, status);
                 });
@@ -365,7 +379,7 @@ app.controller('RegisterCtrl',
             };
 
             $scope.addLoanAccountByReferral=function(){
-                accountFactory.updateLoanAccountByReferral({email:$scope.user.email,referral:$scope.linkaccount.referral}).then(function(data){
+                accountFactory.updateLoanAccountByReferral({email:$scope.user.email,referral:$scope.user.referral}).then(function(data){
                      $scope.loanAccount=data; 
                    $scope.registration.condition ="registrationConfirm";
                 },function (data, status) {
@@ -502,6 +516,7 @@ app.controller('RegisterCtrl',
                 nibbler.phone = user.phone;
                 nibbler.url = NibbleUtils.getBaseUrl();
                 nibbler.ssn=user.ssn;
+                nibbler.referral=user.referral;
                 nibbler.dateOfBirth=$filter('date')(user.dateOfBirth, $scope.format);
                 if ($scope.selected != undefined) {
                     nibbler.bank = {

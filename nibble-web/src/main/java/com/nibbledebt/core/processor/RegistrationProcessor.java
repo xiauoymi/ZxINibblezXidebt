@@ -258,21 +258,16 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 		nibblerData.setZip(nibbler.getZip());
 		nibblerData.setCity(nibbler.getCity());
 		nibblerData.setPhone(nibbler.getPhone());
-		try {
-			nibblerData.setDateOfBirth(
-					org.apache.commons.lang3.time.DateUtils.parseDate(nibbler.getDateOfBirth(), "YYYY-MM-DD").getTime()
-							+ "");
-		} catch (ParseException e) {
-			e.printStackTrace();
-			throw new ProcessingException("Error parsing date of birth..");
-		}
+		nibblerData.setDateOfBirth(nibbler.getDateOfBirth());		
 		nibblerData.setSsn(nibbler.getSsn());
 		nibblerData.setIavToken(nibbler.getNibblerDir().getIavToken());
+		if(nibbler.getReferral()!=null)
+		nibblerData.setReferral(nibbler.getReferral());
 	}
 
 	@Transactional
 	@Notify(notifyMethod = NotifyMethod.EMAIL, notifyType = NotifyType.ACCOUNT_LINKED)
-	public AddAccountsResponse addLoanAccountByReferral(NibblerData nibblerData, Nibbler nibbler)
+	public AddAccountsResponse addLoanAccountByReferral(NibblerData nibblerData, Nibbler contributor)
 			throws ProcessingException, ServiceException, RepositoryException, ValidationException {
 		try {
 			if (nibblerData.getReferral() != null) {
@@ -283,14 +278,15 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 				List<String> types = Arrays.asList("student_loan", "loan", "student_loan");
 				List<NibblerAccount> nibblerAccounts = nibblerAccountDao
 						.findNibblerAccountByAccountType(referralNibbler.getNibblerDir().getUsername(), types);
-				Nibbler contributor = nibblerDao.find(nibblerData.getEmail());
 				referralNibbler.getContributors().add(contributor);
+				contributor.setReceiver(referralNibbler);
 				List<Account> accounts = saveLoanAccounts(nibblerData,
 						nibblerAccounts.stream().filter(a -> a.getUseForpayoff()).collect(Collectors.toList()));
 				AddAccountsResponse overallResponse = new AddAccountsResponse();
 				overallResponse.getAccounts().setAccount(accounts);
-				overallResponse.setReferral(nibbler.getReferral());
-				nibblerData.setReferral(nibbler.getReferral());
+				overallResponse.setReferral(contributor.getReferral());
+				nibblerData.setReferral(contributor.getReferral());
+				nibblerDao.saveOrUpdate(referralNibbler);
 				sendNotifAccountLinked(nibblerData);
 				return overallResponse;
 			} else {
@@ -644,6 +640,18 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 				nibbler.setPhone(nibblerData.getPhone());
 				nibbler.setSsn(nibblerData.getSsn());
 				nibbler.setDateOfBirth(nibblerData.getDateOfBirth());
+				if(nibblerData.getReferral()!=null){
+					try {
+						Nibbler receiver=nibblerDao.findByReferral(nibblerData.getReferral());
+						nibbler.setReceiver(receiver);
+						nibbler.setReferral(nibblerData.getReferral());
+					} catch (Exception e) {
+						throw new ProcessingException("Wrong referral code");
+					}
+					
+
+				}
+				
 				NibblerDirectory nibblerDir = new NibblerDirectory();
 				nibblerDir.setUsername(nibblerData.getEmail());
 				nibblerDir.setPassword(encoder.encodePassword(String.valueOf(nibblerData.getPassword()), salt));
@@ -695,6 +703,8 @@ public class RegistrationProcessor extends AbstractProcessor implements Applicat
 			nibbler.setZip(nibblerData.getZip());
 			nibbler.setEmail(nibblerData.getEmail());
 			nibbler.setPhone(nibblerData.getPhone());
+			nibbler.setDateOfBirth(nibblerData.getDateOfBirth());
+			nibbler.setSsn(nibblerData.getSsn());
 			nibbler.getNibblerDir()
 					.setPassword(encoder.encodePassword(String.valueOf(nibblerData.getPassword()), salt));
 			nibblerDao.update(nibbler);

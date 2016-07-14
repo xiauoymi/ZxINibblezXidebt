@@ -79,9 +79,3 @@ app.config(['$stateProvider', '$urlRouterProvider',
         ;
 
     }]);
-
-
-
-
-
-

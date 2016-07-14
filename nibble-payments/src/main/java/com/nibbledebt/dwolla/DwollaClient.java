@@ -125,12 +125,13 @@ public class DwollaClient implements IDwollaClient {
 //		System.err.println(transfer);
 //		FundingSource fs= api.id("e795beea-ce5a-40e6-a0a2-cf9e48075070");
 //		System.out.println(fs.getEmbedded());
-		//"https://api-uat.dwolla.com/funding-sources/1c2245e2-a1fc-41d7-b668-a7a22e5d9361"
+		//"https://api-uat.dwolla.com/funding-sources/6b482280-6b70-44ed-8d5f-e51e7ea9867e"
 		//"https://api-uat.dwolla.com/funding-sources/560bb6e3-49fd-4b2b-a66f-ff838c529dfd"
-		//dw.transfer("https://api-uat.dwolla.com/funding-sources/1c2245e2-a1fc-41d7-b668-a7a22e5d9361", "https://api-uat.dwolla.com/funding-sources/560bb6e3-49fd-4b2b-a66f-ff838c529dfd", "1000", null);
-		dw.statusTransfer("1a810d90-47eb-4039-8277-4f0d501aeac3");
+//		String s=dw.transfer("https://api-uat.dwolla.com/funding-sources/6b482280-6b70-44ed-8d5f-e51e7ea9867e", "https://api-uat.dwolla.com/funding-sources/560bb6e3-49fd-4b2b-a66f-ff838c529dfd", "2", null);
+		
 		//dw.payFee("https://api-uat.dwolla.com/funding-sources/e795beea-ce5a-40e6-a0a2-cf9e48075070", "10", null);
-		//System.out.println(fundingSource);
+//		System.out.println("transfer " +s);
+		dw.statusTransfer("3f715bae-d7c7-43d8-be65-ecb16d288417");
 	}
 
 	public String transfer(String from, String to, String value, NibblerAccount nibblerAccount) throws ApiException {
