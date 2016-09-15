@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="nibble-web:war">
+    <output-path>$PROJECT_DIR$/nibble-web/target</output-path>
+    <root id="archive" name="nibble-web-1.0.0.war">
+      <element id="artifact" artifact-name="nibble-web:war exploded" />
+    </root>
+  </artifact>
+</component>

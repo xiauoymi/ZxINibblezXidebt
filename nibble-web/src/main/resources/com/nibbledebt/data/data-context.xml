@@ -66,9 +66,27 @@
 				    <property name="maximumPoolSize" value="20" />
 				    <property name="connectionTestQuery" value="select 1" />
 				    <property name="driverClassName" value="org.postgresql.Driver" />
-				    <property name="jdbcUrl" value="jdbc:postgresql://localhost:5432/nweb" />
+				    <property name="jdbcUrl" value="jdbc:postgresql://localhost:5433/nweb" />
+				 <!--   <property name="username" value="postgres" /> -->
 				    <property name="username" value="postgres" />
-				    <property name="password" value="nweb" />
+				 <!--   <property name="password" value="nweb" /> -->
+				    <property name="password" value="root" />
+				</bean>
+			</constructor-arg>
+		</bean>
+ 	</beans>
+ 	
+ 		<beans profile="aws" default-autowire="default" >
+	 	<bean id="dataSource"  class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+			<constructor-arg>
+				<bean class="com.zaxxer.hikari.HikariConfig">
+				    <property name="poolName" value="springHikariCP" />
+				    <property name="maximumPoolSize" value="20" />
+				    <property name="connectionTestQuery" value="select 1" />
+				    <property name="driverClassName" value="org.postgresql.Driver" />
+				    <property name="jdbcUrl" value="jdbc:postgresql://nweb2.cc9lv30uvc9b.us-west-2.rds.amazonaws.com:5432/nweb2" />
+				    <property name="username" value="postgres" />
+				    <property name="password" value="nwebpostgres" />
 				</bean>
 			</constructor-arg>
 		</bean>

@@ -582,7 +582,7 @@ public class TransactionProcessor extends AbstractProcessor {
 			Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("weekly-report.vm");
 			StringWriter acWriter = new StringWriter();
 			acCtx.put("summary", summary);
-			acCtx.put("path", "nibble.college");
+			acCtx.put("path", "54.187.155.238:9000");
 			acTmpl.merge(acCtx, acWriter);
 			awsMailSao.sendEmail("Weekly Reporting", acWriter.toString(), toEmails);
 		} catch (Exception e) {

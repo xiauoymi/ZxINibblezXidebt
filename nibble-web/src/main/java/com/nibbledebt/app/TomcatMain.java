@@ -24,7 +24,8 @@ public class TomcatMain {
 
 	      //The port that we should run on can be set into an environment variable
 	      //Look for that variable and default to 8080 if it isn't there.
-	      String webPort = System.getProperty("PORT") == null ? System.getenv("PORT") : System.getProperty("PORT");
+//	      String webPort = System.getProperty("PORT") == null ? System.getenv("PORT") : System.getProperty("PORT");
+	      String webPort = "9000";
 	      String webappDirLocation = System.getProperty("WEBAPP_DIR") == null ? System.getenv("WEBAPP_DIR") : System.getProperty("WEBAPP_DIR");
 //	      String ksPath = System.getProperty("KS_PATH") == null ? System.getenv("KS_PATH") : System.getProperty("KS_PATH");
 //	      String ksPassword = System.getProperty("KS_PASSWORD") == null ? System.getenv("KS_PASSWORD") : System.getProperty("KS_PASSWORD");

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/nibble-cad-client/nibble-cad-client.iml" filepath="$PROJECT_DIR$/nibble-cad-client/nibble-cad-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nibble-common/nibble-common.iml" filepath="$PROJECT_DIR$/nibble-common/nibble-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nibble-data/nibble-data.iml" filepath="$PROJECT_DIR$/nibble-data/nibble-data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nibble-finicity-client/nibble-finicity-client.iml" filepath="$PROJECT_DIR$/nibble-finicity-client/nibble-finicity-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nibble-integration/nibble-integration.iml" filepath="$PROJECT_DIR$/nibble-integration/nibble-integration.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nibble-notification/nibble-notification.iml" filepath="$PROJECT_DIR$/nibble-notification/nibble-notification.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nibble-parent.iml" filepath="$PROJECT_DIR$/nibble-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nibble-payments/nibble-payments.iml" filepath="$PROJECT_DIR$/nibble-payments/nibble-payments.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nibble-web/nibble-web.iml" filepath="$PROJECT_DIR$/nibble-web/nibble-web.iml" />
+    </modules>
+  </component>
+</project>
