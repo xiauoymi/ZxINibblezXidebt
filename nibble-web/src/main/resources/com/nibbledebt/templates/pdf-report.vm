@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;">
+<head style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;">
+    <meta name="viewport" content="width=device-width" style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;">
+    <title style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;">Activate Account</title>
+    <style style="margin: 0;font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;box-sizing: border-box;font-size: 14px;">
+
+    </style>
+</head>
+<body>
+<table>
+    #set ($color = 'ffffff')
+    #foreach( $summary in $summaries )
+        #if ($summary.sumPayment < 20)
+            #set ($color = '#D0021B')
+        #else
+            #set ($color = 'ffffff')
+        #end
+
+        <tr bgcolor="$color"><td>$summary.personFirstName</td><td align="center">$summary.email</td><td>$summary.formatNumber4Email($summary.sumPayment)</td></tr>
+
+    #end
+</table>
+</body>
+</html>

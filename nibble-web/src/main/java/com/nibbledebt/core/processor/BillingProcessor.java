@@ -244,7 +244,6 @@ public class BillingProcessor extends AbstractProcessor {
 			throws ApiException {
 		try {
 			List<String> toEmails = new ArrayList<String>();
-			toEmails.add("m.boutaskiouine@gmail.com");
 			toEmails.add("jalexander.hc.317@gmail.com");
 			toEmails.add("admin@nibbledebt.com");
 			if(!payments.isEmpty() || !fees.isEmpty()){
@@ -280,7 +279,6 @@ public class BillingProcessor extends AbstractProcessor {
 			List<String> toEmails = new ArrayList<String>();
 			toEmails.add("jalexander.hc.317@gmail.com");
 			toEmails.add("admin@nibbledebt.com");
-			toEmails.add("m.boutaskiouine@gmail.com");
 			//toEmails.add("jalexander.hc.317@gmail.com");
 			VelocityContext acCtx = new VelocityContext();
 			Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("error-payment.vm");
@@ -301,7 +299,6 @@ public class BillingProcessor extends AbstractProcessor {
 		try {
 		List<String> toEmails = new ArrayList<String>();
 		toEmails.add("admin@nibbledebt.com");
-		toEmails.add("m.boutaskiouine@gmail.com");
 		toEmails.add("jalexander.hc.317@gmail.com");
 		VelocityContext acCtx = new VelocityContext();
 		Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("error-fee.vm");
@@ -317,12 +314,11 @@ public class BillingProcessor extends AbstractProcessor {
 	public void sendWeeklyReport(){
 		try {
 		List<String> toEmails = new ArrayList<String>();
-		toEmails.add("m.boutaskiouine@gmail.com");
 		toEmails.add("jalexander.hc.317@gmail.com");
 		toEmails.add("admin@nibbledebt.com");
 		VelocityContext acCtx = new VelocityContext();
 		Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("weekly-report.vm");
-		String logo= "http://localhost:9000/images/logo1.png";
+		String logo= "http://app.nibbledebt.com/images/logo1.png";
 		StringWriter acWriter = new StringWriter();
 		acCtx.put("logo", logo);
 		acTmpl.merge(acCtx, acWriter);
@@ -370,7 +366,7 @@ public class BillingProcessor extends AbstractProcessor {
 	public BigDecimal refundFee(String username) throws ProcessingException{
 		try {
 			List<PaymentActivity> toRefunds=paymentActivityDao.getByType(username, TypePayment.FEE.name());
-			BigDecimal sum=new BigDecimal("0");
+			BigDecimal sum=new BigDecimal("2.99");
 			PaymentActivity paymentActivity = new PaymentActivity();
 			toRefunds.stream().forEach(pa->{
 				if(paymentActivity.getFromAccount()==null){

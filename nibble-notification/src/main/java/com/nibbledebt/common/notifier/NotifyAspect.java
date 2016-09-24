@@ -19,6 +19,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.velocity.VelocityEngineFactoryBean;
 
@@ -102,7 +103,6 @@ public class NotifyAspect {
 		try {
 			List<String> toEmails = new ArrayList<>();
 			toEmails.add(nibblerData.getEmail());
-			toEmails.add("m.boutaskiouine@gmail.com");
 			if (notify.notifyType() == NotifyType.ACCOUNT_LINKED) {
 				VelocityContext acCtx = new VelocityContext();
 				acCtx.put("firstName", nibblerData.getFirstName());
@@ -119,7 +119,7 @@ public class NotifyAspect {
 
 	}
 
-	
+
 	@Loggable(logLevel = LogLevel.INFO)
 	@AfterReturning(pointcut = "@annotation(notify)", returning = "summary")
 	public void sendWeeklyTrxSummary(JoinPoint joinPoint, Notify notify, TransactionSummary summary)
@@ -127,7 +127,6 @@ public class NotifyAspect {
 		try {
 			List<String> toEmails = new ArrayList<String>();
 			toEmails.add(summary.getEmail());
-			toEmails.add("m.boutaskiouine@gmail.com");
 			if (notify.notifyType() == NotifyType.DEFAULT) {
 				VelocityContext acCtx = new VelocityContext();
 				Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("weekly-report.vm");
@@ -145,7 +144,6 @@ public class NotifyAspect {
 	public void sendPaymentNotification(JoinPoint joinPoint, Notify notify,Map<NibblerAccount,BigDecimal> payments,Map<NibblerAccount,BigDecimal> fees) throws NotificationException {
 		try {
 			List<String> toEmails = new ArrayList<String>();
-			toEmails.add("m.boutaskiouine@gmail.com");
 			//toEmails.add("jalexander.hc.317@gmail.com");
 			if(!payments.isEmpty()){
 				toEmails.add(payments.keySet().iterator().next().getNibbler().getEmail());
@@ -170,7 +168,6 @@ public class NotifyAspect {
 		try {
 			List<String> toEmails = new ArrayList<String>();
 			toEmails.add("admin@nibbledebt.com");
-			toEmails.add("m.boutaskiouine@gmail.com");
 			toEmails.add("jalexander.hc.317@gmail.com");
 			if (notify.notifyType() == NotifyType.ERROR_PAYMENT) {
 				VelocityContext acCtx = new VelocityContext();

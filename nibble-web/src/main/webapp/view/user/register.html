@@ -198,30 +198,30 @@
 			</div>
 		</div>
 		<div id="registration_form3" ng-switch-when="linkAccount">
-			<br />
-			<div class="line">
-				<span class="step1 badge">1</span> <span class="step2 badge">2</span>
-				<span class="step3 badge badge-info">3</span> <span
-					 class="step4 badge">4</span>
-			</div>
-			<br />
-			<!-- 			<div class="form-group"> -->
-			<!-- 				<button class="btn btn-lg btn-nibble-primary btn-block" -->
-			<!-- 					ng-click="registerForm2()"> -->
-			<!-- 					<i class="fa fa-md fa-arrow-left font-color-white"></i> Back -->
-			<!-- 				</button> -->
-			<!-- 			</div> -->
-<!-- 			<div class="form-group"> -->
-<!-- 				<h4 class="form-primary-heading text-center">Choose your -->
-<!-- 					Funding Source</h4> -->
-<!-- 			</div> -->
-			<div ng-init="loadIAV('addRoundupAccount')"></div>
-			<div class="island__section animation-frame" ng-show="isFundingIAV()"></div>
-			<div id="fundingIAV"></div>
 			<br>
-			<div class="form-group text-center" ng-show="showNext2Loan">
+			<div class="line">
+				<span class="step1 badge">1</span>
+				<span class="step2 badge">2</span>
+				<span class="step3 badge badge-info">3</span>
+				<span class="step4 badge">4</span>
+			</div>
+			<br>
+			<div class="text-center">
+				<h3 style="color: grey; width: 700px; margin-left: -175px;">Uh Oh. We were unable to retrieve your Account Number and Routing Number from your Bank</h3>
+				<h3 style="color: grey;">Please Enter them below</h3>
+			</div>
+			<br>
+			<div class="form-group">
+				<input type="text" class="form-control empty"
+					   placeholder="Account Number" name="accountNumber" required>
+				<br>
+				<input type="text" class="form-control empty"
+					   placeholder="Routing Number" name="routingNumber" required>
+			</div>
+			<br>
+			<div class="form-group text-center">
 				<button class="btn btn-sm-cus btn-nibble-primary"
-					ng-click="initLinkAccount('loanAccount')">
+					ng-click="initLoanAccount()">
 					Continue <i class="fa fa-md font-color-white"></i>
 				</button>
 			</div>
@@ -233,30 +233,32 @@
 				</div>
 			</div>
 		</div>
-		<div id="registration_form3" ng-switch-when="loanAccount">
-			<br />
+		<div id="registration_form4" ng-switch-when="loanAccount">
+			<br>
 			<div class="line">
-				<span class="step1 badge">1</span> <span class="step2 badge">2</span>
-				<span class="step3 badge">3</span> <span 
-					class="step4 badge badge-info">4</span>
+				<span class="step1 badge">1</span>
+				<span class="step2 badge">2</span>
+				<span class="step3 badge">3</span>
+				<span class="step4 badge badge-info">4</span>
 			</div>
-			<br />
+			<br>
+			<div class="text-center">
+				<h3 style="color: grey; width: 530px; margin-left: -75px;">Please enter you Loan Account Number / Reference Number</h3>			
+				<h3 style="color: grey;">Thank you</h3>
+			</div>
+			<br>
 			<div class="form-group">
-				<button class="btn btn-lg btn-nibble-primary btn-block"
-					ng-click="registration.condition='linkAccount'">
-					<i class="fa fa-md fa-arrow-left font-color-white"></i> Back
+				<input type="text" class="form-control empty"
+					   placeholder="Account Number" name="accountNumberLoan" required>
+				<br>
+			</div>
+			<br>
+			<div class="form-group text-center">
+				<button class="btn btn-sm-cus btn-nibble-primary"
+						ng-click="updateRegister(user)">
+					Continue <i class="fa fa-md font-color-white"></i>
 				</button>
 			</div>
-			<div class="form-group">
-				<h4 class="form-primary-heading text-center">Choose your loan
-					provider </h4>
-			</div>
-			<div class="form-group">
-						<div ng-init="loadIAV('addLoanAccount')"></div>
-						<div class="island__section animation-frame"
-							ng-show="isFundingIAV()"></div>
-						<div id="fundingIAV"></div>
-			</div>			
 			<hr />
 			<div class="row">
 				<div class="col-md-offset-1">
@@ -267,191 +269,27 @@
 		</div>
 		<div ng-switch-when="registrationConfirm">
 			<br />
+			<div class="line">
+				<span class="step1 badge">1</span>
+				<span class="step2 badge">2</span>
+				<span class="step3 badge">3</span>
+				<span class="step4 badge badge-info">4</span>
+			</div>
+			<br>
+			<div class="modal-header">
+				<h3 style="color: grey;">Please Enter your Loan Account Number/Reference Number</h3>
+				<h3 style="color: grey;">Thank you</h3>
+			</div>
+			<br>
 			<div class="form-group text-center">
-				<h4 class="form-primary-heading">Review your info</h4>
+				<button class="btn btn-sm-cus btn-nibble-primary"
+						ng-click="">
+					Continue <i class="fa fa-md font-color-white"></i>
+				</button>
 			</div>
-			<div class="row" ng-show="isEditing">
-				<div class="form-group">
-					<h4 class="form-primary-heading">Enter your information :</h4>
-				</div>
-				<div class="form-group">
-					<input type="text" class="form-control empty"
-						placeholder="&#xf05a;    First Name" name="firstname" required
-						ng-model="user.firstName" xt-validation-tooltip>
-				</div>
-				<div class="form-group">
-					<input type="text" class="form-control empty"
-						placeholder="&#xf05a;    Last Name" name="lastname" required
-						ng-model="user.lastName" xt-validation-tooltip>
-				</div>
-				<div class="form-group">
-					<div class="col-md-12">
-						<p>Email Address:{{user.email}}</p>
-					</div>
-				</div>
-				<div class="form-group">
-					<input type="password" class="form-control empty"
-						placeholder="&#xf023;    Password" name="password" required
-						ng-model="user.password"
-						msg-strength="Password requires 8 characters, one capital and one number."
-						xt-validation-tooltip title="Passwod must include"
-						data-toggle="tooltip">
-
-					<div class="progress">
-						<div class="progress-bar"
-							ng-class="{'progress-bar-success': isPasswordStrong(), 'progress-bar-warning': isPasswordOk(),
-                         'progress-bar-danger': isPasswordWeak()}"
-							aria-valuenow="{{registration.passwordStrenth}}"
-							aria-valuemin="0" aria-valuemax="100"
-							style="width: {{registration.passwordStrenth}}%"></div>
-					</div>
-				</div>
-				<div class="form-group">
-					<input type="password" class="form-control empty"
-						placeholder="&#xf023;    Re-enter Password" name="repassword"
-						required ng-model="user.repassword"
-						msg-equalto="The password you have entered does not match"
-						xt-validation-tooltip>
-
-				</div>
-				<div class="form-group">
-					<input type="text" class="form-control empty"
-						placeholder="&#xf015;    Address Line 1" name="address1" required
-						ng-model="user.address1" xt-validation-tooltip>
-				</div>
-				<div class="form-group">
-					<input type="text" class="form-control empty"
-						placeholder="&#xf015;    Address Line 2" name="address2"
-						ng-model="user.address2">
-				</div>
-				<div class="form-group">
-					<input type="text" class="form-control empty"
-						placeholder="&#xf015;    City" name="city" required
-						ng-model="user.city" xt-validation-tooltip>
-				</div>
-				<div class="form-group">
-					<select ng-model="user.state" placeholder="&#xf015; State"
-						xt-validation-tooltip class="form-control empty" name="regstate"
-						required>
-						<option value="">Choose State</option>
-						<option ng-repeat="x in states">{{x}}</option>
-					</select>
-				</div>
-				<div class="form-group">
-					<input type="text" class="form-control empty" maxlength="5"
-						placeholder="&#xf015;    Zipcode" name="zipcode" required
-						onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-						ng-model="user.zip" xt-validation-tooltip zip-code
-						msg-zip-code="Zipcode must be 5 characters long, all numbers">
-				</div>
-				<div class="form-group">
-					<input type="text" class="form-control empty" maxlength="10"
-						placeholder="&#xf095;    Phone" name="phone" required
-						onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-						ng-model="user.phone" xt-validation-tooltip phone-number
-						msg-phone-number="Phone Numbers must be ten digits long">
-				</div>
-				<div class="form-group">
-					<p class="input-group">
-						<input type="text" class="form-control empty" max-date="maxDate"
-							uib-datepicker-popup="{{format}}" ng-model="user.dateOfBirth" name="dateOfBirth" uib-date-format
-							is-open="popup1.opened" datepicker-options="dateOptions" required placeholder="Select Date of birth"
-							close-text="Close" alt-input-formats="altInputFormats"
-							xt-validation-tooltip date msg-date='Must be a valid date' onkeydown="return false"/> <span
-							class="input-group-btn">
-							<button type="button" class="btn btn-default"
-								style="padding: 14px;" ng-click="open1()">
-								<i class="glyphicon glyphicon-calendar"></i>
-							</button>
-						</span>
-					</p>
-				</div>
-				<div class="form-group">
-					<input type="text" class="form-control empty" minlength="4"
-						maxlength="4" placeholder="&#xf05a;    Last 4 of SSN" name="ssn"
-						required
-						onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-						ng-model="user.ssn" xt-validation-tooltip minlength
-						msg-minlength="Must be 4 Characters Long.">
-				</div>
-
-				<div class="form-group text-center">
-					<button class="btn btn-sm-cus btn-nibble-primary"
-						ng-click="cancelEditUser()">
-						Cancel <i class="fa fa-md font-color-white"></i>
-					</button>
-					<button class="btn btn-sm-cus btn-nibble-primary"
-						ng-click="updateRegister(user)"
-						ng-disabled="invalidRegisterForm1()">
-						Submit <i class="fa fa-md font-color-white"></i>
-					</button>
-				</div>
-
-			</div>
-			<div class="row" ng-hide="isEditing">
-				<div class="row text-center"
-					style="border-radius: 25px; border: 2px solid #89C4F4;">
-					<div class="col-md-12">
-						<p>First Name:{{user.firstName}}</p>
-					</div>
-					<div class="col-md-12">
-						<p>Last Name:{{user.lastName}}</p>
-					</div>
-					<div class="col-md-12">
-						<p>Email Address:{{user.email}}</p>
-					</div>
-					<div class="col-md-12">
-						<p>Date Of Birth:{{user.dateOfBirth | date:'yyyy-MM-dd'}}</p>
-					</div>
-					<div class="col-md-12">
-						<p>SSN :{{user.ssn}}</p>
-					</div>
-					<div class="col-md-12">
-						<p>Password:Confirmed Match</p>
-					</div>
-					<div class="col-md-12">
-						<p>Address:{{user.address1}}</p>
-					</div>
-					<div class="col-md-12">
-						<p>City:{{user.city}}</p>
-					</div>
-					<div class="col-md-12">
-						<p>States:{{user.state}}</p>
-					</div>
-					<div class="col-md-12">
-						<p>Zip Code:{{user.zip}}</p>
-					</div>
-					<div class="col-md-12">
-						<p>Phone #:{{user.phone}}</p>
-					</div>
-					<div ng-repeat="funding in roundupAccount.data.accounts.account"
-						class="col-md-12">
-						<p>Funding Account
-							:********{{showAccountNumber(funding.accountNumber)}}</p>
-					</div>
-					<div ng-repeat="loan in loanAccount.data.accounts.account"
-						class="col-md-12">
-						<p>Loan Account
-							:********{{showAccountNumber(loan.accountNumber)}}</p>
-					</div>
-					<div class="col-md-12">
-						<p>Referral Code :{{loanAccount.data.referral}}</p>
-					</div>
-				</div>
-				<br>
-				<div class="form-group text-center">
-					<button class="btn btn-sm-cus btn-nibble-primary"
-						ng-click="editUser(user)">
-						Edit <i class="fa fa-md font-color-white"></i>
-					</button>
-					<button class="btn btn-sm-cus btn-nibble-primary"
-						ng-click="registration.condition='registrationFinish'">
-						Continue <i class="fa fa-md font-color-white"></i>
-					</button>
-				</div>
-			</div>
+			<hr />
 			<div class="row">
-				<div class="col-md-offset-1 col-md-10">
+				<div class="col-md-offset-1">
 					<small><a href="" ng-click="goToLogin()"><i
 							class="fa fa-arrow-left"></i> Back to login</a></small>
 				</div>

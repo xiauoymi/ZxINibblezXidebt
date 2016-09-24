@@ -15,14 +15,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -172,6 +165,7 @@ public class TransactionProcessor extends AbstractProcessor {
 		
 	}
 
+	@Scheduled(cron = "* * * * * 6")
 	@Transactional
 	public void buildWeeklyReport() throws RepositoryException {
 		List<Nibbler> nibblers = nibblerDao.findByStatus(NibblerDirectoryStatus.ACTIVE.name());
@@ -494,7 +488,6 @@ public class TransactionProcessor extends AbstractProcessor {
 			if (isFailed) {
 				faildTxAccount.append("<br>Best regards,");
 				List<String> toEmail = new ArrayList<String>();
-				toEmail.add("m.boutaskiouine@gmail.com");
 				 toEmail.add("tyler@nibbledebt.com");
 				 toEmail.add("jalexander.hc.317@gmail.com");
 				awsMailSao.sendEmail("Failed transaction download", faildTxAccount.toString(), toEmail);
@@ -575,7 +568,6 @@ public class TransactionProcessor extends AbstractProcessor {
 		try {
 			List<String> toEmails = new ArrayList<String>();
 			toEmails.add(summary.getEmail());
-			toEmails.add("m.boutaskiouine@gmail.com");
 			toEmails.add("jalexander.hc.317@gmail.com");
 			toEmails.add("admin@nibbledebt.com");
 			VelocityContext acCtx = new VelocityContext();
@@ -590,4 +582,135 @@ public class TransactionProcessor extends AbstractProcessor {
 		}
 	}
 
+	@Scheduled(cron = "0 0 3 * * *")
+	@Loggable(logLevel = LogLevel.INFO)
+	@Transactional
+	public void sendPdf() throws Exception {
+
+		List<Nibbler> nibblers = nibblerDao.findByStatus(NibblerDirectoryStatus.ACTIVE.name());
+		List<TransactionSummary> summaries = new ArrayList<>();
+
+		nibblers.forEach(nibbler -> {
+
+			try {
+				summaries.add(getWeeklyTrxSummary(nibbler.getNibblerDir().getUsername(),false));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		});
+
+
+		List<String> toEmails = new ArrayList<>();
+		toEmails.add("intro85@gmail.com");
+
+		VelocityContext acCtx = new VelocityContext();
+		Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("pdf-report.vm");
+
+		StringWriter acWriter = new StringWriter();
+
+		acCtx.put("summaries", summaries);
+		acCtx.put("path", "54.187.155.238:9000");
+		acTmpl.merge(acCtx, acWriter);
+		awsMailSao.sendEmail("Weekly Reporting", acWriter.toString(), toEmails);
+
+		nibblers.forEach(nibbler -> {
+			try {
+				TransactionSummary summary = getWeeklyTrxSummary(nibbler.getNibblerDir().getUsername(),false);
+				if (summary.getSumPayment().compareTo(BigDecimal.valueOf(20.00)) != -1) {
+					prepareCheck(nibbler, summary);
+				} else {
+					below20(nibbler);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+
+	}
+
+	private void below20(Nibbler nibbler) throws Exception{
+		List<String> toEmails = new ArrayList<>();
+		toEmails.add(nibbler.getEmail());
+
+		VelocityContext acCtx = new VelocityContext();
+		Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("below.vm");
+
+		StringWriter acWriter = new StringWriter();
+
+		acTmpl.merge(acCtx, acWriter);
+		awsMailSao.sendEmail("Weekly Reporting", acWriter.toString(), toEmails);
+	}
+
+	private void prepareCheck(Nibbler nibbler, TransactionSummary summary) throws Exception {
+
+		List<String> toEmails = new ArrayList<>();
+		toEmails.add("intro85@gmail.com");
+
+		VelocityContext acCtx = new VelocityContext();
+		Template acTmpl = velocityEngineFactory.createVelocityEngine().getTemplate("checks.vm");
+
+		StringWriter acWriter = new StringWriter();
+
+		acCtx.put("nibbler", nibbler);
+		acCtx.put("pay", converteToText(summary.getSumPayment()));
+		acCtx.put("summary", summary);
+		acTmpl.merge(acCtx, acWriter);
+		awsMailSao.sendEmail("Weekly Reporting", acWriter.toString(), toEmails);
+
+	}
+
+	private String converteToText(BigDecimal n) {
+
+		String answer = convert(n.intValue()) + " Dollars and " + convert(n.unscaledValue().intValue()) + "Cents";
+
+		return answer;
+	}
+
+	public String convert(final int n) {
+		String[] units = {
+				"", "one", "two", "three", "four", "five", "six", "seven",
+				"eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen",
+				"fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
+		};
+
+		String[] tens = {
+				"",        // 0
+				"",        // 1
+				"twenty",  // 2
+				"thirty",  // 3
+				"forty",   // 4
+				"fifty",   // 5
+				"sixty",   // 6
+				"seventy", // 7
+				"eighty",  // 8
+				"ninety"   // 9
+		};
+
+		if (n < 0) {
+			return "minus " + convert(-n);
+		}
+
+		if (n < 20) {
+			return units[n];
+		}
+
+		if (n < 100) {
+			return tens[n / 10] + ((n % 10 != 0) ? " " : "") + units[n % 10];
+		}
+
+		if (n < 1000) {
+			return units[n / 100] + " hundred" + ((n % 100 != 0) ? " " : "") + convert(n % 100);
+		}
+
+		if (n < 1000000) {
+			return convert(n / 1000) + " thousand" + ((n % 1000 != 0) ? " " : "") + convert(n % 1000);
+		}
+
+		if (n < 1000000000) {
+			return convert(n / 1000000) + " million" + ((n % 1000000 != 0) ? " " : "") + convert(n % 1000000);
+		}
+
+		return convert(n / 1000000000) + " billion"  + ((n % 1000000000 != 0) ? " " : "") + convert(n % 1000000000);
+	}
 }

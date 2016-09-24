@@ -1,21 +1,5 @@
 package io.swagger.client;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TimeZone;
-
-import javax.ws.rs.core.Response.Status.Family;
-
 import com.fasterxml.jackson.databind.JavaType;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -25,17 +9,25 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.client.apache.config.ApacheHttpClientConfig;
 import com.sun.jersey.multipart.FormDataMultiPart;
-
 import io.swagger.client.auth.ApiKeyAuth;
 import io.swagger.client.auth.Authentication;
 import io.swagger.client.auth.HttpBasicAuth;
 import io.swagger.client.auth.OAuth;
 
+import javax.ws.rs.core.Response.Status.Family;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Map.Entry;
+
 public class ApiClient {
 	private Map<String, Client> hostMap = new HashMap<String, Client>();
 	private Map<String, String> defaultHeaderMap = new HashMap<String, String>();
 	private boolean debugging = false;
-	private String basePath = "https://localhost/";
+	private String basePath = "https://app.nibledebt.com/";
 
 	private Map<String, Authentication> authentications;
 
